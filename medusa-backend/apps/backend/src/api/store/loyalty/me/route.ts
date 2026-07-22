@@ -1,6 +1,7 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http";
 import type LoyaltyService from "../../../../modules/loyalty/service";
-import { LOYALTY_MODULE, POINTS_PER_TRY, TRY_PER_POINT } from "../../../../modules/loyalty";
+import { LOYALTY_MODULE } from "../../../../modules/loyalty";
+import { POINTS_PER_TRY, TRY_PER_POINT } from "../../../../modules/loyalty/service";
 
 /**
  * GET /store/loyalty/me

@@ -5,9 +5,9 @@ import { SITE_SEO_MODULE } from "../../../modules/site-seo";
 /** GET /admin/site-seo — singleton row (yoksa default ile oluşturur). */
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
   const svc = req.scope.resolve<SiteSeoService>(SITE_SEO_MODULE);
-  const list = await svc.listSiteSeos({});
+  const list = await svc.listSiteSeoes({});
   if (list.length === 0) {
-    const [created] = await svc.createSiteSeos([
+    const [created] = await svc.createSiteSeoes([
       {
         site_name: "Testere Store",
         default_title:
@@ -31,13 +31,13 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
 export async function PATCH(req: MedusaRequest, res: MedusaResponse) {
   const svc = req.scope.resolve<SiteSeoService>(SITE_SEO_MODULE);
   const body = req.body as Record<string, unknown>;
-  const existing = await svc.listSiteSeos({});
+  const existing = await svc.listSiteSeoes({});
 
   let row;
   if (existing.length === 0) {
-    [row] = await svc.createSiteSeos([body]);
+    [row] = await svc.createSiteSeoes([body]);
   } else {
-    [row] = await svc.updateSiteSeos([{ id: existing[0].id, ...body }]);
+    [row] = await svc.updateSiteSeoes([{ id: existing[0].id, ...body }]);
   }
   res.json({ site_seo: row });
 }

@@ -117,7 +117,7 @@ const OrderCargoTrackingWidget = ({ data }: DetailWidgetProps<OrderLite>) => {
         <Heading level="h2">Kargo Takip Bilgileri</Heading>
       </div>
 
-      {meta.tracking_number && (
+      {!!meta.tracking_number && (
         <div className="flex items-center justify-between rounded-lg border border-ui-border-base bg-ui-bg-subtle p-3">
           <div className="space-y-0.5">
             <div className="flex items-center gap-2">
@@ -130,7 +130,7 @@ const OrderCargoTrackingWidget = ({ data }: DetailWidgetProps<OrderLite>) => {
               Takip No: <span className="font-mono">{String(meta.tracking_number)}</span>
             </Text>
           </div>
-          {meta.tracking_url && (
+          {!!meta.tracking_url && (
             <a
               href={String(meta.tracking_url)}
               target="_blank"

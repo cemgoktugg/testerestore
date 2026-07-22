@@ -9,7 +9,7 @@ import { SITE_SEO_MODULE } from "../../../modules/site-seo";
  */
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
   const svc = req.scope.resolve<SiteSeoService>(SITE_SEO_MODULE);
-  const list = await svc.listSiteSeos({});
+  const list = await svc.listSiteSeoes({});
   res.setHeader(
     "Cache-Control",
     "public, max-age=60, s-maxage=300, stale-while-revalidate=600"

@@ -13,7 +13,7 @@ const FooterSetting = model.define("footer_setting", {
   contact_address: model.text().nullable(),
   copyright_text: model.text().nullable(),
   /** Array<{ label: string; href?: string }> */
-  legal_links: model.json().default([]),
+  legal_links: model.json().default([] as unknown as Record<string, unknown>),
 });
 
 export default FooterSetting;

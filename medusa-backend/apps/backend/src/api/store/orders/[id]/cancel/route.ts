@@ -46,7 +46,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
   }
 
   const status = String(order.status || "").toLowerCase();
-  const fulfillment = String(order.fulfillment_status || "").toLowerCase();
+  const fulfillment = String((order as { fulfillment_status?: string }).fulfillment_status || "").toLowerCase();
 
   if (status === "canceled") {
     res.status(400).json({ message: "Bu sipariş zaten iptal edilmiş." });

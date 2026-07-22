@@ -8,7 +8,7 @@ const FooterLinkGroup = model.define("footer_link_group", {
   id: model.id().primaryKey(),
   title: model.text(),
   /** Array<{ label: string; href: string }> */
-  links: model.json().default([]),
+  links: model.json().default([] as unknown as Record<string, unknown>),
   sort_order: model.number().default(0),
   is_active: model.boolean().default(true),
 });
