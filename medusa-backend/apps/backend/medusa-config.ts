@@ -1,5 +1,5 @@
 import path from 'node:path'
-import { loadEnv, defineConfig } from '@medusajs/framework/utils'
+import { loadEnv, defineConfig, Modules } from '@medusajs/framework/utils'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type ViteConfig = any
@@ -32,14 +32,17 @@ module.exports = defineConfig({
       ? [
           {
             resolve: "@medusajs/event-bus-redis",
+            key: Modules.EVENT_BUS,
             options: { redisUrl: process.env.REDIS_URL },
           },
           {
             resolve: "@medusajs/cache-redis",
+            key: Modules.CACHE,
             options: { redisUrl: process.env.REDIS_URL },
           },
           {
             resolve: "@medusajs/workflow-engine-redis",
+            key: Modules.WORKFLOW_ENGINE,
             options: { redis: { url: process.env.REDIS_URL } },
           },
         ]
