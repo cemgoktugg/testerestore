@@ -24,6 +24,26 @@ module.exports = defineConfig({
     },
   },
   modules: [
+    // Redis: event bus + cache + workflow engine. REDIS_URL varsa (production)
+    // Redis kullanılır; yoksa (local dev, Redis yok) Medusa'nın in-memory
+    // default'ları devreye girer. Production'da tek instance için bile
+    // event/job/workflow kalıcılığı için Redis şart (yeniden başlatmada kayıp yok).
+    ...(process.env.REDIS_URL
+      ? [
+          {
+            resolve: "@medusajs/event-bus-redis",
+            options: { redisUrl: process.env.REDIS_URL },
+          },
+          {
+            resolve: "@medusajs/cache-redis",
+            options: { redisUrl: process.env.REDIS_URL },
+          },
+          {
+            resolve: "@medusajs/workflow-engine-redis",
+            options: { redis: { url: process.env.REDIS_URL } },
+          },
+        ]
+      : []),
     {
       resolve: "./src/modules/hero-slider",
     },

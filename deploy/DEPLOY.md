@@ -165,8 +165,11 @@ Dosyalar standart Medusa v2 + Next.js Docker desenine göre hazırlandı ama
 build yolları, native bağımlılıklar). VPS + domain hazır olduğunda ilk deploy'u
 birlikte yapıp takılan yeri anında düzeltebiliriz.
 
+## Redis (event bus + cache + workflow engine)
+`medusa-config.ts` artık `REDIS_URL` varsa Redis modüllerini otomatik yükler
+(event-bus-redis + cache-redis + workflow-engine-redis). Compose `REDIS_URL`'i
+`redis://redis:6379` olarak veriyor → production'da Redis devrede. Local dev'de
+`REDIS_URL` yorumlu olduğu için in-memory çalışır (Redis kurmaya gerek yok).
+
 ## Opsiyonel iyileştirmeler (sonra)
-- **Redis'i tam devreye almak** (event bus + cache + workflow engine): şu an
-  `REDIS_URL` verili ama `medusa-config.ts`'te redis modülleri tanımlı değil →
-  tek instance için in-memory çalışır. Ölçeklenince redis modüllerini ekleriz.
 - **www yönlendirmesi**, **rate limiting**, **otomatik DB yedeği (cron)**.
