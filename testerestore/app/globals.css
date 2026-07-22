@@ -1,0 +1,211 @@
+@import "tailwindcss";
+
+:root {
+  --background: #f3f5f8;
+  --foreground: #12151a;
+  --card: #f8fafc;
+  --card-foreground: #12151a;
+  --popover: #f8fafc;
+  --popover-foreground: #12151a;
+  --primary: #475569; /* Polished Steel Gray */
+  --primary-foreground: #ffffff;
+  --secondary: #cbd5e1;
+  --secondary-foreground: #1e293b;
+  --muted: #e2e8f0;
+  --muted-foreground: #64748b;
+  --accent: #f97316; /* Molten orange for highlights */
+  --accent-foreground: #ffffff;
+  --border: #d1d5db;
+  --input: #cbd5e1;
+  --ring: #64748b;
+  --radius: 0.75rem;
+}
+
+.dark {
+  --background: #0d0e12; /* Deep titanium dark */
+  --foreground: #e9ecef;
+  --card: #14161d; /* Brushed aluminum card */
+  --card-foreground: #e9ecef;
+  --popover: #14161d;
+  --popover-foreground: #e9ecef;
+  --primary: #94a3b8; /* Steel grey */
+  --primary-foreground: #0d0e12;
+  --secondary: #1f222a;
+  --secondary-foreground: #e9ecef;
+  --muted: #1e2026;
+  --muted-foreground: #94a3b8;
+  --accent: #ff781f;
+  --accent-foreground: #ffffff;
+  --border: #232731;
+  --input: #232731;
+  --ring: #94a3b8;
+}
+
+@theme {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 60%, #e2e8f0 100%);
+  background-attachment: fixed;
+  color: var(--foreground);
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  overflow-x: hidden;
+}
+.dark body {
+  background: linear-gradient(180deg, #0d0e12 0%, #131620 60%, #090a0e 100%);
+  background-attachment: fixed;
+}
+
+/* Chrome metallic gradient utility */
+.bg-chrome {
+  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 50%, #cbd5e1 100%);
+}
+.dark .bg-chrome {
+  background: linear-gradient(135deg, #1b1e28 0%, #12151e 50%, #0b0c12 100%);
+}
+
+/* Polished steel card background gradient */
+.bg-metallic-card {
+  background: linear-gradient(135deg, #fdfefe 0%, #f1f5f9 50%, #e2e8f0 100%);
+  border: 1px solid var(--border);
+}
+.dark .bg-metallic-card {
+  background: linear-gradient(135deg, #1a1e29 0%, #12151e 50%, #0a0c13 100%);
+  border: 1px solid var(--border);
+}
+
+/* Orange/Molten steel button gradient */
+.bg-molten-grad {
+  background: linear-gradient(135deg, #ff6b1a 0%, #ffa133 100%);
+  box-shadow: 0 4px 14px rgba(255, 107, 26, 0.18);
+  transition: all 0.2s ease;
+}
+.bg-molten-grad:hover {
+  background: linear-gradient(135deg, #ea5a00 0%, #f08c1a 100%);
+  box-shadow: 0 6px 18px rgba(255, 107, 26, 0.28);
+  transform: translateY(-1px);
+}
+
+/* Platinum silver gradient button */
+.bg-silver-grad {
+  background: linear-gradient(135deg, #f1f5f9 0%, #cbd5e1 100%);
+  color: #1e293b;
+  border: 1px solid #cbd5e1;
+  transition: all 0.2s ease;
+}
+.dark .bg-silver-grad {
+  background: linear-gradient(135deg, #272d3d 0%, #121622 100%);
+  color: #f1f5f9;
+  border: 1px solid #2d3448;
+  transition: all 0.2s ease;
+}
+.bg-silver-grad:hover {
+  background: linear-gradient(135deg, #cbd5e1 0%, #94a3b8 100%);
+}
+.dark .bg-silver-grad:hover {
+  background: linear-gradient(135deg, #333c52 0%, #1b2030 100%);
+}
+
+/* Text gradients */
+.text-steel-grad {
+  background: linear-gradient(135deg, #475569 0%, #0f172a 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.dark .text-steel-grad {
+  background: linear-gradient(135deg, #f8fafc 0%, #94a3b8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.text-orange-grad {
+  background: linear-gradient(135deg, #ff5f00 0%, #ffaf00 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Custom metallic grid and spark textures for the saw theme */
+.metallic-grid {
+  background-image: 
+    radial-gradient(circle at 1px 1px, var(--border) 1px, transparent 0),
+    linear-gradient(to bottom, var(--background), transparent);
+  background-size: 24px 24px, 100% 100%;
+}
+
+.glow-orange {
+  box-shadow: 0 0 20px rgba(255, 95, 0, 0.15);
+}
+
+.glow-orange-lg {
+  box-shadow: 0 0 40px rgba(255, 95, 0, 0.25);
+}
+
+/* Unified premium card — dark gunmetal regardless of theme */
+.bg-premium-card {
+  background: linear-gradient(135deg, #2b2f36 0%, #1f2329 55%, #14171c 100%);
+}
+.bg-premium-image-bg {
+  background: linear-gradient(135deg, #3a4048 0%, #2b2f36 55%, #1f2329 100%);
+}
+.premium-card-highlight {
+  position: relative;
+}
+.premium-card-highlight::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.22), transparent);
+  pointer-events: none;
+  z-index: 1;
+}
+.premium-card-highlight::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 33%;
+  background: linear-gradient(270deg, rgba(255, 255, 255, 0.05), transparent);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--background);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--muted-foreground);
+}
+

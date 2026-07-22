@@ -1,0 +1,12 @@
+# Storefront Docker build — imaja gereksiz/yerel dosyaları alma
+node_modules
+.next
+.git
+.env*
+npm-debug.log*
+tests
+playwright-report
+test-results
+*.log
+.DS_Store
+medusa-backend

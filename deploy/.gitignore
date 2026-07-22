@@ -1,0 +1,3 @@
+# Sırları ve kalıcı verileri ASLA commit etme
+.env
+backend-static/

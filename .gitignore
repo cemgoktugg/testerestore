@@ -1,0 +1,37 @@
+# ============================================================================
+# Root .gitignore — testere store monorepo (storefront + medusa-backend + deploy)
+# ============================================================================
+
+# ── SIRLAR — ASLA commit etme (.example / .template hariç) ──
+**/.env
+**/.env.local
+**/.env.*.local
+*.pem
+*.key
+
+# ── Bağımlılıklar ──
+**/node_modules/
+
+# ── Build / cache çıktıları ──
+**/.next/
+**/.medusa/
+**/out/
+**/build/
+**/.turbo/
+**/*.tsbuildinfo
+**/playwright-report/
+**/test-results/
+
+# ── Yüklenen görseller (ayrı taşınır — bkz. deploy/DOKPLOY.md) ──
+medusa-backend/apps/backend/static/
+
+# ── Loglar ──
+*.log
+
+# ── OS / editör ──
+.DS_Store
+__MACOSX/
+Thumbs.db
+
+# ── Yerel araç ayarları ──
+.claude/

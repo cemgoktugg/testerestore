@@ -1,0 +1,27 @@
+[
+  {
+    "name": "Şerit Testereler",
+    "handle": "blades",
+    "is_active": true,
+    "children": [
+      {
+        "name": "Bi-Metal",
+        "handle": "bimetal",
+        "is_active": true,
+        "children": [
+          { "name": "M42", "handle": "bimetal-m42" },
+          { "name": "M51", "handle": "bimetal-m51" }
+        ]
+      },
+      { "name": "Ahşap", "handle": "wood" },
+      { "name": "Et ve Kemik", "handle": "meat-bone" },
+      { "name": "Sünger / Tekstil", "handle": "sponge-textile" },
+      { "name": "Karbür Uçlu", "handle": "carbide-tipped" }
+    ]
+  },
+  {
+    "name": "Makineler",
+    "handle": "machines",
+    "is_active": true
+  }
+]

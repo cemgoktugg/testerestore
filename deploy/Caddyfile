@@ -1,0 +1,22 @@
+# ============================================================================
+# Caddy — otomatik HTTPS (Let's Encrypt) + ters proxy
+#   {$DOMAIN}      → storefront (Next.js, :3000)
+#   {$API_DOMAIN}  → backend (Medusa API + admin + /static görseller, :9000)
+# Sertifikalar otomatik alınır/yenilenir (caddy_data volume'unda saklanır).
+# ============================================================================
+
+{
+	email {$ACME_EMAIL}
+}
+
+# --- Storefront (müşteri sitesi) -------------------------------------------
+{$DOMAIN} {
+	encode zstd gzip
+	reverse_proxy storefront:3000
+}
+
+# --- Backend: API + Admin panel + görseller --------------------------------
+{$API_DOMAIN} {
+	encode zstd gzip
+	reverse_proxy backend:9000
+}

@@ -1,0 +1,9 @@
+# Medusa backend Docker build — imaja gereksiz/yerel dosyaları alma
+node_modules
+.medusa
+static
+.git
+.env*
+*.log
+.DS_Store
+.turbo

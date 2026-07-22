@@ -1,0 +1,124 @@
+# ============================================================================
+# TESTERE STORE — Dokploy Compose stack
+# Dokploy > Create Service > Compose  ile bu dosyayı kullanın.
+#   - Domain/SSL: Dokploy'un Traefik'i (aşağıdaki label'larla) otomatik yönetir
+#     → Caddy'ye GEREK YOK.
+#   - Env: Dokploy UI'da girilen değişkenler .env'e yazılır; compose ${VAR} ile
+#     okur. (Bu dosyayı DEĞİŞTİRMEDEN, tüm değerleri Dokploy UI'dan verin.)
+#   - Kalıcı görseller: ../files/backend-static (Dokploy'un kalıcı klasörü).
+# ============================================================================
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - dokploy-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redisdata:/data
+    networks:
+      - dokploy-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ../medusa-backend/apps/backend
+      dockerfile: ../../../deploy/backend.Dockerfile
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      REDIS_URL: redis://redis:6379
+      JWT_SECRET: ${JWT_SECRET}
+      COOKIE_SECRET: ${COOKIE_SECRET}
+      STORE_CORS: ${STORE_CORS}
+      ADMIN_CORS: ${ADMIN_CORS}
+      AUTH_CORS: ${AUTH_CORS}
+      MEDUSA_BACKEND_URL: ${MEDUSA_BACKEND_URL}
+      STOREFRONT_URL: ${STOREFRONT_URL}
+      RESEND_API_KEY: ${RESEND_API_KEY}
+      RESEND_FROM_EMAIL: ${RESEND_FROM_EMAIL}
+      RESEND_FROM_NAME: ${RESEND_FROM_NAME}
+      IYZICO_API_KEY: ${IYZICO_API_KEY}
+      IYZICO_SECRET_KEY: ${IYZICO_SECRET_KEY}
+      IYZICO_BASE_URL: ${IYZICO_BASE_URL}
+      IYZICO_CALLBACK_URL: ${IYZICO_CALLBACK_URL}
+    volumes:
+      # Yüklenen görseller kalıcı → deploy'lar arası SİLİNMEZ.
+      # İlk kurulumda mevcut 83 MB'ı Dokploy'un dosya yöneticisiyle buraya koyun.
+      - ../files/backend-static:/app/.medusa/server/static
+    networks:
+      - dokploy-network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.testere-api.rule=Host(`${API_DOMAIN}`)"
+      - "traefik.http.routers.testere-api.entrypoints=websecure"
+      - "traefik.http.routers.testere-api.tls.certResolver=letsencrypt"
+      - "traefik.http.services.testere-api.loadbalancer.server.port=9000"
+
+  storefront:
+    build:
+      context: ../testerestore
+      dockerfile: ../deploy/storefront.Dockerfile
+      args:
+        NEXT_PUBLIC_MEDUSA_BACKEND_URL: ${NEXT_PUBLIC_MEDUSA_BACKEND_URL}
+        NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY: ${NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY}
+        NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL}
+        NEXT_PUBLIC_DEFAULT_REGION: ${NEXT_PUBLIC_DEFAULT_REGION}
+        NEXT_PUBLIC_DEFAULT_CURRENCY: ${NEXT_PUBLIC_DEFAULT_CURRENCY}
+        NEXT_PUBLIC_WHATSAPP_NUMBER: ${NEXT_PUBLIC_WHATSAPP_NUMBER}
+        NEXT_PUBLIC_GTM_ID: ${NEXT_PUBLIC_GTM_ID}
+        NEXT_PUBLIC_GA_ID: ${NEXT_PUBLIC_GA_ID}
+        NEXT_PUBLIC_META_PIXEL_ID: ${NEXT_PUBLIC_META_PIXEL_ID}
+        NEXT_PUBLIC_YANDEX_METRIKA_ID: ${NEXT_PUBLIC_YANDEX_METRIKA_ID}
+        NEXT_PUBLIC_SENTRY_DSN: ${NEXT_PUBLIC_SENTRY_DSN}
+    restart: unless-stopped
+    depends_on:
+      - backend
+    environment:
+      NODE_ENV: production
+      PORT: "3000"
+      HOSTNAME: "0.0.0.0"
+      MEDUSA_BACKEND_URL: ${MEDUSA_BACKEND_URL}
+    networks:
+      - dokploy-network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.testere-web.rule=Host(`${DOMAIN}`)"
+      - "traefik.http.routers.testere-web.entrypoints=websecure"
+      - "traefik.http.routers.testere-web.tls.certResolver=letsencrypt"
+      - "traefik.http.services.testere-web.loadbalancer.server.port=3000"
+
+volumes:
+  pgdata:
+  redisdata:
+
+networks:
+  # Dokploy'un Traefik ağı — dışarıdan gelir (Dokploy oluşturur).
+  dokploy-network:
+    external: true

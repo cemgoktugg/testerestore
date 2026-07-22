@@ -1,0 +1,128 @@
+[
+  {
+    "title": "Bi-Metal M42 Premium Şerit Testere Bıçağı",
+    "handle": "bimetal-premium",
+    "subtitle": "Yüksek hız çeliği dişleri ve yay çeliği gövdesi ile genel metal, profil ve boru kesimlerinde mükemmel ömür ve yüksek aşınma direnci.",
+    "description": "M42 kalite şerit testerelerimiz, yüksek kaliteli HSS (Co %8) diş uçları ve esnek yay çeliği gövdesi sayesinde her türlü çelik kesiminde üstün performans sunar. Özellikle boru, profil ve dolu demir kesimlerinde titreşimi azaltan değişken diş (TPI) yapısına sahiptir.",
+    "thumbnail": "/images/bimetal_blade.png",
+    "category_handles": ["bimetal", "bimetal-m42"],
+    "options": [
+      { "title": "Genişlik", "values": ["6mm", "10mm", "13mm", "20mm", "27mm", "34mm", "41mm"] },
+      { "title": "Kalınlık", "values": ["0.65mm", "0.90mm", "1.10mm", "1.30mm"] },
+      { "title": "Diş Adımı", "values": ["3/4 TPI", "4/6 TPI", "5/8 TPI", "6/10 TPI", "8/12 TPI", "10/14 TPI"] }
+    ],
+    "variants_matrix": "27mm:0.90mm:4/6 TPI=210,27mm:0.90mm:5/8 TPI=210,27mm:1.10mm:4/6 TPI=215,20mm:0.90mm:5/8 TPI=175,34mm:1.10mm:3/4 TPI=295,13mm:0.65mm:8/12 TPI=140,6mm:0.65mm:14 TPI=110",
+    "metadata": {
+      "blade_type": "M42",
+      "material_usage": ["metal", "profile", "solid"],
+      "width_mm": "27",
+      "thickness_mm": "0.90",
+      "tooth_pitch": ["3/4 TPI", "4/6 TPI", "5/8 TPI", "6/10 TPI"],
+      "custom_length_enabled": true,
+      "min_length_mm": 1000,
+      "max_length_mm": 15000,
+      "price_calculation_type": "per_meter",
+      "welding_cost": 90,
+      "product_type": "blade",
+      "applications": [
+        "Yapısal çelikler ve profiller",
+        "İnce ve kalın etli çelik borular",
+        "Düşük alaşımlı dolu çelik malzemeler",
+        "Demir dışı pirinç, alüminyum ve bronz metaller"
+      ],
+      "technical_features": [
+        "IDEAL marka makinelerde kusursuz kaynak garantisi",
+        "Isıl işlemli HSS M42 dişler ile maksimum körelme mukavemeti",
+        "Gelişmiş değişken diş adımı (Vario) tasarımı ile düşük titreşimli çalışma"
+      ],
+      "is_best_seller": true,
+      "best_seller_rank": 1,
+      "rating": 4.9,
+      "reviews_count": 312,
+      "sold_count": "5.200",
+      "seo_title": "M42 Bi-Metal Şerit Testere | Premium Kalite",
+      "seo_description": "Metal kesimi için yüksek performanslı M42 bi-metal şerit testere. Özel uzunlukta kaynak garantili."
+    }
+  },
+  {
+    "title": "Carbide Ultimate Karbür Şerit Testere Bıçağı",
+    "handle": "carbide-ultimate",
+    "subtitle": "Karbür uçlu dişleri sayesinde paslanmaz çelikler, titanyum ve döküm malzemeler gibi zorlu metal kesimlerinde rakipsiz kesim hızı ve ömür.",
+    "description": "Karbür şerit testerelerimiz, diş uçlarına kaynaklanmış sert karbür partikülleri sayesinde en aşındırıcı ve sert malzemeleri kesmek için tasarlanmıştır.",
+    "thumbnail": "/images/carbide_blade.png",
+    "category_handles": ["carbide-tipped"],
+    "options": [
+      { "title": "Genişlik", "values": ["10mm", "13mm", "20mm", "27mm", "34mm", "41mm"] },
+      { "title": "Kalınlık", "values": ["0.90mm", "1.10mm", "1.30mm"] },
+      { "title": "Diş Adımı", "values": ["2/3 TPI", "3/4 TPI", "4/6 TPI", "5/8 TPI"] }
+    ],
+    "metadata": {
+      "blade_type": "TCT",
+      "material_usage": ["metal", "stainless", "titanium"],
+      "tooth_pitch": ["2/3 TPI", "3/4 TPI", "4/6 TPI", "5/8 TPI"],
+      "custom_length_enabled": true,
+      "min_length_mm": 1500,
+      "max_length_mm": 12000,
+      "price_calculation_type": "per_meter",
+      "welding_cost": 190,
+      "product_type": "blade",
+      "is_best_seller": true,
+      "best_seller_rank": 2,
+      "rating": 4.8,
+      "reviews_count": 187,
+      "sold_count": "2.400"
+    }
+  },
+  {
+    "title": "Woodcut Classic Ağaç Kesim Şerit Testeresi",
+    "handle": "woodcut-classic",
+    "subtitle": "Sert ve yumuşak ağaçların hızlı ve düzgün dilimlenmesi için özel karbon çeliğinden üretilmiş yüksek dayanımlı marangoz bıçakları.",
+    "thumbnail": "/images/woodworking_blade.png",
+    "category_handles": ["wood"],
+    "options": [
+      { "title": "Genişlik", "values": ["13mm", "20mm", "27mm", "34mm"] },
+      { "title": "Kalınlık", "values": ["0.65mm", "0.90mm"] },
+      { "title": "Diş Adımı", "values": ["4/6 TPI", "6/10 TPI", "10/14 TPI"] }
+    ],
+    "metadata": {
+      "blade_type": "Karbon Çeliği",
+      "material_usage": ["wood"],
+      "custom_length_enabled": true,
+      "min_length_mm": 1000,
+      "max_length_mm": 8000,
+      "price_calculation_type": "per_meter",
+      "welding_cost": 60,
+      "product_type": "blade",
+      "rating": 4.7,
+      "reviews_count": 248,
+      "sold_count": "3.800"
+    }
+  },
+  {
+    "title": "Kraken Professional Şerit Testere Makinesi",
+    "handle": "kraken-machine",
+    "subtitle": "Profesyonel atölyeler için tasarlanmış, güçlü motorlu, hassas kılavuz rulmanlı ve döküm gövde yapılı şerit testere makinesi.",
+    "thumbnail": "/images/bandsaw_machine.png",
+    "options": [{ "title": "Standart", "values": ["220V Tek", "220V + Stant", "380V Tek", "380V + Stant"] }],
+    "single_variant_price": 48500,
+    "metadata": {
+      "product_type": "machine",
+      "custom_length_enabled": false,
+      "price_calculation_type": "fixed",
+      "is_best_seller": true,
+      "best_seller_rank": 3,
+      "rating": 5.0,
+      "reviews_count": 94,
+      "sold_count": "320",
+      "applications": [
+        "Profiller ve metal lamaların açılı hassas kesimleri",
+        "Mobilya tomruk ve kalas dilimleme işleri"
+      ],
+      "technical_features": [
+        "2.2 kW yüksek torklu bakır sargı elektrik motoru",
+        "Hassas optik lazer kesim çizgi kılavuzu",
+        "Acil stop anahtarı ve tekerlek emniyet şalterleri"
+      ]
+    }
+  }
+]
