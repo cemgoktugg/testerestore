@@ -4,7 +4,7 @@ VPS'inde **Dokploy** kurulu olduğu için tüm stack'i Dokploy'un **Compose**
 özelliğiyle yayınlıyoruz. Dokploy'un Traefik'i domain + SSL'i otomatik yönetir
 (Caddy'ye gerek yok). Görseller kalıcı diskte kalır → **bulut depolama ücreti yok.**
 
-Kullanılacak dosya: **`deploy/docker-compose.dokploy.yml`** (Caddi'siz, Traefik label'lı).
+Kullanılacak dosya: **`docker-compose.yml`** (Caddi'siz, Traefik label'lı).
 
 ---
 
@@ -39,7 +39,7 @@ git push -u origin main
 
 1. Dokploy paneli → **Create Project** (örn. "testere") → içine **Create Service → Compose**.
 2. **Provider: Git** → repoyu bağla → Branch: `main`.
-3. **Compose Path:** `deploy/docker-compose.dokploy.yml`
+3. **Compose Path:** `docker-compose.yml`
 
 ## 3. Ortam değişkenlerini gir (Environment sekmesi)
 

@@ -1,11 +1,9 @@
 # ============================================================================
-# TESTERE STORE — Dokploy Compose stack
-# Dokploy > Create Service > Compose  ile bu dosyayı kullanın.
-#   - Domain/SSL: Dokploy'un Traefik'i (aşağıdaki label'larla) otomatik yönetir
-#     → Caddy'ye GEREK YOK.
-#   - Env: Dokploy UI'da girilen değişkenler .env'e yazılır; compose ${VAR} ile
-#     okur. (Bu dosyayı DEĞİŞTİRMEDEN, tüm değerleri Dokploy UI'dan verin.)
-#   - Kalıcı görseller: ../files/backend-static (Dokploy'un kalıcı klasörü).
+# TESTERE STORE — Dokploy Compose stack (REPO KÖKÜ)
+# Dokploy'da: Provider = GitHub/Git (Raw DEĞİL) + Compose Path = docker-compose.yml
+# Build context'leri repo köküne göre (./) — Dokploy repoyu klonlayınca çözülür.
+# Postgres + Redis + Medusa backend + Next storefront + otomatik HTTPS (Traefik).
+# Tüm değerler Dokploy UI > Environment'tan gelir (${VAR}).
 # ============================================================================
 
 services:
@@ -42,7 +40,7 @@ services:
 
   backend:
     build:
-      context: ../medusa-backend/apps/backend
+      context: ./medusa-backend/apps/backend
       dockerfile: ../../../deploy/backend.Dockerfile
     restart: unless-stopped
     depends_on:
@@ -69,9 +67,9 @@ services:
       IYZICO_BASE_URL: ${IYZICO_BASE_URL}
       IYZICO_CALLBACK_URL: ${IYZICO_CALLBACK_URL}
     volumes:
-      # Yüklenen görseller kalıcı → deploy'lar arası SİLİNMEZ.
-      # İlk kurulumda mevcut 83 MB'ı Dokploy'un dosya yöneticisiyle buraya koyun.
-      - ../files/backend-static:/app/.medusa/server/static
+      # Yüklenen görseller kalıcı (named volume). İlk deploy'dan sonra mevcut
+      # 83 MB'ı bu volume'a taşırız (docker cp / admin upload).
+      - backend_static:/app/.medusa/server/static
     networks:
       - dokploy-network
     labels:
@@ -83,7 +81,7 @@ services:
 
   storefront:
     build:
-      context: ../testerestore
+      context: ./testerestore
       dockerfile: ../deploy/storefront.Dockerfile
       args:
         NEXT_PUBLIC_MEDUSA_BACKEND_URL: ${NEXT_PUBLIC_MEDUSA_BACKEND_URL}
@@ -117,8 +115,8 @@ services:
 volumes:
   pgdata:
   redisdata:
+  backend_static:
 
 networks:
-  # Dokploy'un Traefik ağı — dışarıdan gelir (Dokploy oluşturur).
   dokploy-network:
     external: true
