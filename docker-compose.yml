@@ -4,6 +4,12 @@
 # Build context'leri repo köküne göre (./) — Dokploy repoyu klonlayınca çözülür.
 # Postgres + Redis + Medusa backend + Next storefront + otomatik HTTPS (Traefik).
 # Tüm değerler Dokploy UI > Environment'tan gelir (${VAR}).
+#
+# AĞLAR:
+#   internal        → servisler arası özel ağ (postgres/redis/backend/storefront).
+#                     Servis adları (postgres, redis) BURADA güvenilir çözülür.
+#   dokploy-network → sadece Traefik'in ulaşması gereken servisler (backend,
+#                     storefront). Paylaşımlı; DB/redis'i buraya KOYMA.
 # ============================================================================
 
 services:
@@ -17,7 +23,7 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
     networks:
-      - dokploy-network
+      - internal
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 10s
@@ -31,7 +37,7 @@ services:
     volumes:
       - redisdata:/data
     networks:
-      - dokploy-network
+      - internal
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 10s
@@ -71,9 +77,11 @@ services:
       # 83 MB'ı bu volume'a taşırız (docker cp / admin upload).
       - backend_static:/app/.medusa/server/static
     networks:
+      - internal
       - dokploy-network
     labels:
       - "traefik.enable=true"
+      - "traefik.docker.network=dokploy-network"
       - "traefik.http.routers.testere-api.rule=Host(`${API_DOMAIN}`)"
       - "traefik.http.routers.testere-api.entrypoints=websecure"
       - "traefik.http.routers.testere-api.tls.certResolver=letsencrypt"
@@ -104,9 +112,11 @@ services:
       HOSTNAME: "0.0.0.0"
       MEDUSA_BACKEND_URL: ${MEDUSA_BACKEND_URL}
     networks:
+      - internal
       - dokploy-network
     labels:
       - "traefik.enable=true"
+      - "traefik.docker.network=dokploy-network"
       - "traefik.http.routers.testere-web.rule=Host(`${DOMAIN}`)"
       - "traefik.http.routers.testere-web.entrypoints=websecure"
       - "traefik.http.routers.testere-web.tls.certResolver=letsencrypt"
@@ -118,5 +128,8 @@ volumes:
   backend_static:
 
 networks:
+  # Servisler arası özel ağ (Dokploy dışı, compose oluşturur) — DB/redis DNS'i.
+  internal:
+  # Traefik'in paylaşımlı ağı (Dokploy oluşturur, dışarıdan gelir).
   dokploy-network:
     external: true
