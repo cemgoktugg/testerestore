@@ -21,7 +21,7 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - pgdata2:/var/lib/postgresql/data
     networks:
       - internal
     healthcheck:
@@ -123,7 +123,7 @@ services:
       - "traefik.http.services.testere-web.loadbalancer.server.port=3000"
 
 volumes:
-  pgdata:
+  pgdata2:
   redisdata:
   backend_static:
 
