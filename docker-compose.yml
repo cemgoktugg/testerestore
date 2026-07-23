@@ -8,6 +8,7 @@
 #   DATABASE_URL = postgresql://medusa:...@testerestore-testerepostgres-...:5432/medusa
 #   REDIS_URL    = redis://default:...@testerestore-testereredis-...:6379
 # Yönetilen DB'ler dokploy-network'te; backend de orada → adları çözülür.
+# deploy-marker: v3 (managed-db, force fresh recreate)
 # ============================================================================
 
 services:
