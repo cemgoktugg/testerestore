@@ -19,6 +19,9 @@ services:
     restart: unless-stopped
     environment:
       NODE_ENV: production
+      # Bu değer değişince docker compose backend'i YENİDEN OLUŞTURUR (recreate).
+      # Dokploy eski container'ı bırakmasın diye zorlama nonce'u.
+      DEPLOY_NONCE: "4"
       DATABASE_URL: ${DATABASE_URL}
       REDIS_URL: ${REDIS_URL}
       JWT_SECRET: ${JWT_SECRET}
