@@ -53,10 +53,13 @@ services:
         condition: service_healthy
     environment:
       NODE_ENV: production
-      DEPLOY_NONCE: "6"
+      DEPLOY_NONCE: "7"
       # İlk deploy'da admin kullanıcısını otomatik oluşturur (varsa geçer).
       ADMIN_EMAIL: ${ADMIN_EMAIL}
       ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+      # "1" olursa tek seferlik seed (region+kategori+ürün+fiyat+kargo...) arka
+      # planda çalışır; marker sonrası tekrar etmez. Seed bitince "0" yapılabilir.
+      SEED_ON_BOOT: ${SEED_ON_BOOT}
       DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
       REDIS_URL: redis://redis:6379
       JWT_SECRET: ${JWT_SECRET}

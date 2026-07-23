@@ -30,6 +30,12 @@ ENV NODE_ENV=production
 # Derlenmiş sunucu + admin
 COPY --from=builder /app/.medusa/server ./
 
+# Seed script'leri (tsconfig build'den exclude ettiği için .medusa/server'a
+# girmiyor) — tek seferlik canlı seed için explicit kopyala. medusa exec bunları
+# swc ile çalıştırır; `../modules/X/service` import'ları compiled .js'e çözülür.
+COPY --from=builder /app/src/scripts ./src/scripts
+COPY --from=builder /app/seed-on-boot.sh ./seed-on-boot.sh
+
 # Üretim bağımlılıkları (derlenmiş sunucunun kendi package.json'ı)
 RUN npm install --omit=dev \
  && npm cache clean --force
@@ -39,6 +45,7 @@ RUN mkdir -p ./static
 
 EXPOSE 9000
 
-# Önce migration'ları çalıştır, sonra (ADMIN_EMAIL varsa) admin kullanıcısını
-# oluştur (zaten varsa hata vermeden geçer), sonra sunucuyu başlat.
-CMD ["sh", "-c", "npx medusa db:migrate && ([ -n \"$ADMIN_EMAIL\" ] && npx medusa user -e \"$ADMIN_EMAIL\" -p \"$ADMIN_PASSWORD\" || true) && npm run start"]
+# Sıra: 1) migration  2) admin (ADMIN_EMAIL varsa)  3) tek seferlik seed'i
+# ARKA PLANDA başlat (SEED_ON_BOOT=1 ise; sunucuyu bloklamaz, deploy sağlıklı
+# kalır)  4) sunucuyu ön planda başlat.
+CMD ["sh", "-c", "npx medusa db:migrate && ([ -n \"$ADMIN_EMAIL\" ] && npx medusa user -e \"$ADMIN_EMAIL\" -p \"$ADMIN_PASSWORD\" || true) && (sh ./seed-on-boot.sh &) && npm run start"]
