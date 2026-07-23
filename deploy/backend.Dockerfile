@@ -39,5 +39,6 @@ RUN mkdir -p ./static
 
 EXPOSE 9000
 
-# Önce migration'ları çalıştır, sonra sunucuyu başlat
-CMD ["sh", "-c", "npx medusa db:migrate && npm run start"]
+# Önce migration'ları çalıştır, sonra (ADMIN_EMAIL varsa) admin kullanıcısını
+# oluştur (zaten varsa hata vermeden geçer), sonra sunucuyu başlat.
+CMD ["sh", "-c", "npx medusa db:migrate && ([ -n \"$ADMIN_EMAIL\" ] && npx medusa user -e \"$ADMIN_EMAIL\" -p \"$ADMIN_PASSWORD\" || true) && npm run start"]
