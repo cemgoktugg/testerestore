@@ -2,38 +2,47 @@
 # ============================================================================
 # TEK SEFERLİK CANLI SEED (deploy'da arka planda çalışır)
 #
-# Koşul: SEED_ON_BOOT=1  VE  marker dosyası yok.
-# Marker kalıcı `static` volume'unda → bir kez çalışır, sonraki deploy'larda
-# tekrar ETMEZ. Her seed `|| devam` ile hataya toleranslı; çoğu idempotent.
+# Koşul: SEED_ON_BOOT=1  VE  marker yok.
+# Durumu ./static/seed-status.txt'e yazar → panel.<domain>/static/seed-status.txt
+# adresinden UZAKTAN izlenebilir (log'a erişmeye gerek yok).
 # cwd = /app/.medusa/server  (Dockerfile WORKDIR).
 # ============================================================================
+STATUS="./static/seed-status.txt"
 MARKER="./static/.seeded"
+mkdir -p ./static 2>/dev/null
+
+log() {
+  echo "[seed] $1"
+  echo "$(date '+%H:%M:%S' 2>/dev/null) | $1" >> "$STATUS" 2>/dev/null
+}
 
 if [ "$SEED_ON_BOOT" != "1" ]; then
-  echo "[seed] SEED_ON_BOOT!=1 → seed atlanıyor"
+  echo "[seed] SEED_ON_BOOT='$SEED_ON_BOOT' (1 değil) → atlanıyor"
+  echo "SKIP: SEED_ON_BOOT='$SEED_ON_BOOT' (1 olmali)" > "$STATUS" 2>/dev/null
   exit 0
 fi
 if [ -f "$MARKER" ]; then
-  echo "[seed] zaten seed edilmiş ($MARKER) → atlanıyor"
+  echo "[seed] zaten seed edilmiş → atlanıyor"
+  echo "SKIP: zaten seed edildi (marker var)" > "$STATUS" 2>/dev/null
   exit 0
 fi
 
+echo "BASLADI" > "$STATUS" 2>/dev/null
 # Ana sunucu tam ayağa kalksın diye kısa bekleme (kaynak çakışmasını azaltır)
 sleep 20
-echo "[seed] ============================================"
-echo "[seed]   TEK SEFERLİK SEED BAŞLIYOR"
-echo "[seed] ============================================"
+log "=== TEK SEFERLIK SEED BASLIYOR ==="
 
 run() {
-  echo "[seed] >>> $1 çalışıyor..."
-  if timeout 300 npx medusa exec "./src/scripts/$1"; then
-    echo "[seed] <<< $1 TAMAM"
+  log ">>> $1 basladi"
+  if timeout 300 npx medusa exec "./src/scripts/$1" > "/tmp/seed-$1.log" 2>&1; then
+    log "<<< $1 OK"
   else
-    echo "[seed] !!! $1 HATA/timeout (devam ediliyor)"
+    log "!!! $1 HATA/timeout (devam ediliyor)"
+    # Hatanın son 3 satırını status'a ekle (uzaktan teşhis için)
+    tail -3 "/tmp/seed-$1.log" 2>/dev/null | sed 's/^/    /' >> "$STATUS" 2>/dev/null
   fi
 }
 
-# Sıra önemli: önce region+kategori+ürün+key, sonra fiyat/vergi/kargo, sonra içerik
 run seed-testere.ts              # TRY + Türkiye region + 8 kategori + ürünler + publishable key
 run seed-blade-prices.ts         # şerit fiyat matrisi (idempotent)
 run seed-tr-kdv.ts               # %20 KDV
@@ -50,6 +59,4 @@ run update-footer-legal-links.ts
 run seed-site-seo.ts             # SEO varsayılanları
 
 touch "$MARKER"
-echo "[seed] ============================================"
-echo "[seed]   SEED TAMAMLANDI — marker yazıldı ($MARKER)"
-echo "[seed] ============================================"
+log "=== SEED TAMAMLANDI ==="
