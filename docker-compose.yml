@@ -2,28 +2,60 @@
 # TESTERE STORE — Dokploy Compose stack (REPO KÖKÜ)
 # Provider = GitHub/Git (Raw DEĞİL) + Compose Path = docker-compose.yml
 #
-# VERİTABANI: Dokploy'un YÖNETİLEN PostgreSQL + Redis servisleri kullanılır
-# (compose içinde gömülü DB YOK). Backend onlara DATABASE_URL / REDIS_URL
-# env'leriyle bağlanır → bu değerleri Dokploy UI > Environment'tan ver:
-#   DATABASE_URL = postgresql://medusa:...@testerestore-testerepostgres-...:5432/medusa
-#   REDIS_URL    = redis://default:...@testerestore-testereredis-...:6379
-# Yönetilen DB'ler dokploy-network'te; backend de orada → adları çözülür.
-# deploy-marker: v3 (managed-db, force fresh recreate)
+# DB: postgres + redis UYGULAMANIN İÇİNDE (embedded), özel `internal` ağda.
+# Backend onlara servis adıyla (postgres / redis) kesin ulaşır — compose'un
+# kendi oluşturduğu ağ olduğu için DNS güvenilir. Managed DB'ye gerek yok.
+# Env'de POSTGRES_DB / POSTGRES_USER / POSTGRES_PASSWORD olmalı.
+# deploy-marker: v5 (embedded + internal, fresh volume)
 # ============================================================================
 
 services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - pgdata3:/var/lib/postgresql/data
+    networks:
+      - internal
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redisdata2:/data
+    networks:
+      - internal
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
   backend:
     build:
       context: ./medusa-backend/apps/backend
       dockerfile: ../../../deploy/backend.Dockerfile
     restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     environment:
       NODE_ENV: production
-      # Bu değer değişince docker compose backend'i YENİDEN OLUŞTURUR (recreate).
-      # Dokploy eski container'ı bırakmasın diye zorlama nonce'u.
-      DEPLOY_NONCE: "4"
-      DATABASE_URL: ${DATABASE_URL}
-      REDIS_URL: ${REDIS_URL}
+      DEPLOY_NONCE: "5"
+      DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      REDIS_URL: redis://redis:6379
       JWT_SECRET: ${JWT_SECRET}
       COOKIE_SECRET: ${COOKIE_SECRET}
       STORE_CORS: ${STORE_CORS}
@@ -41,6 +73,7 @@ services:
     volumes:
       - backend_static:/app/.medusa/server/static
     networks:
+      - internal
       - dokploy-network
     labels:
       - "traefik.enable=true"
@@ -75,6 +108,7 @@ services:
       HOSTNAME: "0.0.0.0"
       MEDUSA_BACKEND_URL: ${MEDUSA_BACKEND_URL}
     networks:
+      - internal
       - dokploy-network
     labels:
       - "traefik.enable=true"
@@ -85,9 +119,11 @@ services:
       - "traefik.http.services.testere-web.loadbalancer.server.port=3000"
 
 volumes:
+  pgdata3:
+  redisdata2:
   backend_static:
 
 networks:
-  # Dokploy'un Traefik + yönetilen DB ağı (dışarıdan gelir).
+  internal:
   dokploy-network:
     external: true
