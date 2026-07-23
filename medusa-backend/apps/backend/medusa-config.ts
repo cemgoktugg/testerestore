@@ -15,6 +15,12 @@ const LOCAL_ADMIN_SOURCE = path.resolve(__dirname, 'src/admin')
 module.exports = defineConfig({
   projectConfig: {
     databaseUrl: process.env.DATABASE_URL,
+    // İlk migration ~33 modül için eşzamanlı bağlantı açıyor; küçük varsayılan
+    // havuz "pool is probably full" → KnexTimeout veriyordu. Havuzu büyüttük.
+    databaseDriverOptions: {
+      connection: { ssl: false },
+      pool: { min: 2, max: 50 },
+    },
     http: {
       storeCors: process.env.STORE_CORS!,
       adminCors: process.env.ADMIN_CORS!,
