@@ -77,6 +77,23 @@ module.exports = defineConfig({
     {
       resolve: "./src/modules/site-seo",
     },
+    // Local file provider — admin'den yüklenen resimlerin URL'i. Yapılandırılmazsa
+    // default `http://localhost:9000/static` → canlıda kırık (admin "resim seç"
+    // çalışmaz). backend_url'i public domaine bağlıyoruz.
+    {
+      resolve: "@medusajs/medusa/file",
+      options: {
+        providers: [
+          {
+            resolve: "@medusajs/medusa/file-local",
+            id: "local",
+            options: {
+              backend_url: `${process.env.MEDUSA_BACKEND_URL || "http://localhost:9000"}/static`,
+            },
+          },
+        ],
+      },
+    },
     {
       resolve: "@medusajs/medusa/notification",
       options: {
