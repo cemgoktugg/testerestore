@@ -18,10 +18,13 @@ try {
   backendHost = "localhost";
 }
 
-const backendPort = (() => {
+// Varsayılan portlarda (443/80) port'u UNDEFINED bırak → remotePattern her
+// portu kabul eder. "443" yazarsak, portsuz URL (https://host/...) eşleşmez
+// ve next/image "url not allowed" (400) verir; resimler görünmez.
+const backendPort: string | undefined = (() => {
   try {
     const u = new URL(medusaBackend);
-    return u.port || (u.protocol === "https:" ? "443" : "80");
+    return u.port || undefined;
   } catch {
     return "9000";
   }
