@@ -38,7 +38,10 @@ ENV NEXT_PUBLIC_MEDUSA_BACKEND_URL=$NEXT_PUBLIC_MEDUSA_BACKEND_URL \
     NEXT_PUBLIC_SENTRY_DSN=$NEXT_PUBLIC_SENTRY_DSN \
     NEXT_TELEMETRY_DISABLED=1
 
-RUN npm run build
+# Cache-bust: BUILD_NONCE değişince bu katman yeniden çalışır → next build
+# backend'den TAZE veri çeker (yeni ürünler + güncel resimler dahil).
+ARG BUILD_NONCE=0
+RUN echo "build-nonce: $BUILD_NONCE" && npm run build
 
 # ---- Stage 2: runtime ------------------------------------------------------
 FROM node:20-slim AS runner

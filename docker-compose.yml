@@ -94,6 +94,9 @@ services:
       context: ./testerestore
       dockerfile: ../deploy/storefront.Dockerfile
       args:
+        # Bump edilince storefront yeniden build olur (taze veri: yeni ürünler,
+        # güncel resimler). Yeni ürün eklenince artır.
+        BUILD_NONCE: ${BUILD_NONCE:-1}
         NEXT_PUBLIC_MEDUSA_BACKEND_URL: ${NEXT_PUBLIC_MEDUSA_BACKEND_URL}
         NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY: ${NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY}
         NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL}
