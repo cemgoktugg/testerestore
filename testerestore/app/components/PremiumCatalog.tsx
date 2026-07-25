@@ -135,18 +135,29 @@ function mapDemoToCard(items: DemoCatalogItem[]): CatalogCardData[] {
 
 const COLLAPSED_COUNT = 4;
 
-export default function PremiumCatalog() {
+export default function PremiumCatalog({
+  initialProducts,
+  initialCategories,
+}: {
+  initialProducts?: StoreProduct[];
+  initialCategories?: StoreProductCategory[];
+} = {}) {
   const { data: productsResp, loading: productsLoading } = useProducts({
     limit: 24,
   });
   const { data: categoryList, loading: categoriesLoading } = useCategories();
 
   const items = useMemo<CatalogCardData[]>(() => {
-    if (productsResp?.products?.length) {
-      return mapMedusaToCard(productsResp.products, categoryList ?? []);
+    // SSR prop'ları (initialProducts/Categories) ilk render'ı doldurur; client tazeler.
+    const products = productsResp?.products?.length
+      ? productsResp.products
+      : initialProducts;
+    const cats = categoryList ?? initialCategories ?? [];
+    if (products?.length) {
+      return mapMedusaToCard(products, cats);
     }
     return mapDemoToCard(getDemoCatalog());
-  }, [productsResp, categoryList]);
+  }, [productsResp, categoryList, initialProducts, initialCategories]);
 
   const categories = PILL_LABELS;
 

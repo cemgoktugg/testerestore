@@ -4,21 +4,35 @@ import Footer from './components/Footer';
 import HeroSlider from './components/HeroSlider';
 import PremiumCatalog from './components/PremiumCatalog';
 import BestSellersSlider from './components/BestSellersSlider';
+import { listHeroSlides } from '../lib/medusa/services/hero-slides';
+import { listBestSellers, listProducts } from '../lib/medusa/services/products';
+import { listCategories } from '../lib/medusa/services/categories';
 
-export default function Home() {
+// SSR + ISR: ana sayfa içeriği (hero, katalog, en çok satanlar) SUNUCUDA çekilip
+// componentlere prop geçilir → ilk HTML dolu gelir, resimler anında yüklenmeye
+// başlar (eskiden client-side fetch → geç LCP). Client yine arka planda tazeler.
+export const revalidate = 300;
+
+export default async function Home() {
+  const [heroSlides, bestSellers, productsResp, categories] = await Promise.all([
+    listHeroSlides(),
+    listBestSellers(8),
+    listProducts({ limit: 24 }),
+    listCategories(),
+  ]);
   return (
     <>
       <Header />
       
       <main className="flex-1 bg-background">
         {/* Hero Slider */}
-        <HeroSlider />
+        <HeroSlider initialSlides={heroSlides} />
 
         {/* Premium Catalog (with category filter) */}
-        <PremiumCatalog />
+        <PremiumCatalog initialProducts={productsResp.products} initialCategories={categories} />
 
         {/* Best Sellers — Horizontal Slider */}
-        <BestSellersSlider />
+        <BestSellersSlider initialBestSellers={bestSellers} />
 
         {/* Quick Parametric Calculator CTA Callout */}
         <section className="py-20 border-t border-border bg-chrome relative overflow-hidden">

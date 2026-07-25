@@ -58,15 +58,19 @@ function mapDemoToBestSeller(): BestSeller[] {
 
 const DRAG_THRESHOLD = 6;
 
-export default function BestSellersSlider() {
+export default function BestSellersSlider({
+  initialBestSellers,
+}: { initialBestSellers?: StoreProduct[] } = {}) {
   const { data: medusaBestSellers, loading } = useBestSellers(8);
 
   const bestSellers = useMemo<BestSeller[]>(() => {
-    if (medusaBestSellers?.length) {
-      return mapMedusaToBestSeller(medusaBestSellers);
+    // SSR prop (initialBestSellers) ilk render'da doldurur; client fetch tazeler.
+    const source = medusaBestSellers?.length ? medusaBestSellers : initialBestSellers;
+    if (source?.length) {
+      return mapMedusaToBestSeller(source);
     }
     return mapDemoToBestSeller();
-  }, [medusaBestSellers]);
+  }, [medusaBestSellers, initialBestSellers]);
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);

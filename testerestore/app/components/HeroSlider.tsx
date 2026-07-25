@@ -98,15 +98,20 @@ function mapConfigSlides(): Slide[] {
 
 const AUTOPLAY_INTERVAL = 6000;
 
-export default function HeroSlider() {
+export default function HeroSlider({
+  initialSlides,
+}: { initialSlides?: StoreHeroSlide[] } = {}) {
   const { data: medusaSlides, loading } = useHeroSlides();
 
   const slides = useMemo<Slide[]>(() => {
-    if (medusaSlides && medusaSlides.length > 0) {
-      return medusaSlides.map(mapMedusaSlide);
+    // SSR prop (initialSlides) ilk render'da doldurur; client fetch tazeler.
+    const source =
+      medusaSlides && medusaSlides.length > 0 ? medusaSlides : initialSlides;
+    if (source && source.length > 0) {
+      return source.map(mapMedusaSlide);
     }
     return mapConfigSlides();
-  }, [medusaSlides]);
+  }, [medusaSlides, initialSlides]);
 
   const [current, setCurrent] = useState(0);
   const [isPaused, setIsPaused] = useState(false);

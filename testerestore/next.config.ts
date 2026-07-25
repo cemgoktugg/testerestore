@@ -38,6 +38,9 @@ const nextConfig: NextConfig = {
   images: {
     // AVIF (WebP'den ~%20-30 daha küçük) + WebP fallback. LCP/bandwidth kazancı.
     formats: ["image/avif", "image/webp"],
+    // Optimize edilmiş resimleri 30 gün cache'le (default 60sn → sık sık soğuk
+    // yeniden optimize ediyordu). İlk optimize sonrası tekrar hızlı.
+    minimumCacheTTL: 2592000,
     // Next 16 blocks upstream URLs that resolve to private IPs (localhost,
     // 127.0.0.1) as SSRF protection. The Medusa local file provider serves
     // images from http://localhost:9000/static/* so in DEV we bypass the

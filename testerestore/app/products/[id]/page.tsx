@@ -15,11 +15,10 @@ import ProductDetailClient from './ProductDetailClient';
  */
 export const revalidate = 300; // 5 dk ISR
 
-// generateStaticParams DIŞINDAKİ her handle → gerçek 404 (soft-404 yerine).
-// Bunun için generateStaticParams TÜM ürünleri döndürmek ZORUNDA; aksi hâlde
-// listeye girmeyen gerçek bir ürün de 404 olur. Yeni ürün eklenince yeniden
-// build/deploy gerekir (küçük katalog için kabul edilebilir tercih).
-export const dynamicParams = false;
+// dynamicParams=true: generateStaticParams'ta olmayan (SONRADAN eklenen) ürünler
+// TALEP ÜZERİNE render edilir → yeni ürün deploy beklemeden görünür. Geçersiz
+// handle aşağıda `notFound()` ile GERÇEK 404 döner (soft-404 yok, SEO korunur).
+export const dynamicParams = true;
 
 export async function generateStaticParams() {
   const ids: { id: string }[] = [];
