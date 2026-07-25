@@ -4,10 +4,12 @@ import { SITE_SEO_MODULE } from "../../../modules/site-seo";
 
 /** GET /admin/site-seo — singleton row (yoksa default ile oluşturur). */
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
-  const svc = req.scope.resolve<SiteSeoService>(SITE_SEO_MODULE);
-  const list = await svc.listSiteSeoes({});
+  // Runtime metot listSiteSeos/createSiteSeos (tip ...Seoes üretir — pluralize bug)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const svc = req.scope.resolve<SiteSeoService>(SITE_SEO_MODULE) as any;
+  const list = await svc.listSiteSeos({});
   if (list.length === 0) {
-    const [created] = await svc.createSiteSeoes([
+    const [created] = await svc.createSiteSeos([
       {
         site_name: "Testere Store",
         default_title:
@@ -29,15 +31,17 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
 
 /** PATCH /admin/site-seo — singleton row'u günceller (yoksa oluşturur). */
 export async function PATCH(req: MedusaRequest, res: MedusaResponse) {
-  const svc = req.scope.resolve<SiteSeoService>(SITE_SEO_MODULE);
+  // Runtime metot listSiteSeos/createSiteSeos (tip ...Seoes üretir — pluralize bug)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const svc = req.scope.resolve<SiteSeoService>(SITE_SEO_MODULE) as any;
   const body = req.body as Record<string, unknown>;
-  const existing = await svc.listSiteSeoes({});
+  const existing = await svc.listSiteSeos({});
 
   let row;
   if (existing.length === 0) {
-    [row] = await svc.createSiteSeoes([body]);
+    [row] = await svc.createSiteSeos([body]);
   } else {
-    [row] = await svc.updateSiteSeoes([{ id: existing[0].id, ...body }]);
+    [row] = await svc.updateSiteSeos([{ id: existing[0].id, ...body }]);
   }
   res.json({ site_seo: row });
 }

@@ -13,13 +13,13 @@ export default async function seedSiteSeo({ container }: ExecArgs) {
   const logger = container.resolve(ContainerRegistrationKeys.LOGGER);
   const svc = container.resolve<SiteSeoService>(SITE_SEO_MODULE);
 
-  const existing = await svc.listSiteSeoes({});
+  const existing = await svc.listSiteSeos({});
   if (existing.length > 0) {
     logger.info("site_seo already exists — skipping.");
     return;
   }
 
-  await svc.createSiteSeoes([
+  await svc.createSiteSeos([
     {
       site_name: "Testere Store",
       default_title:
