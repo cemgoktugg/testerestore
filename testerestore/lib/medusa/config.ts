@@ -7,13 +7,6 @@
 
 const isServer = typeof window === "undefined";
 
-function readEnv(serverKey: string, publicKey: string, fallback = ""): string {
-  if (isServer) {
-    return process.env[serverKey] || process.env[publicKey] || fallback;
-  }
-  return process.env[publicKey] || fallback;
-}
-
 // ÖNEMLİ: NEXT_PUBLIC_* client bundle'a SADECE literal `process.env.NEXT_PUBLIC_X`
 // erişimiyle gömülür. Dinamik (`process.env[key]`) erişim client'ta undefined
 // döner → localhost fallback → tüm client-side fetch'ler patlar. O yüzden burada
