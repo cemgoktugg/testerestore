@@ -14,11 +14,14 @@ function readEnv(serverKey: string, publicKey: string, fallback = ""): string {
   return process.env[publicKey] || fallback;
 }
 
-export const MEDUSA_BACKEND_URL = readEnv(
-  "MEDUSA_BACKEND_URL",
-  "NEXT_PUBLIC_MEDUSA_BACKEND_URL",
-  "http://localhost:9000"
-);
+// ÖNEMLİ: NEXT_PUBLIC_* client bundle'a SADECE literal `process.env.NEXT_PUBLIC_X`
+// erişimiyle gömülür. Dinamik (`process.env[key]`) erişim client'ta undefined
+// döner → localhost fallback → tüm client-side fetch'ler patlar. O yüzden burada
+// literal erişim ŞART. Sunucuda runtime MEDUSA_BACKEND_URL öncelikli.
+export const MEDUSA_BACKEND_URL =
+  (isServer ? process.env.MEDUSA_BACKEND_URL : "") ||
+  process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL ||
+  "http://localhost:9000";
 
 export const MEDUSA_PUBLISHABLE_KEY =
   process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY || "";
