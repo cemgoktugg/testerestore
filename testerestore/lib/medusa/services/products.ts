@@ -145,6 +145,27 @@ export async function listBestSellers(
   return products.slice(0, limit);
 }
 
+/**
+ * Ready-made (hazır boy) ürünler — metadata.is_ready_made === true olanlar.
+ * Ana katalogdan ayrı bölümde/sayfada listelenir. Boy'a göre (kısa→uzun) sıralı.
+ */
+export async function listReadyMade(limit = 24): Promise<StoreProduct[]> {
+  if (!MEDUSA_READY) return [];
+  // Hazır ürünler çok sayıda olabildiği için geniş çekip filtreliyoruz.
+  const { products } = await listProducts({ limit: 100 });
+  const ready = products.filter(
+    (p) =>
+      (p.metadata as Record<string, unknown> | null)?.is_ready_made === true ||
+      /hazır/i.test(p.title || "")
+  );
+  ready.sort((a, b) => {
+    const la = Number((a.metadata as Record<string, unknown> | null)?.length_mm ?? 0);
+    const lb = Number((b.metadata as Record<string, unknown> | null)?.length_mm ?? 0);
+    return la - lb;
+  });
+  return ready.slice(0, limit);
+}
+
 /** Related products — same primary category, excluding self. */
 export async function listRelatedProducts(
   product: StoreProduct,

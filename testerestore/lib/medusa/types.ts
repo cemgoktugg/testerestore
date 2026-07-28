@@ -41,8 +41,9 @@ export interface BladeProductMetadata {
   /** Default/displayed thickness. */
   thickness_mm?: string | number;
 
-  /** Available tooth pitches (TPI). */
-  tooth_pitch?: string[];
+  /** Tooth pitch(es). Configurable products store an array (["2/3","4/6"]);
+   *  ready-made (hazır boy) products store a single string ("4/6"). */
+  tooth_pitch?: string | string[];
 
   /** Tooth form for the spec visualizer — düz / kanca / atlamalı. */
   tooth_form?: "regular" | "hook" | "skip";

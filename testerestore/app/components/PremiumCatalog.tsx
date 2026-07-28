@@ -11,6 +11,7 @@ import { getProductImage } from '../../lib/medusa/format';
 import type { StoreProduct, StoreProductCategory } from '../../lib/medusa/types';
 import { getDemoCatalog, type DemoCatalogItem } from '../../lib/demo-products';
 import { siteContent } from '../../lib/content-config';
+import { isReadyMade } from '../../lib/ready-made';
 import { CatalogGridSkeleton } from './skeletons/CatalogSkeleton';
 
 /** Site genelinde kullanılan turuncu accent — `--accent` Tailwind değişkeniyle uyumlu. */
@@ -154,7 +155,11 @@ export default function PremiumCatalog({
       : initialProducts;
     const cats = categoryList ?? initialCategories ?? [];
     if (products?.length) {
-      return mapMedusaToCard(products, cats);
+      // Hazır (ready-made) ürünler ana kataloga GİRMEZ — kendi "Hazır Boy"
+      // bölümünde/sayfasında listelenirler. Grid sadece yapılandırılabilir
+      // aileleri gösterir, yoksa hazır boylar grid'i boğar.
+      const configurable = products.filter((p) => !isReadyMade(p));
+      return mapMedusaToCard(configurable, cats);
     }
     return mapDemoToCard(getDemoCatalog());
   }, [productsResp, categoryList, initialProducts, initialCategories]);

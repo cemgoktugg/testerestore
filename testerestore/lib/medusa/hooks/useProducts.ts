@@ -5,6 +5,7 @@ import {
   listProducts,
   getProductBySlug,
   listBestSellers,
+  listReadyMade,
   listRelatedProducts,
 } from "../services/products";
 import type { StoreProduct } from "../types";
@@ -34,6 +35,12 @@ export function useProduct(slug: string | undefined) {
 export function useBestSellers(limit = 8) {
   return useAsync(() => listBestSellers(limit), [limit], {
     cacheKey: `bestsellers:${limit}`,
+  });
+}
+
+export function useReadyMade(limit = 24) {
+  return useAsync(() => listReadyMade(limit), [limit], {
+    cacheKey: `readymade:${limit}`,
   });
 }
 

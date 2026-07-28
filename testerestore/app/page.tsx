@@ -3,9 +3,10 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 import HeroSlider from './components/HeroSlider';
 import PremiumCatalog from './components/PremiumCatalog';
+import HazirBoySection from './components/HazirBoySection';
 import BestSellersSlider from './components/BestSellersSlider';
 import { listHeroSlides } from '../lib/medusa/services/hero-slides';
-import { listBestSellers, listProducts } from '../lib/medusa/services/products';
+import { listBestSellers, listProducts, listReadyMade } from '../lib/medusa/services/products';
 import { listCategories } from '../lib/medusa/services/categories';
 
 // SSR + ISR: ana sayfa içeriği (hero, katalog, en çok satanlar) SUNUCUDA çekilip
@@ -14,12 +15,14 @@ import { listCategories } from '../lib/medusa/services/categories';
 export const revalidate = 300;
 
 export default async function Home() {
-  const [heroSlides, bestSellers, productsResp, categories] = await Promise.all([
-    listHeroSlides(),
-    listBestSellers(8),
-    listProducts({ limit: 24 }),
-    listCategories(),
-  ]);
+  const [heroSlides, bestSellers, productsResp, categories, readyMade] =
+    await Promise.all([
+      listHeroSlides(),
+      listBestSellers(8),
+      listProducts({ limit: 24 }),
+      listCategories(),
+      listReadyMade(24),
+    ]);
   return (
     <>
       <Header />
@@ -28,8 +31,11 @@ export default async function Home() {
         {/* Hero Slider */}
         <HeroSlider initialSlides={heroSlides} />
 
-        {/* Premium Catalog (with category filter) */}
+        {/* Premium Catalog (with category filter) — yapılandırılabilir aileler */}
         <PremiumCatalog initialProducts={productsResp.products} initialCategories={categories} />
+
+        {/* Hazır Boy — stoktan, aynı gün kargo (hazır ürün yoksa görünmez) */}
+        <HazirBoySection initialReadyMade={readyMade} />
 
         {/* Best Sellers — Horizontal Slider */}
         <BestSellersSlider initialBestSellers={bestSellers} />

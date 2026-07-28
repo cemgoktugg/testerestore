@@ -18,6 +18,7 @@ import Link from 'next/link';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import BladeConfigurator from '../../components/BladeConfigurator';
+import ReadyMadeBuyBox from '../../components/ReadyMadeBuyBox';
 import BladeSpecVisualizer from '../../components/BladeSpecVisualizer';
 import ProductReviews from '../../components/ProductReviews';
 import RecentlyViewed from '../../components/RecentlyViewed';
@@ -36,6 +37,7 @@ import { useRelatedProducts } from '../../../lib/medusa/hooks/useProducts';
 import { formatMoney, getProductImage, resolveBladeImage } from '../../../lib/medusa/format';
 import type { BladeProductMetadata, StoreProduct } from '../../../lib/medusa/types';
 import { MEDUSA_READY } from '../../../lib/medusa/config';
+import { isReadyMade } from '../../../lib/ready-made';
 import {
   PRODUCT_DETAILS_FALLBACK,
   type ProductDetailsFallback,
@@ -222,6 +224,23 @@ export default function ProductDetailClient({
     },
     []
   );
+
+  /**
+   * Hazır boy ürün mü? Hazır ürün önceden kaynaklı ve tek SKU'dur; parametrik
+   * konfigüratör yerine sabit ölçü paneli gösterilir. Ölçüler seçilemediği için
+   * diş profili görselleştiricisi de değerleri metadata'dan alır (konfigüratör
+   * `onConfigChange` yaymayacağı için bladeConfig varsayılanda kalırdı).
+   */
+  const readyMadeProduct =
+    product?.medusa && isReadyMade(product.medusa) ? product.medusa : null;
+  const readyMadeMeta = (readyMadeProduct?.metadata || {}) as BladeProductMetadata;
+  const specWidth = readyMadeProduct
+    ? `${readyMadeMeta.width_mm ?? ''}mm`
+    : bladeConfig.width;
+  const specTpi =
+    readyMadeProduct && typeof readyMadeMeta.tooth_pitch === 'string'
+      ? `${readyMadeMeta.tooth_pitch} TPI`
+      : bladeConfig.tpi;
 
   // --- Loading / not-found
   if (loading && !product) {
@@ -432,8 +451,8 @@ export default function ProductDetailClient({
                 ) : (
                   <div className="absolute inset-0">
                     <BladeSpecVisualizer
-                      toothPitch={bladeConfig.tpi}
-                      widthMm={bladeConfig.width}
+                      toothPitch={specTpi}
+                      widthMm={specWidth}
                       bladeType={product.medusa?.metadata?.blade_type as string | undefined}
                       toothForm={
                         product.medusa?.metadata?.tooth_form as
@@ -449,9 +468,9 @@ export default function ProductDetailClient({
                           | 'alternate'
                           | undefined
                       }
-                      availablePitches={
-                        product.medusa?.metadata?.tooth_pitch as string[] | undefined
-                      }
+                      availablePitches={toPitchArray(
+                        product.medusa?.metadata?.tooth_pitch
+                      )}
                     />
                   </div>
                 )}
@@ -497,7 +516,13 @@ export default function ProductDetailClient({
 
             {/* Right: Configurator or Machine Form */}
             <div className="lg:col-span-5">
-              {product.type === 'blade' ? (
+              {product.type === 'blade' && readyMadeProduct ? (
+                <ReadyMadeBuyBox
+                  product={readyMadeProduct}
+                  image={product.image}
+                  categoryLabel={product.category}
+                />
+              ) : product.type === 'blade' ? (
                 <BladeConfigurator
                   product={product.medusa ?? null}
                   productId={product.handle}
@@ -906,6 +931,18 @@ export default function ProductDetailClient({
   );
 }
 
+/**
+ * tooth_pitch metadata'sı iki şekilde gelebilir:
+ *   - Ana (konfigüre edilebilir) ürün → dizi: ["2/3", "3/4", "4/6"]
+ *   - Hazır boy ürün → tek string: "4/6"
+ * Her iki durumu da string dizisine normalize eder (boşsa []).
+ */
+function toPitchArray(v: unknown): string[] {
+  if (Array.isArray(v)) return v.map(String).filter(Boolean);
+  if (typeof v === 'string' && v.trim()) return [v.trim()];
+  return [];
+}
+
 // ---------- Specs table ----------
 function SpecsTable({ product }: { product: UnifiedProduct }) {
   const meta = (product.medusa?.metadata || {}) as BladeProductMetadata;
@@ -917,8 +954,12 @@ function SpecsTable({ product }: { product: UnifiedProduct }) {
     if (meta.blade_type) rows.push({ key: 'Çelik Sınıfı / Kalitesi', value: String(meta.blade_type) });
     if (meta.width_mm) rows.push({ key: 'Standart Genişlik', value: `${meta.width_mm} mm` });
     if (meta.thickness_mm) rows.push({ key: 'Standart Kalınlık', value: `${meta.thickness_mm} mm` });
-    if (meta.tooth_pitch?.length)
-      rows.push({ key: 'Mevcut Diş Adımları (TPI)', value: meta.tooth_pitch.join(', ') });
+    const pitches = toPitchArray(meta.tooth_pitch);
+    if (pitches.length)
+      rows.push({
+        key: pitches.length > 1 ? 'Mevcut Diş Adımları (TPI)' : 'Diş Adımı (TPI)',
+        value: pitches.join(', '),
+      });
     if (meta.min_length_mm && meta.max_length_mm)
       rows.push({
         key: 'Üretilebilir Boy Aralığı',
