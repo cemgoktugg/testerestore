@@ -12,7 +12,17 @@ flask>=3.0.0
 flask-cors>=4.0.0
 gunicorn>=21.2.0
 
-openai==1.6.1
+# openai: requirements.txt'teki `==1.6.1` BAYAT. O sürüm httpx.Client'a
+# `proxies=` geçiyor; httpx 0.28'de bu parametre kaldırıldığı için konteyner
+# "Client.__init__() got an unexpected keyword argument 'proxies'" ile
+# çöküyordu. Geliştirme ortamında fiilen çalışan sürüm openai 2.14.0 +
+# httpx 0.28.1 — onu baz alıyoruz.
+openai>=2.14,<3
+
+# chromadb yalnızca RAG için gerekli. Uygulama RAG'i varsayılan olarak
+# KULLANMIYOR (conversational_engine.py:171 `enable_rag: bool = False`,
+# web/app.py:27 bayrağı geçmiyor), ama ADVISOR_ENABLE_RAG=1 ile açılabilsin
+# diye imajda duruyor.
 chromadb>=0.5.0
 tiktoken>=0.5.0
 pypdf>=3.17.0

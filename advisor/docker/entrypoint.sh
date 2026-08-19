@@ -22,9 +22,20 @@ if [ -d /app/data.dist ]; then
   done
 fi
 
-# 2) Vektör indeksi — koleksiyon doluysa atlanır, OpenAI faturası çıkmaz.
-python docker/index_encyclopedia_container.py || \
-  echo "[entrypoint] indeksleme başarısız — servis RAG'siz devam ediyor"
+# 2) Vektör indeksi — YALNIZCA RAG açıksa.
+#
+# Uygulama RAG'i varsayılan olarak kullanmıyor: ConversationalEngine'in
+# `enable_rag` parametresi False (llm/conversational_engine.py:171) ve
+# web/app.py:27 bu bayrağı geçmiyor. Yani ansiklopediyi indekslemek şu an
+# hiç okunmayacak bir veri için OpenAI embedding faturası demek.
+# RAG'i açmak istersen: ADVISOR_ENABLE_RAG=1 ver VE web/app.py'de
+# ConversationalEngine(rules_path, enable_rag=True) yap.
+if [ "${ADVISOR_ENABLE_RAG:-0}" = "1" ]; then
+  python docker/index_encyclopedia_container.py || \
+    echo "[entrypoint] indeksleme başarısız — servis RAG'siz devam ediyor"
+else
+  echo "[entrypoint] RAG kapalı (ADVISOR_ENABLE_RAG=1 ile açılır) — indeksleme atlandı"
+fi
 
 # 3) Tek worker: session'lar ConversationalEngine içinde bellekte tutuluyor
 #    (llm/conversational_engine.py:242). Birden fazla worker olursa
