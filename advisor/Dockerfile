@@ -50,8 +50,14 @@ COPY wsgi.py       ./wsgi.py
 # data.dist içinde durur (entrypoint ilk açılışta eksikleri kopyalar).
 COPY data/ ./data.dist/
 
+# chmod +x: entrypoint'in çalıştırma biti git'ten gelmeyebilir. Windows
+# dosya sistemi exec bitini tutmuyor, dolayısıyla dosya repoya 100644 olarak
+# girebiliyor ve konteyner açılışta "permission denied" ile ölüyor. Burada
+# koşulsuz set ediyoruz — git metadata'sına bağımlı kalmıyoruz.
+#
 # chroma_db ve data mount noktaları — root olmayan kullanıcı yazabilsin
-RUN mkdir -p /app/chroma_db /app/data \
+RUN chmod +x /app/docker/entrypoint.sh \
+    && mkdir -p /app/chroma_db /app/data \
     && useradd --create-home --uid 10001 advisor \
     && chown -R advisor:advisor /app
 
