@@ -1,0 +1,2380 @@
+{
+  "__comment_product_meta": "Bu blok ürün tipi ve dil bilgilerini içerir. Multi-product sistemlerde hangi engine'in ne için kullanıldığını belirtir.",
+  "product_type": "bandsaw_blade",
+  "applies_to_categories": ["METAL_CUTTING", "WOOD_CUTTING", "COMPOSITE_CUTTING"],
+  "locale": "tr-TR",
+  "translations": {
+    "en-US": "rules_en.json",
+    "__comment": "Diğer diller için çeviri dosyaları buradan referans edilir"
+  },
+  "related_engines": {
+    "circular_saw_rules_v1": "Dairesel testere için alternatif motor",
+    "__comment": "Bu engine ile ilişkili diğer ürün motorları"
+  },
+
+  "engine_id": "bandsaw_rules_v1",
+  "version": "1.8.0",
+  "__why": "v1.8.0: ANSİKLOPEDİ ENTEGRASYONU - (1) 8 yeni ansiklopedi kuralı eklendi (run-in, malzeme uyarıları, kesim tavsiyeleri) (2) 5 yeni state alanı (run_in_required, cut_type, vb.) (3) System prompt güncellendi (4) RAG için bandsaw_encyclopedia.md oluşturuldu. Toplam 53 kural. Tüm testler geçiyor (%100).",
+
+  "__comment_state_schema": "Bu blok tüm state değişkenlerini tanımlar. Her field başlangıçta null veya varsayılan değerle başlar. Kurallar bu field'ları doldurur.",
+  "state_schema": {
+    "fields": {
+      "goal": null,
+      "material_category": null,
+
+      "metal_family": null,
+      "metal_part_type": null,
+
+      "material_family": null,
+      "part_type": null,
+
+      "profile_wall_thickness_bucket": null,
+      "solid_max_diameter_bucket": null,
+      "sheet_thickness_bucket": null,
+      "max_cross_section_bucket": null,
+      "__comment_solid_sheet": "SOLID için çap (D1-D5), SHEET için kalınlık (S1-S5) bucket'ları.",
+
+      "machine_class": null,
+      "machine_manufacturer": null,
+      "machine_model": null,
+      "blade_length_mm": null,
+      "coolant": null,
+
+      "blade_type": null,
+      "tooth_pitch": null,
+      "tooth_geometry": null,
+      "set_type": null,
+
+      "blade_width_mm": null,
+      "blade_thickness_mm": null,
+      "coolant_note": null,
+
+      "disclaimer": null,
+
+      "sku": null,
+      "confidence": "UNKNOWN",
+      "warnings": [],
+
+      "__comment_encyclopedia": "Ansiklopedi tabanlı yeni alanlar - kesim parametreleri ve alıştırma",
+      "run_in_required": null,
+      "run_in_speed_percent": null,
+      "run_in_feed_percent": null,
+      "run_in_area_cm2": null,
+      "recommended_cutting_speed_m_min": null,
+      "estimated_blade_life_meters": null,
+      "user_priority": null,
+      "surface_finish_requirement": null,
+      "cut_type": null
+    }
+  },
+
+  "__comment_input_normalization": "Kullanıcıdan gelen farklı yazımları normalize eder (örn N->NO, yok->NO).",
+  "input_normalization": {
+    "maps": {
+      "coolant": {
+        "N": "NO",
+        "NO": "NO",
+        "YOK": "NO",
+        "HAYIR": "NO",
+        "Y": "YES",
+        "YES": "YES",
+        "VAR": "YES",
+        "EVET": "YES",
+        "UNKNOWN": "UNKNOWN"
+      }
+    }
+  },
+
+  "__comment_defaults": "Bu blok session başladığında otomatik olarak set edilen değerleri içerir.",
+  "defaults": {
+    "set_on_start": {
+      "warnings": [],
+      "confidence": "UNKNOWN",
+      "disclaimer": "Bu öneri bilgilendirme amaçlıdır. Kesim koşulları ve makine özelliklerine göre değişebilir. Nihai uygunluk kullanıcı sorumluluğundadır."
+    }
+  },
+
+  "__comment_validation": "Bu blok kullanıcı girdilerini kontrol eder.",
+  "validation_rules": [
+    {
+      "field": "blade_length_mm",
+      "type": "range",
+      "min": 500,
+      "max": 12000,
+      "error_message": "Bıçak uzunluğu 500-12000 mm arasında olmalıdır."
+    },
+    {
+      "field": "material_category",
+      "type": "required",
+      "error_message": "Malzeme kategorisi seçilmelidir."
+    }
+  ],
+
+  "__comment_questions": "Bu blok kullanıcıya sorulacak soruları tanımlar.",
+  "questions": [
+    {
+      "id": "Q_MATERIAL_CATEGORY",
+      "text": "Ne keseceksiniz?",
+      "type": "single_select",
+      "options": [
+        { "value": "METAL", "label": "Metal" },
+        { "value": "WOOD", "label": "Ahşap" },
+        { "value": "PLASTIC_COMPOSITE", "label": "Plastik / Kompozit" },
+        { "value": "ORGANIC_BONE", "label": "Organik / Kemiksi" },
+        { "value": "UNKNOWN", "label": "Emin değilim" }
+      ],
+      "writes_to": "material_category"
+    },
+
+    {
+      "id": "Q_METAL_FAMILY",
+      "text": "Hangi metal türünü keseceksiniz?",
+      "type": "single_select",
+      "options": [
+        { "value": "CARBON_STEEL", "label": "Karbon çelik" },
+        { "value": "STAINLESS", "label": "Paslanmaz" },
+        { "value": "ALUMINUM", "label": "Alüminyum" },
+        { "value": "CAST_IRON", "label": "Döküm" },
+        { "value": "MIXED", "label": "Karışık metaller" },
+        { "value": "UNKNOWN", "label": "Emin değilim" }
+      ],
+      "writes_to": "metal_family"
+    },
+
+    {
+      "id": "Q_METAL_PART_TYPE",
+      "text": "Kesilecek parça tipi hangisine daha yakın?",
+      "type": "single_select",
+      "options": [
+        { "value": "PROFILE", "label": "Profil" },
+        { "value": "SOLID", "label": "Dolu" },
+        { "value": "SHEET", "label": "Sac" },
+        { "value": "MIXED", "label": "Karışık" },
+        { "value": "UNKNOWN", "label": "Emin değilim" }
+      ],
+      "writes_to": "metal_part_type"
+    },
+
+    {
+      "id": "Q_PROFILE_WALL_THICKNESS",
+      "text": "Kestiğiniz profilin et kalınlığı nedir?",
+      "type": "single_select",
+      "options": [
+        { "value": "T1", "label": "≤ 2 mm" },
+        { "value": "T2", "label": "2 – 3 mm" },
+        { "value": "T3", "label": "3 – 5 mm" },
+        { "value": "T4", "label": "5 – 8 mm" },
+        { "value": "T5", "label": "8 – 12 mm" },
+        { "value": "T6", "label": "> 12 mm" },
+        { "value": "UNKNOWN", "label": "Emin değilim" }
+      ],
+      "writes_to": "profile_wall_thickness_bucket"
+    },
+
+    {
+      "id": "Q_SOLID_MAX_DIAMETER",
+      "text": "Keseceğiniz dolu malzemenin maksimum çapı nedir?",
+      "type": "single_select",
+      "options": [
+        { "value": "D1", "label": "< 50 mm" },
+        { "value": "D2", "label": "50 - 100 mm" },
+        { "value": "D3", "label": "100 - 150 mm" },
+        { "value": "D4", "label": "150 - 250 mm" },
+        { "value": "D5", "label": "> 250 mm" },
+        { "value": "UNKNOWN", "label": "Emin değilim" }
+      ],
+      "writes_to": "solid_max_diameter_bucket"
+    },
+
+    {
+      "id": "Q_SHEET_THICKNESS",
+      "text": "Sac kalınlığı nedir?",
+      "type": "single_select",
+      "options": [
+        { "value": "S1", "label": "< 1 mm" },
+        { "value": "S2", "label": "1 - 3 mm" },
+        { "value": "S3", "label": "3 - 6 mm" },
+        { "value": "S4", "label": "6 - 10 mm" },
+        { "value": "S5", "label": "> 10 mm" },
+        { "value": "UNKNOWN", "label": "Emin değilim" }
+      ],
+      "writes_to": "sheet_thickness_bucket"
+    },
+
+    {
+      "__comment": "S5 opsiyonel: UI isterse sorar. Router'a bağlanmadı.",
+      "id": "Q_MAX_CROSS_SECTION",
+      "text": "En büyük kesit ölçünüz yaklaşık kaç mm? (Opsiyonel)",
+      "type": "single_select",
+      "options": [
+        { "value": "S1", "label": "≤ 50 mm" },
+        { "value": "S2", "label": "50 – 100 mm" },
+        { "value": "S3", "label": "100 – 200 mm" },
+        { "value": "S4", "label": "> 200 mm" },
+        { "value": "UNKNOWN", "label": "Emin değilim" }
+      ],
+      "writes_to": "max_cross_section_bucket"
+    },
+
+    {
+      "id": "Q_MACHINE_CLASS",
+      "text": "Kullandığınız makine hangisine daha yakın?",
+      "type": "single_select",
+      "options": [
+        { "value": "M1", "label": "Küçük / hobi" },
+        { "value": "M2", "label": "Orta sınıf / atölye" },
+        { "value": "M3", "label": "Sanayi tipi" },
+        { "value": "UNKNOWN", "label": "Emin değilim" }
+      ],
+      "writes_to": "machine_class"
+    },
+
+    {
+      "id": "Q_MACHINE_MODEL",
+      "text": "Makine markanız ve modeliniz nedir? (Örn: AMADA H-250, BEHRINGER HBP 320 A)",
+      "type": "text",
+      "writes_to": "machine_model",
+      "__comment": "RAG sistemi bu bilgiyle veritabanından makine özelliklerini bulacak"
+    },
+
+    {
+      "id": "Q_BLADE_LENGTH",
+      "text": "Makinenizin bıçak uzunluğu kaç mm? (Örn: 2240)",
+      "type": "number",
+      "rules": { "min": 500, "max": 12000, "integer_only": true },
+      "writes_to": "blade_length_mm"
+    },
+
+    {
+      "id": "Q_COOLANT",
+      "text": "Kesimde soğutma kullanıyor musunuz?",
+      "type": "single_select",
+      "options": [
+        { "value": "YES", "label": "Var" },
+        { "value": "NO", "label": "Yok" },
+        { "value": "UNKNOWN", "label": "Emin değilim" }
+      ],
+      "writes_to": "coolant"
+    }
+  ],
+
+  "__comment_navigation": "Wizard navigation ayarları.",
+  "navigation": {
+    "allow_back": true,
+    "allow_skip": false,
+    "invalidate_dependent_answers": true
+  },
+
+  "__comment_router": "Soru sırası ve koşulları.",
+  "router": {
+    "next_question_order": [
+      { "id": "Q_MATERIAL_CATEGORY", "ask_if_missing": ["material_category"] },
+
+      {
+        "id": "Q_METAL_FAMILY",
+        "ask_if_missing": ["metal_family"],
+        "ask_only_if": [{ "eq": ["material_category", "METAL"] }]
+      },
+
+      {
+        "id": "Q_MACHINE_MODEL",
+        "ask_if_missing": ["machine_model"],
+        "ask_only_if": [{ "eq": ["material_category", "METAL"] }],
+        "__comment": "ERKEN SOR: Makine modelinden uzunluk/genişlik/kalınlık otomatik gelir (4515 makine, 108 üretici)"
+      },
+
+      {
+        "id": "Q_METAL_PART_TYPE",
+        "ask_if_missing": ["metal_part_type"],
+        "ask_only_if": [{ "eq": ["material_category", "METAL"] }]
+      },
+
+      {
+        "__comment": "MVP: Metal + Profil ise et kalınlığı her metalde sorulur (CARBON/PASLANMAZ fark etmeksizin).",
+        "id": "Q_PROFILE_WALL_THICKNESS",
+        "ask_if_missing": ["profile_wall_thickness_bucket"],
+        "ask_only_if": [
+          { "eq": ["material_category", "METAL"] },
+          {
+            "any": [
+              { "eq": ["metal_part_type", "PROFILE"] },
+              { "eq": ["part_type", "PROFILE"] }
+            ]
+          }
+        ]
+      },
+
+      {
+        "__comment": "SOLID: Dolu malzeme çapı sorulur.",
+        "id": "Q_SOLID_MAX_DIAMETER",
+        "ask_if_missing": ["solid_max_diameter_bucket"],
+        "ask_only_if": [
+          { "eq": ["material_category", "METAL"] },
+          {
+            "any": [
+              { "eq": ["metal_part_type", "SOLID"] },
+              { "eq": ["part_type", "SOLID"] }
+            ]
+          }
+        ]
+      },
+
+      {
+        "__comment": "SHEET: Sac kalınlığı sorulur.",
+        "id": "Q_SHEET_THICKNESS",
+        "ask_if_missing": ["sheet_thickness_bucket"],
+        "ask_only_if": [
+          { "eq": ["material_category", "METAL"] },
+          {
+            "any": [
+              { "eq": ["metal_part_type", "SHEET"] },
+              { "eq": ["part_type", "SHEET"] }
+            ]
+          }
+        ]
+      },
+
+      {
+        "id": "Q_MACHINE_CLASS",
+        "ask_if_missing": ["machine_class"],
+        "ask_only_if": [
+          { "eq": ["material_category", "METAL"] },
+          { "not_exists": ["machine_model"] }
+        ],
+        "__comment": "Makine modeli bilinmiyorsa makine sınıfı sor (fallback)"
+      },
+      {
+        "id": "Q_BLADE_LENGTH",
+        "ask_if_missing": ["blade_length_mm"],
+        "ask_only_if": [
+          { "eq": ["material_category", "METAL"] },
+          { "not_exists": ["machine_model"] }
+        ],
+        "__comment": "Makine modeli bilinmiyorsa uzunluk sor (fallback)"
+      },
+      {
+        "id": "Q_COOLANT",
+        "ask_if_missing": ["coolant"],
+        "ask_only_if": [{ "eq": ["material_category", "METAL"] }]
+      }
+    ]
+  },
+
+  "__comment_rules_execution": "Kuralların çalıştırılma stratejisi.",
+  "rules_execution": {
+    "strategy": "sequential",
+    "conflict_resolution": "last_write_wins",
+    "max_iterations": 10
+  },
+
+  "__comment_rules": "İş mantığı kuralları.",
+  "rules": [
+    {
+      "id": "R_SET_CORE_FROM_METAL_FAMILY",
+      "when": { "all": [{ "eq": ["material_category", "METAL"] }, { "exists": ["metal_family"] }] },
+      "then": [
+        {
+          "set": [
+            "material_family",
+            {
+              "map": [
+                "metal_family",
+                {
+                  "CARBON_STEEL": "CARBON_STEEL",
+                  "STAINLESS": "STAINLESS",
+                  "ALUMINUM": "ALUMINUM",
+                  "CAST_IRON": "CAST_IRON",
+                  "MIXED": "MIXED",
+                  "UNKNOWN": "MIXED"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "append_warning_if": {
+            "cond": { "eq": ["metal_family", "UNKNOWN"] },
+            "message": "Metal türü net olmadığı için 'karışık metal' varsayıldı."
+          }
+        }
+      ]
+    },
+
+    {
+      "id": "R_SET_CORE_FROM_METAL_PART_TYPE",
+      "when": { "all": [{ "eq": ["material_category", "METAL"] }, { "exists": ["metal_part_type"] }] },
+      "then": [
+        {
+          "set": [
+            "part_type",
+            {
+              "map": [
+                "metal_part_type",
+                {
+                  "PROFILE": "PROFILE",
+                  "SOLID": "SOLID",
+                  "SHEET": "SHEET",
+                  "MIXED": "MIXED",
+                  "UNKNOWN": "MIXED"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+
+    {
+      "__comment": "A1 satış modu: part_type UNKNOWN kalmasın; profile çek (MEDIUM_ASSUMED). UYARI: Sadece bu kural warning basacak, bir önceki kural basmayacak.",
+      "id": "R_ASSUME_PROFILE_WHEN_PART_TYPE_UNKNOWN",
+      "when": {
+        "all": [
+          { "eq": ["material_category", "METAL"] },
+          { "eq": ["part_type", "MIXED"] },
+          { "eq": ["metal_part_type", "UNKNOWN"] }
+        ]
+      },
+      "then": [
+        { "set": ["part_type", "PROFILE"] },
+        { "set": ["confidence", "MEDIUM_ASSUMED"] },
+        {
+          "append_warning_if": {
+            "cond": { "eq": ["metal_part_type", "UNKNOWN"] },
+            "message": "Parça tipi belirtilmediği için profil varsayıldı. Dolu/sac kesilecekse seçim değişebilir."
+          }
+        }
+      ]
+    },
+
+    {
+      "id": "R_ASSUME_CARBON_STEEL_WHEN_UNKNOWN_PROFILE",
+      "when": {
+        "all": [
+          { "eq": ["material_category", "METAL"] },
+          { "eq": ["part_type", "PROFILE"] },
+          { "eq": ["material_family", "MIXED"] }
+        ]
+      },
+      "then": [
+        { "set": ["material_family", "CARBON_STEEL"] },
+        { "set": ["confidence", "MEDIUM_ASSUMED"] },
+        {
+          "append_warning_if": {
+            "cond": { "eq": ["metal_family", "UNKNOWN"] },
+            "message": "Metal türü belirtilmediği için karbon çelik varsayıldı. Farklı bir metal kesilecekse seçim değişebilir."
+          }
+        }
+      ]
+    },
+
+    {
+      "id": "R_SET_BLADE_TYPE_FROM_MATERIAL",
+      "when": { "all": [{ "exists": ["material_family"] }] },
+      "then": [
+        {
+          "set": [
+            "blade_type",
+            {
+              "map": [
+                "material_family",
+                {
+                  "CARBON_STEEL": "BI_METAL_M42_FLEXBACK",
+                  "STAINLESS": "BI_METAL_M51",
+                  "ALUMINUM": "BI_METAL_M42_FLEXBACK",
+                  "CAST_IRON": "BI_METAL_M42_FLEXBACK",
+                  "MIXED": "BI_METAL_M42_FLEXBACK"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+
+    {
+      "__comment": "Tooth geometry ve set type - Tüm metal ve part tipleri için universal (15 kural birleştirildi)",
+      "id": "R_SET_TOOTH_GEOMETRY_AND_SET_TYPE_UNIVERSAL",
+      "when": { 
+        "any": [
+          { "exists": ["material_family"] },
+          { "exists": ["part_type"] }
+        ]
+      },
+      "then": [
+        { "set": ["tooth_geometry", "STANDARD_RAKER_PLACEHOLDER"] },
+        { "set": ["set_type", "STANDARD_SET_PLACEHOLDER"] }
+      ]
+    },
+
+    {
+      "id": "R_TPI_FROM_WALL_THICKNESS_CARBON_PROFILE",
+      "when": {
+        "all": [
+          { "eq": ["material_family", "CARBON_STEEL"] },
+          { "eq": ["part_type", "PROFILE"] },
+          { "exists": ["profile_wall_thickness_bucket"] }
+        ]
+      },
+      "then": [
+        {
+          "set": [
+            "tooth_pitch",
+            {
+              "map": [
+                "profile_wall_thickness_bucket",
+                {
+                  "T1": "14/18",
+                  "T2": "10/14",
+                  "T3": "8/12",
+                  "T4": "6/10",
+                  "T5": "5/8",
+                  "T6": "4/6",
+                  "UNKNOWN": "8/12"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "append_warning_if": {
+            "cond": { "eq": ["profile_wall_thickness_bucket", "UNKNOWN"] },
+            "message": "Et kalınlığı bilinmediği için güvenli varsayılan TPI (8/12) seçildi."
+          }
+        }
+      ]
+    },
+
+    {
+      "id": "R_TPI_FROM_WALL_THICKNESS_STAINLESS_PROFILE",
+      "when": {
+        "all": [
+          { "eq": ["material_family", "STAINLESS"] },
+          { "eq": ["part_type", "PROFILE"] },
+          { "exists": ["profile_wall_thickness_bucket"] }
+        ]
+      },
+      "then": [
+        {
+          "set": [
+            "tooth_pitch",
+            {
+              "map": [
+                "profile_wall_thickness_bucket",
+                {
+                  "T1": "14/18",
+                  "T2": "10/14",
+                  "T3": "10/14",
+                  "T4": "8/12",
+                  "T5": "6/10",
+                  "T6": "5/8",
+                  "UNKNOWN": "10/14"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "append_warning_if": {
+            "cond": { "eq": ["profile_wall_thickness_bucket", "UNKNOWN"] },
+            "message": "Et kalınlığı bilinmediği için paslanmazda güvenli varsayılan TPI (10/14) seçildi."
+          }
+        }
+      ]
+    },
+
+    {
+      "__comment": "Paslanmaz + soğutmasız kesim uyarısı. Tüm part_type'lar için geçerli (PROFILE/SOLID/SHEET).",
+      "id": "R_STAINLESS_COOLANT_WARNING",
+      "when": {
+        "all": [
+          { "eq": ["material_family", "STAINLESS"] },
+          { "eq": ["coolant", "NO"] }
+        ]
+      },
+      "then": [
+        {
+          "append_warning_if": {
+            "cond": { "eq": ["coolant", "NO"] },
+            "message": "Paslanmazda soğutmasız kesimde ısı artar; diş aşınması hızlanabilir. İlerlemeyi azaltın ve mümkünse soğutma kullanın."
+          }
+        }
+      ]
+    },
+
+    {
+      "id": "R_TPI_FROM_WALL_THICKNESS_ALUMINUM_PROFILE",
+      "when": {
+        "all": [
+          { "eq": ["material_family", "ALUMINUM"] },
+          { "eq": ["part_type", "PROFILE"] },
+          { "exists": ["profile_wall_thickness_bucket"] }
+        ]
+      },
+      "then": [
+        {
+          "set": [
+            "tooth_pitch",
+            {
+              "map": [
+                "profile_wall_thickness_bucket",
+                {
+                  "T1": "18/24",
+                  "T2": "14/18",
+                  "T3": "10/14",
+                  "T4": "8/12",
+                  "T5": "6/10",
+                  "T6": "5/8",
+                  "UNKNOWN": "10/14"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "append_warning_if": {
+            "cond": { "eq": ["profile_wall_thickness_bucket", "UNKNOWN"] },
+            "message": "Et kalınlığı bilinmediği için alüminyumda güvenli varsayılan TPI (10/14) seçildi."
+          }
+        }
+      ]
+    },
+
+    {
+      "__comment": "Alüminyum + soğutmasız kesim uyarısı. Talaş yapışması riski yüksek.",
+      "id": "R_ALUMINUM_COOLANT_WARNING",
+      "when": {
+        "all": [
+          { "eq": ["material_family", "ALUMINUM"] },
+          { "eq": ["coolant", "NO"] }
+        ]
+      },
+      "then": [
+        {
+          "append_warning_if": {
+            "cond": { "eq": ["coolant", "NO"] },
+            "message": "Alüminyumda soğutmasız kesimde talaş yapışması riski yüksektir. Düşük hızda kesin ve sık sık bıçağı temizleyin."
+          }
+        }
+      ]
+    },
+
+    {
+      "id": "R_TPI_FROM_WALL_THICKNESS_CAST_IRON_PROFILE",
+      "when": {
+        "all": [
+          { "eq": ["material_family", "CAST_IRON"] },
+          { "eq": ["part_type", "PROFILE"] },
+          { "exists": ["profile_wall_thickness_bucket"] }
+        ]
+      },
+      "then": [
+        {
+          "set": [
+            "tooth_pitch",
+            {
+              "map": [
+                "profile_wall_thickness_bucket",
+                {
+                  "T1": "10/14",
+                  "T2": "8/12",
+                  "T3": "6/10",
+                  "T4": "5/8",
+                  "T5": "4/6",
+                  "T6": "3/4",
+                  "UNKNOWN": "6/10"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "append_warning_if": {
+            "cond": { "eq": ["profile_wall_thickness_bucket", "UNKNOWN"] },
+            "message": "Et kalınlığı bilinmediği için dökümde güvenli varsayılan TPI (6/10) seçildi."
+          }
+        }
+      ]
+    },
+
+    {
+      "__comment": "Döküm + soğutma notu. Kuru kesim yapılabilir ama tozdan dolayı dikkat.",
+      "id": "R_CAST_IRON_COOLANT_NOTE",
+      "when": {
+        "all": [
+          { "eq": ["material_family", "CAST_IRON"] }
+        ]
+      },
+      "then": [
+        {
+          "append_warning_if": {
+            "cond": { "eq": ["coolant", "NO"] },
+            "message": "Döküm kuru kesilebilir ancak toz oluşumu fazladır. Havalandırma ve koruyucu ekipman kullanın."
+          }
+        }
+      ]
+    },
+
+    {
+      "id": "R_TPI_FROM_WALL_THICKNESS_MIXED_PROFILE",
+      "when": {
+        "all": [
+          { "eq": ["material_family", "MIXED"] },
+          { "eq": ["part_type", "PROFILE"] },
+          { "exists": ["profile_wall_thickness_bucket"] }
+        ]
+      },
+      "then": [
+        {
+          "set": [
+            "tooth_pitch",
+            {
+              "map": [
+                "profile_wall_thickness_bucket",
+                {
+                  "T1": "14/18",
+                  "T2": "10/14",
+                  "T3": "8/12",
+                  "T4": "6/10",
+                  "T5": "5/8",
+                  "T6": "4/6",
+                  "UNKNOWN": "8/12"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "append_warning_if": {
+            "cond": { "eq": ["profile_wall_thickness_bucket", "UNKNOWN"] },
+            "message": "Et kalınlığı bilinmediği için karışık metal kesiminde güvenli varsayılan TPI (8/12) seçildi."
+          }
+        }
+      ]
+    },
+
+    {
+      "id": "R_TPI_FROM_DIAMETER_CARBON_SOLID",
+      "when": {
+        "all": [
+          { "eq": ["material_family", "CARBON_STEEL"] },
+          { "eq": ["part_type", "SOLID"] },
+          { "exists": ["solid_max_diameter_bucket"] }
+        ]
+      },
+      "then": [
+        {
+          "set": [
+            "tooth_pitch",
+            {
+              "map": [
+                "solid_max_diameter_bucket",
+                {
+                  "D1": "10/14",
+                  "D2": "8/12",
+                  "D3": "6/10",
+                  "D4": "5/8",
+                  "D5": "4/6",
+                  "UNKNOWN": "6/10"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "append_warning_if": {
+            "cond": { "eq": ["solid_max_diameter_bucket", "UNKNOWN"] },
+            "message": "Çap bilinmediği için orta düzey TPI (6/10) seçildi."
+          }
+        }
+      ]
+    },
+
+    {
+      "id": "R_TPI_FROM_DIAMETER_STAINLESS_SOLID",
+      "when": {
+        "all": [
+          { "eq": ["material_family", "STAINLESS"] },
+          { "eq": ["part_type", "SOLID"] },
+          { "exists": ["solid_max_diameter_bucket"] }
+        ]
+      },
+      "then": [
+        {
+          "set": [
+            "tooth_pitch",
+            {
+              "map": [
+                "solid_max_diameter_bucket",
+                {
+                  "D1": "10/14",
+                  "D2": "8/12",
+                  "D3": "6/10",
+                  "D4": "5/8",
+                  "D5": "4/6",
+                  "UNKNOWN": "8/12"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "append_warning_if": {
+            "cond": { "eq": ["solid_max_diameter_bucket", "UNKNOWN"] },
+            "message": "Çap bilinmediği için paslanmaz dolu kesitte orta TPI (8/12) seçildi."
+          }
+        }
+      ]
+    },
+
+    {
+      "id": "R_TPI_FROM_DIAMETER_ALUMINUM_SOLID",
+      "when": {
+        "all": [
+          { "eq": ["material_family", "ALUMINUM"] },
+          { "eq": ["part_type", "SOLID"] },
+          { "exists": ["solid_max_diameter_bucket"] }
+        ]
+      },
+      "then": [
+        {
+          "set": [
+            "tooth_pitch",
+            {
+              "map": [
+                "solid_max_diameter_bucket",
+                {
+                  "D1": "14/18",
+                  "D2": "10/14",
+                  "D3": "8/12",
+                  "D4": "6/10",
+                  "D5": "5/8",
+                  "UNKNOWN": "8/12"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "append_warning_if": {
+            "cond": { "eq": ["solid_max_diameter_bucket", "UNKNOWN"] },
+            "message": "Çap bilinmediği için alüminyum dolu kesitte orta TPI (8/12) seçildi."
+          }
+        }
+      ]
+    },
+
+    {
+      "id": "R_TPI_FROM_DIAMETER_CAST_IRON_SOLID",
+      "when": {
+        "all": [
+          { "eq": ["material_family", "CAST_IRON"] },
+          { "eq": ["part_type", "SOLID"] },
+          { "exists": ["solid_max_diameter_bucket"] }
+        ]
+      },
+      "then": [
+        {
+          "set": [
+            "tooth_pitch",
+            {
+              "map": [
+                "solid_max_diameter_bucket",
+                {
+                  "D1": "8/12",
+                  "D2": "6/10",
+                  "D3": "5/8",
+                  "D4": "4/6",
+                  "D5": "3/4",
+                  "UNKNOWN": "5/8"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "append_warning_if": {
+            "cond": { "eq": ["solid_max_diameter_bucket", "UNKNOWN"] },
+            "message": "Çap bilinmediği için döküm dolu kesitte orta TPI (5/8) seçildi."
+          }
+        }
+      ]
+    },
+
+    {
+      "id": "R_TPI_FROM_DIAMETER_MIXED_SOLID",
+      "when": {
+        "all": [
+          { "eq": ["material_family", "MIXED"] },
+          { "eq": ["part_type", "SOLID"] },
+          { "exists": ["solid_max_diameter_bucket"] }
+        ]
+      },
+      "then": [
+        {
+          "set": [
+            "tooth_pitch",
+            {
+              "map": [
+                "solid_max_diameter_bucket",
+                {
+                  "D1": "10/14",
+                  "D2": "8/12",
+                  "D3": "6/10",
+                  "D4": "5/8",
+                  "D5": "4/6",
+                  "UNKNOWN": "6/10"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "append_warning_if": {
+            "cond": { "eq": ["solid_max_diameter_bucket", "UNKNOWN"] },
+            "message": "Çap bilinmediği için karışık metal dolu kesitte güvenli TPI (6/10) seçildi."
+          }
+        }
+      ]
+    },
+
+    {
+      "__comment": "Kalın dolu malzeme uyarısı - tüm metal tipleri için",
+      "id": "R_SOLID_THICK_MATERIAL_WARNING",
+      "when": {
+        "all": [
+          { "eq": ["part_type", "SOLID"] },
+          { "in": ["solid_max_diameter_bucket", ["D4", "D5"]] }
+        ]
+      },
+      "then": [
+        {
+          "append_warning_if": {
+            "cond": { "in": ["solid_max_diameter_bucket", ["D4", "D5"]] },
+            "message": "Kalın dolu malzeme (>150mm) keserken ilerlemeyi azaltın ve kesimde ara verin (ısınmayı önlemek için)."
+          }
+        }
+      ]
+    },
+
+    {
+      "id": "R_TPI_FROM_THICKNESS_CARBON_SHEET",
+      "when": {
+        "all": [
+          { "eq": ["material_family", "CARBON_STEEL"] },
+          { "eq": ["part_type", "SHEET"] },
+          { "exists": ["sheet_thickness_bucket"] }
+        ]
+      },
+      "then": [
+        {
+          "set": [
+            "tooth_pitch",
+            {
+              "map": [
+                "sheet_thickness_bucket",
+                {
+                  "S1": "18/24",
+                  "S2": "14/18",
+                  "S3": "10/14",
+                  "S4": "8/12",
+                  "S5": "6/10",
+                  "UNKNOWN": "10/14"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "append_warning_if": {
+            "cond": { "eq": ["sheet_thickness_bucket", "UNKNOWN"] },
+            "message": "Sac kalınlığı bilinmediği için orta düzey TPI (10/14) seçildi."
+          }
+        }
+      ]
+    },
+
+    {
+      "id": "R_TPI_FROM_THICKNESS_STAINLESS_SHEET",
+      "when": {
+        "all": [
+          { "eq": ["material_family", "STAINLESS"] },
+          { "eq": ["part_type", "SHEET"] },
+          { "exists": ["sheet_thickness_bucket"] }
+        ]
+      },
+      "then": [
+        {
+          "set": [
+            "tooth_pitch",
+            {
+              "map": [
+                "sheet_thickness_bucket",
+                {
+                  "S1": "18/24",
+                  "S2": "14/18",
+                  "S3": "10/14",
+                  "S4": "8/12",
+                  "S5": "6/10",
+                  "UNKNOWN": "10/14"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "append_warning_if": {
+            "cond": { "eq": ["sheet_thickness_bucket", "UNKNOWN"] },
+            "message": "Sac kalınlığı bilinmediği için paslanmaz sac kesiminde orta TPI (10/14) seçildi."
+          }
+        }
+      ]
+    },
+
+    {
+      "id": "R_TPI_FROM_THICKNESS_ALUMINUM_SHEET",
+      "when": {
+        "all": [
+          { "eq": ["material_family", "ALUMINUM"] },
+          { "eq": ["part_type", "SHEET"] },
+          { "exists": ["sheet_thickness_bucket"] }
+        ]
+      },
+      "then": [
+        {
+          "set": [
+            "tooth_pitch",
+            {
+              "map": [
+                "sheet_thickness_bucket",
+                {
+                  "S1": "24/32",
+                  "S2": "18/24",
+                  "S3": "14/18",
+                  "S4": "10/14",
+                  "S5": "8/12",
+                  "UNKNOWN": "14/18"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "append_warning_if": {
+            "cond": { "eq": ["sheet_thickness_bucket", "UNKNOWN"] },
+            "message": "Sac kalınlığı bilinmediği için alüminyum sac kesiminde orta TPI (14/18) seçildi."
+          }
+        }
+      ]
+    },
+
+    {
+      "id": "R_TPI_FROM_THICKNESS_CAST_IRON_SHEET",
+      "when": {
+        "all": [
+          { "eq": ["material_family", "CAST_IRON"] },
+          { "eq": ["part_type", "SHEET"] },
+          { "exists": ["sheet_thickness_bucket"] }
+        ]
+      },
+      "then": [
+        {
+          "set": [
+            "tooth_pitch",
+            {
+              "map": [
+                "sheet_thickness_bucket",
+                {
+                  "S1": "14/18",
+                  "S2": "10/14",
+                  "S3": "8/12",
+                  "S4": "6/10",
+                  "S5": "5/8",
+                  "UNKNOWN": "8/12"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "append_warning_if": {
+            "cond": { "eq": ["sheet_thickness_bucket", "UNKNOWN"] },
+            "message": "Sac kalınlığı bilinmediği için döküm sac kesiminde orta TPI (8/12) seçildi."
+          }
+        }
+      ]
+    },
+
+    {
+      "id": "R_TPI_FROM_THICKNESS_MIXED_SHEET",
+      "when": {
+        "all": [
+          { "eq": ["material_family", "MIXED"] },
+          { "eq": ["part_type", "SHEET"] },
+          { "exists": ["sheet_thickness_bucket"] }
+        ]
+      },
+      "then": [
+        {
+          "set": [
+            "tooth_pitch",
+            {
+              "map": [
+                "sheet_thickness_bucket",
+                {
+                  "S1": "18/24",
+                  "S2": "14/18",
+                  "S3": "10/14",
+                  "S4": "8/12",
+                  "S5": "6/10",
+                  "UNKNOWN": "10/14"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "append_warning_if": {
+            "cond": { "eq": ["sheet_thickness_bucket", "UNKNOWN"] },
+            "message": "Sac kalınlığı bilinmediği için karışık metal sac kesiminde güvenli TPI (10/14) seçildi."
+          }
+        }
+      ]
+    },
+
+    {
+      "__comment": "Çok ince sac uyarısı - tüm metal tipleri için (S1: <1mm)",
+      "id": "R_SHEET_VERY_THIN_WARNING",
+      "when": {
+        "all": [
+          { "eq": ["part_type", "SHEET"] },
+          { "eq": ["sheet_thickness_bucket", "S1"] }
+        ]
+      },
+      "then": [
+        {
+          "append_warning_if": {
+            "cond": { "eq": ["sheet_thickness_bucket", "S1"] },
+            "message": "Çok ince sac (<1mm) keserken düşük ilerleme ve hafif baskı kullanın. Malzeme titreşimi önlemek için destek kullanmanız önerilir."
+          }
+        }
+      ]
+    },
+
+    {
+      "__comment": "DEFAULT: Eğer machine_class ve machine_manufacturer YOKSA ve width/thickness hala set edilmemişse, güvenli varsayılanları kullan",
+      "id": "R_DEFAULT_WIDTH_THICKNESS",
+      "when": { 
+        "all": [
+          { "not": { "exists": ["machine_manufacturer"] } },
+          { "not": { "exists": ["machine_class"] } },
+          { "not": { "exists": ["blade_width_mm"] } },
+          { "not": { "exists": ["blade_thickness_mm"] } }
+        ] 
+      },
+      "then": [
+        {
+          "set": ["blade_width_mm", 16]
+        },
+        {
+          "set": ["blade_thickness_mm", 0.9]
+        },
+        {
+          "append_warning": "Makine bilgisi eksik olduğu için standart bıçak boyutları (16mm x 0.9mm) önerildi. Makinenizin kasnak çapına uygunluğunu kontrol ediniz."
+        }
+      ]
+    },
+
+    {
+      "__comment": "Kasnak uyarısı artık sadece belirsizlik varsa basılır (happy path = 0 warning). SADECE blade_width/thickness YOKSA çalışır - makine lookup'tan gelen değerleri korur.",
+      "id": "R_WIDTH_THICKNESS_FROM_MACHINE",
+      "when": { 
+        "all": [
+          { "exists": ["machine_class"] },
+          { "not": { "exists": ["blade_width_mm"] } },
+          { "not": { "exists": ["blade_thickness_mm"] } }
+        ] 
+      },
+      "then": [
+        {
+          "set": [
+            "blade_width_mm",
+            {
+              "map": [
+                "machine_class",
+                { "M1": 13, "M2": 16, "M3": 27, "UNKNOWN": 16 }
+              ]
+            }
+          ]
+        },
+        {
+          "set": [
+            "blade_thickness_mm",
+            {
+              "map": [
+                "machine_class",
+                { "M1": 0.65, "M2": 0.9, "M3": 1.1, "UNKNOWN": 0.9 }
+              ]
+            }
+          ]
+        },
+        {
+          "append_warning_if": {
+            "cond": { "eq": ["machine_class", "UNKNOWN"] },
+            "message": "Makine sınıfı bilinmediği için güvenli varsayılan genişlik/kalınlık (16 / 0.90) seçildi."
+          }
+        },
+        {
+          "append_warning_if": {
+            "cond": {
+              "any": [
+                { "eq": ["machine_class", "UNKNOWN"] },
+                { "eq": ["confidence", "MEDIUM_ASSUMED"] }
+              ]
+            },
+            "message": "Bıçak kalınlığının makinenizin kasnak çapına uygunluğunu kontrol ediniz."
+          }
+        }
+      ]
+    },
+
+    {
+      "id": "R_COOLANT_NOTES",
+      "when": { "all": [{ "exists": ["coolant"] }] },
+      "then": [
+        {
+          "set": [
+            "coolant_note",
+            {
+              "map": [
+                "coolant",
+                {
+                  "YES": "Soğutma, diş ömrünü uzatır ve yüzey kalitesini artırır; standart hızlarda kesebilirsiniz.",
+                  "NO": "Soğutma yoksa ısı artar; bıçak ömrü düşmemesi için ilerlemeyi azaltın ve mümkünse aralıklı kesim uygulayın.",
+                  "UNKNOWN": "Soğutma bilgisi net değil; ısınma görürseniz hız/ilerlemeyi azaltmanız önerilir."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+
+    {
+      "__comment": "Carbon + Profile SKU",
+      "__comment": "SKU generation kuralı - Tüm metal tipleri ve part tipleri için tek kural (15 kural birleştirildi)",
+      "id": "R_BUILD_SKU_UNIVERSAL",
+      "when": {
+        "all": [
+          { "exists": ["blade_width_mm"] },
+          { "exists": ["blade_thickness_mm"] },
+          { "exists": ["tooth_pitch"] },
+          { "exists": ["blade_length_mm"] }
+        ]
+      },
+      "then": [
+        {
+          "set": [
+            "sku",
+            {
+              "format": [
+                "{W}-{TK}-{TPI}-{L}",
+                {
+                  "W": "blade_width_mm",
+                  "TK": { "fixed2": "blade_thickness_mm" },
+                  "TPI": "tooth_pitch",
+                  "L": "blade_length_mm"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+
+    {
+      "__comment_section": "🎯 QUALITY & PERFORMANCE OPTIMIZATION RULES (v1.7.0) - 15 rules: 3 hardness + 3 priority + 3 surface + 5 speed + 1 life",
+      "id": "R_HARDNESS_SOFT_TPI_INCREASE",
+      "when": {
+        "all": [
+          { "eq": ["material_hardness", "SOFT"] },
+          { "any": [
+            { "eq": ["material_family", "ALUMINUM"] },
+            { "eq": ["material_family", "CARBON_STEEL"] }
+          ]},
+          { "exists": ["tooth_pitch"] }
+        ]
+      },
+      "then": [
+        {
+          "append_warning_if": {
+            "cond": { "eq": ["material_hardness", "SOFT"] },
+            "message": "Yumuşak malzeme için TPI artırılabilir (daha ince kesim). Mevcut TPI: {tooth_pitch}. Daha yüksek TPI ile daha düzgün yüzey elde edebilirsiniz."
+          }
+        }
+      ]
+    },
+
+    {
+      "id": "R_HARDNESS_HARD_TPI_DECREASE",
+      "when": {
+        "all": [
+          { "eq": ["material_hardness", "HARD"] },
+          { "any": [
+            { "eq": ["material_family", "STAINLESS"] },
+            { "eq": ["material_family", "CAST_IRON"] }
+          ]},
+          { "exists": ["tooth_pitch"] }
+        ]
+      },
+      "then": [
+        {
+          "append_warning_if": {
+            "cond": { "eq": ["material_hardness", "HARD"] },
+            "message": "Sert malzeme için TPI azaltılabilir (daha kalın diş). Mevcut TPI: {tooth_pitch}. Daha düşük TPI ile kesim hızı artırılabilir ancak yüzey kalitesi azalır."
+          }
+        }
+      ]
+    },
+
+    {
+      "id": "R_HARDNESS_BLADE_TYPE_UPGRADE",
+      "when": {
+        "all": [
+          { "eq": ["material_hardness", "HARD"] },
+          { "eq": ["blade_type", "BI_METAL_M42_FLEXBACK"] },
+          { "any": [
+            { "eq": ["material_family", "STAINLESS"] },
+            { "eq": ["material_family", "CAST_IRON"] }
+          ]}
+        ]
+      },
+      "then": [
+        {
+          "append_warning_if": {
+            "cond": { "eq": ["material_hardness", "HARD"] },
+            "message": "Çok sert malzeme için BI_METAL_M51 veya CARBIDE bıçak kullanımı önerilir. Daha uzun ömür ve daha az aşınma sağlar."
+          }
+        }
+      ]
+    },
+
+    {
+      "id": "R_PRIORITY_SPEED_RECOMMENDATION",
+      "when": {
+        "all": [
+          { "eq": ["user_priority", "SPEED"] },
+          { "exists": ["tooth_pitch"] }
+        ]
+      },
+      "then": [
+        {
+          "append_warning_if": {
+            "cond": { "eq": ["user_priority", "SPEED"] },
+            "message": "Hız öncelikli kesim: Düşük TPI ve yüksek ilerleme kullanın. Mevcut TPI: {tooth_pitch}. Soğutma kullanımı şiddetle tavsiye edilir."
+          }
+        }
+      ]
+    },
+
+    {
+      "id": "R_PRIORITY_LONGEVITY_RECOMMENDATION",
+      "when": {
+        "all": [
+          { "eq": ["user_priority", "LONGEVITY"] },
+          { "exists": ["tooth_pitch"] }
+        ]
+      },
+      "then": [
+        {
+          "append_warning_if": {
+            "cond": { "eq": ["user_priority", "LONGEVITY"] },
+            "message": "Uzun ömür öncelikli: Orta TPI, düşük ilerleme ve mutlaka soğutma kullanın. Bıçak ömrü 2-3 kat artabilir."
+          }
+        }
+      ]
+    },
+
+    {
+      "id": "R_PRIORITY_BALANCED_DEFAULT",
+      "when": {
+        "all": [
+          { "not": { "exists": ["user_priority"] } },
+          { "exists": ["tooth_pitch"] }
+        ]
+      },
+      "then": [
+        { "set": ["user_priority", "BALANCED"] }
+      ]
+    },
+
+    {
+      "id": "R_SURFACE_FINE_HIGH_TPI",
+      "when": {
+        "all": [
+          { "eq": ["surface_finish_requirement", "FINE"] },
+          { "exists": ["tooth_pitch"] }
+        ]
+      },
+      "then": [
+        {
+          "append_warning_if": {
+            "cond": { "eq": ["surface_finish_requirement", "FINE"] },
+            "message": "İnce yüzey kalitesi için yüksek TPI (18/24 veya üzeri) ve düşük ilerleme kullanın. Mevcut TPI: {tooth_pitch}."
+          }
+        }
+      ]
+    },
+
+    {
+      "id": "R_SURFACE_ROUGH_LOW_TPI",
+      "when": {
+        "all": [
+          { "eq": ["surface_finish_requirement", "ROUGH"] },
+          { "exists": ["tooth_pitch"] }
+        ]
+      },
+      "then": [
+        {
+          "append_warning_if": {
+            "cond": { "eq": ["surface_finish_requirement", "ROUGH"] },
+            "message": "Kaba yüzey yeterli ise düşük TPI (4/6 veya 6/10) ile hızlı kesim yapılabilir. Mevcut TPI: {tooth_pitch}."
+          }
+        }
+      ]
+    },
+
+    {
+      "id": "R_SURFACE_STANDARD_DEFAULT",
+      "when": {
+        "all": [
+          { "not": { "exists": ["surface_finish_requirement"] } },
+          { "exists": ["tooth_pitch"] }
+        ]
+      },
+      "then": [
+        { "set": ["surface_finish_requirement", "STANDARD"] }
+      ]
+    },
+
+    {
+      "id": "R_CUTTING_SPEED_CARBON_STEEL",
+      "when": {
+        "all": [
+          { "eq": ["material_family", "CARBON_STEEL"] },
+          { "exists": ["tooth_pitch"] }
+        ]
+      },
+      "then": [
+        {
+          "map": [
+            "recommended_cutting_speed_m_min",
+            "tooth_pitch",
+            {
+              "4/6": 60,
+              "5/8": 55,
+              "6/10": 50,
+              "8/12": 45,
+              "10/14": 40,
+              "14/18": 35,
+              "18/24": 30,
+              "24/32": 25,
+              "__default": 40
+            }
+          ]
+        }
+      ]
+    },
+
+    {
+      "id": "R_CUTTING_SPEED_STAINLESS",
+      "when": {
+        "all": [
+          { "eq": ["material_family", "STAINLESS"] },
+          { "exists": ["tooth_pitch"] }
+        ]
+      },
+      "then": [
+        {
+          "map": [
+            "recommended_cutting_speed_m_min",
+            "tooth_pitch",
+            {
+              "4/6": 40,
+              "5/8": 35,
+              "6/10": 30,
+              "8/12": 28,
+              "10/14": 25,
+              "14/18": 22,
+              "18/24": 20,
+              "24/32": 18,
+              "__default": 25
+            }
+          ]
+        }
+      ]
+    },
+
+    {
+      "id": "R_CUTTING_SPEED_ALUMINUM",
+      "when": {
+        "all": [
+          { "eq": ["material_family", "ALUMINUM"] },
+          { "exists": ["tooth_pitch"] }
+        ]
+      },
+      "then": [
+        {
+          "map": [
+            "recommended_cutting_speed_m_min",
+            "tooth_pitch",
+            {
+              "4/6": 120,
+              "5/8": 110,
+              "6/10": 100,
+              "8/12": 90,
+              "10/14": 80,
+              "14/18": 70,
+              "18/24": 60,
+              "24/32": 50,
+              "__default": 80
+            }
+          ]
+        }
+      ]
+    },
+
+    {
+      "id": "R_CUTTING_SPEED_CAST_IRON",
+      "when": {
+        "all": [
+          { "eq": ["material_family", "CAST_IRON"] },
+          { "exists": ["tooth_pitch"] }
+        ]
+      },
+      "then": [
+        {
+          "map": [
+            "recommended_cutting_speed_m_min",
+            "tooth_pitch",
+            {
+              "4/6": 50,
+              "5/8": 45,
+              "6/10": 40,
+              "8/12": 35,
+              "10/14": 30,
+              "14/18": 28,
+              "18/24": 25,
+              "24/32": 22,
+              "__default": 35
+            }
+          ]
+        }
+      ]
+    },
+
+    {
+      "id": "R_CUTTING_SPEED_MIXED",
+      "when": {
+        "all": [
+          { "eq": ["material_family", "MIXED"] },
+          { "exists": ["tooth_pitch"] }
+        ]
+      },
+      "then": [
+        {
+          "map": [
+            "recommended_cutting_speed_m_min",
+            "tooth_pitch",
+            {
+              "4/6": 45,
+              "5/8": 42,
+              "6/10": 40,
+              "8/12": 35,
+              "10/14": 32,
+              "14/18": 28,
+              "18/24": 25,
+              "24/32": 22,
+              "__default": 35
+            }
+          ]
+        }
+      ]
+    },
+
+    {
+      "id": "R_BLADE_LIFE_ESTIMATION",
+      "when": {
+        "all": [
+          { "exists": ["material_family"] },
+          { "exists": ["coolant"] },
+          { "exists": ["blade_type"] }
+        ]
+      },
+      "then": [
+        {
+          "map": [
+            "estimated_blade_life_meters",
+            "material_family",
+            {
+              "CARBON_STEEL": 5000,
+              "ALUMINUM": 8000,
+              "STAINLESS": 3000,
+              "CAST_IRON": 4000,
+              "MIXED": 3500,
+              "__default": 3000
+            }
+          ]
+        },
+        {
+          "append_warning_if": {
+            "cond": { "eq": ["coolant", "NO"] },
+            "message": "Soğutmasız kesimde bıçak ömrü %40-60 azalabilir. Tahmini ömür: {estimated_blade_life_meters} metre (soğutmalı ile)."
+          }
+        },
+        {
+          "append_warning_if": {
+            "cond": { "all": [
+              { "eq": ["coolant", "YES"] },
+              { "exists": ["estimated_blade_life_meters"] }
+            ]},
+            "message": "Tahmini bıçak ömrü (optimal koşullarda): {estimated_blade_life_meters} metre. Gerçek ömür kesim koşullarına göre değişebilir."
+          }
+        }
+      ]
+    },
+
+    {
+      "__comment": "ANSİKLOPEDİ KURALLARI - Yeni bıçak alıştırma (run-in) uyarısı",
+      "id": "R_NEW_BLADE_RUN_IN_RECOMMENDATION",
+      "when": {
+        "all": [
+          { "exists": ["blade_type"] },
+          { "exists": ["sku"] }
+        ]
+      },
+      "then": [
+        { "set": ["run_in_required", true] },
+        { "set": ["run_in_speed_percent", 70] },
+        { "set": ["run_in_feed_percent", 50] },
+        { "set": ["run_in_area_cm2", 500] }
+      ]
+    },
+
+    {
+      "__comment": "ANSİKLOPEDİ - Titanyum ve nikel alaşımları özel uyarısı",
+      "id": "R_TITANIUM_NICKEL_SPECIAL_WARNING",
+      "when": {
+        "all": [
+          { "eq": ["material_family", "TITANIUM_NICKEL"] }
+        ]
+      },
+      "then": [
+        { "set": ["blade_type", "CARBIDE_TIPPED"] },
+        {
+          "append_warning": "Titanyum/Nikel alaşımları şerit testerenin sınırlarını zorlar. Çok düşük hız (10-30 m/dk), kararlı besleme ve yüksek sıcaklık direnci olan bıçak kullanın. Sabırsız hız artırımı ani bıçak kaybına neden olabilir."
+        }
+      ]
+    },
+
+    {
+      "__comment": "ANSİKLOPEDİ - Paslanmaz çelik iş sertleşmesi uyarısı",
+      "id": "R_STAINLESS_WORK_HARDENING_WARNING",
+      "when": {
+        "all": [
+          { "eq": ["material_family", "STAINLESS"] },
+          { "exists": ["tooth_pitch"] }
+        ]
+      },
+      "then": [
+        {
+          "append_warning": "Paslanmaz çelikler kesim sırasında iş sertleşmesi gösterir. Kesintisiz ve sabit besleme zorunludur. İlk temas hatası anında diş kırılmasına neden olabilir."
+        }
+      ]
+    },
+
+    {
+      "__comment": "ANSİKLOPEDİ - Alüminyum talaş yapışması uyarısı",
+      "id": "R_ALUMINUM_CHIP_ADHESION_WARNING",
+      "when": {
+        "all": [
+          { "eq": ["material_family", "ALUMINUM"] },
+          { "exists": ["tooth_pitch"] }
+        ]
+      },
+      "then": [
+        {
+          "append_warning": "Alüminyum kesiminde talaş yapışması riski yüksektir. Yüksek hız (80-120 m/dk), düşük-orta besleme ve etkin soğutma/talaş tahliyesi zorunludur. Yetersiz soğutma diş dolgusuna ve dalgalı yüzeye neden olur."
+        }
+      ]
+    },
+
+    {
+      "__comment": "ANSİKLOPEDİ - Boru/Profil ilk temas uyarısı",
+      "id": "R_PIPE_PROFILE_FIRST_CONTACT_WARNING",
+      "when": {
+        "all": [
+          { "eq": ["part_type", "PROFILE"] },
+          { "exists": ["tooth_pitch"] }
+        ]
+      },
+      "then": [
+        {
+          "append_warning": "Boru ve profil kesimlerinde ilk temas noktasında ani şok yük oluşur. Beslemeyi girişte minimum tutun ve değişken TPI kullanımını tercih edin. Boşluk-dolu geçişleri diş kırılmasını tetikleyebilir."
+        }
+      ]
+    },
+
+    {
+      "__comment": "ANSİKLOPEDİ - Kalın kesit düşük TPI uyarısı (>100mm)",
+      "id": "R_THICK_SECTION_LOW_TPI_RECOMMENDATION",
+      "when": {
+        "all": [
+          { "eq": ["part_type", "SOLID"] },
+          { "any": [
+            { "eq": ["solid_max_diameter_bucket", "D4"] },
+            { "eq": ["solid_max_diameter_bucket", "D5"] }
+          ]}
+        ]
+      },
+      "then": [
+        {
+          "append_warning": "Büyük kesitlerde (>100mm) düşük TPI tercih edin. Yüksek TPI ile kalın kesitte diş başına aşırı yük biner ve diş kökü yorulması riski artar. Önerilen TPI: 3/6 veya 4/6."
+        }
+      ]
+    },
+
+    {
+      "__comment": "ANSİKLOPEDİ - Yüksek karbonlu çelik ısı riski uyarısı",
+      "id": "R_HIGH_CARBON_STEEL_HEAT_WARNING",
+      "when": {
+        "all": [
+          { "eq": ["material_family", "CARBON_STEEL"] },
+          { "eq": ["coolant", "NO"] }
+        ]
+      },
+      "then": [
+        {
+          "append_warning": "Yüksek karbonlu çeliklerde soğutmasız kesim ısı riskini artırır. Düşük hız (40-55 m/dk), kontrollü besleme kullanın. Isıya bağlı diş körelmesi ve diş kökü aşınması riski vardır."
+        }
+      ]
+    },
+
+    {
+      "__comment": "ANSİKLOPEDİ - Açılı kesim etkin kalınlık uyarısı",
+      "id": "R_MITRE_CUT_EFFECTIVE_THICKNESS_WARNING",
+      "when": {
+        "all": [
+          { "eq": ["cut_type", "MITRE"] }
+        ]
+      },
+      "then": [
+        {
+          "append_warning": "Açılı (mitre) kesimlerde görünen et kalınlığı gerçek yükü yansıtmaz. 45° kesimde etkin kalınlık yaklaşık %140 artar. Daha kaba TPI kullanın ve ilk temasta yavaş ilerleyin."
+        }
+      ]
+    },
+
+    {
+      "id": "R_FINAL_CONFIDENCE_IF_NOT_ASSUMED",
+      "when": { "all": [{ "exists": ["sku"] }, { "not": { "eq": ["confidence", "MEDIUM_ASSUMED"] } }] },
+      "then": [{ "set": ["confidence", "HIGH"] }]
+    }
+  ],
+
+  "__comment_test_scenarios": "Otomatik test senaryoları.",
+  "test_scenarios": [
+    {
+      "name": "Standart karbon çelik profil kesimi (happy path)",
+      "inputs": {
+        "material_category": "METAL",
+        "metal_family": "CARBON_STEEL",
+        "metal_part_type": "PROFILE",
+        "profile_wall_thickness_bucket": "T3",
+        "machine_class": "M2",
+        "blade_length_mm": 2240,
+        "coolant": "YES"
+      },
+      "expected_outputs": {
+        "blade_type": "BI_METAL_M42_FLEXBACK",
+        "tooth_pitch": "8/12",
+        "blade_width_mm": 16,
+        "blade_thickness_mm": 0.9,
+        "sku": "16-0.90-8/12-2240",
+        "confidence": "HIGH",
+        "warnings_count": 0
+      }
+    },
+
+    {
+      "name": "Bilinmeyen metal türü - varsayım senaryosu (assumed)",
+      "inputs": {
+        "material_category": "METAL",
+        "metal_family": "UNKNOWN",
+        "metal_part_type": "PROFILE",
+        "profile_wall_thickness_bucket": "T4",
+        "machine_class": "M2",
+        "blade_length_mm": 2750,
+        "coolant": "NO"
+      },
+      "expected_outputs": {
+        "blade_type": "BI_METAL_M42_FLEXBACK",
+        "tooth_pitch": "6/10",
+        "material_family": "MIXED",
+        "confidence": "MEDIUM_ASSUMED",
+        "warnings_count": 3
+      },
+      "__comment": "UNKNOWN metal becomes MIXED (safe default) with 3 warnings (metal unknown + coolant + blade life)"
+    },
+
+    {
+      "name": "Minimum bilgi - maksimum varsayım (satış modu)",
+      "inputs": {
+        "material_category": "METAL",
+        "metal_family": "UNKNOWN",
+        "metal_part_type": "UNKNOWN",
+        "profile_wall_thickness_bucket": "UNKNOWN",
+        "machine_class": "UNKNOWN",
+        "blade_length_mm": 1640,
+        "coolant": "UNKNOWN"
+      },
+      "expected_outputs": {
+        "material_family": "MIXED",
+        "part_type": "MIXED",
+        "blade_width_mm": 16,
+        "blade_thickness_mm": 0.9,
+        "confidence": "MEDIUM_ASSUMED"
+      },
+      "__comment": "Minimal info: both material and part_type stay MIXED (safest when no info available)"
+    },
+
+    {
+      "name": "Paslanmaz profil kesimi (MVP happy path)",
+      "inputs": {
+        "material_category": "METAL",
+        "metal_family": "STAINLESS",
+        "metal_part_type": "PROFILE",
+        "profile_wall_thickness_bucket": "T2",
+        "machine_class": "M2",
+        "blade_length_mm": 2750,
+        "coolant": "YES"
+      },
+      "expected_outputs": {
+        "material_family": "STAINLESS",
+        "part_type": "PROFILE",
+        "blade_type": "BI_METAL_M51",
+        "tooth_pitch": "10/14",
+        "blade_width_mm": 16,
+        "blade_thickness_mm": 0.9,
+        "confidence": "HIGH"
+      }
+    },
+
+    {
+      "name": "Makine sınıfı bilinmiyor (uyarı üretmeli)",
+      "inputs": {
+        "material_category": "METAL",
+        "metal_family": "CARBON_STEEL",
+        "metal_part_type": "PROFILE",
+        "profile_wall_thickness_bucket": "T3",
+        "machine_class": "UNKNOWN",
+        "blade_length_mm": 2240,
+        "coolant": "YES"
+      },
+      "expected_outputs": {
+        "tooth_pitch": "8/12",
+        "blade_width_mm": 16,
+        "blade_thickness_mm": 0.9,
+        "sku": "16-0.90-8/12-2240",
+        "confidence": "HIGH",
+        "warnings_count": 2
+      },
+      "expected_warnings": [
+        "Makine sınıfı bilinmediği için güvenli varsayılan genişlik/kalınlık (16 / 0.90) seçildi.",
+        "Bıçak kalınlığının makinenizin kasnak çapına uygunluğunu kontrol ediniz."
+      ],
+      "__comment": "Machine UNKNOWN still produces HIGH confidence recommendation (valid SKU) but with warnings"
+    },
+
+    {
+      "name": "Alüminyum profil kesimi (happy path)",
+      "inputs": {
+        "material_category": "METAL",
+        "metal_family": "ALUMINUM",
+        "metal_part_type": "PROFILE",
+        "profile_wall_thickness_bucket": "T3",
+        "machine_class": "M2",
+        "blade_length_mm": 2240,
+        "coolant": "YES"
+      },
+      "expected_outputs": {
+        "material_family": "ALUMINUM",
+        "part_type": "PROFILE",
+        "blade_type": "BI_METAL_M42_FLEXBACK",
+        "tooth_pitch": "10/14",
+        "blade_width_mm": 16,
+        "blade_thickness_mm": 0.9,
+        "sku": "16-0.90-10/14-2240",
+        "confidence": "HIGH",
+        "warnings_count": 0
+      },
+      "__comment": "Alüminyum yumuşak olduğu için daha yüksek TPI kullanılır"
+    },
+
+    {
+      "name": "Alüminyum soğutmasız kesim (uyarı üretmeli)",
+      "inputs": {
+        "material_category": "METAL",
+        "metal_family": "ALUMINUM",
+        "metal_part_type": "PROFILE",
+        "profile_wall_thickness_bucket": "T4",
+        "machine_class": "M2",
+        "blade_length_mm": 2750,
+        "coolant": "NO"
+      },
+      "expected_outputs": {
+        "tooth_pitch": "8/12",
+        "confidence": "HIGH",
+        "warnings_count": 2
+      }
+    },
+
+    {
+      "name": "Döküm profil kesimi (happy path)",
+      "inputs": {
+        "material_category": "METAL",
+        "metal_family": "CAST_IRON",
+        "metal_part_type": "PROFILE",
+        "profile_wall_thickness_bucket": "T3",
+        "machine_class": "M3",
+        "blade_length_mm": 3660,
+        "coolant": "YES"
+      },
+      "expected_outputs": {
+        "material_family": "CAST_IRON",
+        "part_type": "PROFILE",
+        "blade_type": "BI_METAL_M42_FLEXBACK",
+        "tooth_pitch": "6/10",
+        "blade_width_mm": 27,
+        "blade_thickness_mm": 1.1,
+        "sku": "27-1.10-6/10-3660",
+        "confidence": "HIGH",
+        "warnings_count": 0
+      },
+      "__comment": "Döküm sert olduğu için daha düşük TPI kullanılır"
+    },
+
+    {
+      "name": "Döküm kuru kesim (toz uyarısı)",
+      "inputs": {
+        "material_category": "METAL",
+        "metal_family": "CAST_IRON",
+        "metal_part_type": "PROFILE",
+        "profile_wall_thickness_bucket": "T5",
+        "machine_class": "M2",
+        "blade_length_mm": 2240,
+        "coolant": "NO"
+      },
+      "expected_outputs": {
+        "tooth_pitch": "4/6",
+        "confidence": "HIGH",
+        "warnings_count": 2
+      }
+    },
+
+    {
+      "name": "Karışık metal kesimi (güvenli varsayılanlar)",
+      "inputs": {
+        "material_category": "METAL",
+        "metal_family": "MIXED",
+        "metal_part_type": "PROFILE",
+        "profile_wall_thickness_bucket": "T4",
+        "machine_class": "M2",
+        "blade_length_mm": 2240,
+        "coolant": "YES"
+      },
+      "expected_outputs": {
+        "material_family": "MIXED",
+        "part_type": "PROFILE",
+        "blade_type": "BI_METAL_M42_FLEXBACK",
+        "tooth_pitch": "6/10",
+        "blade_width_mm": 16,
+        "blade_thickness_mm": 0.9,
+        "sku": "16-0.90-6/10-2240",
+        "confidence": "MEDIUM_ASSUMED",
+        "warnings_count": 0
+      },
+      "__comment": "MIXED metal explicitly chosen: MEDIUM_ASSUMED confidence (exact material not known), no extra warnings"
+    },
+
+    {
+      "name": "Karbon çelik dolu kesim - orta çap (SOLID happy path)",
+      "inputs": {
+        "material_category": "METAL",
+        "metal_family": "CARBON_STEEL",
+        "metal_part_type": "SOLID",
+        "solid_max_diameter_bucket": "D2",
+        "machine_class": "M2",
+        "blade_length_mm": 2240,
+        "coolant": "YES"
+      },
+      "expected_outputs": {
+        "material_family": "CARBON_STEEL",
+        "part_type": "SOLID",
+        "blade_type": "BI_METAL_M42_FLEXBACK",
+        "tooth_pitch": "8/12",
+        "blade_width_mm": 16,
+        "blade_thickness_mm": 0.9,
+        "sku": "16-0.90-8/12-2240",
+        "confidence": "HIGH",
+        "warnings_count": 0
+      },
+      "__comment": "SOLID için ilk test - 50-100mm çap aralığı"
+    },
+
+    {
+      "name": "Alüminyum kalın dolu çubuk - uyarı ile (SOLID)",
+      "inputs": {
+        "material_category": "METAL",
+        "metal_family": "ALUMINUM",
+        "metal_part_type": "SOLID",
+        "solid_max_diameter_bucket": "D4",
+        "machine_class": "M3",
+        "blade_length_mm": 3660,
+        "coolant": "YES"
+      },
+      "expected_outputs": {
+        "material_family": "ALUMINUM",
+        "part_type": "SOLID",
+        "blade_type": "BI_METAL_M42_FLEXBACK",
+        "tooth_pitch": "6/10",
+        "blade_width_mm": 27,
+        "blade_thickness_mm": 1.1,
+        "sku": "27-1.10-6/10-3660",
+        "confidence": "HIGH",
+        "warnings_count": 1
+      },
+      "expected_warnings": [
+        "Kalın dolu malzeme (>150mm) keserken ilerlemeyi azaltın ve kesimde ara verin (ısınmayı önlemek için)."
+      ],
+      "__comment": "Kalın dolu malzeme uyarısı testi"
+    },
+
+    {
+      "name": "Döküm dolu kesim - çap bilinmiyor",
+      "inputs": {
+        "material_category": "METAL",
+        "metal_family": "CAST_IRON",
+        "metal_part_type": "SOLID",
+        "solid_max_diameter_bucket": "UNKNOWN",
+        "machine_class": "M2",
+        "blade_length_mm": 2240,
+        "coolant": "NO"
+      },
+      "expected_outputs": {
+        "material_family": "CAST_IRON",
+        "part_type": "SOLID",
+        "tooth_pitch": "5/8",
+        "confidence": "HIGH",
+        "warnings_count": 3
+      },
+      "__comment": "UNKNOWN çap + soğutmasız kesim üç uyarı üretir (unknown diameter + toz + blade life)"
+    },
+
+    {
+      "name": "Karbon çelik orta kalınlıkta sac (SHEET happy path)",
+      "inputs": {
+        "material_category": "METAL",
+        "metal_family": "CARBON_STEEL",
+        "metal_part_type": "SHEET",
+        "sheet_thickness_bucket": "S2",
+        "machine_class": "M2",
+        "blade_length_mm": 2240,
+        "coolant": "YES"
+      },
+      "expected_outputs": {
+        "material_family": "CARBON_STEEL",
+        "part_type": "SHEET",
+        "blade_type": "BI_METAL_M42_FLEXBACK",
+        "tooth_pitch": "14/18",
+        "blade_width_mm": 16,
+        "blade_thickness_mm": 0.9,
+        "sku": "16-0.90-14/18-2240",
+        "confidence": "HIGH",
+        "warnings_count": 0
+      },
+      "__comment": "SHEET için ilk test - 1-3mm kalınlık aralığı, ince sac için yüksek TPI"
+    },
+
+    {
+      "name": "Alüminyum çok ince sac - uyarı ile (SHEET)",
+      "inputs": {
+        "material_category": "METAL",
+        "metal_family": "ALUMINUM",
+        "metal_part_type": "SHEET",
+        "sheet_thickness_bucket": "S1",
+        "machine_class": "M2",
+        "blade_length_mm": 2240,
+        "coolant": "YES"
+      },
+      "expected_outputs": {
+        "material_family": "ALUMINUM",
+        "part_type": "SHEET",
+        "blade_type": "BI_METAL_M42_FLEXBACK",
+        "tooth_pitch": "24/32",
+        "blade_width_mm": 16,
+        "blade_thickness_mm": 0.9,
+        "sku": "16-0.90-24/32-2240",
+        "confidence": "HIGH",
+        "warnings_count": 1
+      },
+      "expected_warnings": [
+        "Çok ince sac (<1mm) keserken düşük ilerleme ve hafif baskı kullanın. Malzeme titreşimi önlemek için destek kullanmanız önerilir."
+      ],
+      "__comment": "Çok ince sac uyarısı testi - alüminyum yumuşak olduğu için en yüksek TPI (24/32)"
+    },
+
+    {
+      "name": "Paslanmaz kalın sac - soğutmasız kesim (SHEET)",
+      "inputs": {
+        "material_category": "METAL",
+        "metal_family": "STAINLESS",
+        "metal_part_type": "SHEET",
+        "sheet_thickness_bucket": "S5",
+        "machine_class": "M3",
+        "blade_length_mm": 3660,
+        "coolant": "NO"
+      },
+      "expected_outputs": {
+        "material_family": "STAINLESS",
+        "part_type": "SHEET",
+        "blade_type": "BI_METAL_M51",
+        "tooth_pitch": "6/10",
+        "blade_width_mm": 27,
+        "blade_thickness_mm": 1.1,
+        "sku": "27-1.10-6/10-3660",
+        "confidence": "HIGH",
+        "warnings_count": 2
+      },
+      "__comment": "Kalın paslanmaz sac (>10mm) soğutmasız kesimde 2 uyarı (paslanmaz ısı + blade life)"
+    },
+
+    {
+      "name": "Yumuşak alüminyum - sertlik optimizasyonu (QUALITY)",
+      "inputs": {
+        "material_category": "METAL",
+        "metal_family": "ALUMINUM",
+        "metal_part_type": "PROFILE",
+        "profile_wall_thickness_bucket": "T2",
+        "material_hardness": "SOFT",
+        "machine_class": "M2",
+        "blade_length_mm": 2240,
+        "coolant": "YES"
+      },
+      "expected_outputs": {
+        "material_family": "ALUMINUM",
+        "part_type": "PROFILE",
+        "blade_type": "BI_METAL_M42_FLEXBACK",
+        "confidence": "HIGH",
+        "warnings_count": 1
+      },
+      "__comment": "Yumuşak malzeme için TPI artırma önerisi verir (uyarı)"
+    },
+
+    {
+      "name": "Sert paslanmaz - sertlik uyarısı (QUALITY)",
+      "inputs": {
+        "material_category": "METAL",
+        "metal_family": "STAINLESS",
+        "metal_part_type": "SOLID",
+        "solid_max_diameter_bucket": "D4",
+        "material_hardness": "HARD",
+        "machine_class": "M3",
+        "blade_length_mm": 3660,
+        "coolant": "YES"
+      },
+      "expected_outputs": {
+        "material_family": "STAINLESS",
+        "part_type": "SOLID",
+        "blade_type": "BI_METAL_M51",
+        "confidence": "HIGH",
+        "warnings_count": 2
+      },
+      "__comment": "Sert malzeme için TPI azaltma + blade upgrade önerisi"
+    },
+
+    {
+      "name": "Hız öncelikli kesim (PERFORMANCE)",
+      "inputs": {
+        "material_category": "METAL",
+        "metal_family": "CARBON_STEEL",
+        "metal_part_type": "PROFILE",
+        "profile_wall_thickness_bucket": "T3",
+        "user_priority": "SPEED",
+        "machine_class": "M2",
+        "blade_length_mm": 2240,
+        "coolant": "YES"
+      },
+      "expected_outputs": {
+        "material_family": "CARBON_STEEL",
+        "part_type": "PROFILE",
+        "blade_type": "BI_METAL_M42_FLEXBACK",
+        "tooth_pitch": "8/12",
+        "user_priority": "SPEED",
+        "confidence": "HIGH",
+        "warnings_count": 1
+      },
+      "__comment": "SPEED önceliği düşük TPI ve yüksek ilerleme önerir"
+    },
+
+    {
+      "name": "Uzun ömür öncelikli kesim (PERFORMANCE)",
+      "inputs": {
+        "material_category": "METAL",
+        "metal_family": "STAINLESS",
+        "metal_part_type": "PROFILE",
+        "profile_wall_thickness_bucket": "T2",
+        "user_priority": "LONGEVITY",
+        "machine_class": "M2",
+        "blade_length_mm": 2240,
+        "coolant": "YES"
+      },
+      "expected_outputs": {
+        "material_family": "STAINLESS",
+        "part_type": "PROFILE",
+        "blade_type": "BI_METAL_M51",
+        "tooth_pitch": "10/14",
+        "user_priority": "LONGEVITY",
+        "confidence": "HIGH",
+        "warnings_count": 1
+      },
+      "__comment": "LONGEVITY önceliği orta TPI ve düşük ilerleme önerir"
+    },
+
+    {
+      "name": "İnce yüzey kalitesi gereksinimi (SURFACE)",
+      "inputs": {
+        "material_category": "METAL",
+        "metal_family": "ALUMINUM",
+        "metal_part_type": "SHEET",
+        "sheet_thickness_bucket": "S2",
+        "surface_finish_requirement": "FINE",
+        "machine_class": "M2",
+        "blade_length_mm": 2240,
+        "coolant": "YES"
+      },
+      "expected_outputs": {
+        "material_family": "ALUMINUM",
+        "part_type": "SHEET",
+        "blade_type": "BI_METAL_M42_FLEXBACK",
+        "tooth_pitch": "18/24",
+        "surface_finish_requirement": "FINE",
+        "confidence": "HIGH",
+        "warnings_count": 1
+      },
+      "__comment": "FINE yüzey için yüksek TPI önerisi"
+    }
+  ],
+
+  "__comment_new_operators_test": "Yeni operatörler için test kuralları: gt, lt, gte, lte, range, contains, in, regex",
+  "test_rules_for_new_operators": [
+    {
+      "id": "TEST_GT_OPERATOR",
+      "description": "Test greater than operator - thickness > 1.27",
+      "when": { "gt": ["blade_thickness_mm", 1.27] },
+      "then": [{ "set": ["confidence", "HIGH"] }],
+      "test_case": { "blade_thickness_mm": 1.6 }
+    },
+    {
+      "id": "TEST_LT_OPERATOR",
+      "description": "Test less than operator - thickness < 1.0",
+      "when": { "lt": ["blade_thickness_mm", 1.0] },
+      "then": [{ "set": ["confidence", "MEDIUM_ASSUMED"] }],
+      "test_case": { "blade_thickness_mm": 0.9 }
+    },
+    {
+      "id": "TEST_GTE_OPERATOR",
+      "description": "Test greater than or equal - width >= 25",
+      "when": { "gte": ["blade_width_mm", 25] },
+      "then": [{ "set": ["blade_type", "BIMETAL"] }],
+      "test_case": { "blade_width_mm": 25 }
+    },
+    {
+      "id": "TEST_LTE_OPERATOR",
+      "description": "Test less than or equal - tpi <= 10",
+      "when": { "lte": ["tooth_pitch", 10] },
+      "then": [{ "set": ["set_type", "FINE"] }],
+      "test_case": { "tooth_pitch": 8 }
+    },
+    {
+      "id": "TEST_RANGE_OPERATOR",
+      "description": "Test range operator - blade_width_mm between 20 and 35",
+      "when": { "range": ["blade_width_mm", 20, 35] },
+      "then": [{ "set": ["confidence", "HIGH"] }],
+      "test_case": { "blade_width_mm": 27 }
+    },
+    {
+      "id": "TEST_CONTAINS_OPERATOR",
+      "description": "Test contains operator - material contains 'STEEL'",
+      "when": { "contains": ["material_family", "STEEL"] },
+      "then": [{ "set": ["coolant", "OIL"] }],
+      "test_case": { "material_family": "CARBON_STEEL" }
+    },
+    {
+      "id": "TEST_IN_OPERATOR",
+      "description": "Test in operator - material in list",
+      "when": { "in": ["material_family", ["ALUMINUM", "STAINLESS"]] },
+      "then": [{ "set": ["coolant", "WATER_BASED"] }],
+      "test_case": { "material_family": "ALUMINUM" }
+    },
+    {
+      "id": "TEST_REGEX_OPERATOR",
+      "description": "Test regex operator - sku matches pattern",
+      "when": { "regex": ["sku", "^[A-Z]{2}\\d{3}"] },
+      "then": [{ "set": ["confidence", "HIGH"] }],
+      "test_case": { "sku": "AB123XYZ" }
+    },
+    {
+      "id": "TEST_COMPLEX_OPERATORS",
+      "description": "Test combining multiple new operators",
+      "when": {
+        "all": [
+          { "range": ["blade_thickness_mm", 1.0, 2.0] },
+          { "gte": ["blade_width_mm", 20] },
+          { "in": ["material_family", ["CARBON_STEEL", "STAINLESS"]] }
+        ]
+      },
+      "then": [{ "set": ["confidence", "HIGH"] }],
+      "test_case": {
+        "blade_thickness_mm": 1.4,
+        "blade_width_mm": 25,
+        "material_family": "CARBON_STEEL"
+      }
+    }
+  ],
+
+  "__comment_output_contract": "Nihai çıktının tamamlanma koşulu.",
+  "output_contract": {
+    "required_for_final_product": [
+      "blade_type",
+      "blade_width_mm",
+      "blade_thickness_mm",
+      "tooth_pitch",
+      "blade_length_mm",
+      "sku",
+      "tooth_geometry",
+      "set_type",
+      "disclaimer"
+    ],
+    "final_when": {
+      "all": [
+        { "exists": ["sku"] },
+        {
+          "any": [
+            { "eq": ["confidence", "HIGH"] },
+            { "eq": ["confidence", "MEDIUM_ASSUMED"] }
+          ]
+        }
+      ]
+    }
+  }
+}

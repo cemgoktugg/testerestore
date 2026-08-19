@@ -1,0 +1,20 @@
+# Production bağımlılıkları — sadece koda gerçekten import edilenler.
+#
+# requirements.txt (geliştirme dosyası) bilerek ellenmedi. Aradaki fark:
+#   ATILDI  : torch, sentence-transformers, langchain, redis, fastapi,
+#             uvicorn, python-multipart, pydantic-settings,
+#             python-json-logger, pytest* → hiçbiri import edilmiyor
+#   EKLENDİ : flask, flask-cors (web/app.py import ediyor ama listede yoktu),
+#             gunicorn (production WSGI sunucusu)
+# Sonuç: imaj ~3 GB yerine ~500 MB.
+
+flask>=3.0.0
+flask-cors>=4.0.0
+gunicorn>=21.2.0
+
+openai==1.6.1
+chromadb>=0.5.0
+tiktoken>=0.5.0
+pypdf>=3.17.0
+pydantic>=2.10.0
+python-dotenv==1.0.0

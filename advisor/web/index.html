@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Şerit Testere Bıçağı Seçici</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i data-lucide="scissors" class="logo-icon"></i>
+                    <span>Şerit Testere AI</span>
+                </div>
+                <nav class="nav">
+                    <a href="#" class="nav-link active">Ana Sayfa</a>
+                    <a href="#" class="nav-link">Makineler</a>
+                    <a href="#" class="nav-link">Bıçaklar</a>
+                    <a href="#" class="nav-link">Yardım</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main class="main">
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="container">
+                <div class="hero-content">
+                    <div class="hero-text">
+                        <h1 class="hero-title">
+                            AI ile Doğru Şerit Testere Bıçağını
+                            <span class="highlight">Hemen Bulun</span>
+                        </h1>
+                        <p class="hero-description">
+                            4,500+ makine veritabanı ve uzman kurallarla desteklenen yapay zeka sistemi
+                            ile size en uygun bıçağı saniyeler içinde bulur.
+                        </p>
+                        <div class="hero-buttons">
+                            <button class="btn btn-primary" onclick="startChat()">
+                                <i data-lucide="message-circle"></i>
+                                AI ile Sohbet Et
+                            </button>
+                            <button class="btn btn-secondary" onclick="showMachineForm()">
+                                <i data-lucide="search"></i>
+                                Makine Ara
+                            </button>
+                        </div>
+                    </div>
+                    <div class="hero-image">
+                        <div class="feature-cards">
+                            <div class="feature-card">
+                                <i data-lucide="zap" class="feature-icon"></i>
+                                <h3>Anında Sonuç</h3>
+                                <p>AI destekli sistem ile saniyeler içinde doğru bıçağı bulun</p>
+                            </div>
+                            <div class="feature-card">
+                                <i data-lucide="database" class="feature-icon"></i>
+                                <h3>4,500+ Makine</h3>
+                                <p>Geniş veritabanımızda makinenizi mutlaka buluruz</p>
+                            </div>
+                            <div class="feature-card">
+                                <i data-lucide="brain" class="feature-icon"></i>
+                                <h3>Uzman Bilgi</h3>
+                                <p>20 yıllık sektör deneyimini AI ile birleştirdik</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Chat Interface -->
+        <section class="chat-section" id="chatSection" style="display: none;">
+            <div class="container">
+                <div class="chat-container">
+                    <div class="chat-header">
+                        <div class="chat-title">
+                            <i data-lucide="bot" class="chat-bot-icon"></i>
+                            <span>AI Uzmanı ile Konuşun</span>
+                        </div>
+                        <button class="chat-close" onclick="closeChat()">
+                            <i data-lucide="x"></i>
+                        </button>
+                    </div>
+                    <div class="chat-messages" id="chatMessages">
+                        <div class="message bot-message">
+                            <div class="message-avatar">
+                                <i data-lucide="bot"></i>
+                            </div>
+                            <div class="message-content">
+                                <p>Merhaba! Ben şerit testere bıçağı uzmanınızım. Size hangi konuda yardımcı olabilirim?</p>
+                                <ul>
+                                    <li>Makine modelinizi söyleyebilir,</li>
+                                    <li>Keseceğiniz malzemeyi açıklayabilir,</li>
+                                    <li>Ya da sorunuzu doğrudan sorabilirsiniz.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chat-input">
+                        <input type="text" id="chatInput" placeholder="Mesajınızı yazın..." 
+                               onkeypress="handleChatKeyPress(event)">
+                        <button onclick="sendMessage()" class="send-button">
+                            <i data-lucide="send"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Machine Search Form -->
+        <section class="machine-form-section" id="machineFormSection" style="display: none;">
+            <div class="container">
+                <div class="form-container">
+                    <div class="form-header">
+                        <h2>Makine ve Malzeme Bilgileri</h2>
+                        <p>Bilgilerinizi girin, size en uygun bıçağı bulalım</p>
+                        <button class="form-close" onclick="closeMachineForm()">
+                            <i data-lucide="x"></i>
+                        </button>
+                    </div>
+                    <form class="machine-form" id="machineForm">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Makine Markası</label>
+                                <input type="text" id="machineBrand" placeholder="Örn: AMADA, BEHRINGER, KESMAK">
+                            </div>
+                            <div class="form-group">
+                                <label>Makine Modeli</label>
+                                <input type="text" id="machineModel" placeholder="Örn: H-250, HBP-320WG">
+                            </div>
+                            <div class="form-group">
+                                <label>Malzeme Türü</label>
+                                <select id="materialType">
+                                    <option value="">Seçin...</option>
+                                    <option value="çelik">Çelik</option>
+                                    <option value="paslanmaz">Paslanmaz Çelik</option>
+                                    <option value="alüminyum">Alüminyum</option>
+                                    <option value="pirinç">Pirinç</option>
+                                    <option value="bakır">Bakır</option>
+                                    <option value="demir">Döküm</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Malzeme Kalınlığı (mm)</label>
+                                <input type="number" id="materialThickness" placeholder="Örn: 50">
+                            </div>
+                            <div class="form-group">
+                                <label>Kesim Hızı Tercihi</label>
+                                <select id="cuttingSpeed">
+                                    <option value="">Seçin...</option>
+                                    <option value="hızlı">Hızlı Kesim</option>
+                                    <option value="hassas">Hassas Kesim</option>
+                                    <option value="orta">Orta Hız</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Günlük Kullanım</label>
+                                <select id="dailyUsage">
+                                    <option value="">Seçin...</option>
+                                    <option value="az">Az (1-2 saat)</option>
+                                    <option value="orta">Orta (3-6 saat)</option>
+                                    <option value="yoğun">Yoğun (7+ saat)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-buttons">
+                            <button type="submit" class="btn btn-primary">
+                                <i data-lucide="search"></i>
+                                Bıçak Önerisi Al
+                            </button>
+                            <button type="button" class="btn btn-secondary" onclick="clearForm()">
+                                <i data-lucide="refresh-cw"></i>
+                                Temizle
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- Results Section -->
+        <section class="results-section" id="resultsSection" style="display: none;">
+            <div class="container">
+                <div class="results-container">
+                    <div class="results-header">
+                        <h2>Önerilen Şerit Testere Bıçağı</h2>
+                        <button class="results-close" onclick="closeResults()">
+                            <i data-lucide="x"></i>
+                        </button>
+                    </div>
+                    <div id="resultsContent">
+                        <!-- Dinamik olarak doldurulacak -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats Section -->
+        <section class="stats">
+            <div class="container">
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-number">4,515+</div>
+                        <div class="stat-label">Makine Modeli</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">108+</div>
+                        <div class="stat-label">Marka</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">53</div>
+                        <div class="stat-label">Uzman Kuralı</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">%98</div>
+                        <div class="stat-label">Doğruluk Oranı</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Şerit Testere AI</h3>
+                    <p>Profesyonel şerit testere bıçağı seçimi için geliştirilmiş AI destekli platform</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Hızlı Linkler</h4>
+                    <ul>
+                        <li><a href="#">Ana Sayfa</a></li>
+                        <li><a href="#">Makineler</a></li>
+                        <li><a href="#">Bıçaklar</a></li>
+                        <li><a href="#">İletişim</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Destek</h4>
+                    <ul>
+                        <li><a href="#">Yardım Merkezi</a></li>
+                        <li><a href="#">Teknik Destek</a></li>
+                        <li><a href="#">Kurulum Kılavuzu</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Şerit Testere AI. Tüm hakları saklıdır.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

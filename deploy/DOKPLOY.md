@@ -71,7 +71,16 @@ NEXT_PUBLIC_SITE_URL=https://testere.com
 NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY=pk_gecici_sonra_degistir
 NEXT_PUBLIC_DEFAULT_REGION=tr
 NEXT_PUBLIC_DEFAULT_CURRENCY=try
+OPENAI_API_KEY=<şerit testere danışmanı için — sk-proj-...>
 ```
+
+> ⚠️ **Advisor servisi ilk kez ekleniyorsa `Stop → Deploy` şart** (sadece
+> Redeploy yetmez). Yeni servis + iki yeni volume (`advisor_chroma`,
+> `advisor_data`) ancak recreate ile oluşur.
+>
+> İlk açılışta advisor ansiklopediyi bir kez vektör DB'ye indeksler (tek
+> seferlik OpenAI embedding maliyeti). Sonraki deploy'larda `advisor_chroma`
+> volume'ü sayesinde tekrarlanmaz.
 > Dokploy bunları compose'un yanına `.env` olarak yazar; compose `${VAR}` ile okur.
 > `DOMAIN`/`API_DOMAIN` aynı zamanda compose'daki Traefik label'larını besler →
 > domain + SSL otomatik kurulur (ekstra ayar gerekmez).

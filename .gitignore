@@ -11,6 +11,13 @@
 
 # ── Bağımlılıklar ──
 **/node_modules/
+**/.venv/
+**/__pycache__/
+**/*.pyc
+
+# ── Advisor (Rules Engine + RAG) yerel çıktıları ──
+# chroma_db konteynerde volume'de üretilir, repoda durmamalı
+advisor/chroma_db/
 
 # ── Build / cache çıktıları ──
 **/.next/

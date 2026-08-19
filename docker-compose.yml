@@ -127,10 +127,40 @@ services:
       - "traefik.http.routers.testere-web.tls.certResolver=letsencrypt"
       - "traefik.http.services.testere-web.loadbalancer.server.port=3000"
 
+  # ── Şerit Testere Danışmanı (Rules Engine + RAG) ────────────────────────
+  # Mevcut servislerin hiçbirine dokunulmadı; bu tamamen eklenti.
+  #
+  # ÖNEMLİ: bilerek `dokploy-network`e BAĞLANMADI ve traefik label'ı YOK.
+  # Yani internetten doğrudan erişilemez. Tarayıcı bu servise hiç konuşmaz;
+  # storefront kendi /api/advisor proxy'si üzerinden iç ağdan çağırır.
+  # Kazanç: CORS derdi yok, servis URL'i dışarı sızmıyor, /api/chat
+  # (her isteği OpenAI'ye para harcayan uç) internete açık değil.
+  advisor:
+    build:
+      context: ./advisor
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      LLM_MODEL: ${ADVISOR_LLM_MODEL:-gpt-4o}
+      OPENAI_EMBEDDING_MODEL: ${ADVISOR_EMBEDDING_MODEL:-text-embedding-3-small}
+      PORT: "5000"
+      GUNICORN_THREADS: ${ADVISOR_THREADS:-8}
+    volumes:
+      # Vektör indeksi — yeniden build'de embedding faturası tekrar çıkmasın
+      - advisor_chroma:/app/chroma_db
+      # unknown_questions.json / learned_knowledge.json runtime'da yazılıyor;
+      # volume olmazsa her deploy'da öğrenilenler silinir
+      - advisor_data:/app/data
+    networks:
+      - internal
+
 volumes:
   pgdata3:
   redisdata2:
   backend_static:
+  advisor_chroma:
+  advisor_data:
 
 networks:
   internal:

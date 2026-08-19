@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Şerit Testere AI Chat</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f7f7f8;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-header {
+            background: linear-gradient(135deg, #2563eb, #3b82f6);
+            color: white;
+            padding: 1rem 1.5rem;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .chat-header h1 {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .chat-subtitle {
+            font-size: 0.875rem;
+            opacity: 0.9;
+            margin-top: 0.25rem;
+        }
+
+        .chat-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+            background: white;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            min-height: 400px;
+            max-height: calc(100vh - 180px);
+        }
+
+        .message {
+            display: flex;
+            gap: 12px;
+            max-width: 85%;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .message.user {
+            align-self: flex-end;
+            flex-direction: row-reverse;
+        }
+
+        .message.assistant {
+            align-self: flex-start;
+        }
+
+        .message-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .message.user .message-avatar {
+            background: #10b981;
+            color: white;
+        }
+
+        .message.assistant .message-avatar {
+            background: linear-gradient(135deg, #2563eb, #3b82f6);
+            color: white;
+        }
+
+        .message-content {
+            background: #f3f4f6;
+            padding: 0.875rem 1.125rem;
+            border-radius: 18px;
+            line-height: 1.5;
+            word-wrap: break-word;
+        }
+
+        .message.user .message-content {
+            background: linear-gradient(135deg, #2563eb, #3b82f6);
+            color: white;
+        }
+
+        .message.assistant .message-content {
+            background: #f3f4f6;
+            color: #1f2937;
+        }
+
+        .chat-input {
+            padding: 1rem;
+            background: white;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .input-container {
+            display: flex;
+            gap: 0.75rem;
+            align-items: flex-end;
+        }
+
+        .input-wrapper {
+            flex: 1;
+            position: relative;
+        }
+
+        #messageInput {
+            width: 100%;
+            min-height: 44px;
+            max-height: 120px;
+            padding: 12px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 22px;
+            font-size: 1rem;
+            font-family: inherit;
+            resize: none;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        #messageInput:focus {
+            border-color: #2563eb;
+        }
+
+        #messageInput::placeholder {
+            color: #9ca3af;
+        }
+
+        .send-button {
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, #2563eb, #3b82f6);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            transition: transform 0.2s, box-shadow 0.2s;
+            flex-shrink: 0;
+        }
+
+        .send-button:hover:not(:disabled) {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+
+        .send-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .typing-indicator {
+            display: flex;
+            gap: 4px;
+            padding: 1rem;
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #9ca3af;
+            animation: typing 1.4s infinite ease-in-out;
+        }
+
+        .typing-dot:nth-child(1) { animation-delay: -0.32s; }
+        .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+
+        @keyframes typing {
+            0%, 80%, 100% { transform: scale(0.8); opacity: 0.5; }
+            40% { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .welcome-message {
+            text-align: center;
+            padding: 2rem;
+            color: #6b7280;
+        }
+
+        .welcome-message h3 {
+            color: #2563eb;
+            margin-bottom: 0.5rem;
+        }
+
+        .sample-questions {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .sample-question {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.875rem;
+        }
+
+        .sample-question:hover {
+            background: #f8fafc;
+            border-color: #2563eb;
+            transform: translateY(-1px);
+        }
+
+        /* Mobile responsive */
+        @media (max-width: 768px) {
+            .chat-container {
+                height: 100vh;
+                border-radius: 0;
+            }
+            
+            .message {
+                max-width: 90%;
+            }
+            
+            .chat-header {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            <h1>🤖 Şerit Testere AI Uzmanı</h1>
+            <div class="chat-subtitle">Size en uygun bıçağı bulalım</div>
+        </div>
+
+        <div class="chat-messages" id="chatMessages">
+            <div class="welcome-message">
+                <h3>👋 Merhaba!</h3>
+                <p>Ben şerit testere bıçağı uzmanınızım. Size nasıl yardımcı olabilirim?</p>
+                
+                <div class="sample-questions">
+                    <div class="sample-question" onclick="sendSampleQuestion('Şerit testerem çabuk kırılıyor, ömrünü nasıl uzatabilirim?')">
+                        🔧 Bıçak ömrü uzatma
+                    </div>
+                    <div class="sample-question" onclick="sendSampleQuestion('Bıçak önerisi istiyorum')">
+                        ⚙️ Bıçak önerisi al
+                    </div>
+                    <div class="sample-question" onclick="sendSampleQuestion('Run-in prosedürü nasıl yapılır?')">
+                        🚀 Run-in rehberi
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="chat-input">
+            <div class="input-container">
+                <div class="input-wrapper">
+                    <textarea 
+                        id="messageInput" 
+                        placeholder="Mesajınızı yazın... (Örn: AMADA H-250 için bıçak önerisi)"
+                        rows="1"
+                    ></textarea>
+                </div>
+                <button id="sendButton" class="send-button" onclick="sendMessage()">
+                    <span>➤</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let isLoading = false;
+        let sessionId = 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+        const chatMessages = document.getElementById('chatMessages');
+        const messageInput = document.getElementById('messageInput');
+        const sendButton = document.getElementById('sendButton');
+
+        // Auto-resize textarea
+        messageInput.addEventListener('input', function() {
+            this.style.height = '44px';
+            this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+        });
+
+        // Send on Enter (but not Shift+Enter)
+        messageInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+
+        // Send message function
+        async function sendMessage() {
+            const message = messageInput.value.trim();
+            if (!message || isLoading) return;
+
+            // Clear input
+            messageInput.value = '';
+            messageInput.style.height = '44px';
+
+            // Hide welcome message if first message
+            const welcomeMsg = document.querySelector('.welcome-message');
+            if (welcomeMsg) {
+                welcomeMsg.style.display = 'none';
+            }
+
+            // Add user message
+            addMessage(message, 'user');
+
+            // Show typing indicator
+            showTypingIndicator();
+
+            // Send to API
+            try {
+                const response = await sendToAPI(message);
+                hideTypingIndicator();
+                addMessage(response, 'assistant');
+            } catch (error) {
+                hideTypingIndicator();
+                addMessage('Üzgünüm, bir hata oluştu. Lütfen tekrar deneyin.', 'assistant');
+                console.error('API Error:', error);
+            }
+        }
+
+        // Add message to chat
+        function addMessage(content, role) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${role}`;
+            
+            const avatar = document.createElement('div');
+            avatar.className = 'message-avatar';
+            avatar.innerHTML = role === 'user' ? '👤' : '🤖';
+            
+            const messageContent = document.createElement('div');
+            messageContent.className = 'message-content';
+            
+            // Format content with basic HTML support
+            if (role === 'assistant' && content.includes('\n')) {
+                messageContent.innerHTML = content
+                    .replace(/\n\n/g, '</p><p>')
+                    .replace(/\n/g, '<br>')
+                    .replace(/^/, '<p>')
+                    .replace(/$/, '</p>')
+                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                    .replace(/• /g, '• ');
+            } else {
+                messageContent.textContent = content;
+            }
+            
+            messageDiv.appendChild(avatar);
+            messageDiv.appendChild(messageContent);
+            chatMessages.appendChild(messageDiv);
+            
+            // Scroll to bottom
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // Show typing indicator
+        function showTypingIndicator() {
+            isLoading = true;
+            sendButton.disabled = true;
+            
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'message assistant';
+            typingDiv.id = 'typingIndicator';
+            
+            typingDiv.innerHTML = `
+                <div class="message-avatar">🤖</div>
+                <div class="message-content">
+                    <div class="typing-indicator">
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                    </div>
+                </div>
+            `;
+            
+            chatMessages.appendChild(typingDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // Hide typing indicator
+        function hideTypingIndicator() {
+            isLoading = false;
+            sendButton.disabled = false;
+            
+            const typingIndicator = document.getElementById('typingIndicator');
+            if (typingIndicator) {
+                typingIndicator.remove();
+            }
+        }
+
+        // Send sample question
+        function sendSampleQuestion(question) {
+            messageInput.value = question;
+            sendMessage();
+        }
+
+        // Main API call function - calls real backend with session management
+        async function sendToAPI(message) {
+            // Check for reset commands
+            const lowerMessage = message.toLowerCase();
+            if (lowerMessage.includes('baştan') || lowerMessage.includes('yeniden') || lowerMessage.includes('reset')) {
+                // Reset session
+                await resetSession();
+                return `Merhaba! Yeniden başlayalım. 😊
+
+Ben şerit testere uzmanınızım. Size nasıl yardımcı olabilirim?
+
+**🔧 Uzman Olduğum Konular:**
+• Bıçak seçimi ve TPI önerileri
+• Kesim problemleri çözümü
+• Bakım ve run-in prosedürleri
+• Makine ayarları optimizasyonu
+
+Sorununuzu rahatça anlatın, birlikte çözelim! 🚀`;
+            }
+            
+            try {
+                const response = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        message: message,
+                        session_id: sessionId
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Update session ID if provided
+                    if (data.session_id) {
+                        sessionId = data.session_id;
+                    }
+                    return data.response;
+                } else {
+                    console.error('API Error:', data.error);
+                    return `Üzgünüm, bir hata oluştu: ${data.error}`;
+                }
+            } catch (error) {
+                console.error('Fetch error:', error);
+                // Fallback to local response if API fails
+                return getFallbackResponse(message);
+            }
+        }
+        
+        // Reset session
+        async function resetSession() {
+            try {
+                await fetch('/api/chat/reset', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        session_id: sessionId
+                    })
+                });
+                // Generate new session ID
+                sessionId = 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+            } catch (error) {
+                console.error('Reset error:', error);
+            }
+        }
+        
+        // Fallback response when API is unavailable
+        function getFallbackResponse(message) {
+            const lowerMessage = message.toLowerCase();
+            
+            if (lowerMessage.includes('merhaba') || lowerMessage.includes('selam')) {
+                return `Merhaba! 👋 Ben şerit testere uzmanınızım.
+
+Şu anda yapay zeka servisine bağlanılamıyor, ancak yardımcı olmaya çalışacağım.
+
+Ne konuda yardıma ihtiyacınız var?`;
+            }
+            
+            return `Şu anda yapay zeka servisine bağlanılamıyor. 
+
+Lütfen şunları kontrol edin:
+• Backend sunucusu çalışıyor mu? (python web/app.py)
+• OpenAI API anahtarınız doğru mu?
+
+Tekrar denemek için mesajınızı yeniden gönderebilirsiniz.`;
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            messageInput.focus();
+        });
+    </script>
+</body>
+</html>
