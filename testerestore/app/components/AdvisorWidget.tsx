@@ -26,16 +26,40 @@ interface ChatMessage {
   role: Role;
   text: string;
   recommendation?: Recommendation | null;
+  match?: SuggestResult | null;
 }
 
-/** Advisor'ın önerisi — alan adları servise göre değişebildiği için hepsi opsiyonel. */
+/**
+ * Advisor'ın önerisi. Alanlar RulesEngine.get_recommendation() ile birebir
+ * (rules_engine/engine.py:338). Hepsi opsiyonel: konuşma yarıda kaldığında
+ * motor kısmi öneri döndürebiliyor.
+ */
 interface Recommendation {
-  blade_size?: string;
-  tpi?: string | number;
-  blade_type?: string;
-  cutting_speed?: string;
-  feed_rate?: string;
+  sku?: string | null;
+  blade_type?: string | null;
+  blade_width_mm?: number | null;
+  blade_thickness_mm?: number | null;
+  tooth_pitch?: string | null;
+  blade_length_mm?: number | null;
+  confidence?: string | null;
   [key: string]: unknown;
+}
+
+/** /api/advisor/suggest çıktısı — katalogla eşleştirme sonucu. */
+interface ReadyMadeMatch {
+  handle: string;
+  title: string;
+  price: number | null;
+  currency_code: string;
+  tooth_pitch: string | null;
+  url: string;
+}
+
+interface SuggestResult {
+  ready_made: ReadyMadeMatch[];
+  /** true → diş adımı dahil tam eşleşme. false → aynı ölçü, farklı diş. */
+  exact: boolean;
+  configurable: { handle: string; label: string; url: string };
 }
 
 interface ChatApiResponse {
@@ -48,13 +72,18 @@ interface ChatApiResponse {
 }
 
 /** Öneri kartında gösterilecek alanların Türkçe etiketleri. */
-const REC_LABELS: Array<[string, string]> = [
-  ["blade_size", "Ölçü"],
-  ["blade_type", "Tip"],
-  ["tpi", "Diş (TPI)"],
-  ["cutting_speed", "Kesme hızı"],
-  ["feed_rate", "İlerleme"],
+const REC_LABELS: Array<[string, string, string]> = [
+  ["blade_width_mm", "Genişlik", "mm"],
+  ["blade_thickness_mm", "Kalınlık", "mm"],
+  ["tooth_pitch", "Diş adımı", "TPI"],
+  ["blade_length_mm", "Boy", "mm"],
 ];
+
+const TRY_FMT = new Intl.NumberFormat("tr-TR", {
+  style: "currency",
+  currency: "TRY",
+  maximumFractionDigits: 0,
+});
 
 /**
  * next_question servis tarafında bazen düz metin, bazen {text, options}
@@ -78,6 +107,32 @@ function readOptions(nq: unknown): string[] {
     })
     .filter((s): s is string => s.length > 0)
     .slice(0, 6);
+}
+
+/**
+ * Öneriyi sitedeki ürünle eşleştirir. Hata durumunda null döner — eşleştirme
+ * sohbeti bloklamamalı, link yoksa kart yine de öneriyi gösterir.
+ */
+async function fetchMatch(rec: Recommendation): Promise<SuggestResult | null> {
+  // Ölçü yoksa soracak bir şey yok (konuşma henüz tamamlanmamış demektir).
+  if (!rec.blade_width_mm && !rec.blade_length_mm) return null;
+  try {
+    const res = await fetch("/api/advisor/suggest", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        blade_type: rec.blade_type,
+        blade_width_mm: rec.blade_width_mm,
+        blade_thickness_mm: rec.blade_thickness_mm,
+        tooth_pitch: rec.tooth_pitch,
+        blade_length_mm: rec.blade_length_mm,
+      }),
+    });
+    if (!res.ok) return null;
+    return (await res.json()) as SuggestResult;
+  } catch {
+    return null;
+  }
 }
 
 function newSessionId(): string {
@@ -180,11 +235,12 @@ export default function AdvisorWidget() {
             ? "Bu soruyu şu an cevaplayamadım. Farklı bir şekilde sorabilir misiniz?"
             : "Danışmana ulaşılamadı. Lütfen biraz sonra tekrar deneyin.");
 
-        push({
-          role: "bot",
-          text: reply,
-          recommendation: data.recommendation ?? null,
-        });
+        // Öneri geldiyse katalogla eşleştir. Mesajı basmadan önce yapıyoruz ki
+        // kart tek seferde tam görünsün (sonradan link belirmesi zıplama yapar).
+        const rec = data.recommendation ?? null;
+        const match = rec ? await fetchMatch(rec) : null;
+
+        push({ role: "bot", text: reply, recommendation: rec, match });
         setOptions(readOptions(data.next_question));
       } catch {
         push({
@@ -288,7 +344,10 @@ export default function AdvisorWidget() {
                 >
                   {m.text}
                   {m.recommendation && (
-                    <RecommendationCard rec={m.recommendation} />
+                    <RecommendationCard
+                      rec={m.recommendation}
+                      match={m.match ?? null}
+                    />
                   )}
                 </div>
               </div>
@@ -353,32 +412,85 @@ export default function AdvisorWidget() {
   );
 }
 
-function RecommendationCard({ rec }: { rec: Recommendation }) {
+function RecommendationCard({
+  rec,
+  match,
+}: {
+  rec: Recommendation;
+  match: SuggestResult | null;
+}) {
   const rows = REC_LABELS.filter(([key]) => {
     const v = rec[key];
-    return (
-      v !== undefined &&
-      v !== null &&
-      String(v).trim() !== "" &&
-      String(v) !== "N/A"
-    );
+    return v !== undefined && v !== null && String(v).trim() !== "" && String(v) !== "N/A";
   });
 
   if (rows.length === 0) return null;
 
+  const ready = match?.ready_made ?? [];
+
   return (
-    <div className="mt-2 rounded-lg border border-border bg-background p-2 text-foreground">
-      <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-        Önerilen bıçak
-      </p>
-      <dl className="space-y-0.5 text-xs">
-        {rows.map(([key, label]) => (
-          <div key={key} className="flex justify-between gap-2">
-            <dt className="text-muted-foreground">{label}</dt>
-            <dd className="text-right font-medium">{String(rec[key])}</dd>
+    <div className="mt-2 space-y-2 rounded-lg border border-border bg-background p-2 text-foreground">
+      <div>
+        <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+          Önerilen bıçak
+        </p>
+        <dl className="space-y-0.5 text-xs">
+          {rows.map(([key, label, unit]) => (
+            <div key={key} className="flex justify-between gap-2">
+              <dt className="text-muted-foreground">{label}</dt>
+              <dd className="text-right font-medium">
+                {String(rec[key])} {unit}
+              </dd>
+            </div>
+          ))}
+        </dl>
+      </div>
+
+      {/* Hazır stok — birebir ya da aynı ölçüde farklı diş adımı */}
+      {ready.length > 0 && (
+        <div className="border-t border-border pt-2">
+          <p className="mb-1 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
+            {match?.exact
+              ? "✓ Hazır stokta — aynı ölçü"
+              : "Aynı ölçüde hazır ürün (diş adımı farklı)"}
+          </p>
+          <div className="space-y-1">
+            {ready.map((p) => (
+              <a
+                key={p.handle}
+                href={p.url}
+                className="block rounded-md border border-border px-2 py-1.5 transition-colors hover:bg-muted"
+              >
+                <span className="block text-xs font-medium leading-snug">
+                  {p.title}
+                </span>
+                {p.price !== null && (
+                  <span className="text-xs text-muted-foreground">
+                    {TRY_FMT.format(p.price)}
+                  </span>
+                )}
+              </a>
+            ))}
           </div>
-        ))}
-      </dl>
+        </div>
+      )}
+
+      {/* Yapılandırılabilir ürün — her ölçü, özel boy hesaplanabiliyor */}
+      {match?.configurable && (
+        <div className="border-t border-border pt-2">
+          <a
+            href={match.configurable.url}
+            className="block rounded-md border border-border px-2 py-1.5 text-xs transition-colors hover:bg-muted"
+          >
+            <span className="block font-medium">{match.configurable.label}</span>
+            <span className="text-muted-foreground">
+              {ready.length > 0
+                ? "Farklı ölçü / özel boy hesapla"
+                : "Bu ölçüyü özel boy olarak hesapla"}
+            </span>
+          </a>
+        </div>
+      )}
     </div>
   );
 }

@@ -32148,6 +32148,18 @@
           "machine_class": "M2"
         }
       ]
+    },
+    "TEST": {
+      "country": "Test",
+      "machines": [
+        {
+          "model": "TEST-2000",
+          "blade_length_mm": 2000,
+          "blade_width_mm": 27.0,
+          "blade_thickness_mm": 0.9,
+          "machine_class": "M2"
+        }
+      ]
     }
   },
   "__comment_machine_classes": "M1: Small/Hobby, M2: Workshop/Industrial, M3: Heavy Industrial",

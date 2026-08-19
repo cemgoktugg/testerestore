@@ -1,5 +1,5 @@
 {
-  "total_machines": 4515,
+  "total_machines": 4516,
   "machines": [
     {
       "display_name": "AMADA CRH-300 S",
@@ -40634,6 +40634,15 @@
       "blade_length_mm": 4780,
       "blade_width_mm": 34.0,
       "blade_thickness_mm": 1.1,
+      "machine_class": "M2"
+    },
+    {
+      "display_name": "TEST TEST-2000",
+      "manufacturer": "TEST",
+      "model": "TEST-2000",
+      "blade_length_mm": 2000,
+      "blade_width_mm": 27.0,
+      "blade_thickness_mm": 0.9,
       "machine_class": "M2"
     }
   ]

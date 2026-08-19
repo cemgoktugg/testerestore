@@ -11,14 +11,34 @@ cd /app
 #    İmajda /app/data.dist içinde duran dosyaları eksikse kopyala.
 #    (machines_database.json salt-okunur veri; unknown_questions.json ve
 #     learned_knowledge.json runtime'da yazılıyor — bu yüzden volume şart.)
+# İki farklı dosya sınıfı var, karıştırılırsa veri kaybı ya da bayat veri olur:
+#
+#   RUNTIME_WRITTEN — uygulama çalışırken yazıyor (öğrenilen bilgi, cevaplanmamış
+#     sorular). Volume'de ne varsa o kalır; imajdaki kopya sadece dosya hiç
+#     yoksa tohum olarak kullanılır. Üzerine yazarsak kullanıcı verisi gider.
+#
+#   Diğerleri (machines_database.json, machines_list.json, ansiklopedi) —
+#     salt-okunur referans veri. Bunlar HER AÇILIŞTA imajdan tazelenir; aksi
+#     halde volume bir kez doldu mu repodaki güncellemeler (yeni makine,
+#     düzeltilmiş ölçü) konteynere asla ulaşmaz.
+RUNTIME_WRITTEN="unknown_questions.json learned_knowledge.json"
+
 if [ -d /app/data.dist ]; then
   mkdir -p /app/data
   for f in /app/data.dist/*; do
     base="$(basename "$f")"
-    if [ ! -e "/app/data/$base" ]; then
-      cp "$f" "/app/data/$base"
-      echo "[entrypoint] data/$base tohumlandı"
-    fi
+    case " $RUNTIME_WRITTEN " in
+      *" $base "*)
+        if [ ! -e "/app/data/$base" ]; then
+          cp "$f" "/app/data/$base"
+          echo "[entrypoint] data/$base tohumlandı (runtime verisi, bir kere)"
+        fi
+        ;;
+      *)
+        cp "$f" "/app/data/$base"
+        echo "[entrypoint] data/$base imajdan tazelendi"
+        ;;
+    esac
   done
 fi
 
