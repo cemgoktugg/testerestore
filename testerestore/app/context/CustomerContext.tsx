@@ -27,6 +27,14 @@ interface CustomerContextType {
   register: (input: RegisterInput) => Promise<void>;
   logout: () => Promise<void>;
   refresh: () => Promise<void>;
+  /**
+   * Bu oturumda girişte kullanılan şifre — YALNIZCA bellekte, hiçbir yere
+   * kaydedilmiyor. Tek amacı: geçici şifreyle giren müşteriye zorunlu şifre
+   * değiştirme ekranında aynı şifreyi bir daha yazdırmamak
+   * (bkz. ForcePasswordChange). Çıkışta ve değişim sonrası temizlenir.
+   */
+  pendingPassword: string | null;
+  clearPendingPassword: () => void;
 }
 
 const CustomerContext = createContext<CustomerContextType | undefined>(undefined);
@@ -35,6 +43,7 @@ export function CustomerProvider({ children }: { children: React.ReactNode }) {
   const [customer, setCustomer] = useState<StoreCustomer | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [pendingPassword, setPendingPassword] = useState<string | null>(null);
 
   const refresh = useCallback(async () => {
     if (!MEDUSA_READY) {
@@ -58,6 +67,7 @@ export function CustomerProvider({ children }: { children: React.ReactNode }) {
     try {
       const c = await svcLogin(input);
       setCustomer(c);
+      setPendingPassword(input.password);
     } catch (e) {
       setError(
         e instanceof Error && e.message.toLowerCase().includes('unauthorized')
@@ -87,7 +97,10 @@ export function CustomerProvider({ children }: { children: React.ReactNode }) {
   const logout = useCallback(async () => {
     await svcLogout();
     setCustomer(null);
+    setPendingPassword(null);
   }, []);
+
+  const clearPendingPassword = useCallback(() => setPendingPassword(null), []);
 
   return (
     <CustomerContext.Provider
@@ -100,6 +113,8 @@ export function CustomerProvider({ children }: { children: React.ReactNode }) {
         register,
         logout,
         refresh,
+        pendingPassword,
+        clearPendingPassword,
       }}
     >
       {children}

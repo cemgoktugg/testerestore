@@ -42,7 +42,7 @@ export default function SifremiUnuttumPage() {
           </div>
           <p className="text-sm text-muted-foreground leading-relaxed">
             Eğer <strong className="text-foreground">{email}</strong> adresine kayıtlı bir hesabınız varsa,
-            şifre sıfırlama bağlantısını gönderdik. Bağlantı 1 saat boyunca geçerli olacaktır.
+            şifre sıfırlama bağlantısını gönderdik. Bağlantı 15 dakika boyunca geçerli olacaktır.
           </p>
           <p className="text-xs text-muted-foreground">
             E-posta gelmediyse spam klasörünüzü kontrol edin.

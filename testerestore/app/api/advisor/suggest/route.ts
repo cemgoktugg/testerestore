@@ -76,10 +76,15 @@ export async function POST(req: NextRequest) {
 
   // Yapılandırılabilir ürün her zaman önerilebilir: özel boy zaten destekleniyor
   // (seed'de custom_length_enabled), müşteri ölçüyü sayfada seçiyor.
+  //
+  // blade_type = fiyat matrisindeki slug. Sohbetten doğrudan satın alma
+  // (/api/advisor/purchase) bunu gönderiyor ki sunucu fiyatı matristen
+  // hesaplayabilsin — hazır ürün filtresiyle aynı slug (bkz. TYPE_MAP).
   const configurable = {
     handle: mapped.handle,
     label: mapped.label,
     url: `/products/${mapped.handle}`,
+    blade_type: mapped.readyMade,
   };
 
   // Hazır ürün ancak ölçü biliniyorsa aranabilir.

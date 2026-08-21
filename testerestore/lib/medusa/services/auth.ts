@@ -153,6 +153,52 @@ export async function completePasswordReset(token: string, password: string): Pr
   );
 }
 
+/**
+ * Giriş yapmış müşterinin kendi şifresini değiştirmesi.
+ *
+ * Medusa'nın hazır ucu (/auth/customer/emailpass/update) BURADA KULLANILAMAZ:
+ * token içinde `entity_id` bekliyor, bu alan yalnızca sıfırlama token'ında var,
+ * normal oturum JWT'sinde yok. Bu yüzden backend'de kendi ucumuz duruyor
+ * (src/api/store/customers/me/password/route.ts) — mevcut şifreyi doğrulayıp
+ * yenisini yazıyor ve `must_change_password` bayrağını temizliyor.
+ */
+export async function changeMyPassword(
+  currentPassword: string,
+  newPassword: string
+): Promise<{ ok: boolean; message: string }> {
+  if (!MEDUSA_READY) return { ok: false, message: "Bağlantı kurulamadı." };
+  try {
+    await medusa.client.fetch("/store/customers/me/password", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: { current_password: currentPassword, new_password: newPassword },
+    });
+    return { ok: true, message: "Şifreniz güncellendi." };
+  } catch (e: unknown) {
+    // SDK non-2xx'te throw eder — sunucunun Türkçe mesajını yakalamaya çalış.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const err = e as any;
+    return {
+      ok: false,
+      message: String(
+        err?.message || "Şifre güncellenemedi. Lütfen tekrar deneyin."
+      ),
+    };
+  }
+}
+
+/**
+ * Hesap geçici şifreyle açıldıysa (danışman sohbeti) true döner —
+ * storefront ilk girişte şifre değiştirmeyi zorunlu kılar.
+ */
+export function mustChangePassword(
+  customer: StoreCustomer | null | undefined
+): boolean {
+  if (!customer) return false;
+  const meta = (customer.metadata || {}) as Record<string, unknown>;
+  return meta.must_change_password === true;
+}
+
 // ---------- Orders ----------
 
 export async function listMyOrders(limit = 20): Promise<HttpTypes.StoreOrder[]> {

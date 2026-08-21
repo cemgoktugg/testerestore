@@ -8,6 +8,7 @@ import { siteContent } from "../lib/content-config";
 import CookieBanner from "./components/CookieBanner";
 import WhatsAppButton from "./components/WhatsAppButton";
 import AdvisorWidget from "./components/AdvisorWidget";
+import ForcePasswordChange from "./components/ForcePasswordChange";
 import { OrganizationJsonLd } from "./components/StructuredData";
 import Analytics from "./components/Analytics";
 import { getSiteSeo, resolvePageSeo } from "../lib/medusa/services/site-seo";
@@ -108,6 +109,7 @@ export default function RootLayout({
               <CookieBanner />
               <WhatsAppButton />
               <AdvisorWidget />
+              <ForcePasswordChange />
               <OrganizationJsonLd />
               <Analytics />
             </CartProvider>

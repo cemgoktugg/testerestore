@@ -63,6 +63,26 @@ export default function CheckoutPage() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [customer?.id]);
+
+  // Sepette kayıtlı teslimat adresi varsa formu ondan doldur (one-shot).
+  // Giriş yapmamış müşteride tek kaynak budur: danışman sohbetinden gelen
+  // sepetin adresi sunucuda zaten dolu, kullanıcıya tekrar yazdırmayalım.
+  // Üstteki müşteri bloğu önce çalışır; burada yalnızca BOŞ alanlar dolar.
+  useEffect(() => {
+    const addr = medusaCart?.shipping_address;
+    if (!addr) return;
+    setEmail((prev) => prev || (medusaCart?.email as string | undefined) || '');
+    setFullName((prev) => {
+      if (prev) return prev;
+      return ((addr.first_name || '') + ' ' + (addr.last_name || '')).trim();
+    });
+    setPhone((prev) => prev || addr.phone || '');
+    setAddress((prev) => prev || addr.address_1 || '');
+    setCity((prev) => prev || addr.city || '');
+    setDistrict((prev) => prev || addr.province || '');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [medusaCart?.shipping_address?.id]);
+
   const [cardName, setCardName] = useState('');
   const [cardNumber, setCardNumber] = useState('');
   const [cardExpiry, setCardExpiry] = useState('');

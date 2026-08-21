@@ -1,7 +1,34 @@
 "use client";
 
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import { Bot, Send, X, Loader2, RotateCcw } from "lucide-react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import {
+  Bot,
+  Send,
+  X,
+  Loader2,
+  RotateCcw,
+  ShoppingCart,
+  CheckCircle2,
+  AlertCircle,
+} from "lucide-react";
+import { useCart } from "../context/CartContext";
+import { setStoredCartId } from "../../lib/medusa/services/cart";
+import {
+  CONSENT_ACCEPT,
+  CONSENT_CANCEL,
+  CONSENT_QUESTION,
+  EMPTY_FORM,
+  PURCHASE_STEPS,
+  buildSignupPayload,
+  derivePurchaseTarget,
+  describeTarget,
+  type PurchaseForm,
+  type PurchaseTarget,
+  type Recommendation,
+  type SignupResponse,
+  type SuggestResult,
+} from "./advisor-purchase";
 
 /**
  * Şerit Testere Danışmanı — yüzen sohbet baloncuğu.
@@ -11,15 +38,38 @@ import { Bot, Send, X, Loader2, RotateCcw } from "lucide-react";
  * app/api/advisor/[...path]/route.ts). Bu sayede CORS yok, servis URL'i
  * dışarı sızmıyor ve rate limit sunucu tarafında uygulanıyor.
  *
+ * İki mod var:
+ *   • "chat"     — soru/cevap, öneri üretimi (LLM + kural motoru)
+ *   • "purchase" — öneri beğenilince açılan, adım adım bilgi toplayan akış
+ *
+ * Satın alma modunda LLM'e HİÇ istek gitmez: sorular bu dosyada tanımlı
+ * (bkz. advisor-purchase.ts), cevaplar burada doğrulanır ve tek seferde
+ * /api/advisor/purchase ucuna gönderilir. Yani müşterinin adı, telefonu ve
+ * adresi OpenAI'ye hiç uğramaz.
+ *
  * Konumlandırma: WhatsAppButton `bottom-5 right-5` (h-14) kullanıyor;
  * bu buton onun üstünde `bottom-24` ile duruyor, çakışma yok.
  */
 
 const SESSION_KEY = "ts_advisor_session";
+const CART_ID_KEY = "ts_cart_id";
 const GREETING =
   "Merhaba! Şerit testere seçiminde yardımcı olayım. Makinenizi, keseceğiniz malzemeyi veya aklınızdaki teknik soruyu yazabilirsiniz.";
 
 type Role = "user" | "bot";
+
+/**
+ * Sohbetin altında beliren hazır cevap butonu.
+ *
+ * `run` yoksa buton kendi etiketini sohbete gönderir — danışmanın kendi
+ * seçenekleri (next_question.options) böyle çalışıyor. Satın alma akışının
+ * butonları ise kendi işlerini yapmak için `run` veriyor.
+ */
+interface QuickAction {
+  label: string;
+  run?: () => void;
+  tone?: "primary" | "default";
+}
 
 interface ChatMessage {
   id: number;
@@ -27,39 +77,8 @@ interface ChatMessage {
   text: string;
   recommendation?: Recommendation | null;
   match?: SuggestResult | null;
-}
-
-/**
- * Advisor'ın önerisi. Alanlar RulesEngine.get_recommendation() ile birebir
- * (rules_engine/engine.py:338). Hepsi opsiyonel: konuşma yarıda kaldığında
- * motor kısmi öneri döndürebiliyor.
- */
-interface Recommendation {
-  sku?: string | null;
-  blade_type?: string | null;
-  blade_width_mm?: number | null;
-  blade_thickness_mm?: number | null;
-  tooth_pitch?: string | null;
-  blade_length_mm?: number | null;
-  confidence?: string | null;
-  [key: string]: unknown;
-}
-
-/** /api/advisor/suggest çıktısı — katalogla eşleştirme sonucu. */
-interface ReadyMadeMatch {
-  handle: string;
-  title: string;
-  price: number | null;
-  currency_code: string;
-  tooth_pitch: string | null;
-  url: string;
-}
-
-interface SuggestResult {
-  ready_made: ReadyMadeMatch[];
-  /** true → diş adımı dahil tam eşleşme. false → aynı ölçü, farklı diş. */
-  exact: boolean;
-  configurable: { handle: string; label: string; url: string };
+  /** Kayıt tamamlandığında basılan özet kartı. */
+  receipt?: SignupResponse | null;
 }
 
 interface ChatApiResponse {
@@ -70,6 +89,24 @@ interface ChatApiResponse {
   recommendation?: Recommendation | null;
   next_question?: unknown;
 }
+
+/** Satın alma akışının o anki durumu. */
+interface PurchaseState {
+  target: PurchaseTarget;
+  /** PURCHASE_STEPS içindeki sıra; uzunluğa eşitse onay adımındayız. */
+  stepIndex: number;
+  form: PurchaseForm;
+  submitting: boolean;
+}
+
+/**
+ * Onay adımının butonları. Etiketler `send()` üzerinden `answerStep`'e gider;
+ * ayrı bir işleyiciye gerek yok (bkz. QuickAction).
+ */
+const CONSENT_ACTIONS: QuickAction[] = [
+  { label: CONSENT_ACCEPT, tone: "primary" },
+  { label: CONSENT_CANCEL },
+];
 
 /** Öneri kartında gösterilecek alanların Türkçe etiketleri. */
 const REC_LABELS: Array<[string, string, string]> = [
@@ -143,11 +180,25 @@ function newSessionId(): string {
   }
 }
 
+/** Tarayıcıda zaten dolu bir sepet var mı? (Uyarı metni için.) */
+function hasOtherCart(newCartId: string): boolean {
+  try {
+    const existing = localStorage.getItem(CART_ID_KEY);
+    return !!existing && existing !== newCartId;
+  } catch {
+    return false;
+  }
+}
+
 export default function AdvisorWidget() {
+  const router = useRouter();
+  const { refreshCart } = useCart();
+
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
-  const [options, setOptions] = useState<string[]>([]);
+  const [actions, setActions] = useState<QuickAction[]>([]);
+  const [purchase, setPurchase] = useState<PurchaseState | null>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([
     { id: 0, role: "bot", text: GREETING },
   ]);
@@ -197,14 +248,184 @@ export default function AdvisorWidget() {
     setMessages((prev) => [...prev, { ...m, id: nextId.current++ }]);
   }, []);
 
+  // ── Sepete geçiş ───────────────────────────────────────────────────────
+  // Sunucuda hazırlanan sepeti bu tarayıcının aktif sepeti yapıp checkout'a
+  // götürür. refreshCart() hem Medusa sepetini hem eski yerel listeyi
+  // yeniden kurar (bkz. CartContext.refreshCart), o yüzden ayrıca bir
+  // senkronizasyon gerekmiyor.
+  const goToCheckout = useCallback(
+    async (cartId: string) => {
+      setStoredCartId(cartId);
+      await refreshCart();
+      setOpen(false);
+      router.push("/checkout");
+    },
+    [refreshCart, router]
+  );
+
+  // ── Satın alma akışı ───────────────────────────────────────────────────
+
+  /**
+   * Sıradaki soruyu (ve varsa hazır cevap butonlarını) basar.
+   *
+   * Butonların ayrı bir işleyicisi yok: etiketleri `send()` üzerinden geçiyor,
+   * `send()` de satın alma modunda cevabı `answerStep`'e yönlendiriyor. Yani
+   * "2" yazmakla "2" butonuna basmak tamamen aynı yoldan ilerliyor.
+   */
+  const askStep = useCallback(
+    (state: PurchaseState) => {
+      if (state.stepIndex < PURCHASE_STEPS.length) {
+        const step = PURCHASE_STEPS[state.stepIndex];
+        push({ role: "bot", text: step.question });
+        setActions((step.options ?? []).map((label) => ({ label })));
+        return;
+      }
+      push({ role: "bot", text: CONSENT_QUESTION });
+      setActions(CONSENT_ACTIONS);
+    },
+    [push]
+  );
+
+  const cancelPurchase = useCallback(() => {
+    setPurchase(null);
+    setActions([]);
+    push({
+      role: "bot",
+      text: "Tamam, kaydı iptal ettim. Başka bir sorunuz varsa yazabilirsiniz.",
+    });
+  }, [push]);
+
+  const submitPurchase = useCallback(
+    async (state: PurchaseState) => {
+      setPurchase({ ...state, submitting: true });
+      setActions([]);
+      setBusy(true);
+
+      try {
+        const res = await fetch("/api/advisor/purchase", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(
+            buildSignupPayload(state.form, state.target, sessionRef.current)
+          ),
+        });
+        const data = (await res.json().catch(() => ({}))) as SignupResponse;
+
+        if (!res.ok || !data.ok || !data.cart_id) {
+          push({
+            role: "bot",
+            text:
+              (data.message ||
+                "Kayıt tamamlanamadı. Lütfen biraz sonra tekrar deneyin.") +
+              '\n\nTekrar denemek için "Onaylıyorum"a basabilirsiniz.',
+          });
+          // Doldurulan bilgiler dursun; onay adımında kalıp tekrar denesin.
+          setPurchase({ ...state, submitting: false });
+          setActions(CONSENT_ACTIONS);
+          return;
+        }
+
+        const text =
+          data.account === "existing"
+            ? "Bu e-posta adresi zaten kayıtlı, o yüzden yeni hesap açmadım. Ürünü sepetinize hazırladım — giriş yaptıktan sonra ödemeye geçebilirsiniz."
+            : data.account === "email_unavailable"
+            ? "Üyelik oluşturma şu an kullanılamıyor, ama siparişiniz için gereken her şeyi hazırladım. Üye olmadan ödemeye geçebilirsiniz."
+            : `Hesabınızı oluşturdum ve ${state.form.email} adresine geçici şifrenizi gönderdim. Ürünü de sepetinize ekledim.`;
+
+        push({ role: "bot", text, receipt: data });
+        setPurchase(null);
+      } catch {
+        push({
+          role: "bot",
+          text: "Bağlantı kurulamadı. İnternet bağlantınızı kontrol edip tekrar deneyin.",
+        });
+        setPurchase({ ...state, submitting: false });
+      } finally {
+        setBusy(false);
+      }
+    },
+    [push]
+  );
+
+  const startPurchase = useCallback(
+    (target: PurchaseTarget) => {
+      const state: PurchaseState = {
+        target,
+        stepIndex: 0,
+        form: { ...EMPTY_FORM },
+        submitting: false,
+      };
+      setPurchase(state);
+      askStep(state);
+      inputRef.current?.focus();
+    },
+    [askStep]
+  );
+
+  /** Satın alma modundayken kullanıcının yazdığı/tıkladığı cevabı işler. */
+  const answerStep = useCallback(
+    (state: PurchaseState, raw: string) => {
+      const text = raw.trim();
+      if (!text) return;
+
+      push({ role: "user", text });
+      setInput("");
+
+      // Onay adımı. Butona basmak yerine yazan kullanıcıyı da anlıyoruz ama
+      // anlamadığımızda İPTAL ETMİYORUZ — tekrar soruyoruz. "evet" yazan
+      // birinin siparişinin sessizce iptal olması kabul edilemez.
+      if (state.stepIndex >= PURCHASE_STEPS.length) {
+        const norm = text.toLocaleLowerCase("tr");
+        if (/^(onaylıyorum|evet|onay|tamam|olur|kabul)/.test(norm)) {
+          void submitPurchase(state);
+          return;
+        }
+        if (/^(vazgeç|vazgec|hayır|hayir|iptal|istemiyorum)/.test(norm)) {
+          cancelPurchase();
+          return;
+        }
+        push({
+          role: "bot",
+          text: 'Onaylıyorsanız "Onaylıyorum", vazgeçmek istiyorsanız "Vazgeç" yazın (ya da butonlara basın).',
+        });
+        return;
+      }
+
+      const step = PURCHASE_STEPS[state.stepIndex];
+      const parsed = step.parse(text);
+
+      if (!parsed.ok) {
+        push({ role: "bot", text: parsed.error });
+        return;
+      }
+
+      const nextState: PurchaseState = {
+        ...state,
+        stepIndex: state.stepIndex + 1,
+        form: { ...state.form, ...parsed.patch },
+      };
+      setPurchase(nextState);
+      askStep(nextState);
+    },
+    [askStep, cancelPurchase, push, submitPurchase]
+  );
+
+  // ── Sohbet ─────────────────────────────────────────────────────────────
+
   const send = useCallback(
     async (raw: string) => {
       const text = raw.trim();
       if (!text || busy) return;
 
+      // Satın alma modunda advisor servisine hiç gitmiyoruz.
+      if (purchase && !purchase.submitting) {
+        answerStep(purchase, text);
+        return;
+      }
+
       push({ role: "user", text });
       setInput("");
-      setOptions([]);
+      setActions([]);
       setBusy(true);
 
       try {
@@ -241,7 +462,31 @@ export default function AdvisorWidget() {
         const match = rec ? await fetchMatch(rec) : null;
 
         push({ role: "bot", text: reply, recommendation: rec, match });
-        setOptions(readOptions(data.next_question));
+
+        // Sohbetten satın alma teklifi — yalnızca somut bir ürüne
+        // bağlanabiliyorsak. Bağlanamıyorsak kart yine de ürün linki gösterir.
+        const target = rec ? derivePurchaseTarget(rec, match) : null;
+        if (target) {
+          push({
+            role: "bot",
+            text: `Bu ürünü buradan, sohbeti bırakmadan sipariş edebilirsiniz:\n\n${describeTarget(
+              target
+            )}\n\nSatın almak ister misiniz?`,
+          });
+          setActions([
+            {
+              label: "Evet, satın al",
+              tone: "primary",
+              run: () => startPurchase(target),
+            },
+            {
+              label: "Hayır, sormaya devam",
+              run: () => setActions([]),
+            },
+          ]);
+        } else {
+          setActions(readOptions(data.next_question).map((label) => ({ label })));
+        }
       } catch {
         push({
           role: "bot",
@@ -252,13 +497,14 @@ export default function AdvisorWidget() {
         inputRef.current?.focus();
       }
     },
-    [busy, push]
+    [answerStep, busy, purchase, push, startPurchase]
   );
 
   const reset = useCallback(async () => {
     const id = sessionRef.current;
     setMessages([{ id: nextId.current++, role: "bot", text: GREETING }]);
-    setOptions([]);
+    setActions([]);
+    setPurchase(null);
     setInput("");
     try {
       await fetch("/api/advisor/chat/reset", {
@@ -270,6 +516,14 @@ export default function AdvisorWidget() {
       /* sunucu sıfırlanamasa da arayüz temiz başlasın */
     }
   }, []);
+
+  const placeholder = useMemo(() => {
+    if (!purchase) return "Örn: 27mm makinemde paslanmaz kesiyorum";
+    if (purchase.stepIndex < PURCHASE_STEPS.length) {
+      return PURCHASE_STEPS[purchase.stepIndex].placeholder;
+    }
+    return "Onaylıyorum";
+  }, [purchase]);
 
   return (
     <>
@@ -300,7 +554,9 @@ export default function AdvisorWidget() {
                 Şerit Testere Danışmanı
               </p>
               <p className="truncate text-xs opacity-80">
-                Makine ve malzemenize göre bıçak önerisi
+                {purchase
+                  ? "Sipariş bilgilerinizi alıyorum"
+                  : "Makine ve malzemenize göre bıçak önerisi"}
               </p>
             </div>
             <button
@@ -320,6 +576,14 @@ export default function AdvisorWidget() {
               <X className="h-4 w-4" aria-hidden="true" />
             </button>
           </div>
+
+          {/* Satın alma modunda ilerleme çubuğu */}
+          {purchase && (
+            <PurchaseProgress
+              stepIndex={purchase.stepIndex}
+              target={purchase.target}
+            />
+          )}
 
           {/* Mesajlar */}
           <div
@@ -349,6 +613,14 @@ export default function AdvisorWidget() {
                       match={m.match ?? null}
                     />
                   )}
+                  {m.receipt && (
+                    <ReceiptCard
+                      result={m.receipt}
+                      onCheckout={() =>
+                        void goToCheckout(m.receipt?.cart_id as string)
+                      }
+                    />
+                  )}
                 </div>
               </div>
             ))}
@@ -357,26 +629,56 @@ export default function AdvisorWidget() {
               <div className="flex justify-start">
                 <div className="flex items-center gap-2 rounded-2xl rounded-bl-sm bg-muted px-3 py-2 text-sm text-muted-foreground">
                   <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
-                  Danışman düşünüyor…
+                  {purchase?.submitting
+                    ? "Hesabınız oluşturuluyor…"
+                    : "Danışman düşünüyor…"}
                 </div>
               </div>
             )}
           </div>
 
-          {/* Hazır seçenekler (servis gönderirse) */}
-          {options.length > 0 && !busy && (
+          {/* Hazır cevap butonları */}
+          {actions.length > 0 && !busy && (
             <div className="flex flex-wrap gap-1.5 border-t border-border px-3 py-2">
-              {options.map((opt) => (
+              {actions.map((a) => (
                 <button
-                  key={opt}
+                  key={a.label}
                   type="button"
-                  onClick={() => void send(opt)}
-                  className="rounded-full border border-border bg-background px-3 py-1 text-xs transition-colors hover:bg-muted cursor-pointer"
+                  onClick={() => (a.run ? a.run() : void send(a.label))}
+                  className={[
+                    "rounded-full border px-3 py-1 text-xs transition-colors cursor-pointer",
+                    a.tone === "primary"
+                      ? "border-primary bg-primary text-primary-foreground hover:opacity-90"
+                      : "border-border bg-background hover:bg-muted",
+                  ].join(" ")}
                 >
-                  {opt}
+                  {a.label}
                 </button>
               ))}
             </div>
+          )}
+
+          {/* KVKK bağlantıları — yalnızca onay adımında */}
+          {purchase && purchase.stepIndex >= PURCHASE_STEPS.length && (
+            <p className="border-t border-border px-3 py-2 text-[11px] leading-relaxed text-muted-foreground">
+              <a
+                href="/yasal/uyelik-sozlesmesi"
+                target="_blank"
+                rel="noreferrer"
+                className="underline hover:text-foreground"
+              >
+                Üyelik Sözleşmesi
+              </a>
+              {" • "}
+              <a
+                href="/yasal/kvkk-aydinlatma-metni"
+                target="_blank"
+                rel="noreferrer"
+                className="underline hover:text-foreground"
+              >
+                KVKK Aydınlatma Metni
+              </a>
+            </p>
           )}
 
           {/* Giriş */}
@@ -393,7 +695,7 @@ export default function AdvisorWidget() {
               onChange={(e) => setInput(e.target.value)}
               maxLength={1000}
               disabled={busy}
-              placeholder="Örn: 27mm makinemde paslanmaz kesiyorum"
+              placeholder={placeholder}
               aria-label="Danışmana mesajınız"
               className="min-w-0 flex-1 rounded-full border border-border bg-background px-3 py-2 text-sm outline-none transition-colors focus:border-primary disabled:opacity-60"
             />
@@ -409,6 +711,117 @@ export default function AdvisorWidget() {
         </div>
       )}
     </>
+  );
+}
+
+/** Satın alma akışında kaçıncı adımdayız — başlığın hemen altında. */
+function PurchaseProgress({
+  stepIndex,
+  target,
+}: {
+  stepIndex: number;
+  target: PurchaseTarget;
+}) {
+  const total = PURCHASE_STEPS.length + 1; // + onay adımı
+  const current = Math.min(stepIndex + 1, total);
+  const pct = Math.round((current / total) * 100);
+
+  return (
+    <div className="border-b border-border bg-muted/40 px-4 py-2">
+      <div className="mb-1 flex items-center justify-between gap-2">
+        <span className="truncate text-[11px] font-medium text-foreground">
+          {target.title}
+        </span>
+        <span className="shrink-0 text-[11px] text-muted-foreground">
+          {current}/{total}
+        </span>
+      </div>
+      <div className="h-1 w-full overflow-hidden rounded-full bg-border">
+        <div
+          className="h-full rounded-full bg-primary transition-all duration-300"
+          style={{ width: `${pct}%` }}
+        />
+      </div>
+    </div>
+  );
+}
+
+/** Kayıt tamamlandığında basılan özet + ödemeye geçiş kartı. */
+function ReceiptCard({
+  result,
+  onCheckout,
+}: {
+  result: SignupResponse;
+  onCheckout: () => void;
+}) {
+  const cartId = result.cart_id;
+  const [warnOtherCart] = useState(() => (cartId ? hasOtherCart(cartId) : false));
+  if (!cartId) return null;
+
+  const created = result.account === "created";
+  const existing = result.account === "existing";
+
+  return (
+    <div className="mt-2 space-y-2 rounded-lg border border-border bg-background p-2 text-foreground">
+      <div className="flex items-start gap-2">
+        <CheckCircle2
+          className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600 dark:text-emerald-400"
+          aria-hidden="true"
+        />
+        <div className="min-w-0 text-xs leading-relaxed">
+          <p className="font-semibold">
+            {created ? "Hesabınız hazır" : "Sepetiniz hazır"}
+          </p>
+          {result.product?.title && (
+            <p className="text-muted-foreground">
+              {result.product.title}
+              {result.product.quantity ? ` × ${result.product.quantity}` : ""}
+            </p>
+          )}
+          {result.shipping && (
+            <p className="text-muted-foreground">
+              Kargo:{" "}
+              {result.shipping.free
+                ? "ücretsiz"
+                : TRY_FMT.format(result.shipping.fee)}
+            </p>
+          )}
+        </div>
+      </div>
+
+      {created && result.email_sent === false && (
+        <p className="flex items-start gap-1.5 rounded-md bg-amber-500/10 px-2 py-1.5 text-[11px] leading-relaxed text-amber-700 dark:text-amber-400">
+          <AlertCircle className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+          Şifre e-postası gönderilemedi. Ödemeyi tamamlayabilirsiniz; şifreniz
+          için &ldquo;şifremi unuttum&rdquo; adımını kullanın.
+        </p>
+      )}
+
+      {warnOtherCart && (
+        <p className="text-[11px] leading-relaxed text-muted-foreground">
+          Not: Tarayıcınızda başka bir sepet vardı. Ödemeye geçerseniz
+          buradaki ürünle devam edilecek.
+        </p>
+      )}
+
+      <button
+        type="button"
+        onClick={onCheckout}
+        className="inline-flex w-full items-center justify-center gap-2 rounded-md bg-primary px-3 py-2 text-xs font-bold text-primary-foreground transition-opacity hover:opacity-90 cursor-pointer"
+      >
+        <ShoppingCart className="h-3.5 w-3.5" aria-hidden="true" />
+        Ödemeye Git
+      </button>
+
+      {existing && (
+        <a
+          href="/giris"
+          className="block rounded-md border border-border px-3 py-2 text-center text-xs transition-colors hover:bg-muted"
+        >
+          Giriş Yap
+        </a>
+      )}
+    </div>
   );
 }
 

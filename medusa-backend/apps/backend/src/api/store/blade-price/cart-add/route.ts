@@ -1,8 +1,7 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http";
 import { z } from "zod";
 import { addToCartWorkflow } from "@medusajs/medusa/core-flows";
-import type BladePriceMatrixService from "../../../../modules/blade-price-matrix/service";
-import { BLADE_PRICE_MATRIX_MODULE } from "../../../../modules/blade-price-matrix";
+import { computeBladeLine } from "../../../../lib/blade-line";
 import { MIN_LENGTH_MM, MAX_LENGTH_MM } from "../calculate/route";
 
 const Schema = z.object({
@@ -35,6 +34,9 @@ const Schema = z.object({
  *
  * Welding is charged once per line: total = (per_meter × length × qty) + welding,
  * amortized into `unit_price` so cart × qty = configurator total exactly.
+ *
+ * Fiyat matematiği `src/lib/blade-line.ts` içinde — danışman sohbetinden
+ * gelen sepete ekleme de aynı fonksiyonu kullanıyor.
  */
 export async function POST(req: MedusaRequest, res: MedusaResponse) {
   const parsed = Schema.safeParse(req.body);
@@ -46,66 +48,16 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     return;
   }
 
-  const {
-    cart_id,
-    variant_id,
-    blade_type,
-    width_mm,
-    thickness_mm,
-    tooth_pitch,
-    length_mm,
-    quantity,
-  } = parsed.data;
+  const { cart_id, variant_id, quantity, ...blade } = parsed.data;
 
-  const svc = req.scope.resolve<BladePriceMatrixService>(
-    BLADE_PRICE_MATRIX_MODULE
-  );
-
-  const filter: Record<string, unknown> = {
-    is_active: true,
-    blade_type,
-    width_mm,
-    thickness_mm,
-  };
-  filter.tooth_pitch = tooth_pitch ?? null;
-
-  const rows = await svc.listBladePrices(filter);
-  if (rows.length === 0) {
+  const pricing = await computeBladeLine(req.scope, { ...blade, quantity });
+  if (!pricing) {
     res.status(404).json({
       message: "No price defined for the selected combination",
       code: "BLADE_PRICE_NOT_FOUND",
     });
     return;
   }
-
-  const row = rows[0] as {
-    price_per_meter: number | string;
-    welding_fee: number | string;
-    currency_code: string;
-  };
-
-  const pricePerMeter = Number(row.price_per_meter);
-  const weldingFee = Number(row.welding_fee ?? 0);
-  const lengthMeter = length_mm / 1000;
-
-  const bladeUnitPrice = pricePerMeter * lengthMeter;
-  const subtotal = bladeUnitPrice * quantity;
-  const totalBeforeDiscount = subtotal + weldingFee;
-
-  // Qty tier discount — frontend BladeConfigurator ile birebir aynı tablo.
-  // Burada server-side uygulanır ki müşteri sepette/checkout'ta da
-  // indirimli fiyatı görsün.
-  const discountPercent =
-    quantity >= 10 ? 15 : quantity >= 5 ? 10 : quantity >= 3 ? 5 : 0;
-  const totalPrice =
-    discountPercent > 0
-      ? (totalBeforeDiscount * (100 - discountPercent)) / 100
-      : totalBeforeDiscount;
-
-  const round2 = (n: number) => Math.round(n * 100) / 100;
-
-  // Amortize welding + discount across qty so cart × qty == configurator total.
-  const amortizedUnitPrice = round2(totalPrice / Math.max(1, quantity));
 
   try {
     const { result } = await addToCartWorkflow(req.scope).run({
@@ -115,32 +67,8 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
           {
             variant_id,
             quantity,
-            unit_price: amortizedUnitPrice,
-            metadata: {
-              product_type: "blade",
-              blade_type,
-              width_mm,
-              thickness_mm,
-              tooth_pitch: tooth_pitch ?? null,
-              length_mm,
-              length_meter: round2(lengthMeter),
-              price_per_meter: round2(pricePerMeter),
-              welding_fee: round2(weldingFee),
-              blade_unit_price: round2(bladeUnitPrice),
-              unit_price: amortizedUnitPrice,
-              subtotal: round2(subtotal),
-              total_before_discount: round2(totalBeforeDiscount),
-              discount_percent: discountPercent,
-              total_price: round2(totalPrice),
-              currency_code: row.currency_code,
-              // Legacy keys for cart/order display compatibility
-              width: `${width_mm}mm`,
-              thickness: `${thickness_mm}mm`,
-              tpi: tooth_pitch ? `${tooth_pitch} TPI` : "—",
-              custom_length_mm: length_mm,
-              welding: weldingFee > 0,
-              unit_price_at_add: amortizedUnitPrice,
-            },
+            unit_price: pricing.unit_price,
+            metadata: pricing.metadata,
           },
         ],
       },
@@ -148,12 +76,12 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
 
     res.json({
       ok: true,
-      unit_price: amortizedUnitPrice,
-      total_price: round2(totalPrice),
-      total_before_discount: round2(totalBeforeDiscount),
-      discount_percent: discountPercent,
-      welding_fee: round2(weldingFee),
-      currency_code: row.currency_code,
+      unit_price: pricing.unit_price,
+      total_price: pricing.total_price,
+      total_before_discount: pricing.total_before_discount,
+      discount_percent: pricing.discount_percent,
+      welding_fee: pricing.welding_fee,
+      currency_code: pricing.currency_code,
       result,
     });
   } catch (e) {

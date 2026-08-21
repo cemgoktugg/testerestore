@@ -121,6 +121,10 @@ function renderTemplate(tpl: string, data: Record<string, unknown>): Rendered {
       return cartAbandonedTemplate(data);
     case "newsletter.welcome":
       return newsletterWelcomeTemplate(data);
+    case "customer.welcome_chat":
+      return welcomeChatTemplate(data);
+    case "auth.password_reset":
+      return passwordResetTemplate(data);
     default:
       return {
         subject: String(data.subject ?? "Bildirim"),
@@ -415,6 +419,158 @@ function newsletterWelcomeTemplate(data: Record<string, unknown>): Rendered {
 İlk siparişinize özel %5 indirim kupon kodunuz: ${coupon}
 
 ${storefront}`;
+
+  return { subject, html, text };
+}
+
+/**
+ * Danışman sohbetinden açılan hesabın hoş geldiniz e-postası.
+ *
+ * Geçici şifre BU E-POSTADAN BAŞKA HİÇBİR YERDE görünmez: sunucu log'una
+ * yazılmaz, API cevabında dönmez, tarayıcıya gitmez. Müşteri ilk girişte
+ * değiştirmek zorunda (customer.metadata.must_change_password).
+ */
+function welcomeChatTemplate(data: Record<string, unknown>): Rendered {
+  const firstName = String(data.first_name || "").trim();
+  const email = String(data.email || "");
+  const password = String(data.temp_password || "");
+  const storefront = process.env.STOREFRONT_URL || "http://localhost:3001";
+  const loginUrl = `${storefront}/giris`;
+
+  const subject = "Hesabınız oluşturuldu — geçici şifreniz";
+  const hello = firstName ? `Merhaba ${firstName},` : "Merhaba,";
+
+  const html = `<!DOCTYPE html><html lang="tr"><body style="margin:0;background:#f5f6f8;font-family:-apple-system,Segoe UI,Roboto,sans-serif;color:#222;">
+    <table width="100%" cellspacing="0" cellpadding="0" style="background:#f5f6f8;padding:32px 12px;">
+      <tr><td align="center">
+        <table width="100%" style="max-width:520px;background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 6px 20px rgba(0,0,0,.06);">
+          <tr><td style="padding:32px;background:linear-gradient(135deg,#ff6a00,#ee0979);color:#fff;text-align:center;">
+            <div style="font-size:22px;font-weight:700;">Hesabınız hazır 🎉</div>
+            <div style="font-size:13px;opacity:.95;margin-top:6px;">Şerit Testere Danışmanı üzerinden oluşturuldu</div>
+          </td></tr>
+          <tr><td style="padding:28px 32px;">
+            <p style="margin:0 0 16px 0;font-size:14px;line-height:1.6;color:#444;">
+              ${escapeHtml(hello)} danışmanımız üzerinden hesabınızı oluşturduk ve
+              seçtiğiniz ürünü sepetinize ekledik. Giriş bilgileriniz:
+            </p>
+
+            <table width="100%" style="background:#fafbfc;border:1px solid #eee;border-radius:10px;padding:4px 0;margin:0 0 18px 0;">
+              <tr><td style="padding:12px 16px;font-size:13px;color:#888;">E-posta</td>
+                  <td style="padding:12px 16px;font-size:13px;font-weight:600;text-align:right;">${escapeHtml(email)}</td></tr>
+              <tr><td style="padding:12px 16px;font-size:13px;color:#888;border-top:1px solid #eee;">Geçici şifre</td>
+                  <td style="padding:12px 16px;text-align:right;border-top:1px solid #eee;">
+                    <span style="font-family:monospace;font-size:18px;font-weight:700;letter-spacing:2px;color:#ee0979;">${escapeHtml(password)}</span>
+                  </td></tr>
+            </table>
+
+            <div style="background:#fff8e6;border-left:3px solid #ffb020;border-radius:6px;padding:12px 14px;margin:0 0 20px 0;">
+              <p style="margin:0;font-size:12.5px;line-height:1.6;color:#7a5c00;">
+                <strong>Güvenliğiniz için:</strong> bu şifre geçicidir. İlk girişinizde
+                sizden yeni bir şifre belirlemeniz istenecek. Şifrenizi kimseyle paylaşmayın.
+              </p>
+            </div>
+
+            <div style="text-align:center;">
+              <a href="${loginUrl}" style="display:inline-block;background:linear-gradient(135deg,#ff6a00,#ee0979);color:#fff;text-decoration:none;font-size:14px;font-weight:700;padding:14px 32px;border-radius:10px;">
+                Giriş Yap
+              </a>
+            </div>
+
+            <p style="margin:22px 0 0 0;font-size:12px;color:#888;line-height:1.6;">
+              Bu hesabı siz oluşturmadıysanız bu e-postayı yok sayabilirsiniz;
+              şifre değiştirilmediği sürece hesap kullanılmaz. Sorunuz olursa
+              bu e-postayı yanıtlamanız yeterli.
+            </p>
+          </td></tr>
+          <tr><td style="padding:14px 32px;background:#fafbfc;border-top:1px solid #eee;text-align:center;font-size:11px;color:#888;">
+            © Testere Store
+          </td></tr>
+        </table>
+      </td></tr>
+    </table>
+  </body></html>`;
+
+  const text = `${hello}
+
+Danışmanımız üzerinden hesabınızı oluşturduk ve seçtiğiniz ürünü sepetinize ekledik.
+
+E-posta: ${email}
+Geçici şifre: ${password}
+
+Bu şifre geçicidir; ilk girişinizde yeni bir şifre belirlemeniz istenecek.
+
+Giriş: ${loginUrl}`;
+
+  return { subject, html, text };
+}
+
+/**
+ * Şifre sıfırlama bağlantısı e-postası.
+ *
+ * Bağlantı 15 dakika geçerli (token'ı üreten workflow öyle imzalıyor).
+ * Süreyi burada değiştirmek işe yaramaz — metin ile gerçeğin uyuşması için
+ * ikisi birlikte değişmeli.
+ */
+function passwordResetTemplate(data: Record<string, unknown>): Rendered {
+  const resetUrl = String(data.reset_url || "");
+  const isAdmin = data.is_admin === true;
+  const subject = isAdmin
+    ? "Yönetim paneli şifre sıfırlama"
+    : "Şifre sıfırlama bağlantınız";
+
+  const html = `<!DOCTYPE html><html lang="tr"><body style="margin:0;background:#f5f6f8;font-family:-apple-system,Segoe UI,Roboto,sans-serif;color:#222;">
+    <table width="100%" cellspacing="0" cellpadding="0" style="background:#f5f6f8;padding:32px 12px;">
+      <tr><td align="center">
+        <table width="100%" style="max-width:520px;background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 6px 20px rgba(0,0,0,.06);">
+          <tr><td style="padding:28px 32px;background:linear-gradient(135deg,#ff6a00,#ee0979);color:#fff;text-align:center;">
+            <div style="font-size:20px;font-weight:700;">Şifrenizi sıfırlayın</div>
+          </td></tr>
+          <tr><td style="padding:28px 32px;">
+            <p style="margin:0 0 20px 0;font-size:14px;line-height:1.6;color:#444;">
+              Şifre sıfırlama talebinde bulundunuz. Yeni şifrenizi belirlemek için
+              aşağıdaki butona tıklayın.
+            </p>
+
+            <div style="text-align:center;margin:0 0 20px 0;">
+              <a href="${resetUrl}" style="display:inline-block;background:linear-gradient(135deg,#ff6a00,#ee0979);color:#fff;text-decoration:none;font-size:14px;font-weight:700;padding:14px 32px;border-radius:10px;">
+                Yeni Şifre Belirle
+              </a>
+            </div>
+
+            <div style="background:#fff8e6;border-left:3px solid #ffb020;border-radius:6px;padding:12px 14px;margin:0 0 20px 0;">
+              <p style="margin:0;font-size:12.5px;line-height:1.6;color:#7a5c00;">
+                Bu bağlantı <strong>15 dakika</strong> boyunca geçerlidir. Süresi
+                dolarsa sıfırlama işlemini yeniden başlatmanız gerekir.
+              </p>
+            </div>
+
+            <p style="margin:0 0 8px 0;font-size:12px;color:#888;line-height:1.6;">
+              Buton çalışmazsa bu adresi tarayıcınıza yapıştırın:
+            </p>
+            <p style="margin:0 0 20px 0;font-size:11px;color:#888;word-break:break-all;">
+              ${escapeHtml(resetUrl)}
+            </p>
+
+            <p style="margin:0;font-size:12px;color:#888;line-height:1.6;">
+              Bu talebi siz yapmadıysanız bu e-postayı yok sayabilirsiniz;
+              şifreniz değişmeden kalır.
+            </p>
+          </td></tr>
+          <tr><td style="padding:14px 32px;background:#fafbfc;border-top:1px solid #eee;text-align:center;font-size:11px;color:#888;">
+            © Testere Store
+          </td></tr>
+        </table>
+      </td></tr>
+    </table>
+  </body></html>`;
+
+  const text = `Şifre sıfırlama talebinde bulundunuz.
+
+Yeni şifrenizi belirlemek için: ${resetUrl}
+
+Bu bağlantı 15 dakika boyunca geçerlidir.
+
+Bu talebi siz yapmadıysanız bu e-postayı yok sayabilirsiniz.`;
 
   return { subject, html, text };
 }

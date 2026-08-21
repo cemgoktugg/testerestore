@@ -52,6 +52,20 @@ export function clearStoredCartId(): void {
 }
 
 /**
+ * Sunucuda hazırlanmış bir sepeti bu tarayıcının aktif sepeti yapar.
+ *
+ * Danışman sohbeti sepeti backend'de kuruyor (/store/advisor-signup) — fiyat,
+ * adres ve kargo sunucudan geliyor. Widget dönen id'yi buraya yazıp
+ * `refreshCart()` çağırıyor; gerisi mevcut akışla aynı.
+ *
+ * DİKKAT: tarayıcıdaki önceki sepetin yerine geçer. Çağıran taraf kullanıcıyı
+ * bilgilendirmeli (widget bunu yapıyor).
+ */
+export function setStoredCartId(id: string): void {
+  writeCartId(id);
+}
+
+/**
  * Retrieve the persisted cart or `null`.
  * Returns null silently if the stored cart id is no longer valid in Medusa.
  */
