@@ -30,9 +30,14 @@ def _reject_large_body():
 
 # Initialize components
 rules_path = os.path.join(parent_dir, 'rules.json')
-# machines_list.json — DÜZ format (4516 kayıtlık 'machines' listesi). Makine
-# modülü yalnızca bu formatı okur; eski iç içe machines_database.json
-# yüklendiğinde liste boş kalıyor, /api/health 0 makine gösteriyordu.
+# machines_list.json — DUZ format (4516 kayitlik 'machines' listesi).
+#
+# Burasi eskiden machines_database.json'i (uretici -> makineler seklinde
+# ic ice yapi) gosteriyordu. AdvancedMachineDatabase duz format bekliyor;
+# ic ice dosyayla is_flat_format False kaliyor, makine listesi bos oluyor
+# ve /api/machines/search ile /api/stats sifir donuyordu. Sohbet akisi
+# etkilenmiyordu cunku ConversationalEngine varsayilan (dogru) yolu
+# kullaniyor.
 database_path = os.path.join(parent_dir, 'data', 'machines_list.json')
 
 rules_engine = RulesEngine(rules_path)
@@ -76,7 +81,8 @@ def search_machines():
         # search_detailed() tek sonuc DEGIL, durum + aday listesi doner.
         # Eski kod search_machine()'in dondurdugu TEK sozlugu liste sanip
         # results[:10] diliyordu; bu her istekte TypeError -> HTTP 500
-        # uretiyordu. Belirsiz sorgularda ("kasto 460") adaylarin tamami doner.
+        # uretiyordu. Belirsiz sorgularda ("kasto 460") artik adaylarin
+        # tamami donuyor, kullanici dogru makineyi secebiliyor.
         detail = machine_db.search_detailed(query)
         candidates = detail['candidates'] or (
             [detail['machine']] if detail['machine'] else [])
@@ -208,7 +214,7 @@ def chat_endpoint():
         # Kural motoru gudumlu diyalog: tam sonucu al (sadece metni degil)
         result = chat_engine.chat(message, session_id=session_id)
 
-        return jsonify({
+        payload = {
             'success': True,
             'response': result.get('message', ''),
             'message': message,
@@ -220,7 +226,17 @@ def chat_endpoint():
             'recommendation': result.get('recommendation'),
             'is_complete': result.get('is_complete', False),
             'extracted_fields': result.get('extracted_fields', {}),
-        })
+        }
+
+        # BYCUTTECH uzman hattinin ek alanlari — SADECE EKLEME.
+        # Mevcut alanlarin hicbiri degismedi; arayuz bunlari yok sayabilir.
+        # Amac: hangi sayinin hangi kaynaktan geldigi ve guven seviyesi
+        # istemci tarafinda da izlenebilsin.
+        for key in ('scope', 'status', 'confidence', 'plan'):
+            if key in result:
+                payload[key] = result[key]
+
+        return jsonify(payload)
     
     except Exception as e:
         import traceback

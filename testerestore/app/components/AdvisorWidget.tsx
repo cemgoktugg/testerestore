@@ -123,6 +123,58 @@ const TRY_FMT = new Intl.NumberFormat("tr-TR", {
 });
 
 /**
+ * Danışman cevaplarındaki hafif markdown'ı okunur hâle getirir.
+ *
+ * Servis `**kalın**` ve `_italik_` işaretlemesi kullanıyor (ürün adı, diş
+ * adımı, hız gibi kritik değerler kalın). Baloncuk metni düz string olarak
+ * bastığı için bunlar ekranda yıldızlarıyla görünüyordu; teknik cevaplarda
+ * işaretleme yoğun olduğu için okunabilirliği belirgin biçimde düşürüyordu.
+ *
+ * Bilerek MİNİMAL: yalnızca kalın ve italik. HTML'e hiç dokunulmuyor —
+ * React düğümü üretiliyor, dangerouslySetInnerHTML yok, dolayısıyla
+ * servisten gelen metin hiçbir koşulda HTML olarak yorumlanamaz.
+ */
+function renderInline(text: string, keyPrefix: string): React.ReactNode[] {
+  const nodes: React.ReactNode[] = [];
+  const pattern = /\*\*([^*]+)\*\*|_([^_\n]+)_/g;
+  let cursor = 0;
+  let match: RegExpExecArray | null;
+
+  while ((match = pattern.exec(text)) !== null) {
+    if (match.index > cursor) nodes.push(text.slice(cursor, match.index));
+    if (match[1] !== undefined) {
+      nodes.push(
+        <strong key={`${keyPrefix}-b-${match.index}`} className="font-semibold">
+          {match[1]}
+        </strong>
+      );
+    } else if (match[2] !== undefined) {
+      nodes.push(
+        <em key={`${keyPrefix}-i-${match.index}`} className="opacity-80">
+          {match[2]}
+        </em>
+      );
+    }
+    cursor = match.index + match[0].length;
+  }
+  if (cursor < text.length) nodes.push(text.slice(cursor));
+  return nodes;
+}
+
+/** Satır yapısını koruyarak mesajı basar (whitespace-pre-wrap yerine). */
+function MessageText({ text }: { text: string }) {
+  return (
+    <>
+      {text.split("\n").map((line, i) => (
+        <span key={i} className="block break-words">
+          {line ? renderInline(line, `l${i}`) : " "}
+        </span>
+      ))}
+    </>
+  );
+}
+
+/**
  * next_question servis tarafında bazen düz metin, bazen {text, options}
  * nesnesi olarak dönüyor. İkisini de kaldıracak şekilde okuyoruz — şekil
  * değişirse widget kırılmasın, sadece butonları göstermesin.
@@ -600,13 +652,13 @@ export default function AdvisorWidget() {
               >
                 <div
                   className={[
-                    "max-w-[85%] whitespace-pre-wrap rounded-2xl px-3 py-2 text-sm leading-relaxed",
+                    "max-w-[85%] break-words rounded-2xl px-3 py-2 text-sm leading-relaxed",
                     m.role === "user"
                       ? "rounded-br-sm bg-primary text-primary-foreground"
                       : "rounded-bl-sm bg-muted text-foreground",
                   ].join(" ")}
                 >
-                  {m.text}
+                  <MessageText text={m.text} />
                   {m.recommendation && (
                     <RecommendationCard
                       rec={m.recommendation}

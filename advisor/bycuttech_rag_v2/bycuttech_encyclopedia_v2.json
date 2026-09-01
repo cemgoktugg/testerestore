@@ -1,0 +1,6080 @@
+{
+  "schema_version": "2.0.0",
+  "title": "Bycuttech Türkçe Şerit Testere Ansiklopedisi",
+  "language": "tr",
+  "generated_date": "2026-09-01",
+  "source_policy": [
+    "Makine üreticisi limiti",
+    "Bycuttech ürün ve teknik tablosu",
+    "Orijinal üretici doğrulama kaynağı",
+    "Doğrulanmış saha verisi"
+  ],
+  "sources": {
+    "catalog": {
+      "title": "B.Y.cuttech Katalog Sägebänder 2025",
+      "url": "https://www.by-saegen.com/wp-content/uploads/2024/11/saegebander-katalog.pdf",
+      "language": "de",
+      "pages": 20,
+      "published": "2024-11"
+    },
+    "cutting_table": {
+      "title": "B.Y.cuttech Schnitttabelle Bimetall",
+      "url": "https://www.by-saegen.com/wp-content/uploads/2024/08/Schnitttabelle-Bimetall.pdf",
+      "language": "de",
+      "pages": 2,
+      "published": "2024-08",
+      "scope": "Bimetal bıçak, 50-125 mm iş parçası"
+    },
+    "troubleshooting": {
+      "title": "B.Y.cuttech Fehlersuche",
+      "url": "https://www.by-saegen.com/wp-content/uploads/2024/03/Fehlersuche.pdf",
+      "language": "de",
+      "pages": 2,
+      "published": "2024-03"
+    },
+    "tension": {
+      "title": "B.Y.cuttech Bandspannung Bandsägeblatt",
+      "url": "https://www.by-saegen.com/wp-content/uploads/2024/08/Bandspannung.pdf",
+      "language": "de",
+      "pages": 1,
+      "published": "2024-08"
+    },
+    "starrett_42": {
+      "title": "Starrett Bandsaw Blades - Cutting Table / Bi-Metal, page 42",
+      "url": "https://catalogues.starrett.co.uk/view/621853475/42/",
+      "language": "en"
+    },
+    "starrett_43": {
+      "title": "Starrett Bandsaw Blades - Cutting Table / Bi-Metal, page 43",
+      "url": "https://catalogues.starrett.co.uk/view/621853475/43/",
+      "language": "en"
+    }
+  },
+  "products": [
+    {
+      "id": "tennax_pro",
+      "canonical_name": "TENNAX PRO",
+      "aliases": [
+        "Tennax Pro",
+        "TENNAX™-PRO"
+      ],
+      "cutting_edge": "M42 bimetal",
+      "hardness_hrc": "67-69",
+      "features_tr": [
+        "Boru ve profiller için geliştirilmiş yeni diş geometrisi",
+        "Yenilikçi çaprazlama",
+        "Daha sakin çalışma"
+      ],
+      "benefits_tr": [
+        "Zorlu kesimlerde daha yüksek performans",
+        "Daha uzun ömür ve daha az diş kırılması",
+        "Daha düşük gürültü, sıcaklık ve titreşim"
+      ],
+      "applications_tr": [
+        "Boru",
+        "profil",
+        "yapısal malzeme",
+        "tekli kesim",
+        "paket kesim"
+      ],
+      "materials_tr": [
+        "alüminyum",
+        "karbon çeliği",
+        "karbon çeliği alaşımları",
+        "dökme demir",
+        "demir dışı metaller",
+        "paslanmaz çelik",
+        "çelik"
+      ],
+      "variants": [
+        {
+          "width_mm": 19,
+          "thickness_mm": 0.9,
+          "available_tpi": [
+            "4/6",
+            "5/8",
+            "6/10",
+            "8/12",
+            "10/14"
+          ]
+        },
+        {
+          "width_mm": 27,
+          "thickness_mm": 0.9,
+          "available_tpi": [
+            "3/4",
+            "4/6",
+            "5/8",
+            "6/10",
+            "8/12",
+            "10/14"
+          ]
+        },
+        {
+          "width_mm": 34,
+          "thickness_mm": 1.1,
+          "available_tpi": [
+            "2/3",
+            "3/4",
+            "4/6",
+            "5/8",
+            "6/10"
+          ]
+        },
+        {
+          "width_mm": 41,
+          "thickness_mm": 1.3,
+          "available_tpi": [
+            "2/3",
+            "3/4",
+            "4/6",
+            "5/8"
+          ]
+        },
+        {
+          "width_mm": 54,
+          "thickness_mm": 1.6,
+          "available_tpi": [
+            "2/3",
+            "3/4",
+            "4/6"
+          ]
+        },
+        {
+          "width_mm": 67,
+          "thickness_mm": 1.6,
+          "available_tpi": [
+            "2/3",
+            "3/4"
+          ]
+        }
+      ],
+      "source": "catalog",
+      "source_pages": [
+        5
+      ]
+    },
+    {
+      "id": "univerz",
+      "canonical_name": "UNIVERZ",
+      "aliases": [
+        "Univerz"
+      ],
+      "cutting_edge": "M42 bimetal",
+      "hardness_hrc": "67-69",
+      "features_tr": [
+        "Dalga çaprazlama",
+        "Multi Edge Performance"
+      ],
+      "benefits_tr": [
+        "Daha yüksek kesme hızlarına elverişli",
+        "Kontur kesimine uygun",
+        "Daha uzun ömür ve daha az diş kırılması",
+        "Daha düşük gürültü, sıcaklık ve titreşim"
+      ],
+      "applications_tr": [
+        "taşınabilir makine",
+        "küçük kasnaklı dikey makine",
+        "profil",
+        "boru",
+        "küçük dolu malzeme"
+      ],
+      "materials_tr": [
+        "alüminyum",
+        "karbon çeliği",
+        "paslanmaz çelik",
+        "çelik"
+      ],
+      "variants": [
+        {
+          "width_mm": 13,
+          "thickness_mm": 0.35,
+          "available_tpi": [
+            "10/14",
+            "14/18"
+          ]
+        },
+        {
+          "width_mm": 13,
+          "thickness_mm": 0.5,
+          "available_tpi": [
+            "10/14",
+            "14",
+            "14/18",
+            "18",
+            "24"
+          ]
+        }
+      ],
+      "source": "catalog",
+      "source_pages": [
+        6
+      ]
+    },
+    {
+      "id": "intenss_pro_die",
+      "canonical_name": "INTENSS PRO-DIE",
+      "aliases": [
+        "Intenss Pro-DIE",
+        "Intenns Pro-DIE",
+        "Intenss™ PRO-DIE"
+      ],
+      "cutting_edge": "M42 bimetal",
+      "hardness_hrc": "67-69",
+      "features_tr": [
+        "Boru ve profil için geliştirilmiş diş geometrisi",
+        "Yenilikçi çaprazlama",
+        "Daha sakin çalışma"
+      ],
+      "benefits_tr": [
+        "Daha yüksek kesme hızı",
+        "Daha uzun ömür ve daha az diş kırılması"
+      ],
+      "applications_tr": [
+        "dikey makinede kontur kesimi",
+        "boru",
+        "sac",
+        "şekil çeliği"
+      ],
+      "materials_tr": [
+        "karbon çeliği",
+        "alüminyum",
+        "paslanmaz çelik",
+        "çelik",
+        "düşük alaşımlı çelik"
+      ],
+      "variants": [
+        {
+          "width_mm": 6,
+          "thickness_mm": 0.65,
+          "available_tpi": [
+            "10/14",
+            "14/18"
+          ]
+        },
+        {
+          "width_mm": 6,
+          "thickness_mm": 0.9,
+          "available_tpi": [
+            "10/14"
+          ]
+        },
+        {
+          "width_mm": 10,
+          "thickness_mm": 0.65,
+          "available_tpi": [
+            "8/12",
+            "10/14",
+            "14/18"
+          ]
+        },
+        {
+          "width_mm": 13,
+          "thickness_mm": 0.65,
+          "available_tpi": [
+            "4",
+            "6",
+            "6/10",
+            "8/12",
+            "10/14",
+            "14",
+            "14/18",
+            "18"
+          ]
+        },
+        {
+          "width_mm": 13,
+          "thickness_mm": 0.9,
+          "available_tpi": [
+            "4",
+            "6/10",
+            "8/12",
+            "10/14"
+          ]
+        }
+      ],
+      "source": "catalog",
+      "source_pages": [
+        7
+      ]
+    },
+    {
+      "id": "intenss",
+      "canonical_name": "INTENSS",
+      "aliases": [
+        "Intenss",
+        "Intenns"
+      ],
+      "cutting_edge": "M42 bimetal",
+      "hardness_hrc": "67-69",
+      "features_tr": [
+        "Kararlı diş geometrisi",
+        "Yenilikçi çaprazlama",
+        "Geniş TPI seçeneği"
+      ],
+      "benefits_tr": [
+        "Alüminyumdan takım çeliğine geniş kullanım",
+        "Zorlu kesimlerde daha yüksek performans"
+      ],
+      "applications_tr": [
+        "küçük ve orta dolu malzeme",
+        "takım ve aparat imalatı",
+        "boru",
+        "profil",
+        "sac",
+        "şekil çeliği",
+        "yapısal malzeme"
+      ],
+      "materials_tr": [
+        "alüminyum",
+        "bakır",
+        "pirinç",
+        "dökme demir",
+        "karbon çeliği",
+        "karbon çeliği alaşımları"
+      ],
+      "variants": [
+        {
+          "width_mm": 19,
+          "thickness_mm": 0.9,
+          "available_tpi": [
+            "3/4",
+            "4/6",
+            "5/8",
+            "6/10",
+            "8/12",
+            "10/14",
+            "14"
+          ]
+        },
+        {
+          "width_mm": 27,
+          "thickness_mm": 0.9,
+          "available_tpi": [
+            "3/4",
+            "4/6",
+            "5/8",
+            "6/10",
+            "8/12",
+            "10/14",
+            "14"
+          ]
+        },
+        {
+          "width_mm": 34,
+          "thickness_mm": 1.1,
+          "available_tpi": [
+            "2/3",
+            "3/4",
+            "4/6",
+            "5/8",
+            "6/10",
+            "8/12"
+          ]
+        },
+        {
+          "width_mm": 41,
+          "thickness_mm": 1.3,
+          "available_tpi": [
+            "2/3",
+            "3/4",
+            "4/6",
+            "5/8"
+          ]
+        }
+      ],
+      "source": "catalog",
+      "source_pages": [
+        8
+      ]
+    },
+    {
+      "id": "intenss_pro",
+      "canonical_name": "INTENSS PRO",
+      "aliases": [
+        "Intenss Pro",
+        "Intenns Pro",
+        "Intenss Pro XTR",
+        "INTENSS PRO XTR"
+      ],
+      "technology": "XTR",
+      "cutting_edge": "M42 bimetal",
+      "hardness_hrc": "67-69",
+      "max_material_hardness_hrc": 45,
+      "features_tr": [
+        "Yoğun üretim için özel diş geometrisi",
+        "Demir ve demir dışı metallerde 45 HRC'ye kadar kullanım"
+      ],
+      "benefits_tr": [
+        "Daha iyi yüzey kalitesi",
+        "Daha yüksek aşınma ve ısı direnci",
+        "Farklı metal ürünlerinde geniş kullanım"
+      ],
+      "applications_tr": [
+        "dolu malzeme",
+        "kalın cidarlı boru",
+        "kalın cidarlı boru paketi"
+      ],
+      "materials_tr": [
+        "alüminyum",
+        "karbon çeliği",
+        "karbon çeliği alaşımları",
+        "dökme demir",
+        "paslanmaz çelik",
+        "takım çeliği",
+        "HSS",
+        "sıcak ve soğuk iş çeliği",
+        "nikel ve titanyum alaşımları"
+      ],
+      "variants": [
+        {
+          "width_mm": 19,
+          "thickness_mm": 0.9,
+          "available_tpi": [
+            "3/4",
+            "4/6",
+            "5/8",
+            "6/10",
+            "8/12",
+            "10/14"
+          ]
+        },
+        {
+          "width_mm": 27,
+          "thickness_mm": 0.9,
+          "available_tpi": [
+            "2/3",
+            "3",
+            "3/4",
+            "4/6",
+            "5/8",
+            "6/10",
+            "8/12",
+            "10/14"
+          ]
+        },
+        {
+          "width_mm": 34,
+          "thickness_mm": 1.1,
+          "available_tpi": [
+            "1.4/2",
+            "2/3",
+            "3/4",
+            "4/6",
+            "5/8",
+            "6/10"
+          ]
+        },
+        {
+          "width_mm": 41,
+          "thickness_mm": 1.3,
+          "available_tpi": [
+            "1/1.2",
+            "1.4/2",
+            "2/3",
+            "3/4",
+            "4/6",
+            "5/8"
+          ]
+        },
+        {
+          "width_mm": 54,
+          "thickness_mm": 1.6,
+          "available_tpi": [
+            "0.8/1.3",
+            "1/1.2",
+            "1.4/2",
+            "2/3",
+            "3/4",
+            "4/6"
+          ]
+        },
+        {
+          "width_mm": 67,
+          "thickness_mm": 1.6,
+          "available_tpi": [
+            "0.8/1.3",
+            "1/1.2",
+            "1.4/2",
+            "2/3",
+            "3/4"
+          ]
+        },
+        {
+          "width_mm": 80,
+          "thickness_mm": 1.6,
+          "available_tpi": [
+            "0.8/1.3",
+            "1/1.2",
+            "1.4/2"
+          ]
+        }
+      ],
+      "source": "catalog",
+      "source_pages": [
+        9,
+        10
+      ]
+    },
+    {
+      "id": "primalloy",
+      "canonical_name": "PRIMALLOY",
+      "aliases": [
+        "Primalloy",
+        "Primalloy XTR",
+        "Primalloy™"
+      ],
+      "technology": "XTR",
+      "cutting_edge": "M51 bimetal",
+      "hardness_hrc": "yaklaşık 70",
+      "features_tr": [
+        "Pozitif talaş açılı özel diş geometrisi",
+        "Yüksek yük için uzatılmış ömür",
+        "Taşlanmış dişler"
+      ],
+      "benefits_tr": [
+        "M42'ye göre daha uzun ömür",
+        "Daha yüksek aşınma ve ısı direnci",
+        "Daha iyi kesim yüzeyi"
+      ],
+      "applications_tr": [
+        "büyük dolu malzeme",
+        "küçük dolu malzeme paketi"
+      ],
+      "materials_tr": [
+        "takım çeliği",
+        "HSS",
+        "paslanmaz çelik",
+        "nikel ve titanyum alaşımları",
+        "sertleştirilmiş çelik",
+        "karbon çeliği alaşımları",
+        "dökme demir",
+        "bakır alaşımları",
+        "sıcak ve soğuk iş çeliği"
+      ],
+      "variants": [
+        {
+          "width_mm": 27,
+          "thickness_mm": 0.9,
+          "available_tpi": [
+            "2/3",
+            "3/4",
+            "4/6"
+          ]
+        },
+        {
+          "width_mm": 34,
+          "thickness_mm": 1.1,
+          "available_tpi": [
+            "2/3",
+            "3/4"
+          ]
+        },
+        {
+          "width_mm": 41,
+          "thickness_mm": 1.3,
+          "available_tpi": [
+            "1.4/2",
+            "2/3",
+            "3/4"
+          ]
+        },
+        {
+          "width_mm": 54,
+          "thickness_mm": 1.6,
+          "available_tpi": [
+            "1/1.2",
+            "1.4/2",
+            "2/3",
+            "3/4"
+          ]
+        },
+        {
+          "width_mm": 67,
+          "thickness_mm": 1.6,
+          "available_tpi": [
+            "0.8/1.3",
+            "1/1.2",
+            "1.4/2",
+            "2/3"
+          ]
+        }
+      ],
+      "source": "catalog",
+      "source_pages": [
+        11
+      ]
+    },
+    {
+      "id": "advanz_ts",
+      "canonical_name": "ADVANZ TS",
+      "aliases": [
+        "Advanz TS"
+      ],
+      "cutting_edge": "karbür uçlu",
+      "tooth_geometry": "üçlü talaş geometrisi",
+      "features_tr": [
+        "Pozitif talaş açısı",
+        "Karbür uç",
+        "Üçlü talaş diş geometrisi"
+      ],
+      "benefits_tr": [
+        "45 HRC üzeri sert malzemelere uygun",
+        "Yüksek aşınma direnci",
+        "Yüksek üretkenlik",
+        "Hassas kesim yüzeyi"
+      ],
+      "applications_tr": [
+        "yüksek alaşımlı metal",
+        "havacılık alaşımı",
+        "sert ve aşındırıcı malzeme",
+        "büyük dolu malzeme",
+        "küçük dolu malzeme paketi"
+      ],
+      "materials_tr": [
+        "yüksek alaşımlı metal",
+        "alüminyum",
+        "karbon çeliği",
+        "karbon alaşımları",
+        "dökme demir",
+        "bakır alaşımları",
+        "HSS",
+        "takım çeliği",
+        "havacılık alaşımları",
+        "paslanmaz çelik",
+        "sıcak ve soğuk iş çeliği",
+        "nikel ve titanyum alaşımları",
+        "sert ve aşındırıcı malzeme"
+      ],
+      "variants": [
+        {
+          "width_mm": 13,
+          "thickness_mm": 0.9,
+          "available_tpi": [
+            "3"
+          ]
+        },
+        {
+          "width_mm": 19,
+          "thickness_mm": 0.9,
+          "available_tpi": [
+            "3",
+            "3/4"
+          ]
+        },
+        {
+          "width_mm": 27,
+          "thickness_mm": 0.9,
+          "available_tpi": [
+            "3",
+            "3/4"
+          ]
+        },
+        {
+          "width_mm": 34,
+          "thickness_mm": 1.1,
+          "available_tpi": [
+            "2/3",
+            "3/4"
+          ]
+        },
+        {
+          "width_mm": 34,
+          "thickness_mm": 1.3,
+          "available_tpi": [
+            "2/3",
+            "3"
+          ]
+        },
+        {
+          "width_mm": 41,
+          "thickness_mm": 1.3,
+          "available_tpi": [
+            "1.4/2",
+            "2/3",
+            "3/4"
+          ]
+        },
+        {
+          "width_mm": 54,
+          "thickness_mm": 1.6,
+          "available_tpi": [
+            "1.4/2",
+            "2/3"
+          ]
+        },
+        {
+          "width_mm": 67,
+          "thickness_mm": 1.6,
+          "available_tpi": [
+            "0.9/1.1",
+            "1.4/2",
+            "2/3"
+          ]
+        },
+        {
+          "width_mm": 80,
+          "thickness_mm": 1.6,
+          "available_tpi": [
+            "0.9/1.1",
+            "1.4/2"
+          ]
+        }
+      ],
+      "source": "catalog",
+      "source_pages": [
+        13
+      ]
+    },
+    {
+      "id": "advanz_fs",
+      "canonical_name": "ADVANZ FS",
+      "aliases": [
+        "Advanz FS"
+      ],
+      "cutting_edge": "karbür uçlu",
+      "tooth_geometry": "beşli talaş geometrisi",
+      "features_tr": [
+        "Pozitif talaş açısı",
+        "Karbür uç",
+        "Beşli talaş diş geometrisi"
+      ],
+      "benefits_tr": [
+        "Yorulma, aşınma ve darbeye yüksek direnç",
+        "Yüksek üretkenlik",
+        "Hassas kesim yüzeyi"
+      ],
+      "applications_tr": [
+        "aşındırıcı demir dışı malzeme",
+        "büyük dolu malzeme",
+        "kalın cidarlı yuvarlak boru",
+        "motor bloğu",
+        "kompozit"
+      ],
+      "materials_tr": [
+        "dökme demir",
+        "kompozit",
+        "cam elyafı",
+        "grafit",
+        "aşındırıcı demir dışı metal",
+        "alüminyum",
+        "bakır alaşımları"
+      ],
+      "qa_status": "catalog_benefit_text_conflicts_with_primary_application; do_not_route_to_45hrc_steel_without_product-owner-validation",
+      "variants": [
+        {
+          "width_mm": 19,
+          "thickness_mm": 0.9,
+          "available_tpi": [
+            "3"
+          ]
+        },
+        {
+          "width_mm": 27,
+          "thickness_mm": 0.9,
+          "available_tpi": [
+            "2/3",
+            "3"
+          ]
+        },
+        {
+          "width_mm": 27,
+          "thickness_mm": 1.3,
+          "available_tpi": [
+            "3"
+          ]
+        },
+        {
+          "width_mm": 34,
+          "thickness_mm": 1.1,
+          "available_tpi": [
+            "3"
+          ]
+        },
+        {
+          "width_mm": 34,
+          "thickness_mm": 1.3,
+          "available_tpi": [
+            "3"
+          ]
+        }
+      ],
+      "source": "catalog",
+      "source_pages": [
+        14
+      ]
+    },
+    {
+      "id": "advanz_mc5",
+      "canonical_name": "ADVANZ MC5",
+      "aliases": [
+        "Advanz MC5"
+      ],
+      "cutting_edge": "karbür uçlu",
+      "tooth_geometry": "beşli talaş geometrisi",
+      "features_tr": [
+        "Pozitif talaş açısı",
+        "Karbür uç",
+        "Taşlanmış diş",
+        "Beşli talaş diş geometrisi"
+      ],
+      "benefits_tr": [
+        "Yorulma, aşınma ve darbeye yüksek direnç",
+        "Yüksek üretkenlik",
+        "Hassas kesim yüzeyi"
+      ],
+      "applications_tr": [
+        "büyük dolu malzeme",
+        "kalın cidarlı yuvarlak boru",
+        "motor bloğu"
+      ],
+      "materials_tr": [
+        "alüminyum",
+        "karbon çeliği",
+        "karbon çeliği alaşımları",
+        "dökme demir",
+        "bronz",
+        "bakır alaşımları",
+        "demir esaslı metal",
+        "HSS",
+        "paslanmaz çelik",
+        "sıcak ve soğuk iş çeliği",
+        "nikel ve titanyum alaşımları"
+      ],
+      "variants": [
+        {
+          "width_mm": 34,
+          "thickness_mm": 1.1,
+          "available_tpi": [
+            "2/3"
+          ]
+        },
+        {
+          "width_mm": 41,
+          "thickness_mm": 1.3,
+          "available_tpi": [
+            "1.4/2",
+            "2/3"
+          ]
+        },
+        {
+          "width_mm": 54,
+          "thickness_mm": 1.6,
+          "available_tpi": [
+            "1.4/2",
+            "2/3"
+          ]
+        },
+        {
+          "width_mm": 67,
+          "thickness_mm": 1.6,
+          "available_tpi": [
+            "0.9/1.1"
+          ]
+        },
+        {
+          "width_mm": 80,
+          "thickness_mm": 1.6,
+          "available_tpi": [
+            "1.4/2"
+          ]
+        }
+      ],
+      "source": "catalog",
+      "source_pages": [
+        15
+      ]
+    }
+  ],
+  "product_router": [
+    {
+      "priority": 100,
+      "when": "tube_or_profile_or_structural_or_profile_bundle",
+      "recommend": "tennax_pro"
+    },
+    {
+      "priority": 95,
+      "when": "portable_or_small_wheel_vertical_machine_and_width_13mm",
+      "recommend": "univerz"
+    },
+    {
+      "priority": 95,
+      "when": "contour_or_sheet_or_thin_profile_and_width_le_13mm",
+      "recommend": "intenss_pro_die"
+    },
+    {
+      "priority": 80,
+      "when": "general_small_or_medium_solid",
+      "recommend": "intenss"
+    },
+    {
+      "priority": 85,
+      "when": "solid_or_thick_wall_or_difficult_alloy_and_hardness_le_45hrc",
+      "recommend": "intenss_pro"
+    },
+    {
+      "priority": 90,
+      "when": "large_solid_or_small_solid_bundle_and_m51_economically_preferred",
+      "recommend": "primalloy"
+    },
+    {
+      "priority": 98,
+      "when": "hardness_gt_45hrc_or_hard_abrasive_material_and_carbide_machine_capable",
+      "recommend": "advanz_ts"
+    },
+    {
+      "priority": 92,
+      "when": "aluminum_casting_or_composite_or_graphite_or_abrasive_nonferrous",
+      "recommend": "advanz_fs"
+    },
+    {
+      "priority": 92,
+      "when": "large_solid_difficult_alloy_or_high_productivity_and_rigid_carbide_machine",
+      "recommend": "advanz_mc5"
+    }
+  ],
+  "cutting_conditions": [
+    {
+      "family_tr": "Karbon çeliği",
+      "grade_designations": "1005-1012",
+      "hardness_value": 150,
+      "hardness_unit": "HB",
+      "blade_speed_m_min": {
+        "min": 79,
+        "max": 91
+      },
+      "cutting_rate_cm2_min": {
+        "min": 77,
+        "max": 103
+      },
+      "blade_scope": "bimetal",
+      "workpiece_dimension_mm": {
+        "min": 50,
+        "max": 125
+      },
+      "source": "cutting_table",
+      "verification_sources": [
+        "starrett_42",
+        "starrett_43"
+      ],
+      "verification_status": "corrected_or_flagged",
+      "qa_note": "Bycuttech baskısında hız 79-81; Starrett orijinalinde 79-91. Doğrulanmış değer kullanıldı.",
+      "printed_value": {
+        "blade_speed_m_min": {
+          "min": 79,
+          "max": 81
+        }
+      }
+    },
+    {
+      "family_tr": "Karbon çeliği",
+      "grade_designations": "1015-1026",
+      "hardness_value": 150,
+      "hardness_unit": "HB",
+      "blade_speed_m_min": {
+        "min": 76,
+        "max": 88
+      },
+      "cutting_rate_cm2_min": {
+        "min": 71,
+        "max": 97
+      },
+      "blade_scope": "bimetal",
+      "workpiece_dimension_mm": {
+        "min": 50,
+        "max": 125
+      },
+      "source": "cutting_table",
+      "verification_sources": [
+        "starrett_42",
+        "starrett_43"
+      ],
+      "verification_status": "verified"
+    },
+    {
+      "family_tr": "Karbon çeliği",
+      "grade_designations": "1030-1055, A36",
+      "hardness_value": 175,
+      "hardness_unit": "HB",
+      "blade_speed_m_min": {
+        "min": 55,
+        "max": 67
+      },
+      "cutting_rate_cm2_min": {
+        "min": 52,
+        "max": 58
+      },
+      "blade_scope": "bimetal",
+      "workpiece_dimension_mm": {
+        "min": 50,
+        "max": 125
+      },
+      "source": "cutting_table",
+      "verification_sources": [
+        "starrett_42",
+        "starrett_43"
+      ],
+      "verification_status": "verified"
+    },
+    {
+      "family_tr": "Karbon çeliği",
+      "grade_designations": "1060-1095",
+      "hardness_value": 200,
+      "hardness_unit": "HB",
+      "blade_speed_m_min": {
+        "min": 49,
+        "max": 61
+      },
+      "cutting_rate_cm2_min": {
+        "min": 39,
+        "max": 52
+      },
+      "blade_scope": "bimetal",
+      "workpiece_dimension_mm": {
+        "min": 50,
+        "max": 125
+      },
+      "source": "cutting_table",
+      "verification_sources": [
+        "starrett_42",
+        "starrett_43"
+      ],
+      "verification_status": "verified"
+    },
+    {
+      "family_tr": "Kolay işlenen karbon çeliği",
+      "grade_designations": "1110, 1117, 1118",
+      "hardness_value": 150,
+      "hardness_unit": "HB",
+      "blade_speed_m_min": {
+        "min": 79,
+        "max": 98
+      },
+      "cutting_rate_cm2_min": {
+        "min": 77,
+        "max": 103
+      },
+      "blade_scope": "bimetal",
+      "workpiece_dimension_mm": {
+        "min": 50,
+        "max": 125
+      },
+      "source": "cutting_table",
+      "verification_sources": [
+        "starrett_42",
+        "starrett_43"
+      ],
+      "verification_status": "verified"
+    },
+    {
+      "family_tr": "Kolay işlenen karbon çeliği",
+      "grade_designations": "1137-1151",
+      "hardness_value": 175,
+      "hardness_unit": "HB",
+      "blade_speed_m_min": {
+        "min": 67,
+        "max": 79
+      },
+      "cutting_rate_cm2_min": {
+        "min": 52,
+        "max": 77
+      },
+      "blade_scope": "bimetal",
+      "workpiece_dimension_mm": {
+        "min": 50,
+        "max": 125
+      },
+      "source": "cutting_table",
+      "verification_sources": [
+        "starrett_42",
+        "starrett_43"
+      ],
+      "verification_status": "verified"
+    },
+    {
+      "family_tr": "Kolay işlenen karbon çeliği",
+      "grade_designations": "1211-1215",
+      "hardness_value": 150,
+      "hardness_unit": "HB",
+      "blade_speed_m_min": {
+        "min": 79,
+        "max": 98
+      },
+      "cutting_rate_cm2_min": {
+        "min": 97,
+        "max": 120
+      },
+      "blade_scope": "bimetal",
+      "workpiece_dimension_mm": {
+        "min": 50,
+        "max": 125
+      },
+      "source": "cutting_table",
+      "verification_sources": [
+        "starrett_42",
+        "starrett_43"
+      ],
+      "verification_status": "verified"
+    },
+    {
+      "family_tr": "Mangan çeliği",
+      "grade_designations": "1330-1345",
+      "hardness_value": 200,
+      "hardness_unit": "HB",
+      "blade_speed_m_min": {
+        "min": 55,
+        "max": 67
+      },
+      "cutting_rate_cm2_min": {
+        "min": 39,
+        "max": 52
+      },
+      "blade_scope": "bimetal",
+      "workpiece_dimension_mm": {
+        "min": 50,
+        "max": 125
+      },
+      "source": "cutting_table",
+      "verification_sources": [
+        "starrett_42",
+        "starrett_43"
+      ],
+      "verification_status": "verified"
+    },
+    {
+      "family_tr": "Mangan çeliği",
+      "grade_designations": "1513-1527",
+      "hardness_value": 150,
+      "hardness_unit": "HB",
+      "blade_speed_m_min": {
+        "min": 79,
+        "max": 91
+      },
+      "cutting_rate_cm2_min": {
+        "min": 77,
+        "max": 103
+      },
+      "blade_scope": "bimetal",
+      "workpiece_dimension_mm": {
+        "min": 50,
+        "max": 125
+      },
+      "source": "cutting_table",
+      "verification_sources": [
+        "starrett_42",
+        "starrett_43"
+      ],
+      "verification_status": "verified"
+    },
+    {
+      "family_tr": "Mangan çeliği",
+      "grade_designations": "1536-1552",
+      "hardness_value": 175,
+      "hardness_unit": "HB",
+      "blade_speed_m_min": {
+        "min": 61,
+        "max": 79
+      },
+      "cutting_rate_cm2_min": {
+        "min": 52,
+        "max": 65
+      },
+      "blade_scope": "bimetal",
+      "workpiece_dimension_mm": {
+        "min": 50,
+        "max": 125
+      },
+      "source": "cutting_table",
+      "verification_sources": [
+        "starrett_42",
+        "starrett_43"
+      ],
+      "verification_status": "verified"
+    },
+    {
+      "family_tr": "Mangan çeliği",
+      "grade_designations": "1561-1572",
+      "hardness_value": 200,
+      "hardness_unit": "HB",
+      "blade_speed_m_min": {
+        "min": 49,
+        "max": 61
+      },
+      "cutting_rate_cm2_min": {
+        "min": 39,
+        "max": 52
+      },
+      "blade_scope": "bimetal",
+      "workpiece_dimension_mm": {
+        "min": 50,
+        "max": 125
+      },
+      "source": "cutting_table",
+      "verification_sources": [
+        "starrett_42",
+        "starrett_43"
+      ],
+      "verification_status": "verified"
+    },
+    {
+      "family_tr": "Molibden çeliği",
+      "grade_designations": "4012-4024",
+      "hardness_value": 175,
+      "hardness_unit": "HB",
+      "blade_speed_m_min": {
+        "min": 61,
+        "max": 73
+      },
+      "cutting_rate_cm2_min": {
+        "min": 45,
+        "max": 58
+      },
+      "blade_scope": "bimetal",
+      "workpiece_dimension_mm": {
+        "min": 50,
+        "max": 125
+      },
+      "source": "cutting_table",
+      "verification_sources": [
+        "starrett_42",
+        "starrett_43"
+      ],
+      "verification_status": "verified"
+    },
+    {
+      "family_tr": "Molibden çeliği",
+      "grade_designations": "4030-4042",
+      "hardness_value": 175,
+      "hardness_unit": "HB",
+      "blade_speed_m_min": {
+        "min": 58,
+        "max": 70
+      },
+      "cutting_rate_cm2_min": {
+        "min": 45,
+        "max": 52
+      },
+      "blade_scope": "bimetal",
+      "workpiece_dimension_mm": {
+        "min": 50,
+        "max": 125
+      },
+      "source": "cutting_table",
+      "verification_sources": [
+        "starrett_42",
+        "starrett_43"
+      ],
+      "verification_status": "verified"
+    },
+    {
+      "family_tr": "Molibden çeliği",
+      "grade_designations": "4047-4068",
+      "hardness_value": 175,
+      "hardness_unit": "HB",
+      "blade_speed_m_min": {
+        "min": 55,
+        "max": 67
+      },
+      "cutting_rate_cm2_min": {
+        "min": 39,
+        "max": 52
+      },
+      "blade_scope": "bimetal",
+      "workpiece_dimension_mm": {
+        "min": 50,
+        "max": 125
+      },
+      "source": "cutting_table",
+      "verification_sources": [
+        "starrett_42",
+        "starrett_43"
+      ],
+      "verification_status": "verified"
+    },
+    {
+      "family_tr": "Krom-molibden çeliği",
+      "grade_designations": "4130-4140",
+      "hardness_value": 200,
+      "hardness_unit": "HB",
+      "blade_speed_m_min": {
+        "min": 55,
+        "max": 67
+      },
+      "cutting_rate_cm2_min": {
+        "min": 39,
+        "max": 52
+      },
+      "blade_scope": "bimetal",
+      "workpiece_dimension_mm": {
+        "min": 50,
+        "max": 125
+      },
+      "source": "cutting_table",
+      "verification_sources": [
+        "starrett_42",
+        "starrett_43"
+      ],
+      "verification_status": "verified"
+    },
+    {
+      "family_tr": "Krom-molibden çeliği",
+      "grade_designations": "4142-4161",
+      "hardness_value": 200,
+      "hardness_unit": "HB",
+      "blade_speed_m_min": {
+        "min": 52,
+        "max": 64
+      },
+      "cutting_rate_cm2_min": {
+        "min": 32,
+        "max": 45
+      },
+      "blade_scope": "bimetal",
+      "workpiece_dimension_mm": {
+        "min": 50,
+        "max": 125
+      },
+      "source": "cutting_table",
+      "verification_sources": [
+        "starrett_42",
+        "starrett_43"
+      ],
+      "verification_status": "verified"
+    },
+    {
+      "family_tr": "Nikel-krom-molibden çeliği",
+      "grade_designations": "4320",
+      "hardness_value": 175,
+      "hardness_unit": "HB",
+      "blade_speed_m_min": {
+        "min": 61,
+        "max": 73
+      },
+      "cutting_rate_cm2_min": {
+        "min": 45,
+        "max": 58
+      },
+      "blade_scope": "bimetal",
+      "workpiece_dimension_mm": {
+        "min": 50,
+        "max": 125
+      },
+      "source": "cutting_table",
+      "verification_sources": [
+        "starrett_42",
+        "starrett_43"
+      ],
+      "verification_status": "verified"
+    },
+    {
+      "family_tr": "Nikel-krom-molibden çeliği",
+      "grade_designations": "4340",
+      "hardness_value": 200,
+      "hardness_unit": "HB",
+      "blade_speed_m_min": {
+        "min": 55,
+        "max": 67
+      },
+      "cutting_rate_cm2_min": {
+        "min": 39,
+        "max": 52
+      },
+      "blade_scope": "bimetal",
+      "workpiece_dimension_mm": {
+        "min": 50,
+        "max": 125
+      },
+      "source": "cutting_table",
+      "verification_sources": [
+        "starrett_42",
+        "starrett_43"
+      ],
+      "verification_status": "verified"
+    },
+    {
+      "family_tr": "Nikel-krom-molibden çeliği",
+      "grade_designations": "8115, 8615-8622, 8145, 8625-8637",
+      "hardness_value": 175,
+      "hardness_unit": "HB",
+      "blade_speed_m_min": {
+        "min": 61,
+        "max": 73
+      },
+      "cutting_rate_cm2_min": {
+        "min": 45,
+        "max": 58
+      },
+      "blade_scope": "bimetal",
+      "workpiece_dimension_mm": {
+        "min": 50,
+        "max": 125
+      },
+      "source": "cutting_table",
+      "verification_sources": [
+        "starrett_42",
+        "starrett_43"
+      ],
+      "verification_status": "verified"
+    },
+    {
+      "family_tr": "Nikel-krom-molibden çeliği",
+      "grade_designations": "8640-8660, 8740",
+      "hardness_value": 200,
+      "hardness_unit": "HB",
+      "blade_speed_m_min": {
+        "min": 55,
+        "max": 67
+      },
+      "cutting_rate_cm2_min": {
+        "min": 39,
+        "max": 52
+      },
+      "blade_scope": "bimetal",
+      "workpiece_dimension_mm": {
+        "min": 50,
+        "max": 125
+      },
+      "source": "cutting_table",
+      "verification_sources": [
+        "starrett_42",
+        "starrett_43"
+      ],
+      "verification_status": "verified"
+    },
+    {
+      "family_tr": "Nikel-krom-molibden çeliği",
+      "grade_designations": "8720, 8822",
+      "hardness_value": 200,
+      "hardness_unit": "HB",
+      "blade_speed_m_min": {
+        "min": 61,
+        "max": 73
+      },
+      "cutting_rate_cm2_min": {
+        "min": 45,
+        "max": 58
+      },
+      "blade_scope": "bimetal",
+      "workpiece_dimension_mm": {
+        "min": 50,
+        "max": 125
+      },
+      "source": "cutting_table",
+      "verification_sources": [
+        "starrett_42",
+        "starrett_43"
+      ],
+      "verification_status": "verified"
+    },
+    {
+      "family_tr": "Nikel-krom-molibden çeliği",
+      "grade_designations": "9310",
+      "hardness_value": 175,
+      "hardness_unit": "HB",
+      "blade_speed_m_min": {
+        "min": 49,
+        "max": 58
+      },
+      "cutting_rate_cm2_min": {
+        "min": 19,
+        "max": 26
+      },
+      "blade_scope": "bimetal",
+      "workpiece_dimension_mm": {
+        "min": 50,
+        "max": 125
+      },
+      "source": "cutting_table",
+      "verification_sources": [
+        "starrett_42",
+        "starrett_43"
+      ],
+      "verification_status": "verified"
+    },
+    {
+      "family_tr": "Nikel-krom-molibden çeliği",
+      "grade_designations": "9430-9445",
+      "hardness_value": 200,
+      "hardness_unit": "HB",
+      "blade_speed_m_min": {
+        "min": 55,
+        "max": 67
+      },
+      "cutting_rate_cm2_min": {
+        "min": 39,
+        "max": 52
+      },
+      "blade_scope": "bimetal",
+      "workpiece_dimension_mm": {
+        "min": 50,
+        "max": 125
+      },
+      "source": "cutting_table",
+      "verification_sources": [
+        "starrett_42",
+        "starrett_43"
+      ],
+      "verification_status": "verified"
+    },
+    {
+      "family_tr": "Nikel-molibden çeliği",
+      "grade_designations": "4615-4626, 4815-4820",
+      "hardness_value": 175,
+      "hardness_unit": "HB",
+      "blade_speed_m_min": {
+        "min": 61,
+        "max": 73
+      },
+      "cutting_rate_cm2_min": {
+        "min": 45,
+        "max": 58
+      },
+      "blade_scope": "bimetal",
+      "workpiece_dimension_mm": {
+        "min": 50,
+        "max": 125
+      },
+      "source": "cutting_table",
+      "verification_sources": [
+        "starrett_42",
+        "starrett_43"
+      ],
+      "verification_status": "verified"
+    },
+    {
+      "family_tr": "Krom çeliği",
+      "grade_designations": "5040-5060",
+      "hardness_value": 200,
+      "hardness_unit": "HB",
+      "blade_speed_m_min": {
+        "min": 55,
+        "max": 67
+      },
+      "cutting_rate_cm2_min": {
+        "min": 39,
+        "max": 52
+      },
+      "blade_scope": "bimetal",
+      "workpiece_dimension_mm": {
+        "min": 50,
+        "max": 125
+      },
+      "source": "cutting_table",
+      "verification_sources": [
+        "starrett_42",
+        "starrett_43"
+      ],
+      "verification_status": "verified"
+    },
+    {
+      "family_tr": "Krom çeliği",
+      "grade_designations": "5115-5120",
+      "hardness_value": 175,
+      "hardness_unit": "HB",
+      "blade_speed_m_min": {
+        "min": 61,
+        "max": 73
+      },
+      "cutting_rate_cm2_min": {
+        "min": 45,
+        "max": 58
+      },
+      "blade_scope": "bimetal",
+      "workpiece_dimension_mm": {
+        "min": 50,
+        "max": 125
+      },
+      "source": "cutting_table",
+      "verification_sources": [
+        "starrett_42",
+        "starrett_43"
+      ],
+      "verification_status": "corrected_or_flagged",
+      "qa_note": "Bycuttech baskısında Q üst sınırı 48; Starrett diziliminde 58. Doğrulanmış değer kullanıldı.",
+      "printed_value": {
+        "cutting_rate_cm2_min": {
+          "min": 45,
+          "max": 48
+        }
+      }
+    },
+    {
+      "family_tr": "Krom çeliği",
+      "grade_designations": "5130-5160",
+      "hardness_value": 200,
+      "hardness_unit": "HB",
+      "blade_speed_m_min": {
+        "min": 55,
+        "max": 67
+      },
+      "cutting_rate_cm2_min": {
+        "min": 39,
+        "max": 52
+      },
+      "blade_scope": "bimetal",
+      "workpiece_dimension_mm": {
+        "min": 50,
+        "max": 125
+      },
+      "source": "cutting_table",
+      "verification_sources": [
+        "starrett_42",
+        "starrett_43"
+      ],
+      "verification_status": "verified"
+    },
+    {
+      "family_tr": "Krom çeliği",
+      "grade_designations": "50100, 51100, 52100",
+      "hardness_value": 225,
+      "hardness_unit": "HB",
+      "blade_speed_m_min": {
+        "min": 40,
+        "max": 49
+      },
+      "cutting_rate_cm2_min": {
+        "min": 26,
+        "max": 32
+      },
+      "blade_scope": "bimetal",
+      "workpiece_dimension_mm": {
+        "min": 50,
+        "max": 125
+      },
+      "source": "cutting_table",
+      "verification_sources": [
+        "starrett_42",
+        "starrett_43"
+      ],
+      "verification_status": "verified"
+    },
+    {
+      "family_tr": "Krom-vanadyum çeliği",
+      "grade_designations": "6118",
+      "hardness_value": 175,
+      "hardness_unit": "HB",
+      "blade_speed_m_min": {
+        "min": 61,
+        "max": 73
+      },
+      "cutting_rate_cm2_min": {
+        "min": 45,
+        "max": 58
+      },
+      "blade_scope": "bimetal",
+      "workpiece_dimension_mm": {
+        "min": 50,
+        "max": 125
+      },
+      "source": "cutting_table",
+      "verification_sources": [
+        "starrett_42",
+        "starrett_43"
+      ],
+      "verification_status": "verified"
+    },
+    {
+      "family_tr": "Krom-vanadyum çeliği",
+      "grade_designations": "6150",
+      "hardness_value": 200,
+      "hardness_unit": "HB",
+      "blade_speed_m_min": {
+        "min": 55,
+        "max": 67
+      },
+      "cutting_rate_cm2_min": {
+        "min": 39,
+        "max": 52
+      },
+      "blade_scope": "bimetal",
+      "workpiece_dimension_mm": {
+        "min": 50,
+        "max": 125
+      },
+      "source": "cutting_table",
+      "verification_sources": [
+        "starrett_42",
+        "starrett_43"
+      ],
+      "verification_status": "verified"
+    },
+    {
+      "family_tr": "Silisyum çeliği",
+      "grade_designations": "9255-9262",
+      "hardness_value": 200,
+      "hardness_unit": "HB",
+      "blade_speed_m_min": {
+        "min": 55,
+        "max": 67
+      },
+      "cutting_rate_cm2_min": {
+        "min": 39,
+        "max": 52
+      },
+      "blade_scope": "bimetal",
+      "workpiece_dimension_mm": {
+        "min": 50,
+        "max": 125
+      },
+      "source": "cutting_table",
+      "verification_sources": [
+        "starrett_42",
+        "starrett_43"
+      ],
+      "verification_status": "verified"
+    },
+    {
+      "family_tr": "Soğuk iş takım çeliği",
+      "grade_designations": "A2-A6, A8-A10",
+      "hardness_value": 200,
+      "hardness_unit": "HB",
+      "blade_speed_m_min": {
+        "min": 55,
+        "max": 67
+      },
+      "cutting_rate_cm2_min": {
+        "min": 19,
+        "max": 26
+      },
+      "blade_scope": "bimetal",
+      "workpiece_dimension_mm": {
+        "min": 50,
+        "max": 125
+      },
+      "source": "cutting_table",
+      "verification_sources": [
+        "starrett_42",
+        "starrett_43"
+      ],
+      "verification_status": "verified"
+    },
+    {
+      "family_tr": "Soğuk iş takım çeliği",
+      "grade_designations": "D2-D7, A7",
+      "hardness_value": 250,
+      "hardness_unit": "HB",
+      "blade_speed_m_min": {
+        "min": 20,
+        "max": 30
+      },
+      "cutting_rate_cm2_min": {
+        "min": 13,
+        "max": 19
+      },
+      "blade_scope": "bimetal",
+      "workpiece_dimension_mm": {
+        "min": 50,
+        "max": 125
+      },
+      "source": "cutting_table",
+      "verification_sources": [
+        "starrett_42",
+        "starrett_43"
+      ],
+      "verification_status": "verified"
+    },
+    {
+      "family_tr": "Soğuk iş takım çeliği",
+      "grade_designations": "O1, O2, O6, O7",
+      "hardness_value": 200,
+      "hardness_unit": "HB",
+      "blade_speed_m_min": {
+        "min": 55,
+        "max": 67
+      },
+      "cutting_rate_cm2_min": {
+        "min": 26,
+        "max": 39
+      },
+      "blade_scope": "bimetal",
+      "workpiece_dimension_mm": {
+        "min": 50,
+        "max": 125
+      },
+      "source": "cutting_table",
+      "verification_sources": [
+        "starrett_42",
+        "starrett_43"
+      ],
+      "verification_status": "verified"
+    },
+    {
+      "family_tr": "Sıcak iş takım çeliği",
+      "grade_designations": "H10-H19, H21-H42, P20",
+      "hardness_value": 200,
+      "hardness_unit": "HB",
+      "blade_speed_m_min": {
+        "min": 40,
+        "max": 49
+      },
+      "cutting_rate_cm2_min": {
+        "min": 19,
+        "max": 26
+      },
+      "blade_scope": "bimetal",
+      "workpiece_dimension_mm": {
+        "min": 50,
+        "max": 125
+      },
+      "source": "cutting_table",
+      "verification_sources": [
+        "starrett_42",
+        "starrett_43"
+      ],
+      "verification_status": "verified"
+    },
+    {
+      "family_tr": "Sıcak iş takım çeliği",
+      "grade_designations": "L2, L6",
+      "hardness_value": 200,
+      "hardness_unit": "HB",
+      "blade_speed_m_min": {
+        "min": 52,
+        "max": 64
+      },
+      "cutting_rate_cm2_min": {
+        "min": 19,
+        "max": 26
+      },
+      "blade_scope": "bimetal",
+      "workpiece_dimension_mm": {
+        "min": 50,
+        "max": 125
+      },
+      "source": "cutting_table",
+      "verification_sources": [
+        "starrett_42",
+        "starrett_43"
+      ],
+      "verification_status": "verified"
+    },
+    {
+      "family_tr": "Darbeye dayanıklı takım çeliği",
+      "grade_designations": "S1-S7",
+      "hardness_value": 200,
+      "hardness_unit": "HB",
+      "blade_speed_m_min": {
+        "min": 40,
+        "max": 49
+      },
+      "cutting_rate_cm2_min": {
+        "min": 19,
+        "max": 26
+      },
+      "blade_scope": "bimetal",
+      "workpiece_dimension_mm": {
+        "min": 50,
+        "max": 125
+      },
+      "source": "cutting_table",
+      "verification_sources": [
+        "starrett_42",
+        "starrett_43"
+      ],
+      "verification_status": "verified"
+    },
+    {
+      "family_tr": "Karbon takım çeliği",
+      "grade_designations": "W1-W5",
+      "hardness_value": 200,
+      "hardness_unit": "HB",
+      "blade_speed_m_min": {
+        "min": 55,
+        "max": 67
+      },
+      "cutting_rate_cm2_min": {
+        "min": 26,
+        "max": 39
+      },
+      "blade_scope": "bimetal",
+      "workpiece_dimension_mm": {
+        "min": 50,
+        "max": 125
+      },
+      "source": "cutting_table",
+      "verification_sources": [
+        "starrett_42",
+        "starrett_43"
+      ],
+      "verification_status": "corrected_or_flagged",
+      "qa_note": "Bycuttech baskısında Q 26-36; Starrett orijinalinde 26-39. Doğrulanmış değer kullanıldı.",
+      "printed_value": {
+        "cutting_rate_cm2_min": {
+          "min": 26,
+          "max": 36
+        }
+      }
+    },
+    {
+      "family_tr": "Ferritik paslanmaz çelik",
+      "grade_designations": "405, 409, 430, 434, 436, 442, 446",
+      "hardness_value": 175,
+      "hardness_unit": "HB",
+      "blade_speed_m_min": {
+        "min": 24,
+        "max": 30
+      },
+      "cutting_rate_cm2_min": {
+        "min": 19,
+        "max": 26
+      },
+      "blade_scope": "bimetal",
+      "workpiece_dimension_mm": {
+        "min": 50,
+        "max": 125
+      },
+      "source": "cutting_table",
+      "verification_sources": [
+        "starrett_42",
+        "starrett_43"
+      ],
+      "verification_status": "verified"
+    },
+    {
+      "family_tr": "Yüksek hız çeliği",
+      "grade_designations": "M1, M2, M7, M10",
+      "hardness_value": 225,
+      "hardness_unit": "HB",
+      "blade_speed_m_min": {
+        "min": 34,
+        "max": 40
+      },
+      "cutting_rate_cm2_min": {
+        "min": 19,
+        "max": 26
+      },
+      "blade_scope": "bimetal",
+      "workpiece_dimension_mm": {
+        "min": 50,
+        "max": 125
+      },
+      "source": "cutting_table",
+      "verification_sources": [
+        "starrett_42",
+        "starrett_43"
+      ],
+      "verification_status": "verified"
+    },
+    {
+      "family_tr": "Yüksek hız çeliği",
+      "grade_designations": "M3, M4, M30-M47",
+      "hardness_value": 225,
+      "hardness_unit": "HB",
+      "blade_speed_m_min": {
+        "min": 20,
+        "max": 30
+      },
+      "cutting_rate_cm2_min": {
+        "min": 13,
+        "max": 19
+      },
+      "blade_scope": "bimetal",
+      "workpiece_dimension_mm": {
+        "min": 50,
+        "max": 125
+      },
+      "source": "cutting_table",
+      "verification_sources": [
+        "starrett_42",
+        "starrett_43"
+      ],
+      "verification_status": "verified"
+    },
+    {
+      "family_tr": "Yüksek hız çeliği",
+      "grade_designations": "T1, T2, T6",
+      "hardness_value": 250,
+      "hardness_unit": "HB",
+      "blade_speed_m_min": {
+        "min": 34,
+        "max": 40
+      },
+      "cutting_rate_cm2_min": {
+        "min": 19,
+        "max": 26
+      },
+      "blade_scope": "bimetal",
+      "workpiece_dimension_mm": {
+        "min": 50,
+        "max": 125
+      },
+      "source": "cutting_table",
+      "verification_sources": [
+        "starrett_42",
+        "starrett_43"
+      ],
+      "verification_status": "verified"
+    },
+    {
+      "family_tr": "Yüksek hız çeliği",
+      "grade_designations": "T15",
+      "hardness_value": 250,
+      "hardness_unit": "HB",
+      "blade_speed_m_min": {
+        "min": 18,
+        "max": 27
+      },
+      "cutting_rate_cm2_min": {
+        "min": 13,
+        "max": 19
+      },
+      "blade_scope": "bimetal",
+      "workpiece_dimension_mm": {
+        "min": 50,
+        "max": 125
+      },
+      "source": "cutting_table",
+      "verification_sources": [
+        "starrett_42",
+        "starrett_43"
+      ],
+      "verification_status": "verified"
+    },
+    {
+      "family_tr": "Yüksek hız çeliği",
+      "grade_designations": "T4, T5",
+      "hardness_value": 250,
+      "hardness_unit": "HB",
+      "blade_speed_m_min": {
+        "min": 27,
+        "max": 37
+      },
+      "cutting_rate_cm2_min": {
+        "min": 13,
+        "max": 19
+      },
+      "blade_scope": "bimetal",
+      "workpiece_dimension_mm": {
+        "min": 50,
+        "max": 125
+      },
+      "source": "cutting_table",
+      "verification_sources": [
+        "starrett_42",
+        "starrett_43"
+      ],
+      "verification_status": "verified"
+    },
+    {
+      "family_tr": "Östenitik paslanmaz çelik",
+      "grade_designations": "201, 202, 301-305, 308, 321, 347",
+      "hardness_value": 150,
+      "hardness_unit": "HB",
+      "blade_speed_m_min": {
+        "min": 30,
+        "max": 37
+      },
+      "cutting_rate_cm2_min": {
+        "min": 10,
+        "max": 13
+      },
+      "blade_scope": "bimetal",
+      "workpiece_dimension_mm": {
+        "min": 50,
+        "max": 125
+      },
+      "source": "cutting_table",
+      "verification_sources": [
+        "starrett_42",
+        "starrett_43"
+      ],
+      "verification_status": "corrected_or_flagged",
+      "qa_note": "Kaynakta '3472' yazım hatası bulunuyor; AISI 347 olarak normalize edildi.",
+      "printed_value": {
+        "grade_designations": "201, 202, 301-305, 308, 321, 3472"
+      }
+    },
+    {
+      "family_tr": "Östenitik paslanmaz çelik",
+      "grade_designations": "A286, 309, 310, 314, 316, 317, 330",
+      "hardness_value": 175,
+      "hardness_unit": "HB",
+      "blade_speed_m_min": {
+        "min": 21,
+        "max": 24
+      },
+      "cutting_rate_cm2_min": {
+        "min": 26,
+        "max": 32
+      },
+      "blade_scope": "bimetal",
+      "workpiece_dimension_mm": {
+        "min": 50,
+        "max": 125
+      },
+      "source": "cutting_table",
+      "verification_sources": [
+        "starrett_42",
+        "starrett_43"
+      ],
+      "verification_status": "corrected_or_flagged",
+      "qa_note": "Q değeri 304 grubundan yüksek görünmektedir ancak Starrett orijinal tabloyla aynıdır; saha doğrulaması önerilir."
+    },
+    {
+      "family_tr": "Kolay işlenen paslanmaz çelik",
+      "grade_designations": "330",
+      "hardness_value": 150,
+      "hardness_unit": "HB",
+      "blade_speed_m_min": {
+        "min": 30,
+        "max": 43
+      },
+      "cutting_rate_cm2_min": {
+        "min": 26,
+        "max": 32
+      },
+      "blade_scope": "bimetal",
+      "workpiece_dimension_mm": {
+        "min": 50,
+        "max": 125
+      },
+      "source": "cutting_table",
+      "verification_sources": [
+        "starrett_42",
+        "starrett_43"
+      ],
+      "verification_status": "verified"
+    },
+    {
+      "family_tr": "Kolay işlenen paslanmaz çelik",
+      "grade_designations": "416, 420F, 430F",
+      "hardness_value": 150,
+      "hardness_unit": "HB",
+      "blade_speed_m_min": {
+        "min": 43,
+        "max": 55
+      },
+      "cutting_rate_cm2_min": {
+        "min": 32,
+        "max": 39
+      },
+      "blade_scope": "bimetal",
+      "workpiece_dimension_mm": {
+        "min": 50,
+        "max": 125
+      },
+      "source": "cutting_table",
+      "verification_sources": [
+        "starrett_42",
+        "starrett_43"
+      ],
+      "verification_status": "verified"
+    },
+    {
+      "family_tr": "Martenzitik paslanmaz çelik",
+      "grade_designations": "403, 410, 420, 422, 501, 502",
+      "hardness_value": 175,
+      "hardness_unit": "HB",
+      "blade_speed_m_min": {
+        "min": 30,
+        "max": 40
+      },
+      "cutting_rate_cm2_min": {
+        "min": 19,
+        "max": 26
+      },
+      "blade_scope": "bimetal",
+      "workpiece_dimension_mm": {
+        "min": 50,
+        "max": 125
+      },
+      "source": "cutting_table",
+      "verification_sources": [
+        "starrett_42",
+        "starrett_43"
+      ],
+      "verification_status": "verified"
+    },
+    {
+      "family_tr": "Martenzitik paslanmaz çelik",
+      "grade_designations": "440A-C, 414, 431",
+      "hardness_value": 225,
+      "hardness_unit": "HB",
+      "blade_speed_m_min": {
+        "min": 27,
+        "max": 30
+      },
+      "cutting_rate_cm2_min": {
+        "min": 19,
+        "max": 26
+      },
+      "blade_scope": "bimetal",
+      "workpiece_dimension_mm": {
+        "min": 50,
+        "max": 125
+      },
+      "source": "cutting_table",
+      "verification_sources": [
+        "starrett_42",
+        "starrett_43"
+      ],
+      "verification_status": "verified"
+    },
+    {
+      "family_tr": "Çökelme sertleşmeli paslanmaz çelik",
+      "grade_designations": "15-5PH, 17-4PH, 17-7PH",
+      "hardness_value": 200,
+      "hardness_unit": "HB",
+      "blade_speed_m_min": {
+        "min": 21,
+        "max": 27
+      },
+      "cutting_rate_cm2_min": {
+        "min": 13,
+        "max": 19
+      },
+      "blade_scope": "bimetal",
+      "workpiece_dimension_mm": {
+        "min": 50,
+        "max": 125
+      },
+      "source": "cutting_table",
+      "verification_sources": [
+        "starrett_42",
+        "starrett_43"
+      ],
+      "verification_status": "verified"
+    },
+    {
+      "family_tr": "Dökme demir",
+      "grade_designations": "Class 20",
+      "hardness_value": 125,
+      "hardness_unit": "HB",
+      "blade_speed_m_min": {
+        "min": 49,
+        "max": 61
+      },
+      "cutting_rate_cm2_min": {
+        "min": 71,
+        "max": 97
+      },
+      "blade_scope": "bimetal",
+      "workpiece_dimension_mm": {
+        "min": 50,
+        "max": 125
+      },
+      "source": "cutting_table",
+      "verification_sources": [
+        "starrett_42",
+        "starrett_43"
+      ],
+      "verification_status": "verified"
+    },
+    {
+      "family_tr": "Dökme demir",
+      "grade_designations": "Class 40",
+      "hardness_value": 200,
+      "hardness_unit": "HB",
+      "blade_speed_m_min": {
+        "min": 37,
+        "max": 49
+      },
+      "cutting_rate_cm2_min": {
+        "min": 52,
+        "max": 77
+      },
+      "blade_scope": "bimetal",
+      "workpiece_dimension_mm": {
+        "min": 50,
+        "max": 125
+      },
+      "source": "cutting_table",
+      "verification_sources": [
+        "starrett_42",
+        "starrett_43"
+      ],
+      "verification_status": "corrected_or_flagged",
+      "qa_note": "Bycuttech baskısındaki 'Calss 40' yazımı düzeltildi.",
+      "printed_value": {
+        "grade_designations": "Calss 40"
+      }
+    },
+    {
+      "family_tr": "Temper dökme demir",
+      "grade_designations": "Malleable 60-40-18",
+      "hardness_value": 150,
+      "hardness_unit": "HB",
+      "blade_speed_m_min": {
+        "min": 61,
+        "max": 76
+      },
+      "cutting_rate_cm2_min": {
+        "min": 52,
+        "max": 65
+      },
+      "blade_scope": "bimetal",
+      "workpiece_dimension_mm": {
+        "min": 50,
+        "max": 125
+      },
+      "source": "cutting_table",
+      "verification_sources": [
+        "starrett_42",
+        "starrett_43"
+      ],
+      "verification_status": "verified"
+    },
+    {
+      "family_tr": "Temper dökme demir",
+      "grade_designations": "Malleable 80-55-06",
+      "hardness_value": 225,
+      "hardness_unit": "HB",
+      "blade_speed_m_min": {
+        "min": 37,
+        "max": 49
+      },
+      "cutting_rate_cm2_min": {
+        "min": 32,
+        "max": 45
+      },
+      "blade_scope": "bimetal",
+      "workpiece_dimension_mm": {
+        "min": 50,
+        "max": 125
+      },
+      "source": "cutting_table",
+      "verification_sources": [
+        "starrett_42",
+        "starrett_43"
+      ],
+      "verification_status": "verified"
+    },
+    {
+      "family_tr": "Nikel alaşımı",
+      "grade_designations": "Hastelloy, Rene 41",
+      "hardness_value": 250,
+      "hardness_unit": "HB",
+      "blade_speed_m_min": {
+        "min": 15,
+        "max": 21
+      },
+      "cutting_rate_cm2_min": {
+        "min": 6,
+        "max": 6
+      },
+      "blade_scope": "bimetal",
+      "workpiece_dimension_mm": {
+        "min": 50,
+        "max": 125
+      },
+      "source": "cutting_table",
+      "verification_sources": [
+        "starrett_42",
+        "starrett_43"
+      ],
+      "verification_status": "verified"
+    },
+    {
+      "family_tr": "Nikel alaşımı",
+      "grade_designations": "Inconel 600, 601",
+      "hardness_value": 250,
+      "hardness_unit": "HB",
+      "blade_speed_m_min": {
+        "min": 18,
+        "max": 24
+      },
+      "cutting_rate_cm2_min": {
+        "min": 13,
+        "max": 19
+      },
+      "blade_scope": "bimetal",
+      "workpiece_dimension_mm": {
+        "min": 50,
+        "max": 125
+      },
+      "source": "cutting_table",
+      "verification_sources": [
+        "starrett_42",
+        "starrett_43"
+      ],
+      "verification_status": "verified"
+    },
+    {
+      "family_tr": "Nikel alaşımı",
+      "grade_designations": "Inconel 625, 718, Waspaloy",
+      "hardness_value": 250,
+      "hardness_unit": "HB",
+      "blade_speed_m_min": {
+        "min": 18,
+        "max": 24
+      },
+      "cutting_rate_cm2_min": {
+        "min": 6,
+        "max": 6
+      },
+      "blade_scope": "bimetal",
+      "workpiece_dimension_mm": {
+        "min": 50,
+        "max": 125
+      },
+      "source": "cutting_table",
+      "verification_sources": [
+        "starrett_42",
+        "starrett_43"
+      ],
+      "verification_status": "verified"
+    },
+    {
+      "family_tr": "Nikel alaşımı",
+      "grade_designations": "Monel 400, 401",
+      "hardness_value": 250,
+      "hardness_unit": "HB",
+      "blade_speed_m_min": {
+        "min": 21,
+        "max": 27
+      },
+      "cutting_rate_cm2_min": {
+        "min": 13,
+        "max": 19
+      },
+      "blade_scope": "bimetal",
+      "workpiece_dimension_mm": {
+        "min": 50,
+        "max": 125
+      },
+      "source": "cutting_table",
+      "verification_sources": [
+        "starrett_42",
+        "starrett_43"
+      ],
+      "verification_status": "verified"
+    },
+    {
+      "family_tr": "Nikel alaşımı",
+      "grade_designations": "Monel K500",
+      "hardness_value": 250,
+      "hardness_unit": "HB",
+      "blade_speed_m_min": {
+        "min": 18,
+        "max": 24
+      },
+      "cutting_rate_cm2_min": {
+        "min": 6,
+        "max": 13
+      },
+      "blade_scope": "bimetal",
+      "workpiece_dimension_mm": {
+        "min": 50,
+        "max": 125
+      },
+      "source": "cutting_table",
+      "verification_sources": [
+        "starrett_42",
+        "starrett_43"
+      ],
+      "verification_status": "verified"
+    },
+    {
+      "family_tr": "Titanyum alaşımı",
+      "grade_designations": "Alpha, Alpha-Beta, Beta",
+      "hardness_value": 325,
+      "hardness_unit": "HB",
+      "blade_speed_m_min": {
+        "min": 14,
+        "max": 18
+      },
+      "cutting_rate_cm2_min": {
+        "min": 6,
+        "max": 6
+      },
+      "blade_scope": "bimetal",
+      "workpiece_dimension_mm": {
+        "min": 50,
+        "max": 125
+      },
+      "source": "cutting_table",
+      "verification_sources": [
+        "starrett_42",
+        "starrett_43"
+      ],
+      "verification_status": "verified"
+    },
+    {
+      "family_tr": "Titanyum",
+      "grade_designations": "Titanyum %99",
+      "hardness_value": 150,
+      "hardness_unit": "HB",
+      "blade_speed_m_min": {
+        "min": 21,
+        "max": 27
+      },
+      "cutting_rate_cm2_min": {
+        "min": 6,
+        "max": 13
+      },
+      "blade_scope": "bimetal",
+      "workpiece_dimension_mm": {
+        "min": 50,
+        "max": 125
+      },
+      "source": "cutting_table",
+      "verification_sources": [
+        "starrett_42",
+        "starrett_43"
+      ],
+      "verification_status": "verified"
+    },
+    {
+      "family_tr": "Refrakter metal",
+      "grade_designations": "Niyobyum (Columbium)",
+      "hardness_value": null,
+      "hardness_unit": null,
+      "blade_speed_m_min": {
+        "min": 18,
+        "max": 24
+      },
+      "cutting_rate_cm2_min": {
+        "min": 6,
+        "max": 6
+      },
+      "blade_scope": "bimetal",
+      "workpiece_dimension_mm": {
+        "min": 50,
+        "max": 125
+      },
+      "source": "cutting_table",
+      "verification_sources": [
+        "starrett_42",
+        "starrett_43"
+      ],
+      "verification_status": "corrected_or_flagged",
+      "qa_note": "Bycuttech Almanca tabloda HSLA altında yer alıyor; Starrett orijinal sınıflandırmasına göre refrakter metal olarak düzeltildi."
+    },
+    {
+      "family_tr": "Refrakter metal",
+      "grade_designations": "Molibden",
+      "hardness_value": null,
+      "hardness_unit": null,
+      "blade_speed_m_min": {
+        "min": 24,
+        "max": 30
+      },
+      "cutting_rate_cm2_min": {
+        "min": 6,
+        "max": 6
+      },
+      "blade_scope": "bimetal",
+      "workpiece_dimension_mm": {
+        "min": 50,
+        "max": 125
+      },
+      "source": "cutting_table",
+      "verification_sources": [
+        "starrett_42",
+        "starrett_43"
+      ],
+      "verification_status": "verified"
+    },
+    {
+      "family_tr": "Refrakter metal",
+      "grade_designations": "Tantal",
+      "hardness_value": null,
+      "hardness_unit": null,
+      "blade_speed_m_min": {
+        "min": 15,
+        "max": 18
+      },
+      "cutting_rate_cm2_min": {
+        "min": 6,
+        "max": 6
+      },
+      "blade_scope": "bimetal",
+      "workpiece_dimension_mm": {
+        "min": 50,
+        "max": 125
+      },
+      "source": "cutting_table",
+      "verification_sources": [
+        "starrett_42",
+        "starrett_43"
+      ],
+      "verification_status": "verified"
+    },
+    {
+      "family_tr": "Bakır alaşımı",
+      "grade_designations": "Sertleştirilmiş alüminyum bronzu",
+      "hardness_value": 30,
+      "hardness_unit": "HRC",
+      "blade_speed_m_min": {
+        "min": 24,
+        "max": 30
+      },
+      "cutting_rate_cm2_min": {
+        "min": 10,
+        "max": 14
+      },
+      "blade_scope": "bimetal",
+      "workpiece_dimension_mm": {
+        "min": 50,
+        "max": 125
+      },
+      "source": "cutting_table",
+      "verification_sources": [
+        "starrett_42",
+        "starrett_43"
+      ],
+      "verification_status": "verified"
+    },
+    {
+      "family_tr": "Bakır alaşımı",
+      "grade_designations": "Sertleştirilmiş berilyum bakır",
+      "hardness_value": 38,
+      "hardness_unit": "HRC",
+      "blade_speed_m_min": {
+        "min": 12,
+        "max": 17
+      },
+      "cutting_rate_cm2_min": {
+        "min": 3,
+        "max": 6
+      },
+      "blade_scope": "bimetal",
+      "workpiece_dimension_mm": {
+        "min": 50,
+        "max": 125
+      },
+      "source": "cutting_table",
+      "verification_sources": [
+        "starrett_42",
+        "starrett_43"
+      ],
+      "verification_status": "verified"
+    },
+    {
+      "family_tr": "Bakır alaşımı",
+      "grade_designations": "Alüminyum bronzu",
+      "hardness_value": 70,
+      "hardness_unit": "HRB",
+      "blade_speed_m_min": {
+        "min": 50,
+        "max": 58
+      },
+      "cutting_rate_cm2_min": {
+        "min": 39,
+        "max": 52
+      },
+      "blade_scope": "bimetal",
+      "workpiece_dimension_mm": {
+        "min": 50,
+        "max": 125
+      },
+      "source": "cutting_table",
+      "verification_sources": [
+        "starrett_42",
+        "starrett_43"
+      ],
+      "verification_status": "verified"
+    },
+    {
+      "family_tr": "Bakır alaşımı",
+      "grade_designations": "Fosfor bronzu",
+      "hardness_value": 70,
+      "hardness_unit": "HRB",
+      "blade_speed_m_min": {
+        "min": 46,
+        "max": 58
+      },
+      "cutting_rate_cm2_min": {
+        "min": 52,
+        "max": 65
+      },
+      "blade_scope": "bimetal",
+      "workpiece_dimension_mm": {
+        "min": 50,
+        "max": 125
+      },
+      "source": "cutting_table",
+      "verification_sources": [
+        "starrett_42",
+        "starrett_43"
+      ],
+      "verification_status": "corrected_or_flagged",
+      "qa_note": "Bycuttech baskısında Q 39-52; Starrett orijinalinde 52-65. Doğrulanmış değer kullanıldı.",
+      "printed_value": {
+        "cutting_rate_cm2_min": {
+          "min": 39,
+          "max": 52
+        }
+      }
+    },
+    {
+      "family_tr": "Bakır alaşımı",
+      "grade_designations": "Bakır %99",
+      "hardness_value": 50,
+      "hardness_unit": "HRB",
+      "blade_speed_m_min": {
+        "min": 43,
+        "max": 55
+      },
+      "cutting_rate_cm2_min": {
+        "min": 45,
+        "max": 58
+      },
+      "blade_scope": "bimetal",
+      "workpiece_dimension_mm": {
+        "min": 50,
+        "max": 125
+      },
+      "source": "cutting_table",
+      "verification_sources": [
+        "starrett_42",
+        "starrett_43"
+      ],
+      "verification_status": "verified"
+    },
+    {
+      "family_tr": "Bakır alaşımı",
+      "grade_designations": "Berilyum bakır",
+      "hardness_value": 70,
+      "hardness_unit": "HRB",
+      "blade_speed_m_min": {
+        "min": 52,
+        "max": 58
+      },
+      "cutting_rate_cm2_min": {
+        "min": 26,
+        "max": 39
+      },
+      "blade_scope": "bimetal",
+      "workpiece_dimension_mm": {
+        "min": 50,
+        "max": 125
+      },
+      "source": "cutting_table",
+      "verification_sources": [
+        "starrett_42",
+        "starrett_43"
+      ],
+      "verification_status": "corrected_or_flagged",
+      "qa_note": "Kaynakta 'Kupfer Berlirio' yazımı teknik Türkçede berilyum bakır olarak normalize edildi."
+    },
+    {
+      "family_tr": "Bakır alaşımı",
+      "grade_designations": "Sarı/kırmızı pirinç",
+      "hardness_value": 70,
+      "hardness_unit": "HRB",
+      "blade_speed_m_min": {
+        "min": 61,
+        "max": 79
+      },
+      "cutting_rate_cm2_min": {
+        "min": 52,
+        "max": 65
+      },
+      "blade_scope": "bimetal",
+      "workpiece_dimension_mm": {
+        "min": 50,
+        "max": 125
+      },
+      "source": "cutting_table",
+      "verification_sources": [
+        "starrett_42",
+        "starrett_43"
+      ],
+      "verification_status": "verified"
+    },
+    {
+      "family_tr": "Bakır alaşımı",
+      "grade_designations": "Kolay işlenen pirinç",
+      "hardness_value": 70,
+      "hardness_unit": "HRB",
+      "blade_speed_m_min": {
+        "min": 67,
+        "max": 76
+      },
+      "cutting_rate_cm2_min": {
+        "min": 65,
+        "max": 77
+      },
+      "blade_scope": "bimetal",
+      "workpiece_dimension_mm": {
+        "min": 50,
+        "max": 125
+      },
+      "source": "cutting_table",
+      "verification_sources": [
+        "starrett_42",
+        "starrett_43"
+      ],
+      "verification_status": "verified"
+    },
+    {
+      "family_tr": "Alüminyum alaşımı",
+      "grade_designations": "1200",
+      "hardness_value": 30,
+      "hardness_unit": "HB",
+      "blade_speed_m_min": {
+        "min": 120,
+        "max": 135
+      },
+      "cutting_rate_cm2_min": {
+        "min": 77,
+        "max": 110
+      },
+      "blade_scope": "bimetal",
+      "workpiece_dimension_mm": {
+        "min": 50,
+        "max": 125
+      },
+      "source": "cutting_table",
+      "verification_sources": [
+        "starrett_42",
+        "starrett_43"
+      ],
+      "verification_status": "verified"
+    },
+    {
+      "family_tr": "Alüminyum alaşımı",
+      "grade_designations": "2024",
+      "hardness_value": 120,
+      "hardness_unit": "HB",
+      "blade_speed_m_min": {
+        "min": 120,
+        "max": 135
+      },
+      "cutting_rate_cm2_min": {
+        "min": 77,
+        "max": 110
+      },
+      "blade_scope": "bimetal",
+      "workpiece_dimension_mm": {
+        "min": 50,
+        "max": 125
+      },
+      "source": "cutting_table",
+      "verification_sources": [
+        "starrett_42",
+        "starrett_43"
+      ],
+      "verification_status": "verified"
+    },
+    {
+      "family_tr": "Alüminyum alaşımı",
+      "grade_designations": "5052",
+      "hardness_value": 50,
+      "hardness_unit": "HB",
+      "blade_speed_m_min": {
+        "min": 120,
+        "max": 135
+      },
+      "cutting_rate_cm2_min": {
+        "min": 77,
+        "max": 110
+      },
+      "blade_scope": "bimetal",
+      "workpiece_dimension_mm": {
+        "min": 50,
+        "max": 125
+      },
+      "source": "cutting_table",
+      "verification_sources": [
+        "starrett_42",
+        "starrett_43"
+      ],
+      "verification_status": "verified"
+    },
+    {
+      "family_tr": "Alüminyum alaşımı",
+      "grade_designations": "6061",
+      "hardness_value": 110,
+      "hardness_unit": "HB",
+      "blade_speed_m_min": {
+        "min": 120,
+        "max": 135
+      },
+      "cutting_rate_cm2_min": {
+        "min": 77,
+        "max": 110
+      },
+      "blade_scope": "bimetal",
+      "workpiece_dimension_mm": {
+        "min": 50,
+        "max": 125
+      },
+      "source": "cutting_table",
+      "verification_sources": [
+        "starrett_42",
+        "starrett_43"
+      ],
+      "verification_status": "verified"
+    },
+    {
+      "family_tr": "Alüminyum alaşımı",
+      "grade_designations": "7075",
+      "hardness_value": 160,
+      "hardness_unit": "HB",
+      "blade_speed_m_min": {
+        "min": 120,
+        "max": 135
+      },
+      "cutting_rate_cm2_min": {
+        "min": 77,
+        "max": 110
+      },
+      "blade_scope": "bimetal",
+      "workpiece_dimension_mm": {
+        "min": 50,
+        "max": 125
+      },
+      "source": "cutting_table",
+      "verification_sources": [
+        "starrett_42",
+        "starrett_43"
+      ],
+      "verification_status": "verified"
+    }
+  ],
+  "tpi_solid_rules": [
+    {
+      "pitch_type": "variable",
+      "tpi": "12/16",
+      "contact_min_mm": 0,
+      "contact_max_mm": 25,
+      "source": "catalog",
+      "source_pages": [
+        16
+      ],
+      "selection_basis": "blade_contact_length"
+    },
+    {
+      "pitch_type": "variable",
+      "tpi": "10/14",
+      "contact_min_mm": 10,
+      "contact_max_mm": 40,
+      "source": "catalog",
+      "source_pages": [
+        16
+      ],
+      "selection_basis": "blade_contact_length"
+    },
+    {
+      "pitch_type": "variable",
+      "tpi": "8/12",
+      "contact_min_mm": 15,
+      "contact_max_mm": 50,
+      "source": "catalog",
+      "source_pages": [
+        16
+      ],
+      "selection_basis": "blade_contact_length"
+    },
+    {
+      "pitch_type": "variable",
+      "tpi": "8/11",
+      "contact_min_mm": 20,
+      "contact_max_mm": 50,
+      "source": "catalog",
+      "source_pages": [
+        16
+      ],
+      "selection_basis": "blade_contact_length"
+    },
+    {
+      "pitch_type": "variable",
+      "tpi": "6/10",
+      "contact_min_mm": 25,
+      "contact_max_mm": 70,
+      "source": "catalog",
+      "source_pages": [
+        16
+      ],
+      "selection_basis": "blade_contact_length"
+    },
+    {
+      "pitch_type": "variable",
+      "tpi": "6/9",
+      "contact_min_mm": 25,
+      "contact_max_mm": 80,
+      "source": "catalog",
+      "source_pages": [
+        16
+      ],
+      "selection_basis": "blade_contact_length"
+    },
+    {
+      "pitch_type": "variable",
+      "tpi": "5/8",
+      "contact_min_mm": 50,
+      "contact_max_mm": 90,
+      "source": "catalog",
+      "source_pages": [
+        16
+      ],
+      "selection_basis": "blade_contact_length"
+    },
+    {
+      "pitch_type": "variable",
+      "tpi": "5/7",
+      "contact_min_mm": 50,
+      "contact_max_mm": 100,
+      "source": "catalog",
+      "source_pages": [
+        16
+      ],
+      "selection_basis": "blade_contact_length"
+    },
+    {
+      "pitch_type": "variable",
+      "tpi": "4/6",
+      "contact_min_mm": 60,
+      "contact_max_mm": 180,
+      "source": "catalog",
+      "source_pages": [
+        16
+      ],
+      "selection_basis": "blade_contact_length"
+    },
+    {
+      "pitch_type": "variable",
+      "tpi": "3/4",
+      "contact_min_mm": 80,
+      "contact_max_mm": 200,
+      "source": "catalog",
+      "source_pages": [
+        16
+      ],
+      "selection_basis": "blade_contact_length"
+    },
+    {
+      "pitch_type": "variable",
+      "tpi": "2/3",
+      "contact_min_mm": 150,
+      "contact_max_mm": 500,
+      "source": "catalog",
+      "source_pages": [
+        16
+      ],
+      "selection_basis": "blade_contact_length"
+    },
+    {
+      "pitch_type": "variable",
+      "tpi": "1.9/2.1",
+      "contact_min_mm": 220,
+      "contact_max_mm": 500,
+      "source": "catalog",
+      "source_pages": [
+        16
+      ],
+      "selection_basis": "blade_contact_length"
+    },
+    {
+      "pitch_type": "variable",
+      "tpi": "1.4/2",
+      "contact_min_mm": 300,
+      "contact_max_mm": 800,
+      "source": "catalog",
+      "source_pages": [
+        16
+      ],
+      "selection_basis": "blade_contact_length"
+    },
+    {
+      "pitch_type": "variable",
+      "tpi": "1.4/1.8",
+      "contact_min_mm": 400,
+      "contact_max_mm": 800,
+      "source": "catalog",
+      "source_pages": [
+        16
+      ],
+      "selection_basis": "blade_contact_length"
+    },
+    {
+      "pitch_type": "variable",
+      "tpi": "1.1/1.4",
+      "contact_min_mm": 500,
+      "contact_max_mm": 1200,
+      "source": "catalog",
+      "source_pages": [
+        16
+      ],
+      "selection_basis": "blade_contact_length"
+    },
+    {
+      "pitch_type": "variable",
+      "tpi": "0.9/1.1",
+      "contact_min_mm": 550,
+      "contact_max_mm": 1200,
+      "source": "catalog",
+      "source_pages": [
+        16
+      ],
+      "selection_basis": "blade_contact_length"
+    },
+    {
+      "pitch_type": "variable",
+      "tpi": "0.75/1.25",
+      "contact_min_mm": 600,
+      "contact_max_mm": 2100,
+      "source": "catalog",
+      "source_pages": [
+        16
+      ],
+      "selection_basis": "blade_contact_length"
+    },
+    {
+      "pitch_type": "variable",
+      "tpi": "0.7/0.9",
+      "contact_min_mm": 1200,
+      "contact_max_mm": 2100,
+      "max_open_ended": true,
+      "source": "catalog",
+      "source_pages": [
+        16
+      ],
+      "selection_basis": "blade_contact_length"
+    },
+    {
+      "pitch_type": "constant",
+      "tpi": "18",
+      "contact_min_mm": 0,
+      "contact_max_mm": 10,
+      "source": "catalog",
+      "source_pages": [
+        16
+      ],
+      "selection_basis": "blade_contact_length"
+    },
+    {
+      "pitch_type": "constant",
+      "tpi": "14",
+      "contact_min_mm": 0,
+      "contact_max_mm": 25,
+      "source": "catalog",
+      "source_pages": [
+        16
+      ],
+      "selection_basis": "blade_contact_length"
+    },
+    {
+      "pitch_type": "constant",
+      "tpi": "10",
+      "contact_min_mm": 15,
+      "contact_max_mm": 50,
+      "source": "catalog",
+      "source_pages": [
+        16
+      ],
+      "selection_basis": "blade_contact_length"
+    },
+    {
+      "pitch_type": "constant",
+      "tpi": "6",
+      "contact_min_mm": 40,
+      "contact_max_mm": 80,
+      "source": "catalog",
+      "source_pages": [
+        16
+      ],
+      "selection_basis": "blade_contact_length"
+    },
+    {
+      "pitch_type": "constant",
+      "tpi": "4",
+      "contact_min_mm": 80,
+      "contact_max_mm": 130,
+      "source": "catalog",
+      "source_pages": [
+        16
+      ],
+      "selection_basis": "blade_contact_length"
+    },
+    {
+      "pitch_type": "constant",
+      "tpi": "3",
+      "contact_min_mm": 150,
+      "contact_max_mm": 220,
+      "source": "catalog",
+      "source_pages": [
+        16
+      ],
+      "selection_basis": "blade_contact_length"
+    },
+    {
+      "pitch_type": "constant",
+      "tpi": "2",
+      "contact_min_mm": 220,
+      "contact_max_mm": 400,
+      "source": "catalog",
+      "source_pages": [
+        16
+      ],
+      "selection_basis": "blade_contact_length"
+    },
+    {
+      "pitch_type": "constant",
+      "tpi": "1.25",
+      "contact_min_mm": 300,
+      "contact_max_mm": 800,
+      "source": "catalog",
+      "source_pages": [
+        16
+      ],
+      "selection_basis": "blade_contact_length"
+    }
+  ],
+  "tpi_tube_profile_rules": [
+    {
+      "diameter_or_profile_width_mm": 25,
+      "wall_thickness_mm": 2,
+      "recommended_tpi": "18",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 50,
+      "wall_thickness_mm": 2,
+      "recommended_tpi": "18",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 75,
+      "wall_thickness_mm": 2,
+      "recommended_tpi": "18",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 100,
+      "wall_thickness_mm": 2,
+      "recommended_tpi": "18",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 125,
+      "wall_thickness_mm": 2,
+      "recommended_tpi": "12/16",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 150,
+      "wall_thickness_mm": 2,
+      "recommended_tpi": "10/14",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 175,
+      "wall_thickness_mm": 2,
+      "recommended_tpi": "10/14",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 200,
+      "wall_thickness_mm": 2,
+      "recommended_tpi": "10/14",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 250,
+      "wall_thickness_mm": 2,
+      "recommended_tpi": "8/11",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 300,
+      "wall_thickness_mm": 2,
+      "recommended_tpi": "8/11",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 400,
+      "wall_thickness_mm": 2,
+      "recommended_tpi": "8/11",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 500,
+      "wall_thickness_mm": 2,
+      "recommended_tpi": "8/11",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 25,
+      "wall_thickness_mm": 4,
+      "recommended_tpi": "12/16",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 50,
+      "wall_thickness_mm": 4,
+      "recommended_tpi": "12/16",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 75,
+      "wall_thickness_mm": 4,
+      "recommended_tpi": "10/14",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 100,
+      "wall_thickness_mm": 4,
+      "recommended_tpi": "8/11",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 125,
+      "wall_thickness_mm": 4,
+      "recommended_tpi": "6/9",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 150,
+      "wall_thickness_mm": 4,
+      "recommended_tpi": "6/9",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 175,
+      "wall_thickness_mm": 4,
+      "recommended_tpi": "6/9",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 200,
+      "wall_thickness_mm": 4,
+      "recommended_tpi": "6/9",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 250,
+      "wall_thickness_mm": 4,
+      "recommended_tpi": "5/7",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 300,
+      "wall_thickness_mm": 4,
+      "recommended_tpi": "5/7",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 400,
+      "wall_thickness_mm": 4,
+      "recommended_tpi": "5/7",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 500,
+      "wall_thickness_mm": 4,
+      "recommended_tpi": "5/7",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 25,
+      "wall_thickness_mm": 6,
+      "recommended_tpi": "12/16",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 50,
+      "wall_thickness_mm": 6,
+      "recommended_tpi": "8/11",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 75,
+      "wall_thickness_mm": 6,
+      "recommended_tpi": "8/11",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 100,
+      "wall_thickness_mm": 6,
+      "recommended_tpi": "6/9",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 125,
+      "wall_thickness_mm": 6,
+      "recommended_tpi": "5/7",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 150,
+      "wall_thickness_mm": 6,
+      "recommended_tpi": "5/7",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 175,
+      "wall_thickness_mm": 6,
+      "recommended_tpi": "5/7",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 200,
+      "wall_thickness_mm": 6,
+      "recommended_tpi": "5/7",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 250,
+      "wall_thickness_mm": 6,
+      "recommended_tpi": "4/6",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 300,
+      "wall_thickness_mm": 6,
+      "recommended_tpi": "4/6",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 400,
+      "wall_thickness_mm": 6,
+      "recommended_tpi": "4/6",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 500,
+      "wall_thickness_mm": 6,
+      "recommended_tpi": "4/6",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 25,
+      "wall_thickness_mm": 8,
+      "recommended_tpi": "12/16",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 50,
+      "wall_thickness_mm": 8,
+      "recommended_tpi": "6/9",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 75,
+      "wall_thickness_mm": 8,
+      "recommended_tpi": "6/9",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 100,
+      "wall_thickness_mm": 8,
+      "recommended_tpi": "5/7",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 125,
+      "wall_thickness_mm": 8,
+      "recommended_tpi": "5/7",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 150,
+      "wall_thickness_mm": 8,
+      "recommended_tpi": "5/7",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 175,
+      "wall_thickness_mm": 8,
+      "recommended_tpi": "4/6",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 200,
+      "wall_thickness_mm": 8,
+      "recommended_tpi": "4/6",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 250,
+      "wall_thickness_mm": 8,
+      "recommended_tpi": "4/6",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 300,
+      "wall_thickness_mm": 8,
+      "recommended_tpi": "4/6",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 400,
+      "wall_thickness_mm": 8,
+      "recommended_tpi": "4/6",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 500,
+      "wall_thickness_mm": 8,
+      "recommended_tpi": "4/6",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 25,
+      "wall_thickness_mm": 10,
+      "recommended_tpi": "12/16",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 50,
+      "wall_thickness_mm": 10,
+      "recommended_tpi": "5/7",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 75,
+      "wall_thickness_mm": 10,
+      "recommended_tpi": "5/7",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 100,
+      "wall_thickness_mm": 10,
+      "recommended_tpi": "4/6",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 125,
+      "wall_thickness_mm": 10,
+      "recommended_tpi": "4/6",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 150,
+      "wall_thickness_mm": 10,
+      "recommended_tpi": "4/6",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 175,
+      "wall_thickness_mm": 10,
+      "recommended_tpi": "4/6",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 200,
+      "wall_thickness_mm": 10,
+      "recommended_tpi": "4/6",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 250,
+      "wall_thickness_mm": 10,
+      "recommended_tpi": "3/4",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 300,
+      "wall_thickness_mm": 10,
+      "recommended_tpi": "3/4",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 400,
+      "wall_thickness_mm": 10,
+      "recommended_tpi": "3/4",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 500,
+      "wall_thickness_mm": 10,
+      "recommended_tpi": "3/4",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 50,
+      "wall_thickness_mm": 15,
+      "recommended_tpi": "5/7",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 75,
+      "wall_thickness_mm": 15,
+      "recommended_tpi": "4/6",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 100,
+      "wall_thickness_mm": 15,
+      "recommended_tpi": "4/6",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 125,
+      "wall_thickness_mm": 15,
+      "recommended_tpi": "4/6",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 150,
+      "wall_thickness_mm": 15,
+      "recommended_tpi": "4/6",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 175,
+      "wall_thickness_mm": 15,
+      "recommended_tpi": "3/4",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 200,
+      "wall_thickness_mm": 15,
+      "recommended_tpi": "3/4",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 250,
+      "wall_thickness_mm": 15,
+      "recommended_tpi": "3/4",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 300,
+      "wall_thickness_mm": 15,
+      "recommended_tpi": "3/4",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 400,
+      "wall_thickness_mm": 15,
+      "recommended_tpi": "3/4",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 500,
+      "wall_thickness_mm": 15,
+      "recommended_tpi": "3/4",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 75,
+      "wall_thickness_mm": 25,
+      "recommended_tpi": "4/6",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 100,
+      "wall_thickness_mm": 25,
+      "recommended_tpi": "4/6",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 125,
+      "wall_thickness_mm": 25,
+      "recommended_tpi": "3/4",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 150,
+      "wall_thickness_mm": 25,
+      "recommended_tpi": "3/4",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 175,
+      "wall_thickness_mm": 25,
+      "recommended_tpi": "3/4",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 200,
+      "wall_thickness_mm": 25,
+      "recommended_tpi": "3/4",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 250,
+      "wall_thickness_mm": 25,
+      "recommended_tpi": "2/3",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 300,
+      "wall_thickness_mm": 25,
+      "recommended_tpi": "2/3",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 400,
+      "wall_thickness_mm": 25,
+      "recommended_tpi": "2/3",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 500,
+      "wall_thickness_mm": 25,
+      "recommended_tpi": "2/3",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 75,
+      "wall_thickness_mm": 35,
+      "recommended_tpi": "3/4",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 100,
+      "wall_thickness_mm": 35,
+      "recommended_tpi": "3/4",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 125,
+      "wall_thickness_mm": 35,
+      "recommended_tpi": "3/4",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 150,
+      "wall_thickness_mm": 35,
+      "recommended_tpi": "3/4",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 175,
+      "wall_thickness_mm": 35,
+      "recommended_tpi": "2/3",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 200,
+      "wall_thickness_mm": 35,
+      "recommended_tpi": "2/3",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 250,
+      "wall_thickness_mm": 35,
+      "recommended_tpi": "2/3",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 300,
+      "wall_thickness_mm": 35,
+      "recommended_tpi": "2/3",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 400,
+      "wall_thickness_mm": 35,
+      "recommended_tpi": "2/3",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 500,
+      "wall_thickness_mm": 35,
+      "recommended_tpi": "2/3",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 125,
+      "wall_thickness_mm": 50,
+      "recommended_tpi": "2/3",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 150,
+      "wall_thickness_mm": 50,
+      "recommended_tpi": "2/3",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 175,
+      "wall_thickness_mm": 50,
+      "recommended_tpi": "2/3",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 200,
+      "wall_thickness_mm": 50,
+      "recommended_tpi": "2/3",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 250,
+      "wall_thickness_mm": 50,
+      "recommended_tpi": "2/3",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 300,
+      "wall_thickness_mm": 50,
+      "recommended_tpi": "2/3",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 400,
+      "wall_thickness_mm": 50,
+      "recommended_tpi": "2/3",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 500,
+      "wall_thickness_mm": 50,
+      "recommended_tpi": "2/3",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 150,
+      "wall_thickness_mm": 65,
+      "recommended_tpi": "2/3",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 175,
+      "wall_thickness_mm": 65,
+      "recommended_tpi": "2/3",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 200,
+      "wall_thickness_mm": 65,
+      "recommended_tpi": "1.4/2",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 250,
+      "wall_thickness_mm": 65,
+      "recommended_tpi": "1.4/2",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 300,
+      "wall_thickness_mm": 65,
+      "recommended_tpi": "1.4/2",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 400,
+      "wall_thickness_mm": 65,
+      "recommended_tpi": "1.4/2",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 500,
+      "wall_thickness_mm": 65,
+      "recommended_tpi": "1.4/2",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 175,
+      "wall_thickness_mm": 75,
+      "recommended_tpi": "2/3",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 200,
+      "wall_thickness_mm": 75,
+      "recommended_tpi": "1.4/2",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 250,
+      "wall_thickness_mm": 75,
+      "recommended_tpi": "1.4/2",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 300,
+      "wall_thickness_mm": 75,
+      "recommended_tpi": "1.4/2",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 400,
+      "wall_thickness_mm": 75,
+      "recommended_tpi": "1.4/2",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 500,
+      "wall_thickness_mm": 75,
+      "recommended_tpi": "1.4/2",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 250,
+      "wall_thickness_mm": 100,
+      "recommended_tpi": "2/3",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 300,
+      "wall_thickness_mm": 100,
+      "recommended_tpi": "1.4/2",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 400,
+      "wall_thickness_mm": 100,
+      "recommended_tpi": "1.4/2",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 500,
+      "wall_thickness_mm": 100,
+      "recommended_tpi": "0.75/1.25",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 300,
+      "wall_thickness_mm": 130,
+      "recommended_tpi": "1.4/2",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 400,
+      "wall_thickness_mm": 130,
+      "recommended_tpi": "1.4/2",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 500,
+      "wall_thickness_mm": 130,
+      "recommended_tpi": "0.75/1.25",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 400,
+      "wall_thickness_mm": 150,
+      "recommended_tpi": "1.4/2",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 500,
+      "wall_thickness_mm": 150,
+      "recommended_tpi": "0.75/1.25",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 500,
+      "wall_thickness_mm": 200,
+      "recommended_tpi": "0.75/1.25",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    },
+    {
+      "diameter_or_profile_width_mm": 500,
+      "wall_thickness_mm": 250,
+      "recommended_tpi": "0.75/1.25",
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    }
+  ],
+  "break_in_rules": [
+    {
+      "blade_scope": "bimetal",
+      "initial_cut_area_cm2": {
+        "min": 300,
+        "max": 500
+      },
+      "feed_multiplier": 0.5,
+      "speed": "recommended_speed",
+      "ramp": "Alıştırma tamamlandıktan sonra ilerlemeyi hedef değere kademeli çıkar.",
+      "source": "catalog",
+      "source_pages": [
+        16,
+        17
+      ]
+    },
+    {
+      "blade_scope": "carbide",
+      "duration_min": 30,
+      "conditions": [
+        {
+          "cross_section_max_mm": 600,
+          "blade_speed_m_min": 30,
+          "feed_mm_min": 5
+        },
+        {
+          "cross_section_min_exclusive_mm": 600,
+          "blade_speed_m_min": 25,
+          "feed_mm_min": 3
+        }
+      ],
+      "source": "catalog",
+      "source_pages": [
+        17
+      ]
+    }
+  ],
+  "tension_rules": [
+    {
+      "products": [
+        "INTENSS PRO-DIE",
+        "UNIVERZ"
+      ],
+      "width_rule": "<=16",
+      "psi_min": 20000,
+      "psi_max": 25000,
+      "kgf_cm2_min": 1400,
+      "kgf_cm2_max": 1800,
+      "mpa_min": 138,
+      "mpa_max": 177,
+      "source": "tension",
+      "override": "machine_manufacturer_manual"
+    },
+    {
+      "products": [
+        "INTENSS",
+        "INTENSS PRO",
+        "PRIMALLOY",
+        "ADVANZ TS",
+        "ADVANZ FS",
+        "ADVANZ MC5"
+      ],
+      "width_rule": "19|27|34",
+      "psi_min": 20000,
+      "psi_max": 35000,
+      "kgf_cm2_min": 1400,
+      "kgf_cm2_max": 2500,
+      "mpa_min": 138,
+      "mpa_max": 241,
+      "source": "tension",
+      "override": "machine_manufacturer_manual"
+    },
+    {
+      "products": [
+        "INTENSS PRO",
+        "PRIMALLOY",
+        "ADVANZ TS",
+        "ADVANZ FS",
+        "ADVANZ MC5"
+      ],
+      "width_rule": ">=41",
+      "psi_min": 30000,
+      "psi_max": 40000,
+      "kgf_cm2_min": 2100,
+      "kgf_cm2_max": 2800,
+      "mpa_min": 207,
+      "mpa_max": 276,
+      "source": "tension",
+      "override": "machine_manufacturer_manual"
+    }
+  ],
+  "decision_rules": [
+    {
+      "id": "REQ-001",
+      "priority": 1000,
+      "when": "material_grade_missing",
+      "action": "ask_material_grade; suppress_numeric_speed_and_rate"
+    },
+    {
+      "id": "REQ-002",
+      "priority": 1000,
+      "when": "shape_or_dimensions_missing",
+      "action": "ask_shape_and_dimensions; suppress_tpi"
+    },
+    {
+      "id": "REQ-003",
+      "priority": 1000,
+      "when": "machine_and_blade_dimensions_missing",
+      "action": "ask_machine_or_blade_dimensions; suppress_width_thickness_tension"
+    },
+    {
+      "id": "FIT-001",
+      "priority": 950,
+      "when": "recommended_variant_not_in_product_matrix",
+      "action": "reject_variant; find_existing_product_variant_or_escalate"
+    },
+    {
+      "id": "SCOPE-001",
+      "priority": 940,
+      "when": "numeric_cutting_table_requested_and_dimension_outside_50_125_mm",
+      "action": "do_not_extrapolate_cutting_rate; mark_conditional"
+    },
+    {
+      "id": "HARD-001",
+      "priority": 930,
+      "when": "material_hardness_hrc_gt_45",
+      "action": "do_not_default_to_bimetal; evaluate_advanz_ts_and_machine_carbide_capability"
+    },
+    {
+      "id": "TPI-001",
+      "priority": 900,
+      "when": "solid_workpiece",
+      "action": "select_by_contact_length_then_filter_by_exact_product_variant"
+    },
+    {
+      "id": "TPI-002",
+      "priority": 900,
+      "when": "tube_or_profile",
+      "action": "select_from_diameter_wall_matrix; for_two_or_more_adjacent_pieces_use_double_wall_thickness"
+    },
+    {
+      "id": "TPI-003",
+      "priority": 890,
+      "when": "teeth_in_cut_lt_3",
+      "action": "reject_pitch_as_too_coarse"
+    },
+    {
+      "id": "TPI-004",
+      "priority": 880,
+      "when": "soft_or_gummy_material_and_overlap",
+      "action": "prefer_coarser_available_pitch"
+    },
+    {
+      "id": "TPI-005",
+      "priority": 880,
+      "when": "hard_tough_or_work_hardening_material_and_overlap",
+      "action": "prefer_finer_available_pitch"
+    },
+    {
+      "id": "SPEED-001",
+      "priority": 850,
+      "when": "new_or_unvalidated_job",
+      "action": "start_in_lower_third_of_verified_speed_range"
+    },
+    {
+      "id": "BREAKIN-001",
+      "priority": 840,
+      "when": "new_bimetal_blade",
+      "action": "apply_bimetal_break_in_rule"
+    },
+    {
+      "id": "TENSION-001",
+      "priority": 830,
+      "when": "tension_requested",
+      "action": "machine_manual_overrides_catalog_tension_range"
+    }
+  ],
+  "troubleshooting": [
+    {
+      "id": "blade_break",
+      "symptom_tr": "Şerit testere bıçağının kopması",
+      "causes_and_actions": [
+        {
+          "cause_tr": "Yanlış bıçak veya TPI",
+          "action_tr": "Bıçak ailesini ve seçilen TPI'yi kontrol edin.",
+          "order": 1
+        },
+        {
+          "cause_tr": "Yanlış bant gerginliği",
+          "action_tr": "Gerginliği makine üreticisinin önerisine göre ayarlayın.",
+          "order": 2
+        },
+        {
+          "cause_tr": "İlerleme basıncı çok yüksek",
+          "action_tr": "İlerlemeyi azaltın.",
+          "order": 3
+        },
+        {
+          "cause_tr": "Yanlış veya bozulmuş soğutma sıvısı",
+          "action_tr": "Soğutma sıvısını kontrol edin; gerekiyorsa değiştirin.",
+          "order": 4
+        },
+        {
+          "cause_tr": "Baskı blokları fazla sıkı",
+          "action_tr": "Baskı bloklarını gevşetin.",
+          "order": 5
+        },
+        {
+          "cause_tr": "Bıçağın sırtı kasnak flanşına sürtüyor",
+          "action_tr": "Kasnak eğimini, bıçak sırtı flanşa değmeyecek şekilde ayarlayın.",
+          "order": 6
+        },
+        {
+          "cause_tr": "Kılavuz kollar malzemeden çok uzak",
+          "action_tr": "Kılavuz kolları iş parçasına yaklaştırın.",
+          "order": 7
+        },
+        {
+          "cause_tr": "Kılavuzlar fazla sıkı",
+          "action_tr": "Kılavuzları gevşetin.",
+          "order": 8
+        }
+      ],
+      "source": "troubleshooting"
+    },
+    {
+      "id": "premature_tooth_wear",
+      "symptom_tr": "Dişlerin erken aşınması",
+      "causes_and_actions": [
+        {
+          "cause_tr": "Bıçak ters takılmış",
+          "action_tr": "Dişler kesme yönüne bakacak şekilde bıçağı yeniden takın.",
+          "order": 1
+        },
+        {
+          "cause_tr": "Yanlış alıştırma",
+          "action_tr": "Ürün ailesine ait alıştırma kuralını uygulayın.",
+          "order": 2
+        },
+        {
+          "cause_tr": "Sert malzeme veya aşırı tufal",
+          "action_tr": "Malzeme ve yüzey sertliğini kontrol edin.",
+          "order": 3
+        },
+        {
+          "cause_tr": "Yanlış soğutma sıvısı veya karışım",
+          "action_tr": "Makine ve sıvı üreticisinin karışım oranını uygulayın.",
+          "order": 4
+        },
+        {
+          "cause_tr": "İlerleme veya bant hızı çok yüksek",
+          "action_tr": "İlerlemeyi azaltın; bant hızını doğrulanmış malzeme aralığına getirin.",
+          "order": 5
+        }
+      ],
+      "source": "troubleshooting"
+    },
+    {
+      "id": "inaccurate_cut",
+      "symptom_tr": "Ölçüsel olarak hatalı kesim",
+      "causes_and_actions": [
+        {
+          "cause_tr": "Kılavuz kollar çok uzakta",
+          "action_tr": "Kılavuz kolları iş parçasına yaklaştırın.",
+          "order": 1
+        },
+        {
+          "cause_tr": "Bıçak aşınmış",
+          "action_tr": "Bıçağı değiştirin.",
+          "order": 2
+        },
+        {
+          "cause_tr": "İlerleme basıncı çok düşük veya yüksek",
+          "action_tr": "Malzeme tablosundaki ilerleme hesabına göre yeniden ayarlayın.",
+          "order": 3
+        },
+        {
+          "cause_tr": "Yanlış TPI",
+          "action_tr": "Temas uzunluğuna ve ürün matrisine göre TPI'yi yeniden seçin.",
+          "order": 4
+        },
+        {
+          "cause_tr": "Soğutma sıvısı kesime ulaşmıyor",
+          "action_tr": "Nozulları ayarlayın veya filtreyi temizleyin.",
+          "order": 5
+        },
+        {
+          "cause_tr": "Kılavuzlar gevşek veya aşınmış",
+          "action_tr": "Kılavuzları sıkın veya değiştirin.",
+          "order": 6
+        }
+      ],
+      "source": "troubleshooting"
+    },
+    {
+      "id": "cut_deviation",
+      "symptom_tr": "Kesimin yana kaçması",
+      "causes_and_actions": [
+        {
+          "cause_tr": "İlerleme basıncı çok yüksek",
+          "action_tr": "İlerlemeyi azaltın.",
+          "order": 1
+        },
+        {
+          "cause_tr": "Bant gerginliği düşük",
+          "action_tr": "Gerginliği makine kılavuzuna göre artırın.",
+          "order": 2
+        },
+        {
+          "cause_tr": "Diş çaprazlaması hasarlı",
+          "action_tr": "Malzeme sertliğini kontrol edin ve bıçağı değiştirin.",
+          "order": 3
+        },
+        {
+          "cause_tr": "Kılavuz kollar gevşek veya uzakta",
+          "action_tr": "Kılavuzları sıkın ve malzemeye yaklaştırın.",
+          "order": 4
+        }
+      ],
+      "source": "troubleshooting"
+    },
+    {
+      "id": "chips_in_gullet",
+      "symptom_tr": "Diş boşluklarında talaş birikmesi",
+      "causes_and_actions": [
+        {
+          "cause_tr": "Talaş fırçası yok veya aşınmış",
+          "action_tr": "Fırçayı değiştirin ve diş boşluğuna göre ayarlayın.",
+          "order": 1
+        },
+        {
+          "cause_tr": "Soğutma sıvısı yok veya yanlış",
+          "action_tr": "Soğutma beslemesini ve sıvı karışımını kontrol edin.",
+          "order": 2
+        },
+        {
+          "cause_tr": "Soğutma debisi yetersiz",
+          "action_tr": "Debiyi ve karışım oranını makine üreticisi değerlerine getirin.",
+          "order": 3
+        }
+      ],
+      "source": "troubleshooting"
+    },
+    {
+      "id": "tooth_back_breakout",
+      "symptom_tr": "Dişlerin arka tarafında kırılma",
+      "causes_and_actions": [
+        {
+          "cause_tr": "İlerleme veya bant hızı çok yüksek",
+          "action_tr": "İlerlemeyi azaltın ve bant hızını doğrulanmış aralığa getirin.",
+          "order": 1
+        },
+        {
+          "cause_tr": "Yanlış TPI",
+          "action_tr": "Temas uzunluğuna göre daha uygun TPI seçin.",
+          "order": 2
+        },
+        {
+          "cause_tr": "Kılavuz ayarı yanlış",
+          "action_tr": "Kılavuzları yeniden ayarlayın.",
+          "order": 3
+        },
+        {
+          "cause_tr": "İlerleme ve bant hızı dengesiz",
+          "action_tr": "Malzeme kesim tablosuna göre iki değeri birlikte ayarlayın.",
+          "order": 4
+        },
+        {
+          "cause_tr": "Yanlış bıçak",
+          "action_tr": "Uygulamaya uygun ürün ailesi ve TPI seçin.",
+          "order": 5
+        },
+        {
+          "cause_tr": "İş parçası mengenede oynuyor",
+          "action_tr": "İş parçasını hareket etmeyecek şekilde sıkın.",
+          "order": 6
+        }
+      ],
+      "source": "troubleshooting"
+    },
+    {
+      "id": "one_sided_tooth_wear",
+      "symptom_tr": "Dişlerin tek taraflı aşınması",
+      "causes_and_actions": [
+        {
+          "cause_tr": "Kirli veya yüzeyi düzensiz iş parçası",
+          "action_tr": "İş parçasını temizleyin veya uygun yüzey payıyla yeni kesim başlatın.",
+          "order": 1
+        },
+        {
+          "cause_tr": "Kasnak flanşı aşınmış veya kasnak izden çıkmış",
+          "action_tr": "Kasnakları hizalayın veya değiştirin.",
+          "order": 2
+        },
+        {
+          "cause_tr": "Kılavuz diş çaprazlamasına baskı yapıyor",
+          "action_tr": "Kılavuzu doğru konuma ayarlayın.",
+          "order": 3
+        },
+        {
+          "cause_tr": "Kırık dişler kesikte kalmış",
+          "action_tr": "Yeni bıçağı eski kesiğe sokmayın; yeni kesim başlatın ve bıçağı yeniden alıştırın.",
+          "order": 4
+        }
+      ],
+      "source": "troubleshooting"
+    },
+    {
+      "id": "tooth_breakage",
+      "symptom_tr": "Dişlerin kopması",
+      "causes_and_actions": [
+        {
+          "cause_tr": "Yanlış alıştırma",
+          "action_tr": "Doğru bimetal veya karbür alıştırma kuralını uygulayın.",
+          "order": 1
+        },
+        {
+          "cause_tr": "Bant hızı çok düşük",
+          "action_tr": "Makine ve malzeme sınırları içinde bant hızını artırın.",
+          "order": 2
+        },
+        {
+          "cause_tr": "İlerleme basıncı çok yüksek",
+          "action_tr": "İlerlemeyi azaltın.",
+          "order": 3
+        },
+        {
+          "cause_tr": "Dişler kesitte sıkışıyor",
+          "action_tr": "Bant hızını artırın ve ilerlemeyi azaltın.",
+          "order": 4
+        },
+        {
+          "cause_tr": "Soğutma sıvısı yetersiz",
+          "action_tr": "Kesim bölgesine yeterli sıvı sağlayın.",
+          "order": 5
+        },
+        {
+          "cause_tr": "Sert malzeme veya aşırı tufal",
+          "action_tr": "Malzeme ve yüzey sertliğini kontrol edin.",
+          "order": 6
+        },
+        {
+          "cause_tr": "Yanlış TPI",
+          "action_tr": "Temas uzunluğu ve en az üç diş kuralına göre yeniden seçin.",
+          "order": 7
+        },
+        {
+          "cause_tr": "İş parçası mengenede oynuyor",
+          "action_tr": "İş parçasını hareket etmeyecek şekilde sıkın.",
+          "order": 8
+        }
+      ],
+      "source": "troubleshooting"
+    },
+    {
+      "id": "blade_back_wear",
+      "symptom_tr": "Bıçak sırtında aşınma",
+      "causes_and_actions": [
+        {
+          "cause_tr": "Kılavuzlar fazla sıkı",
+          "action_tr": "Kılavuzları gevşetin.",
+          "order": 1
+        },
+        {
+          "cause_tr": "Bant gerginliği düşük",
+          "action_tr": "Gerginliği makine üreticisinin önerisine göre ayarlayın.",
+          "order": 2
+        },
+        {
+          "cause_tr": "Bıçak aşınmış",
+          "action_tr": "Bıçağı değiştirin.",
+          "order": 3
+        },
+        {
+          "cause_tr": "İlerleme basıncı çok yüksek",
+          "action_tr": "İlerlemeyi azaltın.",
+          "order": 4
+        },
+        {
+          "cause_tr": "Kılavuz hasarlı veya aşınmış",
+          "action_tr": "Kılavuzu değiştirin.",
+          "order": 5
+        },
+        {
+          "cause_tr": "Kılavuz kollar gevşek veya fazla sıkı",
+          "action_tr": "Kılavuz kolları yeniden ayarlayın.",
+          "order": 6
+        },
+        {
+          "cause_tr": "Bıçak sırtı kasnak flanşına sürtüyor",
+          "action_tr": "Kasnak eğimini bıçak sırtı flanşa değmeyecek şekilde ayarlayın.",
+          "order": 7
+        }
+      ],
+      "source": "troubleshooting"
+    },
+    {
+      "id": "wandering_or_wavy_cut",
+      "symptom_tr": "Dalgalı veya yön değiştiren kesim",
+      "causes_and_actions": [
+        {
+          "cause_tr": "Yanlış bıçak",
+          "action_tr": "Uygulamaya uygun bıçağı seçin.",
+          "order": 1
+        },
+        {
+          "cause_tr": "Bıçak kör veya hasarlı",
+          "action_tr": "Yeni bıçak takın.",
+          "order": 2
+        },
+        {
+          "cause_tr": "İlerleme veya bant hızı yanlış",
+          "action_tr": "Kesim tablosu ve makine kılavuzuna göre ayarlayın.",
+          "order": 3
+        },
+        {
+          "cause_tr": "Bıçak doğru yönlendirilmiyor",
+          "action_tr": "Kılavuz kolları ve makaralı kılavuzları ayarlayın.",
+          "order": 4
+        },
+        {
+          "cause_tr": "Bant gerginliği düşük",
+          "action_tr": "Gerginliği makine üreticisinin önerisine göre artırın.",
+          "order": 5
+        },
+        {
+          "cause_tr": "Yanlış TPI",
+          "action_tr": "Temas uzunluğuna göre TPI'yi yeniden seçin.",
+          "order": 6
+        },
+        {
+          "cause_tr": "Kılavuz kollar çok uzakta",
+          "action_tr": "Kılavuz kolları malzemeye yaklaştırın.",
+          "order": 7
+        }
+      ],
+      "source": "troubleshooting"
+    },
+    {
+      "id": "blade_surface_damage",
+      "symptom_tr": "Bıçak gövdesi yüzeyinde hasar",
+      "causes_and_actions": [
+        {
+          "cause_tr": "Makaralı kılavuz fazla sıkı",
+          "action_tr": "Makaralı kılavuzu gevşetin.",
+          "order": 1
+        },
+        {
+          "cause_tr": "Bıçak kılavuzda fazla yukarıda",
+          "action_tr": "Makaraları veya baskı bloklarını yeniden ayarlayın.",
+          "order": 2
+        },
+        {
+          "cause_tr": "Dişler kasnak üzerinde yürüyor",
+          "action_tr": "Kasnak eğimini dişler kasnağa basmayacak şekilde ayarlayın.",
+          "order": 3
+        },
+        {
+          "cause_tr": "Yanlış bıçak genişliği",
+          "action_tr": "Makine kılavuzundaki bıçak genişliğini kullanın.",
+          "order": 4
+        },
+        {
+          "cause_tr": "Talaş yeniden kesime taşınıyor",
+          "action_tr": "Talaş fırçasını temizleyin, ayarlayın veya değiştirin.",
+          "order": 5
+        },
+        {
+          "cause_tr": "Makaralı kılavuz aşınmış",
+          "action_tr": "Kılavuzları değiştirin.",
+          "order": 6
+        },
+        {
+          "cause_tr": "Soğutma sıvısı yetersiz",
+          "action_tr": "Yeterli soğutma sıvısı sağlayın.",
+          "order": 7
+        },
+        {
+          "cause_tr": "Bıçak kesitte sıkışıyor",
+          "action_tr": "İlerlemeyi ve sıkmayı kontrol edin.",
+          "order": 8
+        }
+      ],
+      "source": "troubleshooting"
+    },
+    {
+      "id": "twisted_blade",
+      "symptom_tr": "Bıçağın burulması",
+      "causes_and_actions": [
+        {
+          "cause_tr": "Kılavuzlar hizasız",
+          "action_tr": "Kılavuzları doğru hizaya getirin.",
+          "order": 1
+        },
+        {
+          "cause_tr": "Kılavuzlar fazla sıkı",
+          "action_tr": "Kılavuzları gevşetin.",
+          "order": 2
+        },
+        {
+          "cause_tr": "İş parçası mengenede oynuyor",
+          "action_tr": "İş parçasını hareket etmeyecek şekilde sıkın.",
+          "order": 3
+        },
+        {
+          "cause_tr": "İlerleme basıncı çok yüksek",
+          "action_tr": "İlerlemeyi azaltın.",
+          "order": 4
+        },
+        {
+          "cause_tr": "Bant gerginliği çok yüksek",
+          "action_tr": "Gerginliği makine üreticisi önerisine göre azaltın.",
+          "order": 5
+        },
+        {
+          "cause_tr": "Kasnaklar aşınmış",
+          "action_tr": "Kasnakları değiştirin.",
+          "order": 6
+        },
+        {
+          "cause_tr": "Kılavuz kollar çok uzakta",
+          "action_tr": "Kılavuz kolları iş parçasına yaklaştırın.",
+          "order": 7
+        }
+      ],
+      "source": "troubleshooting"
+    }
+  ],
+  "articles": [
+    {
+      "slug": "bimetal-bicak-yapisi",
+      "title_tr": "Bimetal Şerit Testere Bıçağının Yapısı",
+      "body_tr": "Taşıyıcı bant, yaklaşık 50 HRC sertliğinde özel alaşımlı ve esnek yay çeliğinden oluşur. Diş uçları yüksek sıcaklık ve aşınma direncine sahip HSS malzemeden üretilir. İki metal lazer kaynağıyla kalıcı olarak birleştirilir. M42 diş uçları yaklaşık 67-69 HRC, M51 ise yaklaşık 70 HRC sertliğindedir. Değişken TPI titreşimi azaltarak kesim kalitesini artırır.",
+      "source": "catalog",
+      "source_pages": [
+        4
+      ]
+    },
+    {
+      "slug": "xtr-teknolojisi",
+      "title_tr": "XTR Kesim Teknolojisi",
+      "body_tr": "XTR; zor işlenen çelik alaşımları ve daha sert malzemeler için geliştirilen özel diş tasarımıdır. Amaç titreşim ve gürültüyü azaltmak, diş tokluğunu ve aşınma direncini yükseltmek, bıçak ömrünü uzatmak ve kesim başına maliyeti düşürmektir.",
+      "source": "catalog",
+      "source_pages": [
+        9
+      ]
+    },
+    {
+      "slug": "karbur-bicak-yapisi",
+      "title_tr": "Karbür Uçlu Şerit Testere Bıçağının Yapısı",
+      "body_tr": "Özel alaşımlı yay çeliği taşıyıcı bandın diş yuvalarına karbür parçalar kaynaklanır; ardından temel ve takip taşlamalarıyla diş geometrisi oluşturulur. Katalog, karbür bıçaklarda daha yüksek talaş kaldırma kapasitesi, düşük titreşim ve uzun ömür vurgular. Kesin performans değeri makine, malzeme ve kesim koşuluyla doğrulanmalıdır.",
+      "source": "catalog",
+      "source_pages": [
+        12
+      ]
+    },
+    {
+      "slug": "tpi-secim-ilkeleri",
+      "title_tr": "TPI Seçim İlkeleri",
+      "body_tr": "TPI, bıçağın iş parçasında aynı anda temas ettiği uzunluğa göre seçilir. Fazla ince TPI kesim sapması, talaş dolması ve erken aşınmaya; fazla kaba TPI diş kırılmasına yol açabilir. Ekonomik kesim için aynı anda en az üç diş kesitte olmalıdır. Boru ve profillerde çap/genişlik ile cidar kalınlığı birlikte değerlendirilir; iki veya daha fazla boru yan yana kesiliyorsa tablo çift cidar kalınlığıyla okunur.",
+      "source": "catalog",
+      "source_pages": [
+        16,
+        17
+      ]
+    },
+    {
+      "slug": "bant-hizi-formulu",
+      "title_tr": "Bant Hızı Hesabı",
+      "body_tr": "Bant hızı (m/dak) = bant uzunluğu (m) x dakikadaki tur sayısı. Örnek: 4,4 m uzunluğunda bıçak dakikada 20 tur atıyorsa bant hızı 88 m/dak olur.",
+      "source": "cutting_table",
+      "source_pages": [
+        1
+      ]
+    }
+  ],
+  "qa_issues": [
+    {
+      "id": "QA-001",
+      "severity": "high",
+      "status": "corrected",
+      "subject": "1005-1012 bant hızı",
+      "catalog_value": "79-81 m/dak",
+      "verified_value": "79-91 m/dak",
+      "basis": "Starrett orijinal bimetal tablo sayfa 42"
+    },
+    {
+      "id": "QA-002",
+      "severity": "medium",
+      "status": "corrected",
+      "subject": "5115-5120 kesim performansı",
+      "catalog_value": "45-48 cm²/dak",
+      "verified_value": "45-58 cm²/dak",
+      "basis": "Starrett orijinal tablo dizilimi"
+    },
+    {
+      "id": "QA-003",
+      "severity": "medium",
+      "status": "corrected",
+      "subject": "W1-W5 kesim performansı",
+      "catalog_value": "26-36 cm²/dak",
+      "verified_value": "26-39 cm²/dak",
+      "basis": "Starrett orijinal bimetal tablo sayfa 42"
+    },
+    {
+      "id": "QA-004",
+      "severity": "medium",
+      "status": "corrected",
+      "subject": "Fosfor bronzu kesim performansı",
+      "catalog_value": "39-52 cm²/dak",
+      "verified_value": "52-65 cm²/dak",
+      "basis": "Starrett orijinal bimetal tablo sayfa 43"
+    },
+    {
+      "id": "QA-005",
+      "severity": "low",
+      "status": "corrected",
+      "subject": "Malzeme adları ve yazım hataları",
+      "catalog_value": "3472, Calss 40, Kupfer Berlirio",
+      "verified_value": "347, Class 40, berilyum bakır",
+      "basis": "Standart teknik adlandırma ve kaynak bağlamı"
+    },
+    {
+      "id": "QA-006",
+      "severity": "high",
+      "status": "requires_product_owner_review",
+      "subject": "ADVANZ FS uygulama metni",
+      "catalog_value": "Avantaj bölümünde 45 HRC üzeri çelik ifadesi; malzeme listesinde alüminyum, kompozit, grafit ve aşındırıcı demir dışı metaller",
+      "verified_value": "Otomatik yönlendirme şimdilik alüminyum döküm/kompozit/aşındırıcı demir dışı uygulamalarla sınırlandı",
+      "basis": "Katalog içi tutarsızlık; ürün sorumlusu onayı gerekli"
+    },
+    {
+      "id": "QA-007",
+      "severity": "high",
+      "status": "guard_added",
+      "subject": "Kesim tablosu kapsamı",
+      "catalog_value": "50-125 mm",
+      "verified_value": "Bu aralığın dışında Q değeri otomatik ekstrapole edilmez",
+      "basis": "Kaynak kapsamı"
+    },
+    {
+      "id": "QA-008",
+      "severity": "medium",
+      "status": "normalized",
+      "subject": "Ürün adı yazımları",
+      "catalog_value": "Intenss / Intenns / XTR varyasyonları",
+      "verified_value": "Kanonik ürün kimliği + alias listesi",
+      "basis": "RAG eşleşme güvenliği"
+    }
+  ],
+  "premium_sources": [
+    {
+      "source_id": "BYC-CATALOG-2025",
+      "publisher": "B.Y.cuttech GmbH",
+      "title": "Katalog Sägebänder 2025",
+      "url": "https://www.by-saegen.com/wp-content/uploads/2024/11/saegebander-katalog.pdf",
+      "source_tier": "S",
+      "authority_type": "owned_product_catalog",
+      "content_type": "pdf",
+      "language": "de",
+      "allowed_usage": "full_structured_ingestion_and_translation",
+      "license_status": "owner_content",
+      "scope": [
+        "product families",
+        "dimensions",
+        "TPI availability",
+        "applications",
+        "break-in",
+        "troubleshooting"
+      ],
+      "numeric_authority": true,
+      "integration_status": "integrated_v1"
+    },
+    {
+      "source_id": "BYC-CUT-BIMETAL-2024-08",
+      "publisher": "B.Y.cuttech GmbH",
+      "title": "Schnitttabelle Bimetall",
+      "url": "https://www.by-saegen.com/wp-content/uploads/2024/08/Schnitttabelle-Bimetall.pdf",
+      "source_tier": "S",
+      "authority_type": "owned_cutting_table",
+      "content_type": "pdf",
+      "language": "de",
+      "allowed_usage": "full_structured_ingestion_and_translation",
+      "license_status": "owner_content",
+      "scope": [
+        "bimetal",
+        "50-125 mm",
+        "material hardness",
+        "blade speed",
+        "cutting rate"
+      ],
+      "numeric_authority": true,
+      "integration_status": "integrated_v1_with_qa"
+    },
+    {
+      "source_id": "BYC-TROUBLE-2024-03",
+      "publisher": "B.Y.cuttech GmbH",
+      "title": "Fehlersuche",
+      "url": "https://www.by-saegen.com/wp-content/uploads/2024/03/Fehlersuche.pdf",
+      "source_tier": "S",
+      "authority_type": "owned_troubleshooting_table",
+      "content_type": "pdf",
+      "language": "de",
+      "allowed_usage": "full_structured_ingestion_and_translation",
+      "license_status": "owner_content",
+      "scope": [
+        "blade failure",
+        "tooth failure",
+        "cut deviation",
+        "corrective actions"
+      ],
+      "numeric_authority": false,
+      "integration_status": "integrated_v1"
+    },
+    {
+      "source_id": "BYC-TENSION-2024-08",
+      "publisher": "B.Y.cuttech GmbH",
+      "title": "Bandspannung Bandsägeblatt",
+      "url": "https://www.by-saegen.com/wp-content/uploads/2024/08/Bandspannung.pdf",
+      "source_tier": "S",
+      "authority_type": "owned_product_tension_table",
+      "content_type": "pdf",
+      "language": "de",
+      "allowed_usage": "full_structured_ingestion_and_translation",
+      "license_status": "owner_content",
+      "scope": [
+        "product family",
+        "blade width",
+        "tension range"
+      ],
+      "numeric_authority": true,
+      "integration_status": "integrated_v1"
+    },
+    {
+      "source_id": "BYC-GUIDE-SELECTION",
+      "publisher": "B.Y.cuttech GmbH",
+      "title": "Auswahl des richtigen Sägebandes",
+      "url": "https://www.by-saegen.com/ratgeber/richtige-bandauswahl-2/",
+      "source_tier": "S",
+      "authority_type": "owned_technical_guide",
+      "content_type": "html",
+      "language": "de",
+      "allowed_usage": "structured_facts_and_turkish_summary",
+      "license_status": "owner_content",
+      "scope": [
+        "TPI",
+        "tooth form",
+        "set",
+        "workpiece geometry"
+      ],
+      "numeric_authority": true,
+      "integration_status": "facts_ready"
+    },
+    {
+      "source_id": "BYC-GUIDE-COOLANT",
+      "publisher": "B.Y.cuttech GmbH",
+      "title": "Kühlschmierung",
+      "url": "https://www.by-saegen.com/ratgeber/kuhlschmierung-2/",
+      "source_tier": "S",
+      "authority_type": "owned_technical_guide",
+      "content_type": "html",
+      "language": "de",
+      "allowed_usage": "structured_facts_with_qa_hold_on_concentration",
+      "license_status": "owner_content",
+      "scope": [
+        "flood coolant",
+        "MQL",
+        "material exceptions"
+      ],
+      "numeric_authority": false,
+      "integration_status": "qa_hold"
+    },
+    {
+      "source_id": "STAR-CUT-42",
+      "publisher": "L.S. Starrett Company",
+      "title": "Cutting Table / Bi-Metal - page 42",
+      "url": "https://catalogues.starrett.co.uk/view/621853475/42/",
+      "source_tier": "A",
+      "authority_type": "original_manufacturer_cutting_table",
+      "content_type": "html_catalog_page",
+      "language": "en",
+      "allowed_usage": "normalized_facts_and_cross_validation",
+      "license_status": "public_primary_page",
+      "scope": [
+        "bimetal",
+        "50-125 mm",
+        "steels",
+        "hardness",
+        "speed",
+        "cutting rate"
+      ],
+      "numeric_authority": true,
+      "integration_status": "integrated_v1_cross_validation"
+    },
+    {
+      "source_id": "STAR-CUT-43",
+      "publisher": "L.S. Starrett Company",
+      "title": "Cutting Table / Bi-Metal - page 43",
+      "url": "https://catalogues.starrett.co.uk/view/621853475/43/",
+      "source_tier": "A",
+      "authority_type": "original_manufacturer_cutting_table",
+      "content_type": "html_catalog_page",
+      "language": "en",
+      "allowed_usage": "normalized_facts_and_cross_validation",
+      "license_status": "public_primary_page",
+      "scope": [
+        "bimetal",
+        "50-125 mm",
+        "stainless",
+        "nickel",
+        "titanium",
+        "nonferrous",
+        "speed",
+        "cutting rate"
+      ],
+      "numeric_authority": true,
+      "integration_status": "integrated_v1_cross_validation"
+    },
+    {
+      "source_id": "STAR-MATERIAL",
+      "publisher": "L.S. Starrett Company",
+      "title": "Sawing Starts with the Material",
+      "url": "https://www.starrett.com/news-events/sawing-starts-with-the-material",
+      "source_tier": "A",
+      "authority_type": "manufacturer_technical_article",
+      "content_type": "html",
+      "language": "en",
+      "allowed_usage": "normalized_facts_and_summary",
+      "license_status": "public_primary_page",
+      "scope": [
+        "teeth in cut",
+        "soft materials",
+        "hard alloys",
+        "bundle geometry"
+      ],
+      "numeric_authority": true,
+      "integration_status": "facts_ready"
+    },
+    {
+      "source_id": "STAR-TUBE",
+      "publisher": "L.S. Starrett Company",
+      "title": "Tube and Pipe Sawing: Varying Applications Demand Different Solutions",
+      "url": "https://www.starrett.com/news-events/tube-and-pipe-sawing-varying-applications-demand-different-solutions-tennax-pro",
+      "source_tier": "A",
+      "authority_type": "manufacturer_technical_article",
+      "content_type": "html",
+      "language": "en",
+      "allowed_usage": "normalized_facts_and_summary",
+      "license_status": "public_primary_page",
+      "scope": [
+        "tube",
+        "profile",
+        "bundle",
+        "clamping",
+        "coolant"
+      ],
+      "numeric_authority": true,
+      "integration_status": "facts_ready"
+    },
+    {
+      "source_id": "STAR-BREAKIN",
+      "publisher": "L.S. Starrett Company",
+      "title": "Why and How to Break-In Band Saw Blades",
+      "url": "https://www.starrett.com/news-events/why-and-how-to-break-in-band-saw-blades",
+      "source_tier": "A",
+      "authority_type": "manufacturer_technical_article",
+      "content_type": "html",
+      "language": "en",
+      "allowed_usage": "brand_scoped_normalized_facts",
+      "license_status": "public_primary_page",
+      "scope": [
+        "Starrett break-in policy"
+      ],
+      "numeric_authority": true,
+      "integration_status": "facts_ready_brand_scoped"
+    },
+    {
+      "source_id": "WIKUS-SELECTION",
+      "publisher": "WIKUS-Sägenfabrik Wilhelm H. Kullmann GmbH & Co. KG",
+      "title": "Blade Selection Parameters",
+      "url": "https://www.wikus.de/en/guidebook/technical-principles/blade-selection",
+      "source_tier": "A",
+      "authority_type": "manufacturer_technical_guide",
+      "content_type": "html",
+      "language": "en",
+      "allowed_usage": "normalized_facts_and_tables",
+      "license_status": "public_primary_page",
+      "scope": [
+        "blade dimensions",
+        "bimetal TPI",
+        "carbide TPI",
+        "tooth forms"
+      ],
+      "numeric_authority": true,
+      "integration_status": "integrated_v2_facts"
+    },
+    {
+      "source_id": "WIKUS-FAQ",
+      "publisher": "WIKUS-Sägenfabrik Wilhelm H. Kullmann GmbH & Co. KG",
+      "title": "WIKUS Band Saw FAQ",
+      "url": "https://www.wikus.de/en/guidebook/faqs",
+      "source_tier": "A",
+      "authority_type": "manufacturer_technical_guide",
+      "content_type": "html",
+      "language": "en",
+      "allowed_usage": "normalized_facts_and_summary",
+      "license_status": "public_primary_page",
+      "scope": [
+        "cutting parameters",
+        "coolant",
+        "tension",
+        "machine condition",
+        "blade life"
+      ],
+      "numeric_authority": true,
+      "integration_status": "integrated_v2_facts"
+    },
+    {
+      "source_id": "WIKUS-LIFE",
+      "publisher": "WIKUS-Sägenfabrik Wilhelm H. Kullmann GmbH & Co. KG",
+      "title": "Blade-Life Influences",
+      "url": "https://www.wikus.de/en/guidebook/practice-tips/blade-life-influences",
+      "source_tier": "A",
+      "authority_type": "manufacturer_technical_guide",
+      "content_type": "html",
+      "language": "en",
+      "allowed_usage": "normalized_facts_and_summary",
+      "license_status": "public_primary_page",
+      "scope": [
+        "machine",
+        "material",
+        "blade",
+        "coolant",
+        "vibration",
+        "cutting data"
+      ],
+      "numeric_authority": false,
+      "integration_status": "ingestion_queue"
+    },
+    {
+      "source_id": "ROENTGEN-PRIMER-2025",
+      "publisher": "Röntgen Sägebänder",
+      "title": "Our Guide to RÖNTGEN 2025",
+      "url": "https://roentgen-saw.com/fileadmin/user_upload/Roentgen_Primer_2025__english_.pdf",
+      "source_tier": "A",
+      "authority_type": "manufacturer_technical_primer",
+      "content_type": "pdf",
+      "language": "en",
+      "allowed_usage": "normalized_facts_and_summary_after_pdf_qa",
+      "license_status": "public_primary_document",
+      "scope": [
+        "tooth pitch",
+        "cutting data",
+        "blade life",
+        "troubleshooting"
+      ],
+      "numeric_authority": true,
+      "integration_status": "ingestion_queue"
+    },
+    {
+      "source_id": "DOALL-BLADES-2025",
+      "publisher": "DoALL Sawing Products",
+      "title": "DoALL Band Saw Blades Brochure 2025",
+      "url": "https://www.doallsaws.com/doall-band-saw-blades-brochure",
+      "source_tier": "A",
+      "authority_type": "manufacturer_product_brochure",
+      "content_type": "pdf_landing_page",
+      "language": "en",
+      "allowed_usage": "normalized_product_and_selection_facts",
+      "license_status": "public_primary_document",
+      "scope": [
+        "blade classes",
+        "tooth forms",
+        "sets",
+        "applications"
+      ],
+      "numeric_authority": true,
+      "integration_status": "ingestion_queue"
+    },
+    {
+      "source_id": "LENOX-SELECTOR",
+      "publisher": "LENOX",
+      "title": "LENOX Blade Selector",
+      "url": "https://portal.lenoxtools.com/bladeselector/",
+      "source_tier": "A",
+      "authority_type": "manufacturer_interactive_selector",
+      "content_type": "interactive_web_app",
+      "language": "en",
+      "allowed_usage": "manual_validation_only_until_terms_review",
+      "license_status": "terms_review_required",
+      "scope": [
+        "machine dimensions",
+        "blade selection",
+        "length availability"
+      ],
+      "numeric_authority": false,
+      "integration_status": "metadata_only"
+    },
+    {
+      "source_id": "BAHCO-BANDSAW-CATALOG",
+      "publisher": "Bahco / SNA Europe",
+      "title": "Bandsaw Catalogue",
+      "url": "https://www.bahco.com/int_en/catalogues",
+      "source_tier": "A",
+      "authority_type": "manufacturer_product_catalog",
+      "content_type": "pdf_landing_page",
+      "language": "en",
+      "allowed_usage": "normalized_product_and_application_facts",
+      "license_status": "public_primary_document",
+      "scope": [
+        "blade products",
+        "dimensions",
+        "TPI",
+        "tooth types",
+        "applications"
+      ],
+      "numeric_authority": true,
+      "integration_status": "ingestion_queue"
+    },
+    {
+      "source_id": "MORSE-GUIDE",
+      "publisher": "The M. K. Morse Company",
+      "title": "Morse Band Saw Blades - Technical FAQ",
+      "url": "https://www.mkmorse.com/products/band-saw-blades/",
+      "source_tier": "A",
+      "authority_type": "manufacturer_technical_guide",
+      "content_type": "html",
+      "language": "en",
+      "allowed_usage": "brand_scoped_normalized_facts",
+      "license_status": "public_primary_page",
+      "scope": [
+        "teeth in cut",
+        "break-in",
+        "soft nonferrous chip evacuation",
+        "product applications"
+      ],
+      "numeric_authority": true,
+      "integration_status": "integrated_v2_facts_brand_scoped"
+    },
+    {
+      "source_id": "KASTO-MACHINE-PAGES",
+      "publisher": "KASTO Maschinenbau GmbH & Co. KG",
+      "title": "Metal Bandsaw Technical Product Pages",
+      "url": "https://www.kasto.com/en/saws/bandsaws",
+      "source_tier": "A",
+      "authority_type": "machine_manufacturer_product_data",
+      "content_type": "html",
+      "language": "en",
+      "allowed_usage": "exact_model_dimensions_and_limits",
+      "license_status": "public_primary_page",
+      "scope": [
+        "machine model",
+        "blade dimensions",
+        "speed range",
+        "cut capacity"
+      ],
+      "numeric_authority": true,
+      "integration_status": "machine_registry_queue"
+    },
+    {
+      "source_id": "AMADA-MACHINE-MANUALS",
+      "publisher": "AMADA MACHINERY AMERICA",
+      "title": "AMADA Saws and Exact-Model Manuals",
+      "url": "https://amadamca.com/",
+      "source_tier": "S",
+      "authority_type": "machine_manufacturer",
+      "content_type": "website_and_model_manuals",
+      "language": "en",
+      "allowed_usage": "exact_model_limits_when_official_manual_is_available",
+      "license_status": "manual_specific_review",
+      "scope": [
+        "machine model",
+        "blade dimensions",
+        "speed",
+        "feed",
+        "tension",
+        "safety"
+      ],
+      "numeric_authority": true,
+      "integration_status": "exact_manual_required"
+    },
+    {
+      "source_id": "BLASER-COOLANT-MEASUREMENT",
+      "publisher": "Blaser Swisslube AG",
+      "title": "Measuring the Coolant Concentration",
+      "url": "https://blaser.com/measuring-the-coolant-concentration/",
+      "source_tier": "A",
+      "authority_type": "coolant_manufacturer_technical_guide",
+      "content_type": "html",
+      "language": "en",
+      "allowed_usage": "normalized_measurement_and_monitoring_facts",
+      "license_status": "public_primary_page",
+      "scope": [
+        "refractometer",
+        "coolant concentration measurement",
+        "monitoring"
+      ],
+      "numeric_authority": false,
+      "integration_status": "integrated_v2_facts"
+    },
+    {
+      "source_id": "ISO-4875-1-2006",
+      "publisher": "International Organization for Standardization",
+      "title": "ISO 4875-1:2006 Metal-cutting band saw blades - Vocabulary",
+      "url": "https://www.iso.org/standard/41854.html",
+      "source_tier": "S",
+      "authority_type": "international_standard",
+      "content_type": "paid_standard",
+      "language": "en",
+      "allowed_usage": "public_metadata_only_until_licensed_copy",
+      "license_status": "license_required_for_full_text",
+      "scope": [
+        "vocabulary",
+        "terminology"
+      ],
+      "numeric_authority": false,
+      "integration_status": "metadata_integrated"
+    },
+    {
+      "source_id": "ISO-4875-2-2006",
+      "publisher": "International Organization for Standardization",
+      "title": "ISO 4875-2:2006 Metal-cutting band saw blades - Characteristics and dimensions",
+      "url": "https://www.iso.org/standard/41855.html",
+      "source_tier": "S",
+      "authority_type": "international_standard",
+      "content_type": "paid_standard",
+      "language": "en",
+      "allowed_usage": "public_metadata_only_until_licensed_copy",
+      "license_status": "license_required_for_full_text",
+      "scope": [
+        "characteristics",
+        "dimensions"
+      ],
+      "numeric_authority": false,
+      "integration_status": "metadata_integrated"
+    },
+    {
+      "source_id": "ASTM-E10-E18-E140",
+      "publisher": "ASTM International",
+      "title": "E10 Brinell, E18 Rockwell and E140 Hardness Conversion Standards",
+      "url": "https://store.astm.org/products-services/standards-and-publications/standards/physical-testing-standards-and-mechanical-testing-standards.html",
+      "source_tier": "S",
+      "authority_type": "standards_body",
+      "content_type": "paid_standards",
+      "language": "en",
+      "allowed_usage": "public_metadata_only_until_licensed_copy",
+      "license_status": "license_required_for_full_text",
+      "scope": [
+        "Brinell hardness",
+        "Rockwell hardness",
+        "hardness conversion"
+      ],
+      "numeric_authority": false,
+      "integration_status": "metadata_integrated"
+    }
+  ],
+  "premium_verified_facts": [
+    {
+      "fact_id": "WIKUS-BIMETAL-TPI-10-14",
+      "source_id": "WIKUS-SELECTION",
+      "predicate": "bimetal_variable_tpi_contact_range",
+      "value": {
+        "tpi": "10/14",
+        "min_mm": 0,
+        "max_mm": 20
+      },
+      "scope": {
+        "brand": "WIKUS",
+        "blade_type": "bimetal"
+      },
+      "verification_status": "verified_primary"
+    },
+    {
+      "fact_id": "WIKUS-BIMETAL-TPI-8-12",
+      "source_id": "WIKUS-SELECTION",
+      "predicate": "bimetal_variable_tpi_contact_range",
+      "value": {
+        "tpi": "8/12",
+        "min_mm": 10,
+        "max_mm": 30
+      },
+      "scope": {
+        "brand": "WIKUS",
+        "blade_type": "bimetal"
+      },
+      "verification_status": "verified_primary"
+    },
+    {
+      "fact_id": "WIKUS-BIMETAL-TPI-6-10",
+      "source_id": "WIKUS-SELECTION",
+      "predicate": "bimetal_variable_tpi_contact_range",
+      "value": {
+        "tpi": "6/10",
+        "min_mm": 20,
+        "max_mm": 50
+      },
+      "scope": {
+        "brand": "WIKUS",
+        "blade_type": "bimetal"
+      },
+      "verification_status": "verified_primary"
+    },
+    {
+      "fact_id": "WIKUS-BIMETAL-TPI-5-8",
+      "source_id": "WIKUS-SELECTION",
+      "predicate": "bimetal_variable_tpi_contact_range",
+      "value": {
+        "tpi": "5/8",
+        "min_mm": 30,
+        "max_mm": 60
+      },
+      "scope": {
+        "brand": "WIKUS",
+        "blade_type": "bimetal"
+      },
+      "verification_status": "verified_primary"
+    },
+    {
+      "fact_id": "WIKUS-BIMETAL-TPI-4-6",
+      "source_id": "WIKUS-SELECTION",
+      "predicate": "bimetal_variable_tpi_contact_range",
+      "value": {
+        "tpi": "4/6",
+        "min_mm": 50,
+        "max_mm": 100
+      },
+      "scope": {
+        "brand": "WIKUS",
+        "blade_type": "bimetal"
+      },
+      "verification_status": "verified_primary"
+    },
+    {
+      "fact_id": "WIKUS-BIMETAL-TPI-3-4",
+      "source_id": "WIKUS-SELECTION",
+      "predicate": "bimetal_variable_tpi_contact_range",
+      "value": {
+        "tpi": "3/4",
+        "min_mm": 80,
+        "max_mm": 170
+      },
+      "scope": {
+        "brand": "WIKUS",
+        "blade_type": "bimetal"
+      },
+      "verification_status": "verified_primary"
+    },
+    {
+      "fact_id": "WIKUS-BIMETAL-TPI-2-3",
+      "source_id": "WIKUS-SELECTION",
+      "predicate": "bimetal_variable_tpi_contact_range",
+      "value": {
+        "tpi": "2/3",
+        "min_mm": 150,
+        "max_mm": 300
+      },
+      "scope": {
+        "brand": "WIKUS",
+        "blade_type": "bimetal"
+      },
+      "verification_status": "verified_primary"
+    },
+    {
+      "fact_id": "WIKUS-BIMETAL-TPI-1.4-2",
+      "source_id": "WIKUS-SELECTION",
+      "predicate": "bimetal_variable_tpi_contact_range",
+      "value": {
+        "tpi": "1.4/2",
+        "min_mm": 250,
+        "max_mm": 550
+      },
+      "scope": {
+        "brand": "WIKUS",
+        "blade_type": "bimetal"
+      },
+      "verification_status": "verified_primary"
+    },
+    {
+      "fact_id": "WIKUS-BIMETAL-TPI-1-1.4",
+      "source_id": "WIKUS-SELECTION",
+      "predicate": "bimetal_variable_tpi_contact_range",
+      "value": {
+        "tpi": "1/1.4",
+        "min_mm": 500,
+        "max_mm": 1000
+      },
+      "scope": {
+        "brand": "WIKUS",
+        "blade_type": "bimetal"
+      },
+      "verification_status": "verified_primary"
+    },
+    {
+      "fact_id": "WIKUS-BIMETAL-TPI-0.75-1.25",
+      "source_id": "WIKUS-SELECTION",
+      "predicate": "bimetal_variable_tpi_contact_range",
+      "value": {
+        "tpi": "0.75/1.25",
+        "min_mm": 700,
+        "max_mm": 1400
+      },
+      "scope": {
+        "brand": "WIKUS",
+        "blade_type": "bimetal"
+      },
+      "verification_status": "verified_primary"
+    },
+    {
+      "fact_id": "WIKUS-CARBIDE-TPI-3-4",
+      "source_id": "WIKUS-SELECTION",
+      "predicate": "carbide_variable_tpi_contact_range",
+      "value": {
+        "tpi": "3/4",
+        "min_mm": 80,
+        "max_mm": 170
+      },
+      "scope": {
+        "brand": "WIKUS",
+        "blade_type": "carbide"
+      },
+      "verification_status": "verified_primary"
+    },
+    {
+      "fact_id": "WIKUS-CARBIDE-TPI-2-3",
+      "source_id": "WIKUS-SELECTION",
+      "predicate": "carbide_variable_tpi_contact_range",
+      "value": {
+        "tpi": "2/3",
+        "min_mm": 150,
+        "max_mm": 300
+      },
+      "scope": {
+        "brand": "WIKUS",
+        "blade_type": "carbide"
+      },
+      "verification_status": "verified_primary"
+    },
+    {
+      "fact_id": "WIKUS-CARBIDE-TPI-1.7-2",
+      "source_id": "WIKUS-SELECTION",
+      "predicate": "carbide_variable_tpi_contact_range",
+      "value": {
+        "tpi": "1.7/2",
+        "min_mm": 250,
+        "max_mm": 370
+      },
+      "scope": {
+        "brand": "WIKUS",
+        "blade_type": "carbide"
+      },
+      "verification_status": "verified_primary"
+    },
+    {
+      "fact_id": "WIKUS-CARBIDE-TPI-1.4-2",
+      "source_id": "WIKUS-SELECTION",
+      "predicate": "carbide_variable_tpi_contact_range",
+      "value": {
+        "tpi": "1.4/2",
+        "min_mm": 290,
+        "max_mm": 550
+      },
+      "scope": {
+        "brand": "WIKUS",
+        "blade_type": "carbide"
+      },
+      "verification_status": "verified_primary"
+    },
+    {
+      "fact_id": "WIKUS-CARBIDE-TPI-1.2-1.6",
+      "source_id": "WIKUS-SELECTION",
+      "predicate": "carbide_variable_tpi_contact_range",
+      "value": {
+        "tpi": "1.2/1.6",
+        "min_mm": 400,
+        "max_mm": 750
+      },
+      "scope": {
+        "brand": "WIKUS",
+        "blade_type": "carbide"
+      },
+      "verification_status": "verified_primary"
+    },
+    {
+      "fact_id": "WIKUS-CARBIDE-TPI-1-1.4",
+      "source_id": "WIKUS-SELECTION",
+      "predicate": "carbide_variable_tpi_contact_range",
+      "value": {
+        "tpi": "1/1.4",
+        "min_mm": 500,
+        "max_mm": 1000
+      },
+      "scope": {
+        "brand": "WIKUS",
+        "blade_type": "carbide"
+      },
+      "verification_status": "verified_primary"
+    },
+    {
+      "fact_id": "WIKUS-CARBIDE-TPI-0.85-1.15",
+      "source_id": "WIKUS-SELECTION",
+      "predicate": "carbide_variable_tpi_contact_range",
+      "value": {
+        "tpi": "0.85/1.15",
+        "min_mm": 700,
+        "max_mm": 1400
+      },
+      "scope": {
+        "brand": "WIKUS",
+        "blade_type": "carbide"
+      },
+      "verification_status": "verified_primary"
+    },
+    {
+      "fact_id": "WIKUS-CARBIDE-TPI-0.7-1",
+      "source_id": "WIKUS-SELECTION",
+      "predicate": "carbide_variable_tpi_contact_range",
+      "value": {
+        "tpi": "0.7/1",
+        "min_mm": 900,
+        "max_mm": 2000
+      },
+      "scope": {
+        "brand": "WIKUS",
+        "blade_type": "carbide"
+      },
+      "verification_status": "verified_primary"
+    },
+    {
+      "fact_id": "WIKUS-TOOTH-FORMS",
+      "source_id": "WIKUS-SELECTION",
+      "predicate": "tooth_form_codes",
+      "value": {
+        "S": "standard",
+        "P": "profile",
+        "K": "hook",
+        "T": "trapezoid",
+        "TSN": "negative-angle trapezoid",
+        "L": "spacing"
+      },
+      "scope": {
+        "brand": "WIKUS"
+      },
+      "verification_status": "verified_primary"
+    },
+    {
+      "fact_id": "WIKUS-TENSION-250-300",
+      "source_id": "WIKUS-FAQ",
+      "predicate": "general_band_tension_n_mm2",
+      "value": {
+        "min": 250,
+        "max": 300,
+        "unit": "N/mm2"
+      },
+      "scope": {
+        "brand": "WIKUS",
+        "rule": "machine manual overrides"
+      },
+      "verification_status": "verified_primary_brand_scoped"
+    },
+    {
+      "fact_id": "WIKUS-CUTTING-PARAMETER-INPUTS",
+      "source_id": "WIKUS-FAQ",
+      "predicate": "cutting_parameters_depend_on",
+      "value": [
+        "contact length",
+        "material",
+        "tempering condition"
+      ],
+      "scope": {
+        "brand": "WIKUS",
+        "general_principle": true
+      },
+      "verification_status": "verified_primary"
+    },
+    {
+      "fact_id": "STARRETT-BREAKIN-SOFT",
+      "source_id": "STAR-BREAKIN",
+      "predicate": "break_in_policy",
+      "value": {
+        "material_class": "soft",
+        "speed": "normal",
+        "feed_percent": 50,
+        "cut_area_in2_min": 50,
+        "cut_area_in2_max": 100,
+        "then": "gradually increase to 100%"
+      },
+      "scope": {
+        "brand": "Starrett",
+        "examples": [
+          "carbon steel",
+          "aluminum"
+        ]
+      },
+      "verification_status": "verified_primary_brand_scoped"
+    },
+    {
+      "fact_id": "STARRETT-BREAKIN-HARD",
+      "source_id": "STAR-BREAKIN",
+      "predicate": "break_in_policy",
+      "value": {
+        "material_class": "hard_or_difficult",
+        "speed": "normal",
+        "feed_percent": 75,
+        "cut_area_in2_min": 25,
+        "cut_area_in2_max": 75,
+        "reach_full_after_in2": 50
+      },
+      "scope": {
+        "brand": "Starrett",
+        "examples": [
+          "nickel alloys",
+          "Inconel",
+          "hardened steel",
+          "tool steel",
+          "stainless steel"
+        ]
+      },
+      "verification_status": "verified_primary_brand_scoped"
+    },
+    {
+      "fact_id": "MORSE-TEETH-IN-CUT",
+      "source_id": "MORSE-GUIDE",
+      "predicate": "teeth_in_cut_guideline",
+      "value": {
+        "absolute_min": 3,
+        "absolute_max": 24,
+        "preferred_min": 6,
+        "preferred_max": 12
+      },
+      "scope": {
+        "brand": "M.K. Morse",
+        "workpiece": "solid material"
+      },
+      "verification_status": "verified_primary_brand_scoped"
+    },
+    {
+      "fact_id": "MORSE-BIMETAL-BREAKIN",
+      "source_id": "MORSE-GUIDE",
+      "predicate": "break_in_policy",
+      "value": {
+        "feed_percent": 50,
+        "speed": "normal",
+        "cut_area_in2_min": 50,
+        "cut_area_in2_max": 100,
+        "then": "gradually increase"
+      },
+      "scope": {
+        "brand": "M.K. Morse",
+        "blade_type": "non-carbide"
+      },
+      "verification_status": "verified_primary_brand_scoped"
+    },
+    {
+      "fact_id": "MORSE-CARBIDE-NO-BREAKIN",
+      "source_id": "MORSE-GUIDE",
+      "predicate": "break_in_policy",
+      "value": {
+        "recommended": false
+      },
+      "scope": {
+        "brand": "M.K. Morse",
+        "blade_type": "carbide-tipped"
+      },
+      "verification_status": "verified_primary_brand_scoped",
+      "conflict_note": "Do not apply to BYCUTTECH carbide products; BYCUTTECH has a separate product-specific break-in rule."
+    },
+    {
+      "fact_id": "BLASER-REFRACTOMETER",
+      "source_id": "BLASER-COOLANT-MEASUREMENT",
+      "predicate": "coolant_concentration_measurement",
+      "value": {
+        "instrument": "handheld refractometer",
+        "method": "apply product-specific refractometer factor"
+      },
+      "scope": {
+        "fluid": "water-miscible metalworking fluid"
+      },
+      "verification_status": "verified_primary"
+    },
+    {
+      "fact_id": "ISO-4875-1-STATUS",
+      "source_id": "ISO-4875-1-2006",
+      "predicate": "standard_status",
+      "value": {
+        "edition": 2,
+        "published": "2006-07",
+        "confirmed": 2023,
+        "scope": "metal-cutting band saw blade vocabulary"
+      },
+      "scope": {
+        "metadata_only": true
+      },
+      "verification_status": "verified_public_metadata"
+    },
+    {
+      "fact_id": "ISO-4875-2-STATUS",
+      "source_id": "ISO-4875-2-2006",
+      "predicate": "standard_status",
+      "value": {
+        "edition": 2,
+        "published": "2006-07",
+        "confirmed": 2023,
+        "scope": "metal-cutting band saw blade characteristics and dimensions"
+      },
+      "scope": {
+        "metadata_only": true
+      },
+      "verification_status": "verified_public_metadata"
+    },
+    {
+      "fact_id": "KASTO-WIN-A46-LIMITS",
+      "source_id": "KASTO-MACHINE-PAGES",
+      "predicate": "machine_limits",
+      "value": {
+        "model": "KASTOwin A 4.6",
+        "speed_m_min": {
+          "min": 12,
+          "max": 150
+        },
+        "blade_mm": {
+          "length": 6096,
+          "width": 41,
+          "thickness": 1.3
+        }
+      },
+      "scope": {
+        "machine_model_exact": true
+      },
+      "verification_status": "verified_primary_model_page"
+    }
+  ],
+  "premium_conflict_rules": [
+    {
+      "rule_id": "CR-BREAKIN-001",
+      "topic": "break-in",
+      "rule": "Never merge break-in values across brands. Exact BYCUTTECH product policy overrides general manufacturer guidance for a BYCUTTECH blade."
+    },
+    {
+      "rule_id": "CR-TENSION-001",
+      "topic": "band tension",
+      "rule": "Exact machine manual overrides all blade-manufacturer general tension ranges."
+    },
+    {
+      "rule_id": "CR-TPI-001",
+      "topic": "TPI",
+      "rule": "Use BYCUTTECH product availability as the final filter even when a general TPI contact table suggests another pitch."
+    }
+  ],
+  "prompt_contract": {
+    "implementation_prompt": "CLAUDE_CODE_MASTER_PROMPT.md",
+    "runtime_system_prompt": "RUNTIME_SYSTEM_PROMPT.md",
+    "evaluation_suite": "evaluation_cases.json",
+    "source_registry": "premium_source_registry.json",
+    "ingestion_policy": "source_ingestion_policy.md"
+  }
+}

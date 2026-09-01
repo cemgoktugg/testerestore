@@ -1,0 +1,264 @@
+{
+  "schema_version": "1.0.0",
+  "generated_at": "2026-09-01",
+  "facts": [
+    {
+      "fact_id": "WIKUS-BIMETAL-TPI-10-14",
+      "source_id": "WIKUS-SELECTION",
+      "predicate": "bimetal_variable_tpi_contact_range",
+      "value": {"tpi": "10/14", "min_mm": 0, "max_mm": 20},
+      "scope": {"brand": "WIKUS", "blade_type": "bimetal"},
+      "verification_status": "verified_primary"
+    },
+    {
+      "fact_id": "WIKUS-BIMETAL-TPI-8-12",
+      "source_id": "WIKUS-SELECTION",
+      "predicate": "bimetal_variable_tpi_contact_range",
+      "value": {"tpi": "8/12", "min_mm": 10, "max_mm": 30},
+      "scope": {"brand": "WIKUS", "blade_type": "bimetal"},
+      "verification_status": "verified_primary"
+    },
+    {
+      "fact_id": "WIKUS-BIMETAL-TPI-6-10",
+      "source_id": "WIKUS-SELECTION",
+      "predicate": "bimetal_variable_tpi_contact_range",
+      "value": {"tpi": "6/10", "min_mm": 20, "max_mm": 50},
+      "scope": {"brand": "WIKUS", "blade_type": "bimetal"},
+      "verification_status": "verified_primary"
+    },
+    {
+      "fact_id": "WIKUS-BIMETAL-TPI-5-8",
+      "source_id": "WIKUS-SELECTION",
+      "predicate": "bimetal_variable_tpi_contact_range",
+      "value": {"tpi": "5/8", "min_mm": 30, "max_mm": 60},
+      "scope": {"brand": "WIKUS", "blade_type": "bimetal"},
+      "verification_status": "verified_primary"
+    },
+    {
+      "fact_id": "WIKUS-BIMETAL-TPI-4-6",
+      "source_id": "WIKUS-SELECTION",
+      "predicate": "bimetal_variable_tpi_contact_range",
+      "value": {"tpi": "4/6", "min_mm": 50, "max_mm": 100},
+      "scope": {"brand": "WIKUS", "blade_type": "bimetal"},
+      "verification_status": "verified_primary"
+    },
+    {
+      "fact_id": "WIKUS-BIMETAL-TPI-3-4",
+      "source_id": "WIKUS-SELECTION",
+      "predicate": "bimetal_variable_tpi_contact_range",
+      "value": {"tpi": "3/4", "min_mm": 80, "max_mm": 170},
+      "scope": {"brand": "WIKUS", "blade_type": "bimetal"},
+      "verification_status": "verified_primary"
+    },
+    {
+      "fact_id": "WIKUS-BIMETAL-TPI-2-3",
+      "source_id": "WIKUS-SELECTION",
+      "predicate": "bimetal_variable_tpi_contact_range",
+      "value": {"tpi": "2/3", "min_mm": 150, "max_mm": 300},
+      "scope": {"brand": "WIKUS", "blade_type": "bimetal"},
+      "verification_status": "verified_primary"
+    },
+    {
+      "fact_id": "WIKUS-BIMETAL-TPI-1.4-2",
+      "source_id": "WIKUS-SELECTION",
+      "predicate": "bimetal_variable_tpi_contact_range",
+      "value": {"tpi": "1.4/2", "min_mm": 250, "max_mm": 550},
+      "scope": {"brand": "WIKUS", "blade_type": "bimetal"},
+      "verification_status": "verified_primary"
+    },
+    {
+      "fact_id": "WIKUS-BIMETAL-TPI-1-1.4",
+      "source_id": "WIKUS-SELECTION",
+      "predicate": "bimetal_variable_tpi_contact_range",
+      "value": {"tpi": "1/1.4", "min_mm": 500, "max_mm": 1000},
+      "scope": {"brand": "WIKUS", "blade_type": "bimetal"},
+      "verification_status": "verified_primary"
+    },
+    {
+      "fact_id": "WIKUS-BIMETAL-TPI-0.75-1.25",
+      "source_id": "WIKUS-SELECTION",
+      "predicate": "bimetal_variable_tpi_contact_range",
+      "value": {"tpi": "0.75/1.25", "min_mm": 700, "max_mm": 1400},
+      "scope": {"brand": "WIKUS", "blade_type": "bimetal"},
+      "verification_status": "verified_primary"
+    },
+    {
+      "fact_id": "WIKUS-CARBIDE-TPI-3-4",
+      "source_id": "WIKUS-SELECTION",
+      "predicate": "carbide_variable_tpi_contact_range",
+      "value": {"tpi": "3/4", "min_mm": 80, "max_mm": 170},
+      "scope": {"brand": "WIKUS", "blade_type": "carbide"},
+      "verification_status": "verified_primary"
+    },
+    {
+      "fact_id": "WIKUS-CARBIDE-TPI-2-3",
+      "source_id": "WIKUS-SELECTION",
+      "predicate": "carbide_variable_tpi_contact_range",
+      "value": {"tpi": "2/3", "min_mm": 150, "max_mm": 300},
+      "scope": {"brand": "WIKUS", "blade_type": "carbide"},
+      "verification_status": "verified_primary"
+    },
+    {
+      "fact_id": "WIKUS-CARBIDE-TPI-1.7-2",
+      "source_id": "WIKUS-SELECTION",
+      "predicate": "carbide_variable_tpi_contact_range",
+      "value": {"tpi": "1.7/2", "min_mm": 250, "max_mm": 370},
+      "scope": {"brand": "WIKUS", "blade_type": "carbide"},
+      "verification_status": "verified_primary"
+    },
+    {
+      "fact_id": "WIKUS-CARBIDE-TPI-1.4-2",
+      "source_id": "WIKUS-SELECTION",
+      "predicate": "carbide_variable_tpi_contact_range",
+      "value": {"tpi": "1.4/2", "min_mm": 290, "max_mm": 550},
+      "scope": {"brand": "WIKUS", "blade_type": "carbide"},
+      "verification_status": "verified_primary"
+    },
+    {
+      "fact_id": "WIKUS-CARBIDE-TPI-1.2-1.6",
+      "source_id": "WIKUS-SELECTION",
+      "predicate": "carbide_variable_tpi_contact_range",
+      "value": {"tpi": "1.2/1.6", "min_mm": 400, "max_mm": 750},
+      "scope": {"brand": "WIKUS", "blade_type": "carbide"},
+      "verification_status": "verified_primary"
+    },
+    {
+      "fact_id": "WIKUS-CARBIDE-TPI-1-1.4",
+      "source_id": "WIKUS-SELECTION",
+      "predicate": "carbide_variable_tpi_contact_range",
+      "value": {"tpi": "1/1.4", "min_mm": 500, "max_mm": 1000},
+      "scope": {"brand": "WIKUS", "blade_type": "carbide"},
+      "verification_status": "verified_primary"
+    },
+    {
+      "fact_id": "WIKUS-CARBIDE-TPI-0.85-1.15",
+      "source_id": "WIKUS-SELECTION",
+      "predicate": "carbide_variable_tpi_contact_range",
+      "value": {"tpi": "0.85/1.15", "min_mm": 700, "max_mm": 1400},
+      "scope": {"brand": "WIKUS", "blade_type": "carbide"},
+      "verification_status": "verified_primary"
+    },
+    {
+      "fact_id": "WIKUS-CARBIDE-TPI-0.7-1",
+      "source_id": "WIKUS-SELECTION",
+      "predicate": "carbide_variable_tpi_contact_range",
+      "value": {"tpi": "0.7/1", "min_mm": 900, "max_mm": 2000},
+      "scope": {"brand": "WIKUS", "blade_type": "carbide"},
+      "verification_status": "verified_primary"
+    },
+    {
+      "fact_id": "WIKUS-TOOTH-FORMS",
+      "source_id": "WIKUS-SELECTION",
+      "predicate": "tooth_form_codes",
+      "value": {"S": "standard", "P": "profile", "K": "hook", "T": "trapezoid", "TSN": "negative-angle trapezoid", "L": "spacing"},
+      "scope": {"brand": "WIKUS"},
+      "verification_status": "verified_primary"
+    },
+    {
+      "fact_id": "WIKUS-TENSION-250-300",
+      "source_id": "WIKUS-FAQ",
+      "predicate": "general_band_tension_n_mm2",
+      "value": {"min": 250, "max": 300, "unit": "N/mm2"},
+      "scope": {"brand": "WIKUS", "rule": "machine manual overrides"},
+      "verification_status": "verified_primary_brand_scoped"
+    },
+    {
+      "fact_id": "WIKUS-CUTTING-PARAMETER-INPUTS",
+      "source_id": "WIKUS-FAQ",
+      "predicate": "cutting_parameters_depend_on",
+      "value": ["contact length", "material", "tempering condition"],
+      "scope": {"brand": "WIKUS", "general_principle": true},
+      "verification_status": "verified_primary"
+    },
+    {
+      "fact_id": "STARRETT-BREAKIN-SOFT",
+      "source_id": "STAR-BREAKIN",
+      "predicate": "break_in_policy",
+      "value": {"material_class": "soft", "speed": "normal", "feed_percent": 50, "cut_area_in2_min": 50, "cut_area_in2_max": 100, "then": "gradually increase to 100%"},
+      "scope": {"brand": "Starrett", "examples": ["carbon steel", "aluminum"]},
+      "verification_status": "verified_primary_brand_scoped"
+    },
+    {
+      "fact_id": "STARRETT-BREAKIN-HARD",
+      "source_id": "STAR-BREAKIN",
+      "predicate": "break_in_policy",
+      "value": {"material_class": "hard_or_difficult", "speed": "normal", "feed_percent": 75, "cut_area_in2_min": 25, "cut_area_in2_max": 75, "reach_full_after_in2": 50},
+      "scope": {"brand": "Starrett", "examples": ["nickel alloys", "Inconel", "hardened steel", "tool steel", "stainless steel"]},
+      "verification_status": "verified_primary_brand_scoped"
+    },
+    {
+      "fact_id": "MORSE-TEETH-IN-CUT",
+      "source_id": "MORSE-GUIDE",
+      "predicate": "teeth_in_cut_guideline",
+      "value": {"absolute_min": 3, "absolute_max": 24, "preferred_min": 6, "preferred_max": 12},
+      "scope": {"brand": "M.K. Morse", "workpiece": "solid material"},
+      "verification_status": "verified_primary_brand_scoped"
+    },
+    {
+      "fact_id": "MORSE-BIMETAL-BREAKIN",
+      "source_id": "MORSE-GUIDE",
+      "predicate": "break_in_policy",
+      "value": {"feed_percent": 50, "speed": "normal", "cut_area_in2_min": 50, "cut_area_in2_max": 100, "then": "gradually increase"},
+      "scope": {"brand": "M.K. Morse", "blade_type": "non-carbide"},
+      "verification_status": "verified_primary_brand_scoped"
+    },
+    {
+      "fact_id": "MORSE-CARBIDE-NO-BREAKIN",
+      "source_id": "MORSE-GUIDE",
+      "predicate": "break_in_policy",
+      "value": {"recommended": false},
+      "scope": {"brand": "M.K. Morse", "blade_type": "carbide-tipped"},
+      "verification_status": "verified_primary_brand_scoped",
+      "conflict_note": "Do not apply to BYCUTTECH carbide products; BYCUTTECH has a separate product-specific break-in rule."
+    },
+    {
+      "fact_id": "BLASER-REFRACTOMETER",
+      "source_id": "BLASER-COOLANT-MEASUREMENT",
+      "predicate": "coolant_concentration_measurement",
+      "value": {"instrument": "handheld refractometer", "method": "apply product-specific refractometer factor"},
+      "scope": {"fluid": "water-miscible metalworking fluid"},
+      "verification_status": "verified_primary"
+    },
+    {
+      "fact_id": "ISO-4875-1-STATUS",
+      "source_id": "ISO-4875-1-2006",
+      "predicate": "standard_status",
+      "value": {"edition": 2, "published": "2006-07", "confirmed": 2023, "scope": "metal-cutting band saw blade vocabulary"},
+      "scope": {"metadata_only": true},
+      "verification_status": "verified_public_metadata"
+    },
+    {
+      "fact_id": "ISO-4875-2-STATUS",
+      "source_id": "ISO-4875-2-2006",
+      "predicate": "standard_status",
+      "value": {"edition": 2, "published": "2006-07", "confirmed": 2023, "scope": "metal-cutting band saw blade characteristics and dimensions"},
+      "scope": {"metadata_only": true},
+      "verification_status": "verified_public_metadata"
+    },
+    {
+      "fact_id": "KASTO-WIN-A46-LIMITS",
+      "source_id": "KASTO-MACHINE-PAGES",
+      "predicate": "machine_limits",
+      "value": {"model": "KASTOwin A 4.6", "speed_m_min": {"min": 12, "max": 150}, "blade_mm": {"length": 6096, "width": 41, "thickness": 1.3}},
+      "scope": {"machine_model_exact": true},
+      "verification_status": "verified_primary_model_page"
+    }
+  ],
+  "conflict_rules": [
+    {
+      "rule_id": "CR-BREAKIN-001",
+      "topic": "break-in",
+      "rule": "Never merge break-in values across brands. Exact BYCUTTECH product policy overrides general manufacturer guidance for a BYCUTTECH blade."
+    },
+    {
+      "rule_id": "CR-TENSION-001",
+      "topic": "band tension",
+      "rule": "Exact machine manual overrides all blade-manufacturer general tension ranges."
+    },
+    {
+      "rule_id": "CR-TPI-001",
+      "topic": "TPI",
+      "rule": "Use BYCUTTECH product availability as the final filter even when a general TPI contact table suggests another pitch."
+    }
+  ]
+}

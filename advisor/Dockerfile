@@ -46,6 +46,19 @@ COPY docker/       ./docker/
 COPY rules.json    ./rules.json
 COPY wsgi.py       ./wsgi.py
 
+# BYCUTTECH uzman hattı: kapsam kontrolü + deterministik teknik karar.
+#
+# bycuttech_rag_v2/ SALT OKUNUR bilgi paketidir (ansiklopedi v2, kaynak
+# defteri, doğrulanmış olgular, runtime sistem promptu, 50 değerlendirme
+# vakası). data/ gibi volume'e mount EDİLMEZ; kod sürümüyle birlikte
+# gelmesi gerekir, yoksa kod ile veri sürümü ayrışır.
+#
+# Bu iki satır olmadan ConversationalEngine uzman hattı yükleyemez ve
+# sohbet eski davranışa (kapsam kontrolsüz, LLM'in ürettiği sayılar)
+# geri döner.
+COPY bycuttech/        ./bycuttech/
+COPY bycuttech_rag_v2/ ./bycuttech_rag_v2/
+
 # data/ kalıcı volume olarak mount edilecek; imajdaki kopya tohum olarak
 # data.dist içinde durur (entrypoint ilk açılışta eksikleri kopyalar).
 COPY data/ ./data.dist/

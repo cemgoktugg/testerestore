@@ -250,6 +250,36 @@ class ConversationalEngine:
             machine_db=self.machine_db,
         )
         
+        # ------------------------------------------------------------------
+        # BYCUTTECH uzman hatti (kapsam + deterministik teknik karar)
+        # ------------------------------------------------------------------
+        # Bilgi paketi yuklenemezse SESSIZCE eski davranisa donulmez: hata
+        # loglanir ve uzman hat devre disi kalir. Boylece "sayilar
+        # dogrulanmis tablodan gelir" garantisi ya tam gecerlidir ya da
+        # acikca kapalidir; arada belirsiz bir durum olmaz.
+        self.bycuttech = None
+        self.bycuttech_error: Optional[str] = None
+        if os.environ.get("ADVISOR_BYCUTTECH", "1") != "0":
+            try:
+                from bycuttech.pipeline import BycuttechAdvisor
+                from bycuttech.runtime_prompt import build_runtime_prompt
+
+                build_runtime_prompt()   # prompt okunamiyorsa burada patlar
+                self.bycuttech = BycuttechAdvisor(machine_db=self.machine_db)
+                logger.info(
+                    "BYCUTTECH uzman hatti etkin: %s",
+                    self.bycuttech.kb.stats(),
+                )
+            except Exception as exc:
+                self.bycuttech_error = str(exc)
+                logger.error(
+                    "BYCUTTECH uzman hatti YUKLENEMEDI (%s). Kapsam kontrolu ve "
+                    "deterministik sayisal karar bu surecte DEVRE DISI.", exc,
+                    exc_info=True,
+                )
+        else:
+            logger.warning("BYCUTTECH uzman hatti ADVISOR_BYCUTTECH=0 ile kapatildi.")
+
         # RAG engine (optional)
         self.rag_engine: Optional[RAGEngine] = None
         self.rag_enabled = enable_rag
@@ -324,6 +354,21 @@ class ConversationalEngine:
         self.sessions.move_to_end(session_id)  # yeni kullanılan en son atılır
 
         # ------------------------------------------------------------------
+        # BYCUTTECH UZMAN HATTI (kapsam + deterministik teknik karar)
+        # ------------------------------------------------------------------
+        # Once uzman hat calisir. Kapsam disi soru, guvenlik uyarisi, ariza
+        # teshisi ya da DOGRULANMIS sayisal cevap uretebiliyorsa cevabi o
+        # verir; boylece sayilar kural motorundan gelir, LLM'den degil.
+        #
+        # Uretemiyorsa (ornegin kullanici butonla ilerleyen urun secim
+        # hunisinde) akis oldugu gibi DialogManager'a devam eder. Bu sayede
+        # mevcut next_question / recommendation sozlesmesi ve satis akisi
+        # bozulmadan kalir.
+        advisor_result, social_prefix = self._bycuttech_answer(message, session_id)
+        if advisor_result is not None:
+            return advisor_result
+
+        # ------------------------------------------------------------------
         # DOKUMANTASYON SORULARI -> RAG
         # ------------------------------------------------------------------
         # Sadece acikca dokuman sorusu olanlar RAG'e gider. Geri kalan her sey
@@ -353,12 +398,94 @@ class ConversationalEngine:
             handler=self.unknown_handler,
         )
 
+        # Selamlama/tesekkur/kimlik sorusunda uzman hattin dogal karsiligi
+        # huni sorusunun basina eklenir. Boylece hem "Merhaba, ben BYCUTTECH
+        # Serit Testere AI'yim" denir hem de secim butonlari yerinde kalir.
+        if social_prefix:
+            result["message"] = f"{social_prefix}\n\n{result['message']}".strip()
+
         # Ogrenilmis bilgi varsa ekle
         learned = self.unknown_handler.search_learned_knowledge(message)
         if learned:
             result["message"] += f"\n\n💡 **Ek Bilgi:** {learned['answer']}"
 
         return result
+
+    def _bycuttech_answer(self, message: str,
+                          session_id: str) -> tuple[Optional[Dict], Optional[str]]:
+        """
+        Uzman hattini calistir; cevap uretebiliyorsa API sozlesmesine cevir.
+
+        Donus: (tam_cevap | None, sosyal_onek | None)
+
+        Tam cevap None ise cagiran akis mevcut DialogManager'a devam eder.
+        Sosyal onek doluysa (selamlama/tesekkur/kimlik sorusu) huni cevabinin
+        BASINA eklenir: metin dogal olur ama next_question ve butonlar
+        oldugu gibi kalir, yani satis akisi bozulmaz.
+
+        Cevap SADECE su durumlarda uretilir:
+          • kapsam disi soru ya da prompt injection denemesi
+          • guvenlik uyarisi gerektiren soru
+          • ariza teshisi
+          • dogrulanmis sayisal cikti (TPI / hiz / Q / varyant)
+          • matriste olmayan urun talebi (teknik inceleme)
+          • eksik bilgi icin acik soru (yalnizca serbest metin teknik istekte)
+
+        Diger her sey — ozellikle butonla ilerleyen urun secimi — eskisi
+        gibi kural motoru hunisinden gecer.
+        """
+        if self.bycuttech is None:
+            return None, None
+
+        try:
+            result = self.bycuttech.handle(message, session_id=session_id)
+        except Exception as exc:
+            # Uzman hat coktuyse sohbeti dusurme; huni calismaya devam etsin.
+            logger.error(f"BYCUTTECH advisor hatasi: {exc}", exc_info=True)
+            return None, None
+
+        plan = result.plan
+        # Kavramsal soruya ("TPI nedir") ansiklopedi makalesinden kaynakli
+        # cevap uretildiyse onu da uzman hat vermeli. Aksi halde cevap
+        # huniye dusuyor, LLM kendi bilgisiyle aciklama yaziyor ve
+        # DialogManager'in uydurma filtresi onu atiyor — yani dogru ve
+        # kaynakli metin uretilmisken kullaniciya hicbir sey ulasmiyor.
+        has_sourced_explanation = any(
+            note.get("kind") == "article" for note in plan.retrieved_notes)
+
+        handled = (
+            result.verdict.scope == "out_of_domain"
+            or result.verdict.injection_attempt
+            or plan.status in ("technical_review_required", "conditional")
+            or plan.has_numeric_output()
+            or plan.intent == "diagnosis"
+            or has_sourced_explanation
+            or bool(plan.safety_notes)
+        )
+        if not handled:
+            # Sosyal mesaj: metni uzman hat versin, soruyu huni sorsun.
+            verdict = result.verdict
+            is_social = (verdict.is_greeting or verdict.is_thanks or verdict.is_meta)
+            if is_social and not plan.normalized_inputs:
+                return None, result.message
+            return None, None
+
+        session = self.sessions.get(session_id)
+        payload = {
+            "session_id": session_id,
+            "message": result.message,
+            "query_type": "bycuttech_expert",
+            "state": session.get_state() if session else {},
+            # Mevcut sozlesme korunuyor: bu hat urun hunisini ilerletmedigi
+            # icin next_question / recommendation bos gecer, arayuz metni
+            # gosterir ve butonlari degistirmez.
+            "next_question": None,
+            "recommendation": None,
+            "is_complete": False,
+            "extracted_fields": plan.normalized_inputs,
+        }
+        payload.update(result.to_payload())
+        return payload, None
 
     def _chat_with_rag(self, session, message: str, stream: bool = False):
         """Dokumantasyon sorusunu RAG baglami ile yanitla."""
@@ -433,15 +560,23 @@ class ConversationalEngine:
         """
         message_lower = message.lower().strip()
         
-        # Check if message looks like a machine model name
-        # If it is, classify as product immediately
+        # Mesajda makine modeli geçiyorsa doğrudan ürün akışına gir.
+        #
+        # __init__'te yüklenen paylaşılan örnek kullanılır. Burada eskiden
+        # her mesaj için yeni bir AdvancedMachineDatabase() kuruluyordu:
+        # 1.1 MB JSON parse + indeks inşası, tur başına.
         try:
-            from rules_engine.machine_database import AdvancedMachineDatabase
-            machine_db = AdvancedMachineDatabase()
-            result = machine_db.search(message)
-            if result and result.get("match_score", 0) >= 0.75:
-                logger.info(f"Message recognized as machine model: {message} -> {result.get('model')}")
-                return "product"
+            if self.machine_db is not None:
+                detail = self.machine_db.search_detailed(message)
+                # Belirsiz sonuç da ürün akışına aittir — model adı geçiyor,
+                # sadece hangisi olduğu netleşmemiş; DialogManager soracak.
+                if detail["status"] in ("match", "ambiguous"):
+                    found = detail["machine"] or detail["candidates"][0]
+                    logger.info(
+                        f"Message recognized as machine model: {message} "
+                        f"-> {found.get('model')} ({detail['status']})"
+                    )
+                    return "product"
         except Exception as e:
             logger.error(f"Machine lookup error in classification: {e}", exc_info=True)
         
