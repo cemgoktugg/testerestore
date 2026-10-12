@@ -19,7 +19,10 @@ CORS(app)
 
 # Initialize components
 rules_path = os.path.join(parent_dir, 'rules.json')
-database_path = os.path.join(parent_dir, 'data', 'machines_database.json')
+# machines_list.json — DÜZ format (4516 kayıtlık 'machines' listesi). Makine
+# modülü yalnızca bu formatı okur; eski iç içe machines_database.json
+# yüklendiğinde liste boş kalıyor, /api/health 0 makine gösteriyordu.
+database_path = os.path.join(parent_dir, 'data', 'machines_list.json')
 
 rules_engine = RulesEngine(rules_path)
 machine_db = MachineDatabase(database_path)
@@ -53,24 +56,30 @@ def search_machines():
         return jsonify({'error': 'Query parameter q is required'}), 400
     
     try:
-        # Use machine database to search
-        results = machine_db.search_machine(query)
-        
-        # Format results for web interface
-        formatted_results = []
-        for machine in results[:10]:  # Limit to top 10 results
-            formatted_results.append({
-                'brand': machine.get('manufacturer', 'Unknown'),
-                'model': machine.get('model', 'Unknown'),
-                'blade_length': machine.get('blade_length'),
-                'blade_width': machine.get('blade_width'), 
-                'blade_thickness': machine.get('blade_thickness'),
-                'match_score': machine.get('match_score', 0)
-            })
-        
+        # search_detailed() tek sonuc DEGIL, durum + aday listesi doner.
+        # Eski kod search_machine()'in dondurdugu TEK sozlugu liste sanip
+        # results[:10] diliyordu; bu her istekte TypeError -> HTTP 500
+        # uretiyordu. Belirsiz sorgularda ("kasto 460") adaylarin tamami doner.
+        detail = machine_db.search_detailed(query)
+        candidates = detail['candidates'] or (
+            [detail['machine']] if detail['machine'] else [])
+
+        formatted_results = [{
+            'brand': machine.get('manufacturer', 'Unknown'),
+            'model': machine.get('model', 'Unknown'),
+            'display_name': machine.get('display_name'),
+            'blade_length': machine.get('blade_length_mm'),
+            'blade_width': machine.get('blade_width_mm'),
+            'blade_thickness': machine.get('blade_thickness_mm'),
+            'machine_class': machine.get('machine_class'),
+            'match_score': machine.get('match_score', 0),
+        } for machine in candidates[:10]]
+
         return jsonify({
             'results': formatted_results,
-            'total': len(results),
+            'total': len(candidates),
+            'status': detail['status'],       # match | ambiguous | none
+            'manufacturer': detail['manufacturer'],
             'query': query
         })
     

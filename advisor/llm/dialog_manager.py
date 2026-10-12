@@ -193,13 +193,48 @@ class DialogManager:
             if answer:
                 parts.append(self._strip_fabrications(answer, allow=False))
 
+        # Model adı birden çok makineye uyuyorsa TAHMİN ETME, sor.
+        # Aynı model adını 102 grup paylaşıyor ve 61'inde bıçak ölçüleri
+        # farklı; yanlış olanı seçersek müşteri makinesine takılmayan bıçak
+        # sipariş eder. Ölçüleri de yazıyoruz, kullanıcı kendi makinesini
+        # model adından değil ölçüsünden tanıyor olabilir.
+        if mapping.machine_candidates and not mapping.machine_found:
+            secenekler = "\n".join(
+                f"- **{c.get('display_name') or c.get('model')}** — "
+                f"{c.get('blade_length_mm')} × {c.get('blade_width_mm')} × "
+                f"{c.get('blade_thickness_mm')} mm"
+                for c in mapping.machine_candidates[:5]
+            )
+            kalan = len(mapping.machine_candidates) - 5
+            if kalan > 0:
+                secenekler += f"\n- …ve {kalan} model daha"
+            parts.append(
+                f"\"{mapping.machine_query}\" birden fazla makineye uyuyor ve "
+                "bıçak ölçüleri farklı. Hangisi sizinki?\n\n"
+                f"{secenekler}\n\n"
+                "Tam modeli yazabilir ya da makinenizdeki bıçağın uzunluğunu "
+                "(mm) söyleyebilirsiniz."
+            )
+            return "\n\n".join(p for p in parts if p)
+
         # Makine yazıldı ama veritabanında bulunamadıysa bunu açıkça söyle
         if mapping.machine_query and not mapping.machine_found:
-            parts.append(
-                f"\"{mapping.machine_query}\" makinesini veritabanımda bulamadım. "
-                "Marka ve modeli tam yazar mısınız? (Örn: AMADA HA-250) "
-                "Bilmiyorsanız bıçak uzunluğunu mm cinsinden de yazabilirsiniz."
-            )
+            # Üretici tanındıysa soruyu daraltarak sor — kullanıcıya
+            # "hiç bulamadım" demek, aslında 200 modelini bildiğimiz bir
+            # markayı yazmışken gereksiz yere umut kırıcı.
+            if mapping.machine_manufacturer:
+                parts.append(
+                    f"**{mapping.machine_manufacturer}** markasını tanıdım ama "
+                    f"\"{mapping.machine_query}\" içinden modeli çıkaramadım. "
+                    "Model kodunu tam yazar mısınız? "
+                    "Bilmiyorsanız bıçak uzunluğunu mm cinsinden de yazabilirsiniz."
+                )
+            else:
+                parts.append(
+                    f"\"{mapping.machine_query}\" makinesini veritabanımda bulamadım. "
+                    "Marka ve modeli tam yazar mısınız? (Örn: AMADA HA-250) "
+                    "Bilmiyorsanız bıçak uzunluğunu mm cinsinden de yazabilirsiniz."
+                )
             return "\n\n".join(p for p in parts if p)
 
         # Makine bulunduysa hangi ölçülerin geldiğini göster (motordan gelen gerçek veri)

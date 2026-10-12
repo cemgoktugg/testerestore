@@ -113,6 +113,12 @@ class MappingResult:
     rejected: Dict[str, Any] = field(default_factory=dict)  # LLM üretti ama geçersiz
     machine_query: Optional[str] = None                     # kullanıcının yazdığı ham makine metni
     machine_found: Optional[Dict] = None                    # veritabanında bulunan kayıt
+    # Model adı birden çok makineye uyduğunda (ör. "H-1300" beş üreticide
+    # var ve bıçak boyları 11380–12300 mm arasında değişiyor) tek bir kayıt
+    # seçmek yanlış bıçak siparişi demektir. Adaylar burada taşınır ki
+    # DialogManager kullanıcıya hangisi olduğunu sorabilsin.
+    machine_candidates: List[Dict] = field(default_factory=list)
+    machine_manufacturer: Optional[str] = None              # cümlede tanınan üretici
     off_topic_text: Optional[str] = None                    # ürün dışı soru metni
 
     @property
@@ -349,11 +355,16 @@ class AnswerMapper:
                     result.values[fieldname] = UNKNOWN
                     continue
                 result.machine_query = str(value).strip()
-                found = self._resolve_machine(result.machine_query)
+                detail = self._resolve_machine(result.machine_query)
+                result.machine_manufacturer = detail.get("manufacturer")
+                found = detail.get("machine")
                 if found:
                     result.machine_found = found
                     result.values[fieldname] = result.machine_query
                 else:
+                    # Adaylar yalnızca eşleşme YOKKEN taşınır; eşleşme varken
+                    # de dolu bırakmak DialogManager'ı boşuna soru sormaya iter.
+                    result.machine_candidates = detail.get("candidates") or []
                     result.rejected[fieldname] = value
                 continue
 
@@ -396,12 +407,34 @@ class AnswerMapper:
 
         return result
 
-    def _resolve_machine(self, query: str) -> Optional[Dict]:
-        """Makine metnini veritabanında ara."""
+    @staticmethod
+    def _empty_machine_result() -> Dict:
+        return {"status": "none", "machine": None,
+                "candidates": [], "manufacturer": None}
+
+    def _resolve_machine(self, query: str) -> Dict:
+        """
+        Makine metnini veritabanında ara.
+
+        search_detailed() sonucunu olduğu gibi döndürür:
+        {'status', 'machine', 'candidates', 'manufacturer'}. Belirsiz
+        sorgularda 'machine' None'dır ama 'candidates' doludur — çağıran
+        katman tahmin etmek yerine kullanıcıya sorabilsin diye.
+        """
         if not self.machine_db or not query:
-            return None
+            return self._empty_machine_result()
         try:
-            return self.machine_db.search(query, threshold=MACHINE_MATCH_THRESHOLD)
+            detailed = getattr(self.machine_db, "search_detailed", None)
+            if detailed is None:
+                # Eski/sahte bir veritabanı enjekte edilmişse tek sonuçlu
+                # API'ye düş; belirsizlik bilgisi olmaz ama akış kırılmaz.
+                found = self.machine_db.search(
+                    query, threshold=MACHINE_MATCH_THRESHOLD
+                )
+                return {"status": "match" if found else "none",
+                        "machine": found, "candidates": [],
+                        "manufacturer": (found or {}).get("manufacturer")}
+            return detailed(query, threshold=MACHINE_MATCH_THRESHOLD)
         except Exception as exc:
             logger.error(f"Machine lookup failed: {exc}")
-            return None
+            return self._empty_machine_result()
