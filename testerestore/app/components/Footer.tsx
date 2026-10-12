@@ -11,6 +11,7 @@ import type {
 } from '../../lib/medusa/services/footer';
 import TrustSignals from './TrustSignals';
 import { LEGAL_LINKS } from '../../lib/legal-links';
+import { resolveLegacyCategoryHref } from '../../lib/category-links';
 
 /** Admin'de href'i boş bırakılmış yasal linki başlığından sayfasına eşler. */
 function legalHrefForLabel(label: string): string | undefined {
@@ -47,10 +48,11 @@ const DEFAULT_LINK_GROUPS: FooterLinkGroup[] = [
   {
     id: 'lg1', sort_order: 0, is_active: true, title: 'Ürünler',
     links: [
-      { label: 'Bi-Metal Şerit Testereler', href: '/?kategori=Bi-Metal#products' },
-      { label: 'Karbür Şerit Testereler', href: '/?kategori=Karb%C3%BCr%20U%C3%A7lu#products' },
-      { label: 'Ağaç Kesim Şeritleri', href: '/?kategori=Ah%C5%9Fap%20Kesim#products' },
-      { label: 'Et ve Kemik Kesim', href: '/?kategori=Et%20ve%20Kemik%20Kesim#products' },
+      { label: 'Bi-Metal Şerit Testereler', href: '/kategori/bi-metal-serit-testere' },
+      { label: 'Karbür Uçlu Şerit Testereler', href: '/kategori/karbur-uclu-serit-testere' },
+      { label: 'Ahşap Kesim Şeritleri', href: '/kategori/ahsap-serit-testere' },
+      { label: 'Et ve Kemik Kesim', href: '/kategori/et-kemik-serit-testere' },
+      { label: 'Sünger ve Tekstil Kesim', href: '/kategori/sunger-tekstil-serit-testere' },
       { label: 'Hazır Boy Ürünler', href: '/hazir-urunler' },
     ],
   },
@@ -59,6 +61,8 @@ const DEFAULT_LINK_GROUPS: FooterLinkGroup[] = [
     links: [
       { label: 'Ana Sayfa', href: '/' },
       { label: 'Parametrik Hesaplayıcı', href: '/products/bimetal-premium' },
+      { label: 'Dijital Katalog', href: '/katalog' },
+      { label: 'Sık Sorulan Sorular', href: '/sss' },
       { label: 'Sepetim', href: '/cart' },
       { label: 'Siparişlerim', href: '/hesabim' },
     ],
@@ -144,7 +148,7 @@ export default function Footer() {
             <ul className="space-y-2 text-xs">
               {(group.links || []).map((l, i) => (
                 <li key={i}>
-                  <Link href={l.href} className="text-muted-foreground hover:text-primary">
+                  <Link href={resolveLegacyCategoryHref(l.href) ?? l.href} className="text-muted-foreground hover:text-primary">
                     {l.label}
                   </Link>
                 </li>
@@ -175,6 +179,19 @@ export default function Footer() {
                 <span>{settings.contact_address}</span>
               </li>
             )}
+          </ul>
+          {/* Admin verisinden bağımsız sabit yardım linkleri */}
+          <ul className="mt-4 space-y-2 text-xs">
+            <li>
+              <Link href="/sss" className="font-semibold text-muted-foreground hover:text-primary">
+                Sık Sorulan Sorular
+              </Link>
+            </li>
+            <li>
+              <Link href="/iletisim" className="font-semibold text-muted-foreground hover:text-primary">
+                İletişim Formu
+              </Link>
+            </li>
           </ul>
         </div>
       </div>

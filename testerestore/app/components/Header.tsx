@@ -18,12 +18,14 @@ export default function Header() {
 
   const navLinks = [
     { name: 'Ana Sayfa', href: '/' },
-    { name: 'Bi-Metal', href: '/?kategori=Bi-Metal#products' },
-    { name: 'Ahşap Kesim', href: '/?kategori=Ah%C5%9Fap+Kesim#products' },
-    { name: 'Et ve Kemik Kesim', href: '/?kategori=Et+ve+Kemik+Kesim#products' },
-    { name: 'Karbür Uçlu', href: '/?kategori=Karb%C3%BCr+U%C3%A7lu#products' },
-    { name: 'Dijital Katalog', href: '/katalog' },
-    { name: 'Blog', href: '/blog' },
+    // Kategori linkleri gerçek (SSR) kategori sayfalarına gider — eskiden ana
+    // sayfanın ?kategori= filtresiydi (Google için ayrı sayfa değildi).
+    { name: 'Bi-Metal', href: '/kategori/bi-metal-serit-testere' },
+    { name: 'Ahşap Kesim', href: '/kategori/ahsap-serit-testere' },
+    { name: 'Et ve Kemik', href: '/kategori/et-kemik-serit-testere' },
+    { name: 'Karbür Uçlu', href: '/kategori/karbur-uclu-serit-testere' },
+    { name: 'Sünger & Tekstil', href: '/kategori/sunger-tekstil-serit-testere' },
+    { name: 'Hazır Boy', href: '/hazir-urunler' },
     { name: 'İletişim', href: '/iletisim' },
   ];
 

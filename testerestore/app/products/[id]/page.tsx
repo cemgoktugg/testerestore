@@ -2,6 +2,8 @@ import { notFound } from 'next/navigation';
 import { listProducts, listRelatedProducts } from '../../../lib/medusa/services/products';
 import { getProductBySlugCached } from '../../../lib/medusa/server/product-cache';
 import ProductDetailClient from './ProductDetailClient';
+import { categoryPageForHandles, categoryHref } from '../../../lib/category-pages';
+import { isReadyMade } from '../../../lib/ready-made';
 
 /**
  * Product detail — Server Component.
@@ -43,5 +45,21 @@ export default async function ProductPage({
   if (!product) notFound();
   // İlgili ürünler sunucuda: linkler SSR HTML'inde olur (iç linkleme).
   const related = await listRelatedProducts(product, 3).catch(() => []);
-  return <ProductDetailClient initialProduct={product} initialRelated={related} slug={id} />;
+  // Breadcrumb hedefi: hazır ürünler kendi listesine, diğerleri en özel kategori sayfasına.
+  const catPage = categoryPageForHandles(
+    (product.categories ?? []).map((c) => c.handle).filter(Boolean) as string[]
+  );
+  const categoryLink = isReadyMade(product)
+    ? { name: 'Hazır Boy Ürünler', href: '/hazir-urunler' }
+    : catPage
+    ? { name: catPage.name, href: categoryHref(catPage) }
+    : undefined;
+  return (
+    <ProductDetailClient
+      initialProduct={product}
+      initialRelated={related}
+      categoryLink={categoryLink}
+      slug={id}
+    />
+  );
 }

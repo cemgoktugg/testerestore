@@ -2,6 +2,7 @@ import type { MetadataRoute } from "next";
 import { listProducts } from "../lib/medusa/services/products";
 import { listBlogPosts } from "../lib/medusa/services/blog";
 import { LEGAL_PAGES } from "../lib/legal-content";
+import { CATEGORY_PAGES } from "../lib/category-pages";
 
 const SITE_URL = (
   process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3001"
@@ -42,8 +43,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${SITE_URL}/hazir-urunler`, lastModified: latestProductUpdate, changeFrequency: "daily", priority: 0.9 },
     { url: `${SITE_URL}/katalog`, changeFrequency: "monthly", priority: 0.6 },
     { url: `${SITE_URL}/iletisim`, changeFrequency: "monthly", priority: 0.6 },
+    { url: `${SITE_URL}/sss`, changeFrequency: "monthly", priority: 0.6 },
     { url: `${SITE_URL}/blog`, changeFrequency: "weekly", priority: 0.7 },
   ];
+
+  // Kategori landing sayfaları
+  const categoryEntries: MetadataRoute.Sitemap = CATEGORY_PAGES.map((c) => ({
+    url: `${SITE_URL}/kategori/${c.slug}`,
+    lastModified: latestProductUpdate,
+    changeFrequency: "weekly" as const,
+    priority: 0.85,
+  }));
 
   // Yasal sayfalar
   const legalEntries: MetadataRoute.Sitemap = LEGAL_PAGES.map((p) => ({
@@ -66,5 +76,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     /* yok say */
   }
 
-  return [...staticEntries, ...productEntries, ...blogEntries, ...legalEntries];
+  return [...staticEntries, ...categoryEntries, ...productEntries, ...blogEntries, ...legalEntries];
 }

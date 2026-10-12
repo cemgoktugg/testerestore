@@ -143,11 +143,14 @@ function unifyFromFallback(f: ProductDetailsFallback): UnifiedProduct {
 export default function ProductDetailClient({
   initialProduct,
   initialRelated,
+  categoryLink,
   slug,
 }: {
   initialProduct: StoreProduct | null;
   /** Aynı kategoriden ürünler — sunucuda (page.tsx) çekilir. */
   initialRelated?: StoreProduct[];
+  /** Breadcrumb kategori linki — sunucuda (page.tsx) hesaplanır. */
+  categoryLink?: { name: string; href: string };
   slug: string;
 }) {
   // Ürün sunucuda (SSR/ISR) çekilir ve prop olarak gelir — client fetch yok.
@@ -183,12 +186,8 @@ export default function ProductDetailClient({
     [initialRelated]
   );
 
-  // Breadcrumb hedefi: hazır ürünler kendi listesine, diğerleri kategori filtresine.
-  const readyMade = medusaProduct ? isReadyMade(medusaProduct) : false;
-  const categoryLabel = readyMade ? 'Hazır Boy Ürünler' : product?.category ?? 'Ürünler';
-  const categoryHref = readyMade
-    ? '/hazir-urunler'
-    : `/?kategori=${encodeURIComponent(product?.category ?? '')}#products`;
+  const categoryLabel = categoryLink?.name ?? product?.category ?? 'Ürünler';
+  const categoryHref = categoryLink?.href ?? '/#products';
 
   // --- UI state hooks (always called — never inside conditionals)
   const [activeTab, setActiveTab] = useState<'image' | '3d'>('image');
@@ -916,7 +915,7 @@ export default function ProductDetailClient({
       <BreadcrumbJsonLd
         items={[
           { name: 'Ana Sayfa', url: '/' },
-          { name: categoryLabel, url: categoryHref.replace('#products', '') },
+          { name: categoryLabel, url: categoryHref },
           { name: product.name, url: `/products/${product.handle}` },
         ]}
       />
