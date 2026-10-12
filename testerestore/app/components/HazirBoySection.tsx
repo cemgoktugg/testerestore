@@ -15,7 +15,7 @@ const DRAG_THRESHOLD = 6;
 export default function HazirBoySection({
   initialReadyMade,
 }: { initialReadyMade?: StoreProduct[] } = {}) {
-  const { data: medusaReady } = useReadyMade(24);
+  const { data: medusaReady } = useReadyMade(24, { enabled: !initialReadyMade?.length });
 
   const cards = useMemo<ReadyMadeCard[]>(() => {
     // SSR prop (initialReadyMade) ilk render'ı doldurur; client fetch tazeler.

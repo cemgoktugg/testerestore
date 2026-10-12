@@ -96,13 +96,6 @@ export default function ReadyMadeSuggestionPopup({
                     className="object-cover"
                     sizes="112px"
                   />
-                  {typeof s.inventory_quantity_display === "number" &&
-                    s.inventory_quantity_display > 0 &&
-                    s.inventory_quantity_display <= 10 && (
-                      <div className="absolute top-1 left-1 inline-flex items-center rounded-md bg-rose-500 text-white text-[9px] font-bold px-1.5 py-0.5">
-                        Son {s.inventory_quantity_display}
-                      </div>
-                    )}
                 </div>
 
                 {/* İçerik */}

@@ -3,8 +3,8 @@
 import { useAsync } from "./useAsync";
 import { listCategories, listCollections, getCategoryByHandle } from "../services/categories";
 
-export function useCategories() {
-  return useAsync(() => listCategories(), []);
+export function useCategories(fetchOpts: { enabled?: boolean } = {}) {
+  return useAsync(() => listCategories(), [], { enabled: fetchOpts.enabled });
 }
 
 export function useCollections() {

@@ -98,6 +98,18 @@ function mapConfigSlides(): Slide[] {
 
 const AUTOPLAY_INTERVAL = 6000;
 
+function SlideHeading({
+  as: Tag,
+  className,
+  children,
+}: {
+  as: 'h1' | 'h2';
+  className: string;
+  children: React.ReactNode;
+}) {
+  return <Tag className={className}>{children}</Tag>;
+}
+
 export default function HeroSlider({
   initialSlides,
 }: { initialSlides?: StoreHeroSlide[] } = {}) {
@@ -191,10 +203,14 @@ export default function HeroSlider({
                       <span>{slide.badge}</span>
                     </div>
 
-                    <h1 className="text-4xl font-bold tracking-[-0.03em] text-foreground sm:text-5xl md:text-6xl leading-[1.1] md:leading-[1.05]">
+                    {/* Sayfada tek H1 olmalı: yalnızca ilk slayt H1, diğerleri H2. */}
+                    <SlideHeading
+                      as={i === 0 ? "h1" : "h2"}
+                      className="text-4xl font-bold tracking-[-0.03em] text-foreground sm:text-5xl md:text-6xl leading-[1.1] md:leading-[1.05]"
+                    >
                       {slide.title}
                       <span className="text-orange-grad">{slide.highlight}</span>
-                    </h1>
+                    </SlideHeading>
 
                     <p className="max-w-xl text-base md:text-lg text-muted-foreground leading-relaxed">
                       {slide.description}

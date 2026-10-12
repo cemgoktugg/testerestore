@@ -7,7 +7,6 @@ import {
   Truck,
   RotateCcw,
   CreditCard,
-  Award,
 } from "lucide-react";
 
 /**
@@ -29,7 +28,7 @@ const ITEMS = [
   {
     icon: ShieldCheck,
     title: "Güvenli Ödeme",
-    desc: "3D Secure & PCI-DSS uyumlu",
+    desc: "iyzico altyapısı, 3D Secure",
   },
   {
     icon: Truck,
@@ -38,8 +37,8 @@ const ITEMS = [
   },
   {
     icon: RotateCcw,
-    title: "14 Gün İade",
-    desc: "Cayma hakkı korumalı",
+    title: "14 Gün Cayma Hakkı",
+    desc: "Hazır boy ürünlerde",
   },
 ];
 
@@ -54,10 +53,6 @@ export default function TrustSignals({ variant = "row" }: Props) {
         <span className="inline-flex items-center gap-1.5 font-semibold">
           <ShieldCheck className="h-3.5 w-3.5 text-emerald-600" />
           3D Secure Ödeme
-        </span>
-        <span className="inline-flex items-center gap-1.5 font-semibold">
-          <Award className="h-3.5 w-3.5 text-emerald-600" />
-          ETBİS Kayıtlı E-Ticaret
         </span>
         <span className="inline-flex items-center gap-1.5 font-semibold">
           <CreditCard className="h-3.5 w-3.5 text-emerald-600" />

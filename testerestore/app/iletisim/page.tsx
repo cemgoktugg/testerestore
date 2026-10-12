@@ -4,12 +4,14 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import IletisimForm from './IletisimForm';
 import { MapPin, Phone, Mail, Clock, MessageCircle, ArrowRight } from 'lucide-react';
+import { pageMetadata } from '../../lib/seo';
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: 'İletişim',
   description:
-    'TestereStore ile iletişime geçin. Atölye adresimiz, telefon, e-posta ve özel kesim talep formu.',
-};
+    'Testere Store ile iletişime geçin. Atölye adresimiz, telefon, e-posta ve özel kesim talep formu.',
+  path: '/iletisim',
+});
 
 const ACCENT = '#a4b402';
 

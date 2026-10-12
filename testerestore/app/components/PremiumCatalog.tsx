@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { Suspense, useEffect, useMemo, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
@@ -9,7 +9,6 @@ import { useProducts } from '../../lib/medusa/hooks/useProducts';
 import { useCategories } from '../../lib/medusa/hooks/useCategories';
 import { getProductImage } from '../../lib/medusa/format';
 import type { StoreProduct, StoreProductCategory } from '../../lib/medusa/types';
-import { getDemoCatalog, type DemoCatalogItem } from '../../lib/demo-products';
 import { siteContent } from '../../lib/content-config';
 import { isReadyMade } from '../../lib/ready-made';
 import { CatalogGridSkeleton } from './skeletons/CatalogSkeleton';
@@ -34,37 +33,19 @@ interface CatalogCardData {
 }
 
 /**
- * Fixed pill list. Each pill matches Medusa categories by `handle`
- * (or by demo `category` string in fallback mode). Renaming a Medusa
- * category in Admin won't break filtering — only the handle matters.
+ * Fixed pill list. Each pill matches Medusa categories by `handle`.
+ * Renaming a Medusa category in Admin won't break filtering — only the
+ * handle matters.
  */
 const CATEGORY_PILLS: ReadonlyArray<{
   label: string;
   /** Medusa category handles that count as this pill. */
   handles: ReadonlyArray<string>;
-  /** Demo-mode `category` strings that count as this pill. */
-  demoMatches: ReadonlyArray<string>;
 }> = [
-  {
-    label: 'Bi-Metal',
-    handles: ['bimetal', 'bimetal-m42', 'bimetal-m51', 'bi-metal'],
-    demoMatches: ['Metal', 'Bi-Metal'],
-  },
-  {
-    label: 'Ahşap Kesim',
-    handles: ['wood', 'ahsap', 'ahşap'],
-    demoMatches: ['Ahşap'],
-  },
-  {
-    label: 'Et ve Kemik Kesim',
-    handles: ['meat-bone', 'et-ve-kemik'],
-    demoMatches: ['Et ve Kemik'],
-  },
-  {
-    label: 'Karbür Uçlu',
-    handles: ['carbide-tipped', 'karbur-uclu'],
-    demoMatches: ['Karbür Uçlu'],
-  },
+  { label: 'Bi-Metal', handles: ['bimetal', 'bimetal-m42', 'bimetal-m51', 'bi-metal'] },
+  { label: 'Ahşap Kesim', handles: ['wood', 'ahsap', 'ahşap'] },
+  { label: 'Et ve Kemik Kesim', handles: ['meat-bone', 'et-ve-kemik'] },
+  { label: 'Karbür Uçlu', handles: ['carbide-tipped', 'karbur-uclu'] },
 ];
 
 const PILL_LABELS = ['Tümü', ...CATEGORY_PILLS.map((p) => p.label)];
@@ -79,13 +60,6 @@ function pillLabelForMedusa(p: StoreProduct): string {
     }
   }
   return p.categories?.[0]?.name ?? 'Şerit Testere';
-}
-
-function pillLabelForDemo(category: string): string {
-  for (const pill of CATEGORY_PILLS) {
-    if (pill.demoMatches.includes(category)) return pill.label;
-  }
-  return category;
 }
 
 function mapMedusaToCard(
@@ -118,35 +92,47 @@ function mapMedusaToCard(
   });
 }
 
-function mapDemoToCard(items: DemoCatalogItem[]): CatalogCardData[] {
-  return items.map((i) => ({
-    id: i.id,
-    handle: i.handle,
-    name: i.name,
-    description: i.description,
-    image: i.image,
-    category: pillLabelForDemo(i.category),
-    href: `/products/${i.handle}`,
-    price: 0,
-    currency: 'try',
-    createdAt: 0,
-  }));
-}
-
 
 const COLLAPSED_COUNT = 4;
 
-export default function PremiumCatalog({
-  initialProducts,
-  initialCategories,
-}: {
+interface PremiumCatalogProps {
   initialProducts?: StoreProduct[];
   initialCategories?: StoreProductCategory[];
-} = {}) {
-  const { data: productsResp, loading: productsLoading } = useProducts({
-    limit: 24,
+}
+
+/**
+ * `useSearchParams` Suspense sınırı olmadan kullanılırsa Next.js TÜM sayfayı
+ * istemci tarafına atar (BAILOUT_TO_CLIENT_SIDE_RENDERING) → sunucu HTML'i boş
+ * gelir, Google ve JS çalıştırmayan AI botları ana sayfada hiçbir şey görmez.
+ * Fallback aynı grid'i URL filtresi olmadan SSR eder; hydrate olunca
+ * ?kategori / fiyat filtreleri uygulanır.
+ */
+export default function PremiumCatalog(props: PremiumCatalogProps) {
+  return (
+    <Suspense fallback={<PremiumCatalogView {...props} searchParams={null} />}>
+      <PremiumCatalogWithParams {...props} />
+    </Suspense>
+  );
+}
+
+function PremiumCatalogWithParams(props: PremiumCatalogProps) {
+  const searchParams = useSearchParams();
+  return <PremiumCatalogView {...props} searchParams={searchParams} />;
+}
+
+function PremiumCatalogView({
+  initialProducts,
+  initialCategories,
+  searchParams,
+}: PremiumCatalogProps & { searchParams: URLSearchParams | null }) {
+  // SSR'dan veri geldiyse tarayıcıda tekrar çekilmez (ISR 5 dk'da bir tazeler).
+  const { data: productsResp, loading: productsLoading } = useProducts(
+    { limit: 24 },
+    { enabled: !initialProducts?.length }
+  );
+  const { data: categoryList, loading: categoriesLoading } = useCategories({
+    enabled: !initialCategories?.length,
   });
-  const { data: categoryList, loading: categoriesLoading } = useCategories();
 
   const items = useMemo<CatalogCardData[]>(() => {
     // SSR prop'ları (initialProducts/Categories) ilk render'ı doldurur; client tazeler.
@@ -161,24 +147,26 @@ export default function PremiumCatalog({
       const configurable = products.filter((p) => !isReadyMade(p));
       return mapMedusaToCard(configurable, cats);
     }
-    return mapDemoToCard(getDemoCatalog());
+    // Backend'den ürün gelmediyse uydurma demo kartı gösterme — olmayan ürün
+    // sayfalarına (kraken-machine, meat-bone…) link veriyordu.
+    return [];
   }, [productsResp, categoryList, initialProducts, initialCategories]);
 
   const categories = PILL_LABELS;
 
   // URL-driven initial filter — Header category links pass ?kategori=X.
-  const searchParams = useSearchParams();
-  const urlCategory = searchParams.get('kategori');
+  // SSR fallback'inde searchParams null → 'Tümü'.
+  const urlCategory = searchParams?.get('kategori') ?? null;
   const initialActive =
     urlCategory && PILL_LABELS.includes(urlCategory) ? urlCategory : 'Tümü';
 
   const [active, setActive] = useState<string>(initialActive);
   const [showAll, setShowAll] = useState(false);
   const [priceMin, setPriceMin] = useState<string>(
-    searchParams.get('minPrice') || ''
+    searchParams?.get('minPrice') || ''
   );
   const [priceMax, setPriceMax] = useState<string>(
-    searchParams.get('maxPrice') || ''
+    searchParams?.get('maxPrice') || ''
   );
 
   // When the URL param changes (clicking another Header link without full
@@ -342,10 +330,14 @@ export default function PremiumCatalog({
             key={active}
             className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 md:gap-6"
           >
-            {visible.map((item, idx) => (
+            {/* Daraltılmış kartlar DOM'dan çıkarılmaz, CSS ile gizlenir — böylece
+                tüm ürün linkleri SSR HTML'inde kalır (iç linkleme / tarama). */}
+            {filtered.map((item, idx) => (
               <article
                 key={item.id}
-                className="catalog-card group relative flex flex-col overflow-hidden rounded-2xl border border-white/[0.08] shadow-[0_8px_30px_rgba(0,0,0,0.35)] transition-all duration-500 hover:-translate-y-2"
+                className={`catalog-card group relative flex flex-col overflow-hidden rounded-2xl border border-white/[0.08] shadow-[0_8px_30px_rgba(0,0,0,0.35)] transition-all duration-500 hover:-translate-y-2 ${
+                  !showAll && idx >= COLLAPSED_COUNT ? 'hidden' : ''
+                }`}
                 style={{ animationDelay: `${idx * 60}ms` }}
               >
                 <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/25 to-transparent" />

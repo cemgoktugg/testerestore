@@ -280,7 +280,28 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
           setCart(legacyFromMedusa(fresh));
         }
       } catch (e) {
-        setError(e instanceof Error ? e : new Error(String(e)));
+        // Optimistik eklenen yerel satırı geri al — sepeti Medusa'daki gerçek
+        // durumla eşitle. Eskiden hata yutuluyordu: müşteri sepette ürünü
+        // görüyor ama gerçek (sunucu) sepette ürün yoktu, ödemede patlıyordu.
+        const fresh = await retrieveCart().catch(() => null);
+        if (fresh) {
+          setMedusaCart(fresh);
+          setCart(legacyFromMedusa(fresh));
+        } else if (legacy) {
+          setCart((prev) =>
+            prev.flatMap((it) =>
+              it.id !== legacy.id
+                ? [it]
+                : it.quantity - quantity > 0
+                ? [{ ...it, quantity: it.quantity - quantity }]
+                : []
+            )
+          );
+        }
+        const err = e instanceof Error ? e : new Error(String(e));
+        setError(err);
+        // Çağıran bileşen kullanıcıya hata göstersin diye yeniden fırlatılır.
+        throw err;
       }
     },
     [addToCart]

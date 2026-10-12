@@ -58,7 +58,7 @@ export default function NewsletterSignup({
       setMessage(
         data.alreadySubscribed
           ? "Zaten abonesiniz, teşekkürler!"
-          : "Hoş geldiniz! İndirim kodu e-posta adresinize gönderildi."
+          : "Teşekkürler! Bültenimize kaydoldunuz."
       );
       setEmail("");
     } catch {
@@ -77,8 +77,7 @@ export default function NewsletterSignup({
           </h4>
         </div>
         <p className="text-[11px] text-muted-foreground leading-relaxed">
-          İlk siparişinize özel <strong className="text-foreground">%5 indirim</strong>{" "}
-          kuponu hediye!
+          Yeni ürünler, teknik rehberler ve kampanyalardan ilk siz haberdar olun.
         </p>
         <form onSubmit={submit} className="flex flex-col gap-2">
           <div className="flex gap-2">
@@ -134,10 +133,10 @@ export default function NewsletterSignup({
     <div className="rounded-2xl bg-gradient-to-br from-accent/10 to-orange-500/5 border border-accent/30 p-6 max-w-xl mx-auto text-center">
       <Mail className="h-10 w-10 text-accent mx-auto mb-3" />
       <h3 className="text-xl font-extrabold mb-2">
-        İlk siparişinize özel %5 indirim
+        Bültenimize abone olun
       </h3>
       <p className="text-sm text-muted-foreground mb-5">
-        E-posta adresinizi bırakın, kupon kodunuzu hemen gönderelim.
+        Yeni ürünler, teknik rehberler ve kampanyalardan ilk siz haberdar olun.
       </p>
       <form onSubmit={submit} className="flex flex-col sm:flex-row gap-2 max-w-md mx-auto">
         <input

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { siteContent } from "./content-config";
 
 /**
  * SITE URL — env'den okur, sonunda slash'ı temizler. Tüm canonical/OG
@@ -31,6 +32,11 @@ export function noIndexMetadata(title?: string): Metadata {
 
 /**
  * Yardımcı: Bir sayfa metadata'sını kanonik URL'le birlikte oluşturur.
+ *
+ * Next.js metadata'yı üst seviye anahtar bazında birleştirir: alt sayfada
+ * `openGraph` verilirse kök layout'unki TAMAMEN ezilir. Bu yüzden siteName,
+ * locale ve varsayılan görsel burada yeniden verilir. Kök layout'a canonical
+ * KONMAZ — konursa canonical'sız her sayfa ana sayfayı işaret eder.
  */
 export function pageMetadata(opts: {
   title?: string;
@@ -40,15 +46,28 @@ export function pageMetadata(opts: {
   noindex?: boolean;
 }): Metadata {
   const url = canonicalUrl(opts.path);
+  const image = opts.image || siteContent.seo.ogImage;
+  const ogTitle = opts.title
+    ? `${opts.title} | ${siteContent.seo.siteName}`
+    : siteContent.seo.defaultTitle;
   return {
     title: opts.title,
     description: opts.description,
     alternates: { canonical: url },
     openGraph: {
-      title: opts.title,
+      type: "website",
+      siteName: siteContent.seo.siteName,
+      locale: "tr_TR",
+      title: ogTitle,
       description: opts.description,
       url,
-      images: opts.image ? [{ url: opts.image }] : undefined,
+      images: image ? [{ url: image }] : undefined,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: ogTitle,
+      description: opts.description,
+      images: image ? [image] : undefined,
     },
     ...(opts.noindex && {
       robots: { index: false, follow: false },

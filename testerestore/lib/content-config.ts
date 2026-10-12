@@ -101,19 +101,7 @@ export const siteContent: SiteContent = {
         secondaryCta: { label: "Tüm Bıçaklar", href: "#products" },
         accent: "from-sky-500/25 via-indigo-500/10",
       },
-      {
-        id: "machine",
-        badge: "Profesyonel Atölye Ekipmanı",
-        badgeIcon: "wrench",
-        titlePrefix: "Güçlü Motor, Hassas Kesim",
-        highlight: "Kraken Şerit Makinesi",
-        description:
-          "2.2 kW motor, 350 mm volan ve lazer kılavuzlu döküm gövde. Atölyenizin üretim hızını üst seviyeye çıkaran profesyonel çözüm.",
-        image: "/images/bandsaw_machine.png",
-        primaryCta: { label: "Makineyi İncele", href: "/products/kraken-machine" },
-        secondaryCta: { label: "Teknik Özellikler", href: "#products" },
-        accent: "from-emerald-500/25 via-teal-500/10",
-      },
+      // (Makine slaytı kaldırıldı: satışta makine yok, /products/kraken-machine 404.)
     ],
   },
   ctaCallout: {
@@ -142,17 +130,19 @@ export const siteContent: SiteContent = {
       "Metal, ahşap, et-kemik ve karbür uçlu şerit testere çözümlerini kullanım alanına göre keşfedin.",
   },
   bestSellersSection: {
-    eyebrow: "En Çok Tercih Edilenler",
-    title: "Çok Satan",
+    eyebrow: "Öne Çıkanlar",
+    title: "Öne Çıkan",
     titleHighlight: "Ürünlerimiz",
     subtitle:
-      "Profesyonel atölyelerin ve sanayi uzmanlarının en çok tercih ettiği şerit testerelerimiz. Müşteri puanları ve satış adetleriyle kanıtlanmış kalite.",
+      "Metal, ahşap, gıda ve tekstil kesiminde en sık başvurulan şerit testere çözümlerimiz. Ölçünüzü seçin, kaynaklı bıçağınızı sipariş edin.",
   },
   seo: {
-    siteName: "TestereStore",
+    // Marka adı her yerde (JSON-LD, OG, başlık) aynı yazılmalı — "TestereStore"
+    // ve "Testere Store" karışınca arama motorları/AI tek varlık olarak eşleyemez.
+    siteName: "Testere Store",
     defaultTitle: "Testere Store — Premium Şerit Testereler ve Bıçaklar",
     defaultDescription:
-      "Endüstriyel şerit testereler ve şerit testere bıçaklarında modern, yüksek kaliteli ve parametrik çözümler sunan Türkiye'nin lider satış platformu.",
+      "Bi-metal M42/M51, karbür uçlu, ahşap ve et-kemik şerit testere bıçakları. İstediğiniz ölçüde kaynaklı özel boy veya stoktan hazır boy, online sipariş.",
     ogImage: "/images/hero_bandsaw.png",
   },
 };

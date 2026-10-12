@@ -3,48 +3,46 @@ import type { Metadata } from 'next';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { ArrowRight, FileDown, BookOpen, FileText, ShieldCheck } from 'lucide-react';
+import { pageMetadata } from '../../lib/seo';
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: 'Dijital Katalog',
   description:
-    'Bi-Metal M42 & M51, karbür uçlu ve ahşap şerit testere kataloglarını PDF olarak indirin. Diş adımı seçim tablosu ve teknik belgeler.',
-};
+    'Bi-Metal M42 & M51, karbür uçlu ve ahşap şerit testere kataloglarını ve teknik belgelerini talep edin. Diş adımı seçim tablosu ve kullanım kılavuzları.',
+  path: '/katalog',
+});
 
-const DOCUMENTS = [
+// href verilen doküman doğrudan indirilir; verilmeyenler iletişim üzerinden
+// talep edilir. (Eskiden boyutları uydurma, butonları işlevsiz PDF listesiydi.)
+const DOCUMENTS: ReadonlyArray<{ title: string; desc: string; type: string; href?: string }> = [
   {
     title: 'Şerit Testere Genel Kataloğu 2026',
     desc: 'Bi-Metal M42 / M51, karbür uçlu ve ahşap kesim serilerinin tam teknik kataloğu, milimetrik boyut ve diş tabloları.',
-    size: '3.4 MB',
     type: 'PDF',
   },
   {
     title: 'Diş Adımı (TPI) Seçim Matrisi',
     desc: 'Malzeme çapına ve et kalınlığına göre ideal TPI seçim tablosu. Kesim hızı ve diş ömrü için referans dokümanı.',
-    size: '850 KB',
     type: 'PDF',
   },
   {
     title: 'IDEAL Kaynak Standartları & Tolerans Belgesi',
     desc: 'Alın kaynağı toleransları, mikroyapı tavlama prosedürleri ve kalite kontrol parametreleri.',
-    size: '1.9 MB',
     type: 'PDF',
   },
   {
     title: 'Kullanım & İş Güvenliği Emniyet Kılavuzu',
     desc: 'Testere montajı, gergi ayarı, koruyucu donanım ve atölye çalışma güvenliği rehberi.',
-    size: '1.2 MB',
     type: 'PDF',
   },
   {
     title: 'Ahşap Kesim Uygulamaları El Kitabı',
     desc: 'Karbon çeliği ve Alman C75S serileri için ahşap türüne göre optimum kesim parametreleri.',
-    size: '1.6 MB',
     type: 'PDF',
   },
   {
     title: 'Karbür Uçlu Bıçaklar Teknik El Kitabı',
     desc: 'TCT serisi için paslanmaz, titanyum, nikel alaşımları kesim parametreleri ve bakım talimatları.',
-    size: '2.1 MB',
     type: 'PDF',
   },
 ];
@@ -72,7 +70,7 @@ export default function KatalogPage() {
               <span className="text-orange-grad">Dokümanlar</span>
             </h1>
             <p className="text-[13px] md:text-[15px] text-muted-foreground max-w-2xl leading-relaxed font-light">
-              Tüm şerit testere serilerimizin kataloglarını, diş seçim tablolarını ve teknik kılavuzlarını PDF olarak indirin.
+              Şerit testere serilerimizin kataloglarını, diş seçim tablolarını ve teknik kılavuzlarını talep edin; size e-posta ile iletelim.
               Atölyenizdeki seçim ve kesim parametrelerini bu kaynaklarla optimize edin.
             </p>
           </div>
@@ -92,21 +90,30 @@ export default function KatalogPage() {
                     <h3 className="text-sm font-bold text-foreground leading-snug">{doc.title}</h3>
                     <p className="text-[11px] text-muted-foreground leading-relaxed">{doc.desc}</p>
                     <span className="inline-flex items-center gap-1 text-[10px] font-bold text-accent uppercase tracking-wider">
-                      <span>{doc.size}</span>
-                      <span>•</span>
                       <span>{doc.type}</span>
                     </span>
                   </div>
                 </div>
 
-                <button
-                  type="button"
-                  className="shrink-0 inline-flex h-10 w-10 items-center justify-center rounded-lg border border-border bg-background text-muted-foreground hover:border-accent/40 hover:bg-accent/5 hover:text-accent transition-all cursor-pointer"
-                  aria-label={`${doc.title} indir`}
-                  title="İndir"
-                >
-                  <FileDown className="h-4 w-4" />
-                </button>
+                {doc.href ? (
+                  <a
+                    href={doc.href}
+                    download
+                    className="shrink-0 inline-flex h-10 w-10 items-center justify-center rounded-lg border border-border bg-background text-muted-foreground hover:border-accent/40 hover:bg-accent/5 hover:text-accent transition-all"
+                    aria-label={`${doc.title} indir`}
+                    title="İndir"
+                  >
+                    <FileDown className="h-4 w-4" />
+                  </a>
+                ) : (
+                  <Link
+                    href={`/iletisim?konu=${encodeURIComponent(doc.title)}`}
+                    className="shrink-0 inline-flex h-10 items-center justify-center rounded-lg border border-border bg-background px-3 text-xs font-semibold text-muted-foreground hover:border-accent/40 hover:bg-accent/5 hover:text-accent transition-all"
+                    aria-label={`${doc.title} talep et`}
+                  >
+                    Talep Et
+                  </Link>
+                )}
               </article>
             ))}
           </div>

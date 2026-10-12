@@ -272,6 +272,7 @@ export default function BladeConfigurator({
   const [length, setLength] = useState<number>(defaultLength);
   const [quantity, setQuantity] = useState<number>(1);
   const [addedMessage, setAddedMessage] = useState(false);
+  const [addError, setAddError] = useState<string | null>(null);
 
   // ---- Hazır ürün önerisi (popup) ----
   const [readyMadeOpen, setReadyMadeOpen] = useState(false);
@@ -518,6 +519,15 @@ export default function BladeConfigurator({
 
   // ---- Add to cart ----
   const handleAddToCart = async () => {
+    setAddError(null);
+    try {
+      await addToCartInner();
+    } catch {
+      setAddError('Ürün sepete eklenemedi. Lütfen tekrar deneyin; sorun sürerse bizimle iletişime geçin.');
+    }
+  };
+
+  const addToCartInner = async () => {
     if (validation) return;
 
     const productSlug = product?.handle || productId || 'bimetal-premium';
@@ -1069,6 +1079,11 @@ export default function BladeConfigurator({
             )}
           </button>
         </div>
+        {addError && (
+          <p role="alert" className="mt-2 text-xs font-semibold text-rose-600">
+            {addError}
+          </p>
+        )}
       </div>
     </div>
     </>

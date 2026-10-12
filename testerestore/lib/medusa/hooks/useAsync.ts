@@ -13,6 +13,13 @@ interface AsyncOpts {
   cacheKey?: string;
   /** Cache freshness window in ms (default 60s). */
   ttl?: number;
+  /**
+   * false → hiç istek atılmaz (data: null, loading: false). Veri sunucuda
+   * (SSR) çekilip prop olarak geldiyse tarayıcıda aynı isteği tekrar atmamak
+   * için kullanılır — ana sayfa her ürün listesini 3 kez, sıkıştırmasız 1,2 MB
+   * olarak yeniden çekiyordu.
+   */
+  enabled?: boolean;
 }
 
 // Client-side navigasyonlar arası paylaşılan hafif cache + eşzamanlı istek
@@ -35,7 +42,7 @@ export function useAsync<T>(
   deps: ReadonlyArray<any> = [],
   opts: AsyncOpts = {}
 ): AsyncState<T> & { refetch: () => void } {
-  const { cacheKey, ttl = DEFAULT_TTL } = opts;
+  const { cacheKey, ttl = DEFAULT_TTL, enabled = true } = opts;
 
   // Seed initial state from a fresh cache hit → no skeleton flash on revisit.
   const seeded = cacheKey ? _cache.get(cacheKey) : undefined;
@@ -44,12 +51,13 @@ export function useAsync<T>(
   const [state, setState] = useState<AsyncState<T>>(
     seededFresh
       ? { data: seeded!.data as T, loading: false, error: null }
-      : { data: null, loading: true, error: null }
+      : { data: null, loading: enabled, error: null }
   );
   const [refetchTick, setRefetchTick] = useState(0);
   const tick = useRef(0);
 
   useEffect(() => {
+    if (!enabled) return;
     const myTick = ++tick.current;
     let cancelled = false;
 
@@ -97,7 +105,7 @@ export function useAsync<T>(
       cancelled = true;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [...deps, refetchTick]);
+  }, [...deps, refetchTick, enabled]);
 
   return {
     ...state,

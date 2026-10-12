@@ -17,10 +17,16 @@ interface ListOpts {
   q?: string;
 }
 
-export function useProducts(opts: ListOpts = {}) {
+/** `enabled: false` → SSR'dan veri geldiyse tarayıcıda yeniden çekme. */
+interface FetchOpts {
+  enabled?: boolean;
+}
+
+export function useProducts(opts: ListOpts = {}, fetchOpts: FetchOpts = {}) {
   const key = JSON.stringify(opts);
   return useAsync(() => listProducts(opts), [key], {
     cacheKey: `products:${key}`,
+    enabled: fetchOpts.enabled,
   });
 }
 
@@ -32,15 +38,17 @@ export function useProduct(slug: string | undefined) {
   );
 }
 
-export function useBestSellers(limit = 8) {
+export function useBestSellers(limit = 8, fetchOpts: FetchOpts = {}) {
   return useAsync(() => listBestSellers(limit), [limit], {
     cacheKey: `bestsellers:${limit}`,
+    enabled: fetchOpts.enabled,
   });
 }
 
-export function useReadyMade(limit = 24) {
+export function useReadyMade(limit = 24, fetchOpts: FetchOpts = {}) {
   return useAsync(() => listReadyMade(limit), [limit], {
     cacheKey: `readymade:${limit}`,
+    enabled: fetchOpts.enabled,
   });
 }
 

@@ -31,6 +31,7 @@ export default function ReadyMadeBuyBox({ product, image, categoryLabel }: Props
   const [quantity, setQuantity] = useState(1);
   const [added, setAdded] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [addError, setAddError] = useState<string | null>(null);
 
   const card = mapReadyMadeCard(product);
   const variant = product.variants?.[0];
@@ -46,6 +47,7 @@ export default function ReadyMadeBuyBox({ product, image, categoryLabel }: Props
   const handleAdd = async () => {
     if (busy) return;
     setBusy(true);
+    setAddError(null);
     try {
       const legacy = {
         id: `${product.handle || product.id}-hazir`,
@@ -84,6 +86,8 @@ export default function ReadyMadeBuyBox({ product, image, categoryLabel }: Props
 
       setAdded(true);
       setTimeout(() => setAdded(false), 2000);
+    } catch {
+      setAddError('Ürün sepete eklenemedi. Lütfen tekrar deneyin; sorun sürerse bizimle iletişime geçin.');
     } finally {
       setBusy(false);
     }
@@ -215,6 +219,11 @@ export default function ReadyMadeBuyBox({ product, image, categoryLabel }: Props
           </>
         )}
       </button>
+      {addError && (
+        <p role="alert" className="text-xs font-semibold text-rose-600">
+          {addError}
+        </p>
+      )}
     </div>
   );
 }

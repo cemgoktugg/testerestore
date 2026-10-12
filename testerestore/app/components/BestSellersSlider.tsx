@@ -4,55 +4,36 @@ import { useRef, useState, useEffect, useCallback, useMemo } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import {
-  TrendingUp, Star, Flame, ArrowRight, ChevronLeft, ChevronRight,
+  TrendingUp, ArrowRight, ChevronLeft, ChevronRight,
 } from 'lucide-react';
 import { useBestSellers } from '../../lib/medusa/hooks/useProducts';
 import { getProductImage } from '../../lib/medusa/format';
 import type { StoreProduct } from '../../lib/medusa/types';
-import { getDemoBestSellers } from '../../lib/demo-products';
 import { siteContent } from '../../lib/content-config';
 import { BestSellerCardSkeleton } from './skeletons/CatalogSkeleton';
 
+/**
+ * "Öne Çıkan Ürünler" — admin'de is_best_seller / best_seller_rank ile seçilen
+ * (editoryal) liste. Puan, yorum sayısı, "x+ satış", "Çok Satan" ve sıra (#1)
+ * rozetleri BİLEREK yok: gerçek satış/yorum verisi olmadan bunları göstermek
+ * yanıltıcı reklam (Ticari Reklam ve Haksız Ticari Uygulamalar Yönetmeliği).
+ * Gerçek yorumlar biriktiğinde puan, onaylı yorumlardan eklenebilir.
+ */
 interface BestSeller {
   id: string;
   name: string;
   tagline: string;
   image: string;
-  rating: number;
-  reviews: number;
-  sold: string;
   href: string;
 }
 
 function mapMedusaToBestSeller(products: StoreProduct[]): BestSeller[] {
-  return products.map((p) => {
-    const meta = (p.metadata || {}) as Record<string, unknown>;
-    return {
-      id: p.id,
-      name: p.title,
-      tagline: p.subtitle || p.description || '',
-      image: getProductImage(p),
-      rating: typeof meta.rating === 'number' ? (meta.rating as number) : 4.8,
-      reviews:
-        typeof meta.reviews_count === 'number'
-          ? (meta.reviews_count as number)
-          : 0,
-      sold: (meta.sold_count as string) || '—',
-      href: `/products/${p.handle || p.id}`,
-    };
-  });
-}
-
-function mapDemoToBestSeller(): BestSeller[] {
-  return getDemoBestSellers().map((i) => ({
-    id: i.id,
-    name: i.name,
-    tagline: i.tagline,
-    image: i.image,
-    rating: i.rating,
-    reviews: i.reviews,
-    sold: i.sold,
-    href: `/products/${i.handle}`,
+  return products.map((p) => ({
+    id: p.id,
+    name: p.title,
+    tagline: p.subtitle || p.description || '',
+    image: getProductImage(p),
+    href: `/products/${p.handle || p.id}`,
   }));
 }
 
@@ -61,15 +42,15 @@ const DRAG_THRESHOLD = 6;
 export default function BestSellersSlider({
   initialBestSellers,
 }: { initialBestSellers?: StoreProduct[] } = {}) {
-  const { data: medusaBestSellers, loading } = useBestSellers(8);
+  const { data: medusaBestSellers, loading } = useBestSellers(8, {
+    enabled: !initialBestSellers?.length,
+  });
 
   const bestSellers = useMemo<BestSeller[]>(() => {
     // SSR prop (initialBestSellers) ilk render'da doldurur; client fetch tazeler.
     const source = medusaBestSellers?.length ? medusaBestSellers : initialBestSellers;
-    if (source?.length) {
-      return mapMedusaToBestSeller(source);
-    }
-    return mapDemoToBestSeller();
+    // Ürün gelmezse demo kart yok (olmayan ürünlere link veriyordu) → bölüm gizlenir.
+    return source?.length ? mapMedusaToBestSeller(source) : [];
   }, [medusaBestSellers, initialBestSellers]);
 
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -154,6 +135,7 @@ export default function BestSellersSlider({
 
   const sec = siteContent.bestSellersSection;
   const isLoading = loading && !bestSellers.length;
+  if (!isLoading && bestSellers.length === 0) return null;
 
   return (
     <section className="relative pt-14 pb-20 md:pt-16 md:pb-24 border-y border-border bg-muted/20 overflow-hidden">
@@ -177,14 +159,6 @@ export default function BestSellersSlider({
           </div>
 
           <div className="flex items-center gap-3">
-            <div className="premium-card-highlight relative hidden md:flex items-center gap-3 rounded-2xl border border-white/[0.08] bg-premium-card px-5 py-3 shadow-[0_8px_30px_rgba(0,0,0,0.35)]">
-              <Flame className="h-5 w-5 text-accent" />
-              <div className="text-xs">
-                <div className="font-semibold text-white">Bu Hafta</div>
-                <div className="text-white/55">1.240+ Sipariş</div>
-              </div>
-            </div>
-
             <div className="flex items-center gap-2">
               <button
                 type="button"
@@ -223,17 +197,13 @@ export default function BestSellersSlider({
           >
             {isLoading
               ? Array.from({ length: 4 }).map((_, i) => <BestSellerCardSkeleton key={i} />)
-              : bestSellers.map((item, i) => (
+              : bestSellers.map((item) => (
                 <Link
                   key={item.id}
                   href={item.href}
                   data-slider-card
                   className="premium-card-highlight group relative flex flex-col shrink-0 snap-start overflow-hidden rounded-2xl border border-white/[0.08] bg-premium-card shadow-[0_8px_30px_rgba(0,0,0,0.35)] transition-all duration-500 hover:-translate-y-1.5 hover:border-accent/40 hover:shadow-[0_20px_60px_rgba(0,0,0,0.55),0_0_30px_rgba(255,120,31,0.12)] cursor-pointer w-[280px] sm:w-[320px] md:w-[340px] lg:w-[360px]"
                 >
-                  <div className="pointer-events-none absolute -top-6 -left-2 text-[120px] font-semibold leading-none text-white/[0.04] select-none z-0">
-                    #{i + 1}
-                  </div>
-
                   <div className="relative aspect-[5/4] overflow-hidden bg-premium-image-bg">
                     <Image
                       src={item.image}
@@ -244,34 +214,9 @@ export default function BestSellersSlider({
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-[#14171c] via-transparent to-transparent pointer-events-none" />
 
-                    <div className="absolute top-3 left-3 z-10 inline-flex items-center gap-1.5 rounded-full bg-molten-grad text-white px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] shadow-lg glow-orange">
-                      <Flame className="h-3 w-3" />
-                      <span>Çok Satan</span>
-                    </div>
-
-                    <div className="absolute top-3 right-3 z-10 inline-flex h-9 w-9 items-center justify-center rounded-full bg-black/55 backdrop-blur-md border border-white/15 text-white text-sm font-semibold shadow-lg">
-                      #{i + 1}
-                    </div>
                   </div>
 
                   <div className="relative flex flex-1 flex-col p-5 z-10">
-                    <div className="flex items-center gap-2 mb-2">
-                      <div className="flex items-center">
-                        {[...Array(5)].map((_, idx) => (
-                          <Star
-                            key={idx}
-                            className={`h-3.5 w-3.5 ${
-                              idx < Math.floor(item.rating)
-                                ? 'fill-accent text-accent'
-                                : 'text-white/20'
-                            }`}
-                          />
-                        ))}
-                      </div>
-                      <span className="text-xs font-semibold text-white">{item.rating}</span>
-                      <span className="text-xs text-white/50">({item.reviews} yorum)</span>
-                    </div>
-
                     <h3 className="text-base md:text-[17px] font-semibold tracking-[-0.015em] text-white group-hover:text-accent transition-colors mb-1.5 line-clamp-2">
                       {item.name}
                     </h3>
@@ -280,12 +225,7 @@ export default function BestSellersSlider({
                       {item.tagline}
                     </p>
 
-                    <div className="flex items-center justify-between pt-3 mt-auto border-t border-white/10">
-                      <div className="flex items-center gap-1.5 text-xs">
-                        <TrendingUp className="h-3.5 w-3.5 text-accent" />
-                        <span className="font-semibold text-white">{item.sold}+</span>
-                        <span className="text-white/55">satış</span>
-                      </div>
+                    <div className="flex items-center justify-end pt-3 mt-auto border-t border-white/10">
                       <div className="inline-flex items-center gap-1 text-xs font-semibold text-orange-grad">
                         <span>İncele</span>
                         <ArrowRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1" />

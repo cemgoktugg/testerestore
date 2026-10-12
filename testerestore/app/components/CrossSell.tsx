@@ -32,7 +32,7 @@ export default function CrossSell({
   exclude = [],
   categoryHint,
   limit = 4,
-  title = "Sıkça Birlikte Alınanlar",
+  title = "Diğer Ürünlerimiz",
   variant = "grid",
 }: Props) {
   const [products, setProducts] = useState<StoreProduct[]>([]);

@@ -5,12 +5,14 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { listBlogPosts } from "../../lib/medusa/services/blog";
 import { ArrowRight, Calendar, User } from "lucide-react";
+import { pageMetadata } from "../../lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Blog",
   description:
     "Şerit testere seçimi, kullanım ipuçları, sektör haberleri ve teknik makaleler.",
-};
+  path: "/blog",
+});
 
 // ISR: sayfa statik render edilir, 5 dakikada bir arka planda yenilenir.
 export const revalidate = 300;

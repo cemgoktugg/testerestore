@@ -20,6 +20,10 @@ import {
   completeCart,
 } from '../../lib/medusa/services/cart';
 import { summarizeOrder } from '../../lib/shipping';
+import { companyInfo } from '../../lib/company-info';
+
+/** Havale/EFT seçeneği yalnızca gerçek bir IBAN tanımlıysa sunulur. */
+const HAS_BANK_ACCOUNT = companyInfo.iban.trim().length > 0;
 
 export default function CheckoutPage() {
   const { cart, cartTotal, clearCart, medusaCart, refreshCart } = useCart();
@@ -83,10 +87,6 @@ export default function CheckoutPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [medusaCart?.shipping_address?.id]);
 
-  const [cardName, setCardName] = useState('');
-  const [cardNumber, setCardNumber] = useState('');
-  const [cardExpiry, setCardExpiry] = useState('');
-  const [cardCvv, setCardCvv] = useState('');
 
   const currency = (medusaCart?.currency_code as string | undefined) || 'try';
   const subTotal =
@@ -122,12 +122,11 @@ export default function CheckoutPage() {
 
     try {
       if (!MEDUSA_READY || !medusaCart) {
-        // Fallback for demo mode without backend
-        const randomOrderNum = `TS-${Math.floor(100000 + Math.random() * 900000)}`;
-        setOrderNumber(randomOrderNum);
-        setOrderCompleted(true);
-        await clearCart();
-        return;
+        // Eskiden burada rastgele "TS-xxxxxx" numarasıyla sahte "Siparişiniz
+        // alındı" gösterilip sepet boşaltılıyordu — gerçekte sipariş yokken.
+        throw new Error(
+          'Sepetiniz sunucuyla eşitlenemedi. Lütfen sayfayı yenileyip tekrar deneyin; sorun sürerse bizimle iletişime geçin.'
+        );
       }
 
       const [firstName, ...rest] = fullName.trim().split(' ');
@@ -267,13 +266,12 @@ export default function CheckoutPage() {
                 <div className="flex items-center gap-2 mb-2">
                   <Zap className="h-5 w-5 text-accent" />
                   <h3 className="text-base font-extrabold text-foreground">
-                    Sonraki Siparişe %10 İndirim
+                    Siparişlerinizi Kolayca Takip Edin
                   </h3>
                 </div>
                 <p className="text-xs text-muted-foreground mb-3 leading-relaxed">
-                  Hesap oluşturarak siparişlerinizi kolayca takip edin, fatura indirin
-                  ve <strong className="text-foreground">bir sonraki siparişinizde %10 indirim</strong>{" "}
-                  kazanın.
+                  Hesap oluşturarak siparişlerinizi ve kargo durumunu tek yerden takip
+                  edin, adres bilgilerinizi bir sonraki alışverişinizde yeniden girmeyin.
                 </p>
                 <Link
                   href={`/kayit?email=${encodeURIComponent(email)}&next=/hesabim`}
@@ -469,6 +467,7 @@ export default function CheckoutPage() {
                       <CreditCard className="h-4 w-4" />
                       <span>Kredi / Banka Kartı</span>
                     </button>
+                    {HAS_BANK_ACCOUNT && (
                     <button
                       type="button"
                       onClick={() => setPaymentMethod('wire')}
@@ -481,90 +480,24 @@ export default function CheckoutPage() {
                       <Landmark className="h-4 w-4" />
                       <span>Havale / EFT Transferi</span>
                     </button>
+                    )}
                   </div>
 
                   {/* Card Section */}
                   {paymentMethod === 'card' ? (
-                    <div className="space-y-4 animate-in fade-in duration-200">
-                      
-                      {/* Premium card preview container */}
-                      <div className="mx-auto max-w-[320px] rounded-2xl bg-gradient-to-br from-zinc-800 to-zinc-950 p-6 text-white shadow-xl flex flex-col justify-between aspect-[1.58] border border-white/10 glow-orange mb-4">
-                        <div className="flex justify-between items-start">
-                          <span className="text-[10px] font-black tracking-widest opacity-80 uppercase">Premium Saw Card</span>
-                          <div className="h-7 w-10 bg-white/10 rounded-md backdrop-blur-sm border border-white/5 flex items-center justify-center font-bold italic text-xs">
-                            Visa
-                          </div>
-                        </div>
-                        <div className="space-y-1.5 py-4">
-                          <span className="block text-[9px] text-zinc-400 font-bold uppercase tracking-wider">Kart Numarası</span>
-                          <span className="text-sm font-mono font-bold tracking-widest">
-                            {cardNumber || '•••• •••• •••• ••••'}
-                          </span>
-                        </div>
-                        <div className="flex justify-between items-end text-xs">
-                          <div>
-                            <span className="block text-[8px] text-zinc-500 font-bold uppercase">Kart Sahibi</span>
-                            <span className="font-bold truncate max-w-[150px] block">
-                              {cardName.toUpperCase() || 'AD SOYAD'}
-                            </span>
-                          </div>
-                          <div className="text-right">
-                            <span className="block text-[8px] text-zinc-500 font-bold uppercase">SKT</span>
-                            <span className="font-mono font-bold">{cardExpiry || 'AA/YY'}</span>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                        <div>
-                          <label className="block text-xs font-semibold text-muted-foreground mb-1">Kart Sahibinin Adı *</label>
-                          <input
-                            type="text"
-                            required={paymentMethod === 'card'}
-                            value={cardName}
-                            onChange={(e) => setCardName(e.target.value)}
-                            className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm focus:border-primary focus:outline-none font-bold"
-                            placeholder="Kart üzerindeki isim"
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-xs font-semibold text-muted-foreground mb-1">Kart Numarası *</label>
-                          <input
-                            type="text"
-                            required={paymentMethod === 'card'}
-                            maxLength={19}
-                            value={cardNumber}
-                            onChange={(e) => setCardNumber(e.target.value)}
-                            className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm focus:border-primary focus:outline-none font-bold font-mono"
-                            placeholder="16 Haneli kart no"
-                          />
-                        </div>
-                      </div>
-
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <label className="block text-xs font-semibold text-muted-foreground mb-1">Son Kullanma (AA/YY) *</label>
-                          <input
-                            type="text"
-                            required={paymentMethod === 'card'}
-                            maxLength={5}
-                            value={cardExpiry}
-                            onChange={(e) => setCardExpiry(e.target.value)}
-                            className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm focus:border-primary focus:outline-none font-bold font-mono"
-                            placeholder="AA/YY"
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-xs font-semibold text-muted-foreground mb-1">Güvenlik Kodu (CVV) *</label>
-                          <input
-                            type="password"
-                            required={paymentMethod === 'card'}
-                            maxLength={3}
-                            value={cardCvv}
-                            onChange={(e) => setCardCvv(e.target.value)}
-                            className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm focus:border-primary focus:outline-none font-bold font-mono"
-                            placeholder="3 Haneli"
-                          />
+                    <div className="space-y-3 animate-in fade-in duration-200">
+                      {/* Kart bilgisi BU SAYFADA ALINMAZ. Eskiden burada kart no /
+                          SKT / CVV soruluyordu ama hiçbir yere gönderilmiyordu;
+                          müşteri kartını iyzico'da ikinci kez giriyordu. */}
+                      <div className="rounded-xl border border-border bg-muted/40 p-4 text-xs text-muted-foreground leading-relaxed flex items-start gap-3">
+                        <ShieldCheck className="h-5 w-5 shrink-0 text-emerald-600" />
+                        <div className="space-y-1">
+                          <p className="font-semibold text-foreground">
+                            Kart bilgilerinizi bir sonraki adımda iyzico güvenli ödeme sayfasında gireceksiniz.
+                          </p>
+                          <p>
+                            Ödeme 3D Secure ile doğrulanır. Kart bilgileriniz sitemize iletilmez ve saklanmaz.
+                          </p>
                         </div>
                       </div>
                     </div>
@@ -578,12 +511,14 @@ export default function CheckoutPage() {
 
                         <div className="border border-border rounded-lg bg-background p-3 space-y-1 text-xs">
                           <div className="flex justify-between items-center border-b border-border pb-1.5 mb-1.5">
-                            <span className="font-bold text-foreground">Akbank T.A.Ş.</span>
+                            <span className="font-bold text-foreground">{companyInfo.bankName}</span>
                             <span className="text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded font-bold">Kurumsal</span>
                           </div>
-                          <div>Alıcı: <strong className="text-foreground">Testere Store A.Ş.</strong></div>
-                          <div>Şube: <span className="text-foreground">İkitelli OSB (334)</span></div>
-                          <div>IBAN: <strong className="text-primary font-mono select-all">TR56 0004 6000 8910 0022 3344 55</strong></div>
+                          <div>Alıcı: <strong className="text-foreground">{companyInfo.legalName}</strong></div>
+                          {companyInfo.bankBranch && (
+                            <div>Şube: <span className="text-foreground">{companyInfo.bankBranch}</span></div>
+                          )}
+                          <div>IBAN: <strong className="text-primary font-mono select-all">{companyInfo.iban}</strong></div>
                         </div>
 
                         <div className="text-[10px] text-primary flex items-start gap-1">

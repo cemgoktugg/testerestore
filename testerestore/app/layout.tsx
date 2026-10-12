@@ -50,10 +50,11 @@ export async function generateMetadata(): Promise<Metadata> {
     },
     icons: {
       icon: "/favicon.ico",
-      apple: "/icon-192.png",
+      apple: "/apple-touch-icon.png",
     },
     openGraph: {
       type: "website",
+      url: "/",
       siteName: seo.site_name,
       title: home.title,
       description: home.description,

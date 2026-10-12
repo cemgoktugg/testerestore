@@ -35,6 +35,31 @@ const nextConfig: NextConfig = {
   // `next build` çıktısını etkiler (.next/standalone üretir); `next dev` ve
   // `next start` davranışı değişmez. Vercel'de yok sayılır.
   output: "standalone",
+  // "X-Powered-By: Next.js" başlığını gönderme (gereksiz parmak izi).
+  poweredByHeader: false,
+  async headers() {
+    return [
+      {
+        source: "/:path*",
+        headers: [
+          // includeSubDomains BİLEREK yok: www alt alan adı henüz DNS/sertifika
+          // almadı; eklenirse tarayıcı www'yi zorla https'e çevirip hata verir.
+          { key: "Strict-Transport-Security", value: "max-age=31536000" },
+          { key: "X-Content-Type-Options", value: "nosniff" },
+          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+          { key: "X-Frame-Options", value: "SAMEORIGIN" },
+          { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
+        ],
+      },
+      {
+        // public/images ve ikonlar varsayılan olarak max-age=0 ile gidiyordu.
+        source: "/images/:path*",
+        headers: [
+          { key: "Cache-Control", value: "public, max-age=604800, stale-while-revalidate=86400" },
+        ],
+      },
+    ];
+  },
   images: {
     // AVIF (WebP'den ~%20-30 daha küçük) + WebP fallback. LCP/bandwidth kazancı.
     formats: ["image/avif", "image/webp"],

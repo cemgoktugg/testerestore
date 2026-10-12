@@ -8,20 +8,9 @@
  * altında güncelleyin.
  */
 
-export const companyInfo = {
-  legalName: "Testere Store Ticaret Ltd. Şti.",
-  brand: "Testere Store",
-  taxOffice: "İkitelli Vergi Dairesi",
-  taxNumber: "1234567890",
-  mersisNumber: "0000000000000000",
-  address:
-    "İkitelli O.S.B. Metal İş Sanayi Sitesi, 14. Blok No: 45, Başakşehir / İstanbul",
-  phone: "+90 (212) 555 10 20",
-  email: "destek@testerestore.com",
-  kvkkEmail: "kvkk@testerestore.com",
-  websiteUrl: "https://www.testerestore.com",
-  lastUpdated: "2026-06-16",
-};
+import { companyInfo } from "./company-info";
+
+export { companyInfo };
 
 export interface LegalPage {
   slug: string;

@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import Header from './components/Header';
 import Footer from './components/Footer';
@@ -8,11 +9,16 @@ import BestSellersSlider from './components/BestSellersSlider';
 import { listHeroSlides } from '../lib/medusa/services/hero-slides';
 import { listBestSellers, listProducts, listReadyMade } from '../lib/medusa/services/products';
 import { listCategories } from '../lib/medusa/services/categories';
+import { slimProductForCard } from '../lib/medusa/slim';
 
 // SSR + ISR: ana sayfa içeriği (hero, katalog, en çok satanlar) SUNUCUDA çekilip
 // componentlere prop geçilir → ilk HTML dolu gelir, resimler anında yüklenmeye
 // başlar (eskiden client-side fetch → geç LCP). Client yine arka planda tazeler.
 export const revalidate = 300;
+
+// Başlık/açıklama/OG kök layout'tan (admin site-seo) gelir; burada sadece
+// canonical eklenir → /?kategori=… varyantları ana sayfanın kopyası sayılmaz.
+export const metadata: Metadata = { alternates: { canonical: '/' } };
 
 export default async function Home() {
   const [heroSlides, bestSellers, productsResp, categories, readyMade] =
@@ -32,13 +38,16 @@ export default async function Home() {
         <HeroSlider initialSlides={heroSlides} />
 
         {/* Premium Catalog (with category filter) — yapılandırılabilir aileler */}
-        <PremiumCatalog initialProducts={productsResp.products} initialCategories={categories} />
+        <PremiumCatalog
+          initialProducts={productsResp.products.map(slimProductForCard)}
+          initialCategories={categories}
+        />
 
         {/* Hazır Boy — stoktan, aynı gün kargo (hazır ürün yoksa görünmez) */}
-        <HazirBoySection initialReadyMade={readyMade} />
+        <HazirBoySection initialReadyMade={readyMade.map(slimProductForCard)} />
 
         {/* Best Sellers — Horizontal Slider */}
-        <BestSellersSlider initialBestSellers={bestSellers} />
+        <BestSellersSlider initialBestSellers={bestSellers.map(slimProductForCard)} />
 
         {/* Quick Parametric Calculator CTA Callout */}
         <section className="py-20 border-t border-border bg-chrome relative overflow-hidden">

@@ -5,10 +5,14 @@ import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import { getLegalPage, LEGAL_PAGES } from "../../../lib/legal-content";
 import { ArrowLeft } from "lucide-react";
+import { pageMetadata } from "../../../lib/seo";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
 }
+
+// Listede olmayan slug'lar build'de üretilmez → gerçek 404 (soft-404 değil).
+export const dynamicParams = false;
 
 export function generateStaticParams() {
   return LEGAL_PAGES.map((p) => ({ slug: p.slug }));
@@ -20,11 +24,11 @@ export async function generateMetadata({
   const { slug } = await params;
   const page = getLegalPage(slug);
   if (!page) return { title: "Sayfa Bulunamadı" };
-  return {
+  return pageMetadata({
     title: page.title,
-    description: `${page.title} — yasal bilgilendirme metni.`,
-    robots: { index: true, follow: true },
-  };
+    description: `Testere Store ${page.title}: alışveriş, kişisel veriler ve haklarınıza ilişkin yasal bilgilendirme metni.`,
+    path: `/yasal/${page.slug}`,
+  });
 }
 
 /** Lightweight Markdown renderer — sadece bizim formatlarımızı destekler. */

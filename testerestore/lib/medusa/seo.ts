@@ -7,9 +7,14 @@
 
 import type { Metadata } from "next";
 import type { BladeProductMetadata, StoreProduct } from "./types";
-import { getProductImage, getProductPriceLabel } from "./format";
+import { getProductImage } from "./format";
 import { siteContent } from "../content-config";
 import { getSiteSeo } from "./services/site-seo";
+import type { ProductReview, ReviewStats } from "./services/reviews";
+import { isReadyMade } from "../ready-made";
+
+/** Başlıkta marka zaten geçiyor mu? (çift "| Testere Store" önlemek için) */
+const BRAND_RE = /testere\s?store/i;
 
 const ABSOLUTE_OG = (
   process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3001"
@@ -25,9 +30,11 @@ export async function buildProductMetadata(
   const siteName = seo.site_name || siteContent.seo.siteName;
 
   if (!product) {
+    // Sayfa zaten notFound() verir; metadata da indekslenmesin.
     return {
       title: fallbackTitle,
       description: fallbackDescription,
+      robots: { index: false, follow: true },
     };
   }
   const meta = (product.metadata || {}) as BladeProductMetadata & {
@@ -36,7 +43,13 @@ export async function buildProductMetadata(
     robots?: string;
     canonical?: string;
   };
-  const title = meta.seo_title || `${product.title} — ${siteName}`;
+  // Kök layout'un şablonu "%s | <site adı>" ekler. Admin'deki seo_title marka
+  // içeriyorsa şablon atlanır (absolute), yoksa marka şablondan gelir. Eskiden
+  // burada da "— Testere Store" eklendiği için başlıkta marka iki kez çıkıyordu.
+  const rawTitle = meta.seo_title || product.title;
+  const hasBrand = BRAND_RE.test(rawTitle);
+  const title: Metadata["title"] = hasBrand ? { absolute: rawTitle } : rawTitle;
+  const ogTitle = hasBrand ? rawTitle : `${rawTitle} | ${siteName}`;
   const description =
     meta.seo_description ||
     product.subtitle ||
@@ -55,7 +68,7 @@ export async function buildProductMetadata(
     robots,
     openGraph: {
       type: "website",
-      title,
+      title: ogTitle,
       description,
       url: canonical,
       siteName,
@@ -64,7 +77,7 @@ export async function buildProductMetadata(
     },
     twitter: {
       card: "summary_large_image",
-      title,
+      title: ogTitle,
       description,
       images: [image],
       ...(seo.twitter_handle && { creator: seo.twitter_handle }),
@@ -72,43 +85,108 @@ export async function buildProductMetadata(
   };
 }
 
-/** JSON-LD Product schema for richer Google results. */
-export function buildProductJsonLd(product: StoreProduct): Record<string, unknown> {
-  const meta = (product.metadata || {}) as BladeProductMetadata;
-  const priceLabel = getProductPriceLabel(product);
-  const offers = (product.variants || []).map((v) => {
-    const cp = v.calculated_price;
-    return {
-      "@type": "Offer",
-      sku: v.sku || v.id,
-      price: cp?.calculated_amount ?? undefined,
-      priceCurrency: cp?.currency_code?.toUpperCase(),
-      availability:
-        (v as { inventory_quantity?: number }).inventory_quantity === 0
-          ? "https://schema.org/OutOfStock"
-          : "https://schema.org/InStock",
-    };
-  });
+function absoluteUrl(u: string): string {
+  if (!u) return u;
+  if (/^https?:\/\//i.test(u)) return u;
+  return `${ABSOLUTE_OG}${u.startsWith("/") ? "" : "/"}${u}`;
+}
+
+function plainText(md: string | null | undefined): string {
+  return (md || "")
+    .replace(/[#*_`>]/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+/**
+ * JSON-LD Product schema — sayfa başına TEK blok, sunucuda üretilir.
+ *
+ * Kurallar (Google ürün yapısal veri politikası + tüketici mevzuatı):
+ *  - aggregateRating / review YALNIZCA onaylı gerçek yorumlardan gelir.
+ *    Ürün metadata'sındaki rating / reviews_count seed verisiydi (gerçek yorum
+ *    0 iken 4.9 / 312 yorum basılıyordu) → artık hiç okunmaz.
+ *  - Ölçüye göre fiyatlanan (yapılandırılabilir) ürünlerde offers basılmaz:
+ *    gerçek fiyat seçilen boy/ölçüye göre fiyat matrisinden hesaplanıyor,
+ *    varyant fiyatları satış fiyatı değil ("110 TL'den" yanıltıcıydı).
+ *  - Hazır boy ürünlerin tek ve gerçek bir fiyatı var → Offer basılır. Fiyat,
+ *    sayfada gösterildiği gibi KDV hariçtir (valueAddedTaxIncluded: false).
+ */
+export function buildProductJsonLd(
+  product: StoreProduct,
+  reviewData?: { reviews: ProductReview[]; stats: ReviewStats }
+): Record<string, unknown> {
+  const siteName = siteContent.seo.siteName;
+  const url = `${ABSOLUTE_OG}/products/${product.handle || product.id}`;
+  const images = Array.from(
+    new Set(
+      [getProductImage(product), ...(product.images || []).map((i) => i.url)]
+        .filter(Boolean)
+        .map((u) => absoluteUrl(u as string))
+    )
+  );
+  const description = plainText(product.description || product.subtitle);
+
+  let offers: Record<string, unknown> | undefined;
+  if (isReadyMade(product)) {
+    const v = product.variants?.[0];
+    const cp = v?.calculated_price;
+    const amount = cp?.calculated_amount;
+    if (typeof amount === "number" && amount > 0 && cp?.currency_code) {
+      const price = amount.toFixed(2);
+      const currency = cp.currency_code.toUpperCase();
+      offers = {
+        "@type": "Offer",
+        url,
+        sku: v?.sku || undefined,
+        price,
+        priceCurrency: currency,
+        priceSpecification: {
+          "@type": "UnitPriceSpecification",
+          price,
+          priceCurrency: currency,
+          valueAddedTaxIncluded: false,
+        },
+        availability: "https://schema.org/InStock",
+        itemCondition: "https://schema.org/NewCondition",
+        seller: { "@type": "Organization", name: siteName },
+      };
+    }
+  }
+
+  const stats = reviewData?.stats;
+  const approved = (reviewData?.reviews || []).filter((r) => r.is_approved !== false);
+  const hasReviews = !!stats && stats.count > 0 && approved.length > 0;
 
   return {
-    "@context": "https://schema.org/",
+    "@context": "https://schema.org",
     "@type": "Product",
+    "@id": `${url}#product`,
     name: product.title,
-    image: [getProductImage(product)].concat(
-      (product.images || []).map((i) => i.url).filter(Boolean) as string[]
-    ),
-    description: product.description || product.subtitle || "",
-    sku: (product.variants?.[0]?.sku as string) || product.id,
-    brand: { "@type": "Brand", name: siteContent.seo.siteName },
-    offers,
-    ...(typeof meta.rating === "number" && {
+    url,
+    image: images,
+    ...(description && { description }),
+    sku: isReadyMade(product)
+      ? product.variants?.[0]?.sku || product.handle
+      : product.handle || product.id,
+    brand: { "@type": "Brand", name: siteName },
+    ...(product.categories?.[0]?.name && { category: product.categories[0].name }),
+    ...(offers && { offers }),
+    ...(hasReviews && {
       aggregateRating: {
         "@type": "AggregateRating",
-        ratingValue: meta.rating,
-        reviewCount: meta.reviews_count ?? 1,
+        ratingValue: Number(stats!.average.toFixed(1)),
+        reviewCount: stats!.count,
+        bestRating: 5,
+        worstRating: 1,
       },
+      review: approved.slice(0, 5).map((r) => ({
+        "@type": "Review",
+        reviewRating: { "@type": "Rating", ratingValue: r.rating, bestRating: 5 },
+        author: { "@type": "Person", name: r.author_name },
+        ...(r.body && { reviewBody: r.body }),
+        datePublished: r.created_at,
+      })),
     }),
-    ...(priceLabel && { description: priceLabel }),
   };
 }
 

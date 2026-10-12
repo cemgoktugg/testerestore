@@ -12,10 +12,11 @@ import { useCustomer } from "../context/CustomerContext";
 
 interface Props {
   productId: string;
-  productName: string;
+  /** Şu an kullanılmıyor (JSON-LD sunucuya taşındı); çağıranlar geçmeye devam edebilir. */
+  productName?: string;
 }
 
-export default function ProductReviews({ productId, productName }: Props) {
+export default function ProductReviews({ productId }: Props) {
   const { customer } = useCustomer();
   const [reviews, setReviews] = useState<ProductReview[]>([]);
   const [stats, setStats] = useState<ReviewStats>({
@@ -117,37 +118,9 @@ export default function ProductReviews({ productId, productName }: Props) {
           </div>
         )}
 
-        {/* JSON-LD AggregateRating + reviews — Google'da yıldız görünür */}
-        {stats.count > 0 && (
-          <script
-            type="application/ld+json"
-            dangerouslySetInnerHTML={{
-              __html: JSON.stringify({
-                "@context": "https://schema.org",
-                "@type": "Product",
-                name: productName,
-                aggregateRating: {
-                  "@type": "AggregateRating",
-                  ratingValue: stats.average,
-                  reviewCount: stats.count,
-                  bestRating: 5,
-                  worstRating: 1,
-                },
-                review: reviews.slice(0, 5).map((r) => ({
-                  "@type": "Review",
-                  reviewRating: {
-                    "@type": "Rating",
-                    ratingValue: r.rating,
-                    bestRating: 5,
-                  },
-                  author: { "@type": "Person", name: r.author_name },
-                  reviewBody: r.body,
-                  datePublished: r.created_at,
-                })),
-              }),
-            }}
-          />
-        )}
+        {/* Yorum JSON-LD'si burada DEĞİL, sunucuda tek Product bloğunun içinde
+            üretilir (lib/medusa/seo.ts) — ikinci bir Product bloğu Google'a
+            çelişkili ürün verisi gönderiyordu. */}
       </div>
 
       {showForm && (

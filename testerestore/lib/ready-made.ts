@@ -25,7 +25,7 @@ export interface ReadyMadeCard {
   price: number;
   currency: string;
   image: string;
-  /** metadata.inventory_quantity_display — "12 adet stokta" için. */
+  /** Gerçek stok adedi (manage_inventory açıksa); bilinmiyorsa null. */
   stock: number | null;
   href: string;
 }
@@ -75,7 +75,14 @@ export function mapReadyMadeCard(p: StoreProduct): ReadyMadeCard {
   const price = prices.length ? Math.min(...prices) : 0;
   const currency = p.variants?.[0]?.calculated_price?.currency_code || "try";
 
-  const stock = asPositive(m.inventory_quantity_display);
+  // Stok adedi YALNIZCA Medusa envanter takibi açıksa (manage_inventory) gerçek
+  // inventory_quantity'den gösterilir. metadata.inventory_quantity_display elle
+  // yazılmış statik bir sayıydı ("10 adet", "Son 8") → sahte aciliyet; artık okunmaz.
+  const v0 = p.variants?.[0] as { manage_inventory?: boolean | null; inventory_quantity?: number | null } | undefined;
+  const stock =
+    v0?.manage_inventory && typeof v0.inventory_quantity === "number"
+      ? Math.max(0, v0.inventory_quantity)
+      : null;
 
   const wtt = [fmtDim(width), fmtDim(thickness), tooth].filter(Boolean).join(" × ");
   const sizeLabel = length ? (wtt ? `${wtt} · ${length} mm` : `${length} mm`) : wtt;

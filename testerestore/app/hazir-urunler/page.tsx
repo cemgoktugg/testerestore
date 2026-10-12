@@ -3,16 +3,18 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import HazirUrunlerClient from './HazirUrunlerClient';
 import { listReadyMade } from '../../lib/medusa/services/products';
+import { pageMetadata } from '../../lib/seo';
 
 // SSR + ISR: hazır boy listesi sunucuda çekilir → ilk HTML dolu, SEO dostu.
 export const revalidate = 300;
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: 'Hazır Boy Şerit Testere — Stoktan, Aynı Gün Kargo',
   description:
     'Önceden kaynaklı, standart ölçülerde hazır şerit testere bıçakları. ' +
     'Genişlik, kalınlık, diş adımı ve boya göre seç, stoktan aynı gün kargoyla al.',
-};
+  path: '/hazir-urunler',
+});
 
 export default async function HazirUrunlerPage() {
   const readyMade = await listReadyMade(200);

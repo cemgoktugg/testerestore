@@ -105,6 +105,8 @@ export default function OrderDetailPage() {
       }
       setReorderSuccess(true);
       setTimeout(() => router.push('/cart'), 1200);
+    } catch {
+      window.alert('Bazı ürünler sepete eklenemedi. Lütfen sepetinizi kontrol edip tekrar deneyin.');
     } finally {
       setReordering(false);
     }

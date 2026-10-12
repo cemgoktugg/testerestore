@@ -79,10 +79,10 @@ export default function KayitPage() {
             <Sparkles className="h-4 w-4 text-accent shrink-0 mt-0.5" />
             <div>
               <div className="font-bold text-foreground">
-                Üyeliğinizi tamamlayın — sonraki siparişe %10 indirim
+                Üyeliğinizi tamamlayın
               </div>
               <div className="text-muted-foreground mt-0.5">
-                Üyelik kodunu kayıt sonrası e-posta ile alacaksınız.
+                Siparişlerinizi ve kargo durumunu hesabınızdan takip edin.
               </div>
             </div>
           </div>

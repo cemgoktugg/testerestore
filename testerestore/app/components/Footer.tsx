@@ -10,6 +10,16 @@ import type {
   FooterFeature, FooterLinkGroup, FooterSettings,
 } from '../../lib/medusa/services/footer';
 import TrustSignals from './TrustSignals';
+import { LEGAL_LINKS } from '../../lib/legal-links';
+
+/** Admin'de href'i boş bırakılmış yasal linki başlığından sayfasına eşler. */
+function legalHrefForLabel(label: string): string | undefined {
+  const norm = (t: string) => t.toLocaleLowerCase('tr').replace(/s+/g, ' ').trim();
+  const page = LEGAL_LINKS.find(
+    (p) => norm(p.title) === norm(label) || norm(p.title).startsWith(norm(label))
+  );
+  return page ? `/yasal/${page.slug}` : undefined;
+}
 import NewsletterSignup from './NewsletterSignup';
 
 /** Map an admin-selectable string to a lucide icon. Falls back to Truck. */
@@ -37,10 +47,11 @@ const DEFAULT_LINK_GROUPS: FooterLinkGroup[] = [
   {
     id: 'lg1', sort_order: 0, is_active: true, title: 'Ürünler',
     links: [
-      { label: 'Bi-Metal Şerit Testereler', href: '/#products' },
-      { label: 'Karbür Şerit Testereler', href: '/#products' },
-      { label: 'Ağaç Kesim Şeritleri', href: '/#products' },
-      { label: 'Şerit Testere Makineleri', href: '/#products' },
+      { label: 'Bi-Metal Şerit Testereler', href: '/?kategori=Bi-Metal#products' },
+      { label: 'Karbür Şerit Testereler', href: '/?kategori=Karb%C3%BCr%20U%C3%A7lu#products' },
+      { label: 'Ağaç Kesim Şeritleri', href: '/?kategori=Ah%C5%9Fap%20Kesim#products' },
+      { label: 'Et ve Kemik Kesim', href: '/?kategori=Et%20ve%20Kemik%20Kesim#products' },
+      { label: 'Hazır Boy Ürünler', href: '/hazir-urunler' },
     ],
   },
   {
@@ -49,7 +60,7 @@ const DEFAULT_LINK_GROUPS: FooterLinkGroup[] = [
       { label: 'Ana Sayfa', href: '/' },
       { label: 'Parametrik Hesaplayıcı', href: '/products/bimetal-premium' },
       { label: 'Sepetim', href: '/cart' },
-      { label: 'Sipariş Sorgulama', href: '/checkout' },
+      { label: 'Siparişlerim', href: '/hesabim' },
     ],
   },
 ];
@@ -57,17 +68,13 @@ const DEFAULT_LINK_GROUPS: FooterLinkGroup[] = [
 const DEFAULT_SETTINGS: FooterSettings = {
   id: 's1',
   company_description:
-    "Türkiye'nin lider şerit testere ve şerit testere bıçağı satış platformu. Endüstriyel kesim ihtiyaçlarınız için yüksek hassasiyetli, dayanıklı ve özel boy kaynaklı çözümler sunuyoruz.",
-  contact_phone: '+90 (212) 555 10 20',
+    'Şerit testere bıçakları: bi-metal, karbür uçlu, ahşap ve et-kemik kesim. Endüstriyel kesim ihtiyaçlarınız için istediğiniz ölçüde kaynaklı özel boy veya stoktan hazır boy.',
+  contact_phone: '',
   contact_email: 'destek@testerestore.com',
   contact_address:
     'İkitelli O.S.B. Metal İş Sanayi Sitesi, 14. Blok No: 45, Başakşehir / İstanbul',
   copyright_text: '© {year} Testere Store. Tüm hakları saklıdır.',
-  legal_links: [
-    { label: 'Kullanım Koşulları' },
-    { label: 'Gizlilik Politikası' },
-    { label: 'KVKK Aydınlatma Metni' },
-  ],
+  legal_links: LEGAL_LINKS.map((p) => ({ label: p.title, href: `/yasal/${p.slug}` })),
 };
 
 export default function Footer() {
@@ -176,18 +183,17 @@ export default function Footer() {
       <div className="border-t border-border py-6 bg-muted/20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-muted-foreground">
           <span>{copyrightText}</span>
-          <div className="flex gap-4">
-            {(settings.legal_links || []).map((l, i) =>
-              l.href ? (
-                <Link key={i} href={l.href} className="hover:text-foreground">
+          <div className="flex flex-wrap justify-center sm:justify-end gap-x-4 gap-y-2">
+            {(settings.legal_links || []).map((l, i) => {
+              const href = l.href || legalHrefForLabel(l.label);
+              return href ? (
+                <Link key={i} href={href} className="hover:text-foreground">
                   {l.label}
                 </Link>
               ) : (
-                <span key={i} className="hover:text-foreground cursor-pointer">
-                  {l.label}
-                </span>
-              )
-            )}
+                <span key={i}>{l.label}</span>
+              );
+            })}
           </div>
         </div>
       </div>

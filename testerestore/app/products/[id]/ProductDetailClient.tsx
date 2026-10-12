@@ -25,15 +25,14 @@ import RecentlyViewed from '../../components/RecentlyViewed';
 import WishlistButton from '../../components/WishlistButton';
 import CrossSell from '../../components/CrossSell';
 import RichText from '../../components/RichText';
-import { ProductJsonLd, BreadcrumbJsonLd } from '../../components/StructuredData';
+import { BreadcrumbJsonLd } from '../../components/StructuredData';
 import { recordRecentlyViewed } from '../../../lib/recently-viewed';
 import { useCart } from '../../context/CartContext';
 import {
   ArrowLeft, CheckCircle2, ShieldAlert, FileText, Info, Eye, Image as ImageIcon,
-  Sparkles, ShoppingCart, FileDown, BookOpen, TrendingUp, ArrowRight, Star,
-  Flame, ChevronLeft, ChevronRight,
+  Sparkles, ShoppingCart, FileDown, BookOpen, TrendingUp, ArrowRight,
+  ChevronLeft, ChevronRight,
 } from 'lucide-react';
-import { useRelatedProducts } from '../../../lib/medusa/hooks/useProducts';
 import { formatMoney, getProductImage, resolveBladeImage } from '../../../lib/medusa/format';
 import type { BladeProductMetadata, StoreProduct } from '../../../lib/medusa/types';
 import { MEDUSA_READY } from '../../../lib/medusa/config';
@@ -143,9 +142,12 @@ function unifyFromFallback(f: ProductDetailsFallback): UnifiedProduct {
 
 export default function ProductDetailClient({
   initialProduct,
+  initialRelated,
   slug,
 }: {
   initialProduct: StoreProduct | null;
+  /** Aynı kategoriden ürünler — sunucuda (page.tsx) çekilir. */
+  initialRelated?: StoreProduct[];
   slug: string;
 }) {
   // Ürün sunucuda (SSR/ISR) çekilir ve prop olarak gelir — client fetch yok.
@@ -165,31 +167,28 @@ export default function ProductDetailClient({
     return null;
   }, [medusaProduct, fallback, loading]);
 
-  // Related products — Medusa-first, else fallback siblings
-  const { data: medusaRelated } = useRelatedProducts(medusaProduct, 3);
-  const relatedItems = useMemo(() => {
-    if (medusaRelated?.length) {
-      return medusaRelated.map((p) => ({
+  // Related products — sunucuda çekilir (SSR'da linkler HTML'de olsun). Demo
+  // fallback listesi kaldırıldı: canlıda olmayan ürünlere (kraken-machine) link
+  // veriyordu. Liste boşsa bölüm hiç render edilmez.
+  const relatedItems = useMemo(
+    () =>
+      (initialRelated ?? []).map((p) => ({
         id: p.id,
         handle: p.handle || p.id,
         name: p.title,
         description: p.subtitle || p.description || '',
         image: getProductImage(p),
         category: p.categories?.[0]?.name || 'Şerit Testere',
-      }));
-    }
-    return Object.values(PRODUCT_DETAILS_FALLBACK)
-      .filter((p) => p.id !== slug)
-      .slice(0, 3)
-      .map((p) => ({
-        id: p.id,
-        handle: p.id,
-        name: p.name,
-        description: p.description,
-        image: p.image,
-        category: p.category,
-      }));
-  }, [medusaRelated, slug]);
+      })),
+    [initialRelated]
+  );
+
+  // Breadcrumb hedefi: hazır ürünler kendi listesine, diğerleri kategori filtresine.
+  const readyMade = medusaProduct ? isReadyMade(medusaProduct) : false;
+  const categoryLabel = readyMade ? 'Hazır Boy Ürünler' : product?.category ?? 'Ürünler';
+  const categoryHref = readyMade
+    ? '/hazir-urunler'
+    : `/?kategori=${encodeURIComponent(product?.category ?? '')}#products`;
 
   // --- UI state hooks (always called — never inside conditionals)
   const [activeTab, setActiveTab] = useState<'image' | '3d'>('image');
@@ -206,7 +205,6 @@ export default function ProductDetailClient({
 
   const [activeBottomTab, setActiveBottomTab] =
     useState<'info' | 'specs' | 'apps' | 'docs'>('info');
-  const [downloadingDoc, setDownloadingDoc] = useState<string | null>(null);
 
   useEffect(() => {
     // Reset image index when the product changes — using a key on the gallery
@@ -287,11 +285,6 @@ export default function ProductDetailClient({
   const goNextImage = () =>
     setImageIdx((i) => (i + 1) % galleryImages.length);
 
-  const handleDownload = (docName: string) => {
-    setDownloadingDoc(docName);
-    setTimeout(() => setDownloadingDoc(null), 1200);
-  };
-
   // ---------- Machine handling (legacy + Medusa) ----------
   const getMachinePrice = () => {
     // If Medusa product has a first variant, use that price as base
@@ -311,30 +304,35 @@ export default function ProductDetailClient({
 
     const baseVariant = product.medusa?.variants?.[0];
     if (baseVariant && MEDUSA_READY) {
-      await addToMedusaCart({
-        variantId: baseVariant.id,
-        quantity: machineQty,
-        metadata: {
-          voltage,
-          stand,
-          product_type: 'machine',
-          unit_price_at_add: getMachinePrice(),
-        },
-        legacy: {
-          id: itemId,
-          productId: product.handle,
-          name: descStr,
-          image: product.image,
-          type: 'machine',
-          specs: {
-            width: voltage,
-            thickness: stand === 'with-stand' ? 'Stantlı' : 'Stantsız',
-            tpi: 'Lazer Kılavuz',
-            length: 2240,
+      try {
+        await addToMedusaCart({
+          variantId: baseVariant.id,
+          quantity: machineQty,
+          metadata: {
+            voltage,
+            stand,
+            product_type: 'machine',
+            unit_price_at_add: getMachinePrice(),
           },
-          price: getMachinePrice(),
-        },
-      });
+          legacy: {
+            id: itemId,
+            productId: product.handle,
+            name: descStr,
+            image: product.image,
+            type: 'machine',
+            specs: {
+              width: voltage,
+              thickness: stand === 'with-stand' ? 'Stantlı' : 'Stantsız',
+              tpi: 'Lazer Kılavuz',
+              length: 2240,
+            },
+            price: getMachinePrice(),
+          },
+        });
+      } catch {
+        window.alert('Ürün sepete eklenemedi. Lütfen tekrar deneyin; sorun sürerse bizimle iletişime geçin.');
+        return;
+      }
     } else {
       addToCart(
         {
@@ -365,19 +363,42 @@ export default function ProductDetailClient({
 
       <main className="flex-1 py-8 md:py-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between mb-6 gap-3">
-            <Link
-              href="/"
-              className="inline-flex items-center gap-2 text-xs font-bold text-muted-foreground hover:text-primary transition-colors"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              <span>Ana Sayfaya Dön</span>
-            </Link>
-            <WishlistButton
-              handle={product.handle}
-              variant="inline"
-              showLabel
-            />
+          {/* Breadcrumb + ürün başlığı (sayfanın tek H1'i — SSR'da gelir) */}
+          <div className="mb-8 space-y-3">
+            <div className="flex items-center justify-between gap-3">
+              <nav aria-label="Breadcrumb" className="min-w-0 text-xs text-muted-foreground">
+                <ol className="flex flex-wrap items-center gap-1.5">
+                  <li>
+                    <Link href="/" className="font-semibold hover:text-primary transition-colors">
+                      Ana Sayfa
+                    </Link>
+                  </li>
+                  <li aria-hidden="true">/</li>
+                  <li>
+                    <Link href={categoryHref} className="font-semibold hover:text-primary transition-colors">
+                      {categoryLabel}
+                    </Link>
+                  </li>
+                  <li aria-hidden="true">/</li>
+                  <li aria-current="page" className="line-clamp-1 text-foreground/80">
+                    {product.name}
+                  </li>
+                </ol>
+              </nav>
+              <WishlistButton
+                handle={product.handle}
+                variant="inline"
+                showLabel
+              />
+            </div>
+            <h1 className="text-2xl md:text-[2rem] font-bold tracking-tight text-foreground leading-tight">
+              {product.name}
+            </h1>
+            {product.medusa?.subtitle && (
+              <p className="max-w-3xl text-sm text-muted-foreground leading-relaxed">
+                {product.medusa.subtitle}
+              </p>
+            )}
           </div>
 
           <div className="grid grid-cols-1 gap-12 lg:grid-cols-12">
@@ -685,7 +706,7 @@ export default function ProductDetailClient({
                     { id: 'info', name: 'Ürün Bilgileri', icon: Info },
                     { id: 'specs', name: 'Teknik Özellikler', icon: FileText },
                     { id: 'apps', name: 'Kullanım Alanları', icon: BookOpen },
-                    { id: 'docs', name: 'Dökümanlar', icon: FileDown },
+                    { id: 'docs', name: 'Dokümanlar', icon: FileDown },
                   ].map((tab) => {
                     const Icon = tab.icon;
                     const isActive = activeBottomTab === tab.id;
@@ -711,8 +732,7 @@ export default function ProductDetailClient({
               </div>
 
               <div className="p-6 md:p-8 min-h-[280px] animate-in fade-in duration-200">
-                {activeBottomTab === 'info' && (
-                  <div className="space-y-6">
+                <div className="space-y-6" hidden={activeBottomTab !== 'info'}>
                     <div className="space-y-3">
                       <h3 className="text-sm font-bold text-foreground uppercase tracking-wider flex items-center gap-2">
                         <span className="h-4 w-1 rounded-full bg-molten-grad" />
@@ -734,14 +754,14 @@ export default function ProductDetailClient({
                         </div>
                       </div>
                     )}
-                  </div>
-                )}
+                </div>
 
-                {activeBottomTab === 'specs' && (
+                <div hidden={activeBottomTab !== 'specs'}>
                   <SpecsTable product={product} />
-                )}
+                </div>
 
-                {activeBottomTab === 'apps' && (() => {
+                <div hidden={activeBottomTab !== 'apps'}>
+                {(() => {
                   const cuttingSpeeds =
                     ((product.medusa?.metadata as BladeProductMetadata | undefined)
                       ?.cutting_speeds as Array<{ material: string; speed: string }>) ?? [];
@@ -785,14 +805,11 @@ export default function ProductDetailClient({
                     </div>
                   );
                 })()}
+                </div>
 
-                {activeBottomTab === 'docs' && (
-                  <DocsTab
-                    documents={product.documents}
-                    downloadingDoc={downloadingDoc}
-                    onDownload={handleDownload}
-                  />
-                )}
+                <div hidden={activeBottomTab !== 'docs'}>
+                  <DocsTab documents={product.documents} />
+                </div>
               </div>
             </div>
           </div>
@@ -810,6 +827,7 @@ export default function ProductDetailClient({
           <RecentlyViewed excludeHandle={product.handle} />
 
           {/* Related Products */}
+          {relatedItems.length > 0 && (
           <section className="relative mt-20 pt-16 border-t border-border">
             <div className="absolute -top-32 left-1/2 -translate-x-1/2 h-72 w-[42rem] max-w-full rounded-full bg-accent/10 blur-3xl pointer-events-none" />
 
@@ -826,7 +844,7 @@ export default function ProductDetailClient({
                     İlginizi <span className="text-orange-grad">Çekebilecek</span> Ürünler
                   </h2>
                   <p className="text-sm text-muted-foreground max-w-xl leading-relaxed font-light">
-                    Bu ürünü inceleyen müşterilerimizin en çok tercih ettiği şerit testereler.
+                    Aynı kategorideki diğer şerit testere seçeneklerimiz.
                   </p>
                 </div>
 
@@ -840,10 +858,7 @@ export default function ProductDetailClient({
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {relatedItems.map((related, i) => {
-                  const rating = (4.8 + (i % 2) * 0.1).toFixed(1);
-                  const sold = ['5.200', '2.400', '1.800', '320'][i] || '500';
-                  const isHot = i === 0;
+                {relatedItems.map((related) => {
                   return (
                     <Link
                       key={related.id}
@@ -866,32 +881,9 @@ export default function ProductDetailClient({
                           </span>
                         </div>
 
-                        {isHot && (
-                          <div className="absolute top-3 right-3 z-10 inline-flex items-center gap-1 rounded-full bg-molten-grad text-white px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] shadow-lg glow-orange">
-                            <Flame className="h-3 w-3" />
-                            <span>Çok Satan</span>
-                          </div>
-                        )}
                       </div>
 
                       <div className="relative flex flex-1 flex-col p-5 z-10">
-                        <div className="flex items-center gap-2 mb-2">
-                          <div className="flex items-center">
-                            {[...Array(5)].map((_, idx) => (
-                              <Star
-                                key={idx}
-                                className={`h-3.5 w-3.5 ${
-                                  idx < Math.floor(parseFloat(rating))
-                                    ? 'fill-accent text-accent'
-                                    : 'text-white/20'
-                                }`}
-                              />
-                            ))}
-                          </div>
-                          <span className="text-xs font-semibold text-white">{rating}</span>
-                          <span className="text-[11px] text-white/50">({sold}+ satış)</span>
-                        </div>
-
                         <h3 className="text-base md:text-[17px] font-semibold tracking-[-0.015em] text-white group-hover:text-accent transition-colors mb-1.5 line-clamp-2">
                           {related.name}
                         </h3>
@@ -913,17 +905,18 @@ export default function ProductDetailClient({
               </div>
             </div>
           </section>
+          )}
         </div>
       </main>
 
       <Footer />
 
-      {/* Schema.org Product + Breadcrumb — Google Rich Results için */}
-      {product.medusa && <ProductJsonLd product={product.medusa} hasReviewsBlock />}
+      {/* Product JSON-LD sunucuda (products/[id]/layout.tsx) TEK blok olarak
+          üretilir — burada tekrar basılırsa Google çelişkili iki ürün görür. */}
       <BreadcrumbJsonLd
         items={[
           { name: 'Ana Sayfa', url: '/' },
-          { name: product.category, url: `/?kategori=${encodeURIComponent(product.category)}#products` },
+          { name: categoryLabel, url: categoryHref.replace('#products', '') },
           { name: product.name, url: `/products/${product.handle}` },
         ]}
       />
@@ -1036,12 +1029,8 @@ function CuttingSpeedTable({
 
 function DocsTab({
   documents,
-  downloadingDoc,
-  onDownload,
 }: {
   documents?: Array<{ name: string; url?: string; size?: string; desc?: string }>;
-  downloadingDoc: string | null;
-  onDownload: (name: string) => void;
 }) {
   const docs = (documents ?? []).map((d) => ({
     name: d.name,
@@ -1061,7 +1050,7 @@ function DocsTab({
   return (
     <div className="space-y-6">
       <h3 className="text-sm font-bold text-foreground uppercase tracking-wider">
-        İndirilebilir Dökümanlar &amp; Belgeler
+        İndirilebilir Dokümanlar &amp; Belgeler
       </h3>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -1092,28 +1081,17 @@ function DocsTab({
                 <FileDown className="h-4 w-4" />
               </a>
             ) : (
-              <button
-                onClick={() => onDownload(doc.name)}
-                disabled={downloadingDoc !== null}
-                className={`rounded-lg p-2.5 transition-all duration-300 cursor-pointer shrink-0 border border-border ${
-                  downloadingDoc === doc.name
-                    ? 'bg-emerald-600 border-emerald-600 text-white animate-pulse'
-                    : 'hover:bg-accent/10 hover:border-accent/20 text-muted-foreground hover:text-accent'
-                }`}
+              <Link
+                href={`/iletisim?konu=${encodeURIComponent(doc.name)}`}
+                className="shrink-0 rounded-lg border border-border px-3 py-2 text-[11px] font-semibold text-muted-foreground transition-all hover:bg-accent/10 hover:border-accent/20 hover:text-accent"
               >
-                <FileDown className="h-4 w-4" />
-              </button>
+                Talep Et
+              </Link>
             )}
           </div>
         ))}
       </div>
 
-      {downloadingDoc && (
-        <div className="fixed bottom-4 right-4 z-50 rounded-xl bg-emerald-600 text-white font-bold text-xs px-5 py-3 shadow-lg flex items-center gap-2 animate-bounce">
-          <Sparkles className="h-4 w-4" />
-          <span>{downloadingDoc} indiriliyor...</span>
-        </div>
-      )}
     </div>
   );
 }

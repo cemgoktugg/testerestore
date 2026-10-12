@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation';
-import { listProducts } from '../../../lib/medusa/services/products';
+import { listProducts, listRelatedProducts } from '../../../lib/medusa/services/products';
 import { getProductBySlugCached } from '../../../lib/medusa/server/product-cache';
 import ProductDetailClient from './ProductDetailClient';
 
@@ -41,5 +41,7 @@ export default async function ProductPage({
   // Geçersiz handle/id → gerçek 404 (HTTP 404). Client fetch yok, null = ürün yok.
   // Aksi hâlde "soft 404" (200) olur ve Google indeksleme/SEO'yu cezalandırır.
   if (!product) notFound();
-  return <ProductDetailClient initialProduct={product} slug={id} />;
+  // İlgili ürünler sunucuda: linkler SSR HTML'inde olur (iç linkleme).
+  const related = await listRelatedProducts(product, 3).catch(() => []);
+  return <ProductDetailClient initialProduct={product} initialRelated={related} slug={id} />;
 }
