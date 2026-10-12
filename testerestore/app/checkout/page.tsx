@@ -7,8 +7,8 @@ import Footer from '../components/Footer';
 import { useCart } from '../context/CartContext';
 import { useCustomer } from '../context/CustomerContext';
 import {
-  CreditCard, Landmark, Truck, CheckCircle2, ShieldCheck,
-  ArrowLeft, ArrowRight, Printer, RefreshCw, Calendar, User, Zap,
+  CreditCard, Landmark, Truck, CheckCircle2, ShieldCheck, FileText,
+  ArrowLeft, ArrowRight, Printer, RefreshCw, User, Zap,
 } from 'lucide-react';
 import TrustSignals from '../components/TrustSignals';
 import { formatMoney } from '../../lib/medusa/format';
@@ -16,9 +16,16 @@ import { MEDUSA_READY, DEFAULT_REGION } from '../../lib/medusa/config';
 import {
   updateCart,
   autoSelectShipping,
+  addShippingMethod,
+  listShippingOptions,
   initializePayment,
   completeCart,
+  type CartShippingOption,
 } from '../../lib/medusa/services/cart';
+import { normalizePhoneTR, isValidTCKN, isValidVKN } from '../../lib/tr-address';
+import AddressFields, { EMPTY_ADDRESS, type AddressValue } from './AddressFields';
+import InvoiceFields, { EMPTY_INVOICE, type InvoiceValue } from './InvoiceFields';
+import ShippingOptions from './ShippingOptions';
 import { summarizeOrder } from '../../lib/shipping';
 import { companyInfo } from '../../lib/company-info';
 
@@ -39,32 +46,40 @@ export default function CheckoutPage() {
   const [consentKvkk, setConsentKvkk] = useState(false);
 
   // Form State
-  const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
-  const [city, setCity] = useState('');
-  const [district, setDistrict] = useState('');
-  const [address, setAddress] = useState('');
+  const [ship, setShipState] = useState<AddressValue>(EMPTY_ADDRESS);
+  const setShip = (patch: Partial<AddressValue>) => setShipState((p) => ({ ...p, ...patch }));
+  const [billingSame, setBillingSame] = useState(true);
+  const [bill, setBillState] = useState<AddressValue>(EMPTY_ADDRESS);
+  const setBill = (patch: Partial<AddressValue>) => setBillState((p) => ({ ...p, ...patch }));
+  const [invoice, setInvoiceState] = useState<InvoiceValue>(EMPTY_INVOICE);
+  const setInvoice = (patch: Partial<InvoiceValue>) => setInvoiceState((p) => ({ ...p, ...patch }));
+  const [fieldErrors, setFieldErrors] = useState<{
+    phone?: string | null;
+    billPhone?: string | null;
+    invoice: Partial<Record<keyof InvoiceValue, string>>;
+  }>({ invoice: {} });
+
+  // Kargo seçenekleri — fiyatlar sunucuda bu sepet için hesaplanır.
+  const [shippingOptions, setShippingOptions] = useState<CartShippingOption[]>([]);
+  const [shippingLoading, setShippingLoading] = useState(false);
+  const [selectedShippingId, setSelectedShippingId] = useState<string | null>(null);
 
   // Pre-fill from logged-in customer (one-shot)
   useEffect(() => {
     if (!customer) return;
     setEmail((prev) => prev || customer.email || '');
-    setFullName((prev) => {
-      if (prev) return prev;
-      const fn = customer.first_name || '';
-      const ln = customer.last_name || '';
-      return (fn + ' ' + ln).trim();
-    });
-    setPhone((prev) => prev || customer.phone || '');
-    const defaultAddr = customer.addresses?.find(
-      (a) => a.is_default_shipping
-    ) || customer.addresses?.[0];
-    if (defaultAddr) {
-      setAddress((prev) => prev || defaultAddr.address_1 || '');
-      setCity((prev) => prev || defaultAddr.city || '');
-      setDistrict((prev) => prev || defaultAddr.province || '');
-    }
+    const defaultAddr =
+      customer.addresses?.find((a) => a.is_default_shipping) || customer.addresses?.[0];
+    setShipState((p) => ({
+      ...p,
+      fullName: p.fullName || ((customer.first_name || '') + ' ' + (customer.last_name || '')).trim(),
+      phone: p.phone || customer.phone || '',
+      address: p.address || defaultAddr?.address_1 || '',
+      city: p.city || defaultAddr?.city || '',
+      district: p.district || defaultAddr?.province || '',
+      postalCode: p.postalCode || defaultAddr?.postal_code || '',
+    }));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [customer?.id]);
 
@@ -76,17 +91,42 @@ export default function CheckoutPage() {
     const addr = medusaCart?.shipping_address;
     if (!addr) return;
     setEmail((prev) => prev || (medusaCart?.email as string | undefined) || '');
-    setFullName((prev) => {
-      if (prev) return prev;
-      return ((addr.first_name || '') + ' ' + (addr.last_name || '')).trim();
-    });
-    setPhone((prev) => prev || addr.phone || '');
-    setAddress((prev) => prev || addr.address_1 || '');
-    setCity((prev) => prev || addr.city || '');
-    setDistrict((prev) => prev || addr.province || '');
+    setShipState((p) => ({
+      ...p,
+      fullName: p.fullName || ((addr.first_name || '') + ' ' + (addr.last_name || '')).trim(),
+      phone: p.phone || addr.phone || '',
+      address: p.address || addr.address_1 || '',
+      city: p.city || addr.city || '',
+      district: p.district || addr.province || '',
+      postalCode: p.postalCode || addr.postal_code || '',
+    }));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [medusaCart?.shipping_address?.id]);
 
+  // Sepet içeriği değiştikçe kargo seçeneklerini (sunucu fiyatlarıyla) yenile.
+  const shippingKey = `${medusaCart?.id ?? ''}|${medusaCart?.item_subtotal ?? ''}|${medusaCart?.items?.length ?? 0}`;
+  useEffect(() => {
+    if (!medusaCart?.id) return;
+    let cancelled = false;
+    setShippingLoading(true);
+    listShippingOptions()
+      .then((opts) => {
+        if (cancelled) return;
+        setShippingOptions(opts);
+        setSelectedShippingId((prev) => {
+          if (prev && opts.some((o) => o.id === prev)) return prev;
+          const standard = opts.find((o) => o.typeCode === 'standard');
+          return (standard ?? [...opts].sort((a, b) => a.amount - b.amount)[0])?.id ?? null;
+        });
+      })
+      .finally(() => {
+        if (!cancelled) setShippingLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [shippingKey]);
 
   const currency = (medusaCart?.currency_code as string | undefined) || 'try';
   const subTotal =
@@ -99,9 +139,11 @@ export default function CheckoutPage() {
     typeof medusaCart?.discount_total === 'number'
       ? (medusaCart.discount_total as number)
       : 0;
-  // KDV is charged on items + shipping; this breakdown adds up to exactly what
-  // Medusa charges at checkout (free shipping >= 2000 TL, else 79.90 TL).
-  const summary = summarizeOrder(subTotal, discount);
+  // KDV ürün + kargo üzerinden; kargo = seçili seçeneğin SUNUCUDA hesaplanmış
+  // ücreti (ücretsiz kargo kuralı Medusa'da). Seçenekler gelmeden önce
+  // lib/shipping'deki gösterim aynası kullanılır.
+  const selectedShipping = shippingOptions.find((o) => o.id === selectedShippingId);
+  const summary = summarizeOrder(subTotal, discount, selectedShipping?.amount);
   const kdv = summary.kdv;
   const shippingCost = summary.shipping;
   const grandTotal = summary.total;
@@ -118,6 +160,28 @@ export default function CheckoutPage() {
       return;
     }
 
+    // Alan doğrulamaları (telefon, T.C. kimlik, kurumsal fatura alanları)
+    const phoneNorm = normalizePhoneTR(ship.phone);
+    const billPhoneNorm = billingSame ? phoneNorm : normalizePhoneTR(bill.phone);
+    const invErrors: Partial<Record<keyof InvoiceValue, string>> = {};
+    if (invoice.type === 'bireysel' && invoice.tckn && !isValidTCKN(invoice.tckn)) {
+      invErrors.tckn = 'Geçerli bir T.C. kimlik numarası girin veya alanı boş bırakın.';
+    }
+    if (invoice.type === 'kurumsal') {
+      if (!invoice.companyName.trim()) invErrors.companyName = 'Firma unvanı gerekli.';
+      if (!isValidVKN(invoice.vkn)) invErrors.vkn = 'Vergi numarası 10 haneli olmalı.';
+      if (!invoice.taxOffice.trim()) invErrors.taxOffice = 'Vergi dairesi gerekli.';
+    }
+    setFieldErrors({
+      phone: phoneNorm ? null : 'Geçerli bir telefon numarası girin (05XX XXX XX XX).',
+      billPhone: billPhoneNorm ? null : 'Geçerli bir telefon numarası girin.',
+      invoice: invErrors,
+    });
+    if (!phoneNorm || !billPhoneNorm || Object.keys(invErrors).length) {
+      setSubmitError('Lütfen işaretli alanları düzeltin.');
+      return;
+    }
+
     setSubmitting(true);
 
     try {
@@ -129,36 +193,49 @@ export default function CheckoutPage() {
         );
       }
 
-      const [firstName, ...rest] = fullName.trim().split(' ');
-      const lastName = rest.join(' ') || firstName;
-      const addressPayload = {
-        first_name: firstName,
-        last_name: lastName,
-        phone,
-        address_1: address,
-        city,
-        province: district,
-        country_code: DEFAULT_REGION.toLowerCase(),
+      const toAddress = (a: AddressValue, phoneN: string, company?: string) => {
+        const [firstName, ...rest] = a.fullName.trim().split(/\s+/);
+        return {
+          first_name: firstName,
+          last_name: rest.join(' ') || firstName,
+          phone: phoneN,
+          address_1: a.address.trim(),
+          city: a.city,
+          province: a.district.trim(),
+          postal_code: a.postalCode || undefined,
+          company: company || undefined,
+          country_code: DEFAULT_REGION.toLowerCase(),
+        };
       };
+      const company = invoice.type === 'kurumsal' ? invoice.companyName.trim() : undefined;
+      const shippingAddress = toAddress(ship, phoneNorm);
+      const billingAddress = billingSame
+        ? { ...shippingAddress, company }
+        : toAddress(bill, billPhoneNorm, company);
 
-      // 1. Push email + address onto the cart
+      // 1. E-posta, adresler ve fatura bilgileri → sepet (metadata siparişe taşınır)
       await updateCart({
         email,
-        shipping_address: addressPayload,
-        billing_address: addressPayload,
+        shipping_address: shippingAddress,
+        billing_address: billingAddress,
         metadata: {
           preferred_payment_method: paymentMethod,
-          district,
+          district: ship.district,
+          invoice_type: invoice.type,
+          ...(invoice.type === 'bireysel' && invoice.tckn ? { tckn: invoice.tckn } : {}),
+          ...(invoice.type === 'kurumsal'
+            ? { company_name: company, vkn: invoice.vkn, tax_office: invoice.taxOffice.trim() }
+            : {}),
         },
       });
 
-      // 2. Add the correct shipping method — the server decides free (>= 2000 TL)
-      //    vs the 79.90 TL flat fee from the cart subtotal, so it can't be gamed.
-      const ship = await autoSelectShipping();
-      if (!ship) {
-        throw new Error(
-          'Kargo seçeneği belirlenemedi. Lütfen tekrar deneyin veya yöneticiyle iletişime geçin.'
-        );
+      // 2. Kargo: müşterinin seçtiği seçenek. Fiyatı Medusa'daki kural hesaplar
+      //    (ücretsiz kargo eşiği sunucuda — tarayıcı fiyata karar veremez).
+      let shippingOk = false;
+      if (selectedShippingId) shippingOk = !!(await addShippingMethod(selectedShippingId));
+      if (!shippingOk) shippingOk = !!(await autoSelectShipping());
+      if (!shippingOk) {
+        throw new Error('Kargo seçeneği belirlenemedi. Lütfen tekrar deneyin veya bizimle iletişime geçin.');
       }
 
       // 3. Initialize payment.
@@ -198,7 +275,7 @@ export default function CheckoutPage() {
         throw new Error(result.error || 'Sipariş oluşturulamadı.');
       }
 
-      setOrderNumber(result.orderId);
+      setOrderNumber(result.displayId ? `#${result.displayId}` : result.orderId);
       setOrderCompleted(true);
       await clearCart();
     } catch (err) {
@@ -230,33 +307,15 @@ export default function CheckoutPage() {
                 Siparişiniz Alındı!
               </h1>
               <p className="text-sm text-muted-foreground max-w-md mx-auto">
-                Bizi tercih ettiğiniz için teşekkür ederiz. Kaynak atölyemiz şerit bıçaklarınızı milimetrik kesim ve Ideal kaynak teknolojisi ile hazırlamaya başladı.
+                Bizi tercih ettiğiniz için teşekkür ederiz. Siparişiniz hazırlanmak üzere sıraya alındı. Sorularınız için sipariş numaranızla bize ulaşabilirsiniz.
               </p>
             </div>
 
             {/* Order Info Card */}
             <div className="rounded-2xl bg-metallic-card p-6 text-left divide-y divide-border/60 max-w-md mx-auto">
-              <div className="pb-4 flex justify-between items-center text-xs">
+              <div className="flex justify-between items-center text-xs">
                 <span className="font-bold text-muted-foreground uppercase">Sipariş No:</span>
                 <span className="font-black text-primary text-sm">{orderNumber}</span>
-              </div>
-              <div className="py-4 flex justify-between items-center text-xs">
-                <span className="font-bold text-muted-foreground uppercase">Kaynak & Hazırlık Süresi:</span>
-                <span className="font-semibold text-foreground flex items-center gap-1">
-                  <RefreshCw className="h-3.5 w-3.5 text-primary animate-spin" /> 16-24 Saat
-                </span>
-              </div>
-              <div className="py-4 flex justify-between items-center text-xs">
-                <span className="font-bold text-muted-foreground uppercase">Kargo Çıkışı:</span>
-                <span className="font-semibold text-foreground flex items-center gap-1">
-                  <Truck className="h-3.5 w-3.5 text-primary" /> En Geç Yarın
-                </span>
-              </div>
-              <div className="pt-4 flex justify-between items-center text-xs">
-                <span className="font-bold text-muted-foreground uppercase">Tahmini Teslimat:</span>
-                <span className="font-semibold text-foreground flex items-center gap-1">
-                  <Calendar className="h-3.5 w-3.5 text-primary" /> 2-3 İş Günü
-                </span>
               </div>
             </div>
 
@@ -369,82 +428,59 @@ export default function CheckoutPage() {
                 {/* 1. Address Block */}
                 <div className="rounded-2xl bg-metallic-card p-6 space-y-4">
                   <h2 className="text-sm font-bold uppercase tracking-wider text-foreground border-b border-border pb-3 mb-2 flex items-center gap-2">
-                    <Truck className="h-4 w-4" /> Teslimat & Fatura Adresi
+                    <Truck className="h-4 w-4" /> Teslimat Adresi
                   </h2>
 
-                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                    <div>
-                      <label className="block text-xs font-semibold text-muted-foreground mb-1">Ad Soyad *</label>
-                      <input
-                        type="text"
-                        required
-                        value={fullName}
-                        onChange={(e) => setFullName(e.target.value)}
-                        className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm focus:border-primary focus:outline-none font-medium"
-                        placeholder="Örn: Cihad Çetinkaya"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-semibold text-muted-foreground mb-1">Telefon Numarası *</label>
-                      <input
-                        type="tel"
-                        required
-                        value={phone}
-                        onChange={(e) => setPhone(e.target.value)}
-                        className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm focus:border-primary focus:outline-none font-medium"
-                        placeholder="0 (555) 123 4567"
-                      />
-                    </div>
-                  </div>
-
                   <div>
-                    <label className="block text-xs font-semibold text-muted-foreground mb-1">E-Posta Adresi *</label>
+                    <label htmlFor="checkout-email" className="block text-xs font-semibold text-muted-foreground mb-1">E-Posta Adresi *</label>
                     <input
+                      id="checkout-email"
                       type="email"
                       required
+                      autoComplete="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm focus:border-primary focus:outline-none font-medium"
-                      placeholder="adsoyad@sirket.com"
+                      placeholder="ornek@firma.com"
                     />
                   </div>
 
-                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                    <div>
-                      <label className="block text-xs font-semibold text-muted-foreground mb-1">Şehir *</label>
-                      <input
-                        type="text"
-                        required
-                        value={city}
-                        onChange={(e) => setCity(e.target.value)}
-                        className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm focus:border-primary focus:outline-none font-medium"
-                        placeholder="İstanbul"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-semibold text-muted-foreground mb-1">İlçe *</label>
-                      <input
-                        type="text"
-                        required
-                        value={district}
-                        onChange={(e) => setDistrict(e.target.value)}
-                        className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm focus:border-primary focus:outline-none font-medium"
-                        placeholder="Başakşehir"
-                      />
-                    </div>
-                  </div>
+                  <AddressFields value={ship} onChange={setShip} section="shipping" phoneError={fieldErrors.phone} />
+                </div>
 
-                  <div>
-                    <label className="block text-xs font-semibold text-muted-foreground mb-1">Açık Adres *</label>
-                    <textarea
-                      required
-                      value={address}
-                      onChange={(e) => setAddress(e.target.value)}
-                      rows={3}
-                      className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm focus:border-primary focus:outline-none font-medium"
-                      placeholder="Sokak, bina, daire no, sanayi sitesi blok detaylarını eksiksiz girin..."
+                {/* Fatura bilgileri */}
+                <div className="rounded-2xl bg-metallic-card p-6 space-y-4">
+                  <h2 className="text-sm font-bold uppercase tracking-wider text-foreground border-b border-border pb-3 mb-2 flex items-center gap-2">
+                    <FileText className="h-4 w-4" /> Fatura Bilgileri
+                  </h2>
+                  <InvoiceFields value={invoice} onChange={setInvoice} errors={fieldErrors.invoice} />
+                  <label className="flex items-center gap-2 text-xs font-semibold text-foreground cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={billingSame}
+                      onChange={(e) => setBillingSame(e.target.checked)}
+                      className="h-4 w-4 accent-orange-500 cursor-pointer"
                     />
-                  </div>
+                    Fatura adresim teslimat adresiyle aynı
+                  </label>
+                  {!billingSame && (
+                    <AddressFields value={bill} onChange={setBill} section="billing" phoneError={fieldErrors.billPhone} />
+                  )}
+                </div>
+
+                {/* Kargo */}
+                <div className="rounded-2xl bg-metallic-card p-6 space-y-4">
+                  <h2 className="text-sm font-bold uppercase tracking-wider text-foreground border-b border-border pb-3 mb-2 flex items-center gap-2">
+                    <Truck className="h-4 w-4" /> Kargo
+                  </h2>
+                  <ShippingOptions
+                    options={shippingOptions}
+                    selectedId={selectedShippingId}
+                    onSelect={setSelectedShippingId}
+                    loading={shippingLoading}
+                    itemSubtotal={subTotal}
+                    currency={currency}
+                  />
                 </div>
 
                 {/* 2. Payment Method Selector */}
@@ -548,8 +584,8 @@ export default function CheckoutPage() {
                           <span className="font-bold text-foreground block">{item.name}</span>
                           <span className="text-[10px] text-muted-foreground">
                             {item.type === 'blade' 
-                              ? `L: ${item.specs.length}mm • ${item.specs.width} • ${item.specs.tpi}`
-                              : `${item.specs.width} • ${item.specs.thickness}`
+                              ? [item.specs.length ? `L: ${item.specs.length} mm` : null, item.specs.width, item.specs.thickness, item.specs.tpi].filter(Boolean).join(' • ')
+                              : [item.specs.width, item.specs.thickness].filter(Boolean).join(' • ')
                             }
                           </span>
                           <span className="block text-[10px] font-bold text-primary mt-0.5">
@@ -630,15 +666,16 @@ export default function CheckoutPage() {
                         className="mt-0.5 h-4 w-4 cursor-pointer accent-orange-500"
                       />
                       <span className="text-[11px] text-muted-foreground leading-relaxed">
-                        Kişisel verilerimin{" "}
+                        {/* Aydınlatma bir bilgilendirmedir, rıza değil (KVKK md.10);
+                            hizmet şartına bağlı "kabul ediyorum" ifadesi kaldırıldı. */}
                         <Link
                           href="/yasal/kvkk-aydinlatma-metni"
                           target="_blank"
                           className="text-accent hover:underline font-semibold"
                         >
                           KVKK Aydınlatma Metni
-                        </Link>{" "}
-                        kapsamında işlenmesini kabul ediyorum.
+                        </Link>
+                        ’ni okudum, kişisel verilerimin sipariş ve teslimat için işleneceği konusunda bilgilendirildim.
                       </span>
                     </label>
                   </div>
@@ -666,7 +703,7 @@ export default function CheckoutPage() {
                         </>
                       ) : (
                         <>
-                          <span>Siparişi Tamamla</span>
+                          <span>Siparişi Onayla ve Öde</span>
                           <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
                         </>
                       )}
@@ -675,7 +712,7 @@ export default function CheckoutPage() {
 
                   <div className="mt-4 flex items-center justify-center gap-1.5 text-[10px] text-muted-foreground text-center">
                     <ShieldCheck className="h-4 w-4 text-primary" />
-                    <span>IDEAL Kaynak ve Boy Değişim Garantisi Altındadır</span>
+                    <span>Ödemeniz iyzico altyapısıyla, 3D Secure doğrulamasıyla alınır</span>
                   </div>
                 </div>
 

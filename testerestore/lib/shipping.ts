@@ -1,7 +1,11 @@
 /**
  * Shipping rules — single source of truth for the storefront.
  *
- * Mirrors the backend (`/store/shipping/auto-select` + seed-tr-shipping-update):
+ * Mirrors the backend. Asıl kural Medusa'da: "Standart Kargo" seçeneğinin
+ * koşullu fiyatı (price rule `item_total >= 2400` — item_total KDV DAHİL;
+ * KDV %20 ile 2.400 KDV dahil = 2.000 KDV hariç). Buradaki değerler yalnızca
+ * gösterim (sepet ilerleme çubuğu, kargo seçenekleri gelmeden önceki özet)
+ * içindir; eşik değişirse ikisi birlikte güncellenmeli.
  *   - item subtotal (KDV-exclusive) >= 2000 TL  ->  free shipping
  *   - below 2000 TL                              ->  79.90 TL flat fee
  *
@@ -43,9 +47,15 @@ export interface OrderSummary {
  * Consistent order-summary breakdown that always adds up and equals the
  * amount Medusa charges (KDV on items + shipping, after discount).
  */
-export function summarizeOrder(itemSubtotal: number, discount = 0): OrderSummary {
+export function summarizeOrder(
+  itemSubtotal: number,
+  discount = 0,
+  /** Sunucunun seçili kargo seçeneği için hesapladığı ücret (varsa bu kullanılır). */
+  shippingOverride?: number
+): OrderSummary {
   const subTotal = Math.max(0, itemSubtotal);
-  const shipping = shippingFeeFor(subTotal);
+  const shipping =
+    typeof shippingOverride === 'number' ? shippingOverride : shippingFeeFor(subTotal);
   const taxable = Math.max(0, subTotal + shipping - discount);
   const kdv = round2(taxable * KDV_RATE);
   const total = round2(subTotal + shipping - discount + kdv);

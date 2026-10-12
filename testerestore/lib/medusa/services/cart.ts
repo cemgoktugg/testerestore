@@ -341,32 +341,6 @@ export async function removePromoCode(
 
 // ---------- Shipping options ----------
 
-/** List shipping options available for the current cart. */
-export async function listShippingOptions(): Promise<
-  Array<{ id: string; name: string; amount: number; provider_id?: string }>
-> {
-  if (!MEDUSA_READY) return [];
-  const cart = await retrieveCart();
-  if (!cart) return [];
-  try {
-    const res = await medusa.store.fulfillment.listCartOptions({
-      cart_id: cart.id,
-    });
-    return (
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (res.shipping_options as any[]) || []
-    ).map((o) => ({
-      id: o.id,
-      name: o.name,
-      amount: o.amount ?? o.calculated_price?.calculated_amount ?? 0,
-      provider_id: o.provider_id,
-    }));
-  } catch (e) {
-    console.error("[medusa] listShippingOptions failed", e);
-    return [];
-  }
-}
-
 /**
  * Server-trusted shipping selection. The backend reads the cart's item
  * subtotal and attaches the correct method (free >= 2000 TL, else 79.90 TL),
@@ -409,6 +383,45 @@ export async function autoSelectShipping(): Promise<{
   } catch (e) {
     console.error("[medusa] autoSelectShipping failed", e);
     return null;
+  }
+}
+
+export interface CartShippingOption {
+  id: string;
+  name: string;
+  /** Sunucunun bu sepet için hesapladığı fiyat (KDV hariç). Ücretsiz kargo kuralı Medusa'da. */
+  amount: number;
+  /** standard | express | … (shipping option type code) */
+  typeCode?: string;
+}
+
+/**
+ * Sepet için seçilebilir kargo seçenekleri ve SUNUCUDA hesaplanmış fiyatları.
+ * Ücretsiz kargo eşiği "Standart Kargo"nun koşullu fiyatıdır (Medusa price rule:
+ * item_total >= 2400 KDV dahil ≡ 2000 KDV hariç) — tarayıcı fiyata karar vermez.
+ */
+export async function listShippingOptions(): Promise<CartShippingOption[]> {
+  if (!MEDUSA_READY) return [];
+  const cart = await retrieveCart();
+  if (!cart) return [];
+  try {
+    const { shipping_options } = await medusa.store.fulfillment.listCartOptions({ cart_id: cart.id });
+    // Eski ayrı "Ücretsiz Kargo" seçeneği (type: free) artık kullanılmıyor —
+    // ücretsiz kargo Standart Kargo'nun koşullu fiyatı. Veritabanından silinene
+    // kadar listede görünmesin (küçük sepette 0 TL seçilebiliyordu).
+    return (shipping_options || [])
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      .filter((o: any) => o.type?.code !== "free")
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      .map((o: any) => ({
+      id: o.id,
+      name: o.name,
+      amount: Number(o.calculated_price?.calculated_amount ?? o.amount ?? 0),
+      typeCode: o.type?.code,
+    }));
+  } catch (e) {
+    console.error("[medusa] listShippingOptions failed", e);
+    return [];
   }
 }
 
@@ -468,6 +481,8 @@ export async function initializePayment(
 export interface CompleteResult {
   type: "order" | "cart";
   orderId?: string;
+  /** Müşteriye gösterilen sipariş numarası (#1, #2 …) */
+  displayId?: number;
   cart?: StoreCart;
   error?: string;
 }
@@ -484,7 +499,7 @@ export async function completeCart(): Promise<CompleteResult> {
     if (r.type === "order") {
       // Order completed — clear stored cart id so a fresh cart starts next.
       clearStoredCartId();
-      return { type: "order", orderId: r.order?.id };
+      return { type: "order", orderId: r.order?.id, displayId: r.order?.display_id };
     }
     return { type: "cart", cart: r.cart, error: r.error?.message };
   } catch (e) {

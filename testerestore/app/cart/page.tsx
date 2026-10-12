@@ -226,6 +226,7 @@ export default function CartPage() {
                       <div className="flex items-center gap-1.5">
                         <button
                           onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                          aria-label={`${item.name} adedini azalt`}
                           className="flex h-8 w-8 items-center justify-center rounded-lg bg-silver-grad text-sm font-bold cursor-pointer"
                         >
                           -
@@ -235,6 +236,7 @@ export default function CartPage() {
                         </span>
                         <button
                           onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                          aria-label={`${item.name} adedini artır`}
                           className="flex h-8 w-8 items-center justify-center rounded-lg bg-silver-grad text-sm font-bold cursor-pointer"
                         >
                           +
@@ -257,6 +259,7 @@ export default function CartPage() {
                         onClick={() => removeFromCart(item.id)}
                         className="rounded-lg p-2 text-muted-foreground hover:text-rose-600 hover:bg-rose-500/10 transition-all cursor-pointer"
                         title="Ürünü Sepetten Çıkar"
+                        aria-label={`${item.name} ürününü sepetten çıkar`}
                       >
                         <Trash2 className="h-4 w-4" />
                       </button>

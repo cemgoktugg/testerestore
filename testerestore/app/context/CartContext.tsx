@@ -123,13 +123,23 @@ function legacyFromMedusa(cart: StoreCart): CartItem[] {
         (li.thumbnail as string) ||
         '/images/bimetal_blade.png',
       type: (meta.product_type as 'blade' | 'machine') || 'blade',
+      // Ölçüye göre ürünlerde etiketler (width/thickness/tpi/custom_length_mm),
+      // hazır boy ürünlerde sayısal alanlar (width_mm/thickness_mm/tooth_pitch/
+      // length_mm) tutulur — ikisi de desteklenir (eskiden hazır boyda sepette
+      // ve ödeme özetinde "undefined" görünüyordu).
       specs: {
-        width: (meta.width as string) || undefined,
-        thickness: (meta.thickness as string) || undefined,
-        tpi: (meta.tpi as string) || undefined,
+        width:
+          (meta.width as string) ||
+          (typeof meta.width_mm === 'number' ? `${meta.width_mm}mm` : undefined),
+        thickness:
+          (meta.thickness as string) ||
+          (typeof meta.thickness_mm === 'number' ? `${meta.thickness_mm}mm` : undefined),
+        tpi: (meta.tpi as string) || (meta.tooth_pitch ? `${meta.tooth_pitch} TPI` : undefined),
         length:
           typeof meta.custom_length_mm === 'number'
             ? (meta.custom_length_mm as number)
+            : typeof meta.length_mm === 'number'
+            ? (meta.length_mm as number)
             : undefined,
       },
       price:
@@ -222,8 +232,15 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
    */
   const resolveMedusaLineId = useCallback(
     (localId: string): string | null => {
-      if (localId.startsWith('li_')) return localId;
       const items = medusaCart?.items;
+      // Yerel sepet satırları Medusa'dan senkronlandığında kimlik = Medusa satır
+      // kimliğidir. Medusa v2 satır kimlikleri "cali_" ile başlar (v1'de "li_").
+      // Eskiden yalnızca "li_" tanınıyordu → eşleşme ölçü metadata'sına düşüyor,
+      // hazır boy ürünlerde hiç eşleşmiyordu: adet değişikliği ve SİLME
+      // sunucuya gitmiyor, ödemede eski sepet tahsil ediliyordu.
+      if (items?.some((li) => li.id === localId) || /^(cali_|li_)/.test(localId)) {
+        return localId;
+      }
       if (!items?.length) return null;
       const local = cart.find((it) => it.id === localId);
       if (!local) return null;
