@@ -31,6 +31,10 @@ import {
 } from "@medusajs/medusa/core-flows";
 import { Modules, ContainerRegistrationKeys } from "@medusajs/framework/utils";
 import { computeBladeLine } from "../../../lib/blade-line";
+import {
+  assertMatrixAllowedForProduct,
+  isConfigurableBlade,
+} from "../../../lib/blade-guard";
 import { applyAutoShipping } from "../../../lib/auto-shipping";
 import { MIN_LENGTH_MM, MAX_LENGTH_MM } from "../blade-price/calculate/route";
 
@@ -122,10 +126,42 @@ function rateLimited(ip: string): boolean {
   return b.count > RL_MAX;
 }
 
+// Aynı e-posta için kısa sürede tekrar tekrar hesap/e-posta üretilmesin.
+const EMAIL_WINDOW_MS = 24 * 60 * 60_000;
+const EMAIL_MAX = 3;
+const emailBuckets = new Map<string, { count: number; resetAt: number }>();
+
+function emailRateLimited(email: string): boolean {
+  const now = Date.now();
+  const key = email.trim().toLowerCase();
+  const b = emailBuckets.get(key);
+  if (!b || now >= b.resetAt) {
+    emailBuckets.set(key, { count: 1, resetAt: now + EMAIL_WINDOW_MS });
+    if (emailBuckets.size > 5000) {
+      for (const [k, v] of emailBuckets) if (now >= v.resetAt) emailBuckets.delete(k);
+    }
+    return false;
+  }
+  b.count += 1;
+  return b.count > EMAIL_MAX;
+}
+
+/**
+ * İstemci IP'si.
+ *  - İnternetten gelen istek Traefik'ten geçer; Express `trust proxy 1` ile
+ *    `req.ip` Traefik'in eklediği gerçek IP'dir. X-Forwarded-For'un İLK
+ *    halkası istemcinin uydurabileceği değerdir — ona güvenilmez (eskiden
+ *    güveniliyordu, her istekte farklı değer yazılarak sınır aşılabiliyordu).
+ *  - Storefront'un /api/advisor/purchase vekili backend'i iç ağdan
+ *    (Traefik'siz) çağırır: o istekte X-Forwarded-For yoktur ve gerçek
+ *    ziyaretçi IP'si `x-client-ip` başlığında gelir. Backend'in host portu
+ *    yayınlanmadığı için internetten Traefik'siz erişim mümkün değildir.
+ */
 function clientIp(req: MedusaRequest): string {
-  const fwd = req.headers["x-forwarded-for"];
-  const raw = Array.isArray(fwd) ? fwd[0] : fwd;
-  if (raw) return raw.split(",")[0].trim();
+  if (!req.headers["x-forwarded-for"]) {
+    const c = req.headers["x-client-ip"];
+    if (typeof c === "string" && c.trim() && c.length <= 64) return c.trim();
+  }
   return req.ip || "unknown";
 }
 
@@ -153,13 +189,21 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
   }
 
   const data = parsed.data;
+  if (emailRateLimited(data.email)) {
+    res.status(429).json({
+      message:
+        "Bu e-posta adresiyle kısa süre içinde çok fazla deneme yapıldı. Lütfen daha sonra tekrar deneyin.",
+      code: "RATE_LIMITED",
+    });
+    return;
+  }
   const logger = req.scope.resolve(ContainerRegistrationKeys.LOGGER);
   const query = req.scope.resolve(ContainerRegistrationKeys.QUERY);
 
   // ── 1. Ürünü çöz ───────────────────────────────────────────────────────
   const { data: products } = await query.graph({
     entity: "product",
-    fields: ["id", "handle", "title", "status", "thumbnail", "variants.id"],
+    fields: ["id", "handle", "title", "status", "thumbnail", "metadata", "variants.id"],
     filters: { handle: data.item.handle } as never,
   });
   const product = products?.[0];
@@ -175,6 +219,22 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     res.status(409).json({
       message: "Bu ürün şu anda satın alınabilir durumda değil.",
       code: "VARIANT_NOT_FOUND",
+    });
+    return;
+  }
+
+  // Ürün ile fiyatlama türü eşleşmeli: matris fiyatı yalnızca bu türdeki
+  // ölçüye göre ürüne; ölçüye göre ürün de yalnızca matris fiyatıyla satılır.
+  try {
+    if (data.item.kind === "configurable") {
+      assertMatrixAllowedForProduct(product, data.item.blade_type, data.item.length_mm);
+    } else if (isConfigurableBlade(product)) {
+      throw new Error("Bu ürün ölçüye göre satılır.");
+    }
+  } catch (e) {
+    res.status(400).json({
+      message: e instanceof Error ? e.message : "Geçersiz ürün",
+      code: "PRODUCT_MISMATCH",
     });
     return;
   }

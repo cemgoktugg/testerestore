@@ -4,6 +4,10 @@ import { updateLineItemInCartWorkflow } from "@medusajs/medusa/core-flows";
 import { Modules } from "@medusajs/framework/utils";
 import type BladePriceMatrixService from "../../../../modules/blade-price-matrix/service";
 import { BLADE_PRICE_MATRIX_MODULE } from "../../../../modules/blade-price-matrix";
+import {
+  assertMatrixAllowedForProduct,
+  productForVariant,
+} from "../../../../lib/blade-guard";
 
 const Schema = z.object({
   cart_id: z.string().min(1),
@@ -69,12 +73,29 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
       res.json({ ok: true, result });
       return;
     } catch (e) {
-      res.status(500).json({
-        message: "update failed",
-        error: e instanceof Error ? e.message : String(e),
-      });
+      req.scope
+        .resolve("logger")
+        .error(`[blade-price/cart-update] ${e instanceof Error ? e.message : String(e)}`);
+      res.status(500).json({ message: "Sepet güncellenemedi." });
       return;
     }
+  }
+
+  // Satır metadata'sı istemci tarafından yazılabilir; matris fiyatını yalnızca
+  // gerçekten bu türdeki ölçüye göre ürünün satırına uygula (ör. hazır boy
+  // satırına sahte blade_type eklenerek ucuzlatılmasın).
+  try {
+    assertMatrixAllowedForProduct(
+      line.variant_id ? await productForVariant(req.scope, line.variant_id) : null,
+      bladeType,
+      lengthMm
+    );
+  } catch (e) {
+    res.status(400).json({
+      message: e instanceof Error ? e.message : "Geçersiz ürün",
+      code: "BLADE_PRODUCT_MISMATCH",
+    });
+    return;
   }
 
   // Matrix-priced item — fiyatı yeniden hesapla
@@ -148,9 +169,9 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
       result,
     });
   } catch (e) {
-    res.status(500).json({
-      message: "updateLineItemInCartWorkflow failed",
-      error: e instanceof Error ? e.message : String(e),
-    });
+    req.scope
+      .resolve("logger")
+      .error(`[blade-price/cart-update] ${e instanceof Error ? e.message : String(e)}`);
+    res.status(500).json({ message: "Sepet güncellenemedi." });
   }
 }

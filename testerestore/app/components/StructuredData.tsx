@@ -45,10 +45,23 @@ export function JsonLd({ data }: { data: unknown }) {
     <script
       type="application/ld+json"
       dangerouslySetInnerHTML={{
-        __html: JSON.stringify(data),
+        __html: safeJsonLd(data),
       }}
     />
   );
+}
+
+/**
+ * <script> içine gömülecek JSON. `JSON.stringify` "<" karakterini kaçırmaz;
+ * kullanıcı içeriği (ör. onaylı ürün yorumu) "</script><script>…" içerirse
+ * betik etiketi kapanıp sayfada kod çalışırdı. "<" ve satır ayırıcıları
+ * \u kaçışına çevrilir: JSON olarak aynı değer, HTML olarak zararsız.
+ */
+export function safeJsonLd(data: unknown): string {
+  return JSON.stringify(data)
+    .replace(/</g, "\\u003c")
+    .replace(/\u2028/g, "\\u2028")
+    .replace(/\u2029/g, "\\u2029");
 }
 
 /** Organization + LocalBusiness — RootLayout'a yerleştirilir. */

@@ -8,6 +8,24 @@ loadEnv(process.env.NODE_ENV || 'development', process.cwd())
 
 const MAX_UPLOAD_BYTES = 5 * 1024 * 1024 // 5 MB
 
+// Üretimde zayıf/eksik imza anahtarıyla AÇILMA. Eskiden env eksikse
+// "supersecret"e düşülüyordu; repo herkese açık olduğu için bu değeri bilen
+// biri admin JWT'si üretip mağazayı ele geçirebilirdi.
+function requiredSecret(name: 'JWT_SECRET' | 'COOKIE_SECRET'): string {
+  const v = process.env[name]
+  // `medusa build` (Docker build aşaması) env olmadan çalışır; orada atlanır.
+  const isBuild = process.argv.includes('build')
+  if (process.env.NODE_ENV !== 'production' || isBuild) return v || 'supersecret-dev-only'
+  if (!v || /^supersecret/i.test(v)) {
+    throw new Error(`${name} tanımlı değil (veya varsayılan değer) — üretimde zorunlu.`)
+  }
+  if (v.length < 32) {
+    // eslint-disable-next-line no-console
+    console.warn(`[güvenlik] ${name} 32 karakterden kısa; uzun rastgele bir değer önerilir.`)
+  }
+  return v
+}
+
 // Path the Medusa Vite plugin scans for custom admin widgets / routes
 // (./src/admin/widgets, ./src/admin/routes, ...).
 const LOCAL_ADMIN_SOURCE = path.resolve(__dirname, 'src/admin')
@@ -25,9 +43,12 @@ module.exports = defineConfig({
       storeCors: process.env.STORE_CORS!,
       adminCors: process.env.ADMIN_CORS!,
       authCors: process.env.AUTH_CORS!,
-      jwtSecret: process.env.JWT_SECRET || "supersecret",
-      cookieSecret: process.env.COOKIE_SECRET || "supersecret",
+      jwtSecret: requiredSecret('JWT_SECRET'),
+      cookieSecret: requiredSecret('COOKIE_SECRET'),
     },
+    // Admin oturumları Redis'te: bellek içi oturum deposu her yeniden
+    // başlatmada oturumları siler ve zamanla bellek sızdırır.
+    ...(process.env.REDIS_URL ? { redisUrl: process.env.REDIS_URL } : {}),
   },
   modules: [
     // Redis: event bus + cache + workflow engine. REDIS_URL varsa (production)

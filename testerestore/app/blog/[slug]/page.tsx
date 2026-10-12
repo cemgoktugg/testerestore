@@ -5,6 +5,7 @@ import Image from "next/image";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import NewsletterSignup from "../../components/NewsletterSignup";
+import { safeJsonLd } from "../../components/StructuredData";
 import { getBlogPost } from "../../../lib/medusa/services/blog";
 import { ArrowLeft, Calendar, User, Tag } from "lucide-react";
 
@@ -117,7 +118,11 @@ function inline(s: string): string {
   const esc = s
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;");
+    .replace(/>/g, "&gt;")
+    // Tırnaklar da kaçırılır: aksi halde [x](https://a"onfocus=...) bağlantı
+    // href özniteliğinden taşıp HTML özniteliği enjekte edebiliyordu.
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
   let out = esc.replace(
     /\*\*([^*]+)\*\*/g,
     '<strong class="text-foreground font-semibold">$1</strong>'
@@ -205,7 +210,7 @@ export default async function BlogPostPage({ params }: PageProps) {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
+          __html: safeJsonLd({
             "@context": "https://schema.org",
             "@type": "BlogPosting",
             headline: post.title,

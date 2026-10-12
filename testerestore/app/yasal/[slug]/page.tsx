@@ -112,7 +112,11 @@ function inlineMd(s: string): string {
   const esc = s
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;");
+    .replace(/>/g, "&gt;")
+    // Tırnaklar da kaçırılır: aksi halde [x](https://a"onfocus=...) bağlantı
+    // href özniteliğinden taşıp HTML özniteliği enjekte edebiliyordu.
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
   // **bold**
   let out = esc.replace(
     /\*\*([^*]+)\*\*/g,

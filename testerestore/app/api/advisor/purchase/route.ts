@@ -18,6 +18,16 @@ import {
   MEDUSA_PUBLISHABLE_KEY,
   MEDUSA_READY,
 } from "../../../../lib/medusa/config";
+import { clientIp, isCrossSite, rawClientIp } from "../../../../lib/request-guard";
+
+/**
+ * Backend'e İÇ AĞDAN (Traefik'siz) gidilir ve ziyaretçinin gerçek IP'si
+ * `x-client-ip` ile iletilir; backend bu başlığa yalnızca Traefik'ten
+ * gelmeyen (X-Forwarded-For'suz) isteklerde güvenir. Eskiden genel adres
+ * kullanılıyordu: backend tüm satın almaları sunucunun kendi IP'sinden
+ * görüyordu, saatte 5 sınırı bütün müşteriler için ortak işliyordu.
+ */
+const SIGNUP_BACKEND_URL = process.env.MEDUSA_INTERNAL_URL || MEDUSA_BACKEND_URL;
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -47,18 +57,16 @@ function rateLimited(ip: string): boolean {
   return b.count > MAX_PER_WINDOW;
 }
 
-function clientIp(req: NextRequest): string {
-  const fwd = req.headers.get("x-forwarded-for");
-  if (fwd) return fwd.split(",")[0].trim();
-  return req.headers.get("x-real-ip") || "unknown";
-}
-
 export async function POST(req: NextRequest) {
   if (!MEDUSA_READY) {
     return NextResponse.json(
       { ok: false, message: "Mağaza şu anda kullanılamıyor." },
       { status: 503 }
     );
+  }
+
+  if (isCrossSite(req)) {
+    return NextResponse.json({ ok: false, message: "Geçersiz istek." }, { status: 403 });
   }
 
   if (rateLimited(clientIp(req))) {
@@ -85,11 +93,12 @@ export async function POST(req: NextRequest) {
   const timeout = setTimeout(() => controller.abort(), 30_000);
 
   try {
-    const upstream = await fetch(`${MEDUSA_BACKEND_URL}/store/advisor-signup`, {
+    const upstream = await fetch(`${SIGNUP_BACKEND_URL}/store/advisor-signup`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         "x-publishable-api-key": MEDUSA_PUBLISHABLE_KEY,
+        "x-client-ip": rawClientIp(req),
       },
       body: JSON.stringify(body),
       signal: controller.signal,

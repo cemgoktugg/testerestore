@@ -87,7 +87,37 @@ services:
       - "traefik.http.routers.testere-api.rule=Host(`${API_DOMAIN}`)"
       - "traefik.http.routers.testere-api.entrypoints=websecure"
       - "traefik.http.routers.testere-api.tls.certResolver=letsencrypt"
+      - "traefik.http.routers.testere-api.middlewares=testere-api-headers"
       - "traefik.http.services.testere-api.loadbalancer.server.port=9000"
+      # ── Güvenlik başlıkları (panel + API) ─────────────────────────────────
+      # Admin paneli başka sitede çerçevelenemesin (clickjacking), HSTS,
+      # MIME koklama kapalı, "X-Powered-By: Express" parmak izi silinir.
+      - "traefik.http.middlewares.testere-api-headers.headers.stsSeconds=31536000"
+      - "traefik.http.middlewares.testere-api-headers.headers.contentTypeNosniff=true"
+      - "traefik.http.middlewares.testere-api-headers.headers.frameDeny=true"
+      - "traefik.http.middlewares.testere-api-headers.headers.referrerPolicy=strict-origin-when-cross-origin"
+      - "traefik.http.middlewares.testere-api-headers.headers.customResponseHeaders.X-Powered-By="
+      # ── Hız sınırları (IP başına) ─────────────────────────────────────────
+      # Giriş / kayıt / şifre sıfırlama: kaba kuvvet şifre denemesine karşı.
+      # Eskiden sınırsızdı (dakikada yüzlerce deneme yapılabiliyordu).
+      - "traefik.http.middlewares.testere-rl-auth.ratelimit.average=10"
+      - "traefik.http.middlewares.testere-rl-auth.ratelimit.period=1m"
+      - "traefik.http.middlewares.testere-rl-auth.ratelimit.burst=10"
+      - "traefik.http.routers.testere-api-auth.rule=Host(`${API_DOMAIN}`) && PathPrefix(`/auth`)"
+      - "traefik.http.routers.testere-api-auth.entrypoints=websecure"
+      - "traefik.http.routers.testere-api-auth.tls.certResolver=letsencrypt"
+      - "traefik.http.routers.testere-api-auth.middlewares=testere-api-headers,testere-rl-auth"
+      - "traefik.http.routers.testere-api-auth.service=testere-api"
+      # E-posta gönderen / kayıt açan formlar (iletişim, bülten, yorum,
+      # danışman kaydı): spam ve e-posta bombardımanına karşı.
+      - "traefik.http.middlewares.testere-rl-forms.ratelimit.average=5"
+      - "traefik.http.middlewares.testere-rl-forms.ratelimit.period=1m"
+      - "traefik.http.middlewares.testere-rl-forms.ratelimit.burst=5"
+      - "traefik.http.routers.testere-api-forms.rule=Host(`${API_DOMAIN}`) && Method(`POST`) && (PathPrefix(`/store/contact`) || PathPrefix(`/store/newsletter`) || PathPrefix(`/store/advisor-signup`) || PathPrefix(`/store/products/`))"
+      - "traefik.http.routers.testere-api-forms.entrypoints=websecure"
+      - "traefik.http.routers.testere-api-forms.tls.certResolver=letsencrypt"
+      - "traefik.http.routers.testere-api-forms.middlewares=testere-api-headers,testere-rl-forms"
+      - "traefik.http.routers.testere-api-forms.service=testere-api"
       # http://panel… → https (301). Middleware storefront servisinde tanımlı.
       - "traefik.http.routers.testere-api-http.rule=Host(`${API_DOMAIN}`)"
       - "traefik.http.routers.testere-api-http.entrypoints=web"
@@ -120,6 +150,11 @@ services:
       PORT: "3000"
       HOSTNAME: "0.0.0.0"
       MEDUSA_BACKEND_URL: ${MEDUSA_BACKEND_URL}
+      # Danışman satın alma vekili backend'e iç ağdan gider ve ziyaretçi IP'sini
+      # iletir (hız sınırı herkes için ortak işlemesin diye).
+      MEDUSA_INTERNAL_URL: http://backend:9000
+      # Danışman sohbeti günlük toplam mesaj tavanı (OpenAI maliyet sınırı).
+      ADVISOR_DAILY_LIMIT: ${ADVISOR_DAILY_LIMIT:-3000}
     networks:
       - internal
       - dokploy-network
@@ -130,6 +165,16 @@ services:
       - "traefik.http.routers.testere-web.entrypoints=websecure"
       - "traefik.http.routers.testere-web.tls.certResolver=letsencrypt"
       - "traefik.http.services.testere-web.loadbalancer.server.port=3000"
+      # Danışman uçları (OpenAI'ye para harcatan sohbet + kayıt): uygulama
+      # içindeki sınıra ek olarak vekil katmanında da IP başına sınır.
+      - "traefik.http.middlewares.testere-rl-advisor.ratelimit.average=30"
+      - "traefik.http.middlewares.testere-rl-advisor.ratelimit.period=1m"
+      - "traefik.http.middlewares.testere-rl-advisor.ratelimit.burst=15"
+      - "traefik.http.routers.testere-web-advisor.rule=Host(`${DOMAIN}`) && PathPrefix(`/api/advisor`)"
+      - "traefik.http.routers.testere-web-advisor.entrypoints=websecure"
+      - "traefik.http.routers.testere-web-advisor.tls.certResolver=letsencrypt"
+      - "traefik.http.routers.testere-web-advisor.middlewares=testere-rl-advisor"
+      - "traefik.http.routers.testere-web-advisor.service=testere-web"
       # ── Yönlendirmeler (hepsi 301 — SEO sinyali yeni adrese aktarılır) ──────
       # http:// → https:// (apex + www). Eskiden http 404 veriyordu.
       - "traefik.http.middlewares.testere-to-https.redirectscheme.scheme=https"
@@ -187,12 +232,54 @@ services:
     networks:
       - internal
 
+  # ── Otomatik yedek ────────────────────────────────────────────────────────
+  # Her gün: veritabanı (pg_dump, sıkıştırılmış özel biçim) + ürün görselleri.
+  # Veritabanı yedekleri BACKUP_KEEP_DAYS (varsayılan 14) gün, görsel arşivleri
+  # 3 gün tutulur. Yedekler aynı sunucuda `db_backups` volume'unda durur —
+  # sunucunun kendisi kaybolursa korumaz; Dokploy "Volume Backups" ile S3 vb.
+  # bir hedefe de kopyalanmalı (bkz. deploy/DOKPLOY.md → Yedekler).
+  db-backup:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      PGHOST: postgres
+      PGUSER: ${POSTGRES_USER}
+      PGPASSWORD: ${POSTGRES_PASSWORD}
+      PGDATABASE: ${POSTGRES_DB}
+      BACKUP_KEEP_DAYS: ${BACKUP_KEEP_DAYS:-14}
+    volumes:
+      - db_backups:/backups
+      - backend_static:/static:ro
+    networks:
+      - internal
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        while true; do
+          TS=$$(date +%Y-%m-%d_%H%M)
+          if pg_dump -Fc -f /backups/db_$$TS.dump.tmp; then
+            mv /backups/db_$$TS.dump.tmp /backups/db_$$TS.dump
+            echo "[yedek] db_$$TS.dump tamam ($$(du -h /backups/db_$$TS.dump | cut -f1))"
+          else
+            rm -f /backups/db_$$TS.dump.tmp
+            echo "[yedek] HATA: veritabanı yedeği alınamadı"
+          fi
+          tar -czf /backups/static_$$TS.tar.gz -C /static . && echo "[yedek] static_$$TS.tar.gz tamam"
+          find /backups -name 'db_*.dump' -mtime +$$BACKUP_KEEP_DAYS -delete
+          find /backups -name 'static_*.tar.gz' -mtime +3 -delete
+          sleep 86400
+        done
+
 volumes:
   pgdata3:
   redisdata2:
   backend_static:
   advisor_chroma:
   advisor_data:
+  db_backups:
 
 networks:
   internal:

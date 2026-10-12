@@ -11,6 +11,7 @@
  * Bu dosya yeni; mevcut hiçbir route veya bileşen değiştirilmedi.
  */
 import { NextRequest, NextResponse } from "next/server";
+import { clientIp, isCrossSite } from "../../../../lib/request-guard";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -34,6 +35,19 @@ const ALLOWED: Record<string, { method: "GET" | "POST"; upstream: string }> = {
 const WINDOW_MS = 60_000;
 const MAX_PER_WINDOW = 12; // IP başına dakikada mesaj
 const MAX_MESSAGE_CHARS = 1000;
+const MAX_BODY_BYTES = 8 * 1024;
+const SESSION_ID_RE = /^[A-Za-z0-9_-]{8,64}$/;
+// Maliyet tavanı: tüm ziyaretçiler toplamında günlük mesaj sınırı (IP başına
+// sınırı çok sayıda IP'yle aşan bir saldırıda OpenAI faturasını sınırlar).
+const DAILY_LIMIT = Number(process.env.ADVISOR_DAILY_LIMIT) || 3000;
+let daily = { day: "", count: 0 };
+
+function dailyLimitReached(): boolean {
+  const today = new Date().toISOString().slice(0, 10);
+  if (daily.day !== today) daily = { day: today, count: 0 };
+  daily.count += 1;
+  return daily.count > DAILY_LIMIT;
+}
 
 type Bucket = { count: number; resetAt: number };
 const buckets = new Map<string, Bucket>();
@@ -55,11 +69,6 @@ function rateLimited(ip: string): boolean {
   return b.count > MAX_PER_WINDOW;
 }
 
-function clientIp(req: NextRequest): string {
-  const fwd = req.headers.get("x-forwarded-for");
-  if (fwd) return fwd.split(",")[0].trim();
-  return req.headers.get("x-real-ip") || "unknown";
-}
 
 async function forward(
   req: NextRequest,
@@ -70,6 +79,10 @@ async function forward(
 
   if (!route || route.method !== req.method) {
     return NextResponse.json({ error: "not_found" }, { status: 404 });
+  }
+
+  if (req.method === "POST" && isCrossSite(req)) {
+    return NextResponse.json({ error: "forbidden" }, { status: 403 });
   }
 
   if (req.method === "POST" && rateLimited(clientIp(req))) {
@@ -86,11 +99,46 @@ async function forward(
 
   let body: string | undefined;
   if (req.method === "POST") {
-    const raw = (await req.json().catch(() => ({}))) as Record<string, unknown>;
-    if (typeof raw.message === "string" && raw.message.length > MAX_MESSAGE_CHARS) {
-      raw.message = raw.message.slice(0, MAX_MESSAGE_CHARS);
+    if (Number(req.headers.get("content-length") || 0) > MAX_BODY_BYTES) {
+      return NextResponse.json({ error: "payload_too_large" }, { status: 413 });
     }
-    body = JSON.stringify(raw);
+    const text = await req.text();
+    if (text.length > MAX_BODY_BYTES) {
+      return NextResponse.json({ error: "payload_too_large" }, { status: 413 });
+    }
+    let raw: Record<string, unknown>;
+    try {
+      raw = JSON.parse(text);
+    } catch {
+      return NextResponse.json({ error: "bad_request" }, { status: 400 });
+    }
+    const sessionId = raw?.session_id;
+    if (typeof sessionId !== "string" || !SESSION_ID_RE.test(sessionId)) {
+      return NextResponse.json({ error: "bad_request" }, { status: 400 });
+    }
+    // Danışmana YALNIZCA bilinen alanlar gider — eskiden gövde olduğu gibi
+    // iletiliyordu; dizi/nesne "message" 1000 karakter sınırını aşıp OpenAI'ye
+    // yüzlerce KB olarak gidebiliyordu.
+    if (key === "chat") {
+      const message = raw.message;
+      if (typeof message !== "string" || !message.trim()) {
+        return NextResponse.json({ error: "bad_request" }, { status: 400 });
+      }
+      if (dailyLimitReached()) {
+        return NextResponse.json(
+          {
+            success: false,
+            error: "busy",
+            response:
+              "Danışman şu anda çok yoğun. Lütfen daha sonra tekrar deneyin veya WhatsApp'tan bize yazın.",
+          },
+          { status: 503 }
+        );
+      }
+      body = JSON.stringify({ message: message.slice(0, MAX_MESSAGE_CHARS), session_id: sessionId });
+    } else {
+      body = JSON.stringify({ session_id: sessionId });
+    }
   }
 
   // Advisor GPT-4o çağırıyor; uzun düşünme süresi normal.
@@ -107,6 +155,17 @@ async function forward(
     });
 
     const text = await upstream.text();
+    if (upstream.status >= 500) {
+      // Python/OpenAI hata ayrıntıları ziyaretçiye gitmesin.
+      return NextResponse.json(
+        {
+          success: false,
+          error: "upstream_error",
+          response: "Danışman şu anda yanıt veremiyor. Lütfen biraz sonra tekrar deneyin.",
+        },
+        { status: 502 }
+      );
+    }
     return new NextResponse(text, {
       status: upstream.status,
       headers: { "Content-Type": "application/json" },

@@ -15,7 +15,18 @@ from llm.conversational_engine import ConversationalEngine
 import json
 
 app = Flask(__name__, static_folder='.')
-CORS(app)
+# Danışman yalnızca storefront sunucusundan (iç ağ) çağrılır; tarayıcıya açık
+# değil, CORS gereksiz. Gövde sınırı: büyük gövdeler OpenAI'ye yüzlerce KB
+# olarak gidip fatura şişirebiliyordu.
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024
+MAX_MESSAGE_CHARS = 1000
+
+
+@app.before_request
+def _reject_large_body():
+    # Rotadaki try/except 413 hatasını 500e çevirmesin diye erken kesilir.
+    if request.content_length and request.content_length > app.config['MAX_CONTENT_LENGTH']:
+        return jsonify({'error': 'payload_too_large'}), 413
 
 # Initialize components
 rules_path = os.path.join(parent_dir, 'rules.json')
@@ -43,9 +54,15 @@ def chat():
     """Serve the simple chat interface"""
     return send_from_directory('.', 'chat.html')
 
+# Yalnızca geliştirme arayüzünün dosyaları — eskiden klasördeki her dosya
+# (app.py kaynak kodu dahil) servis ediliyordu.
+DEV_UI_FILES = {'chat.html', 'index.html', 'styles.css', 'script.js'}
+
 @app.route('/<path:filename>')
 def static_files(filename):
     """Serve static files (CSS, JS, etc.)"""
+    if filename not in DEV_UI_FILES:
+        return jsonify({'error': 'not_found'}), 404
     return send_from_directory('.', filename)
 
 @app.route('/api/machines/search', methods=['GET'])
@@ -84,7 +101,7 @@ def search_machines():
         })
     
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        return jsonify({'error': 'internal_error'}), 500
 
 @app.route('/api/analyze', methods=['POST'])
 def analyze_request():
@@ -163,7 +180,7 @@ def analyze_request():
     except Exception as e:
         return jsonify({
             'success': False,
-            'error': str(e)
+            'error': 'internal_error'
         }), 500
 
 @app.route('/api/chat', methods=['POST'])
@@ -176,12 +193,17 @@ def chat_endpoint():
         }), 503
     
     try:
-        data = request.get_json()
+        data = request.get_json(silent=True) or {}
         message = data.get('message', '')
         session_id = data.get('session_id', 'default_session')
-        
-        if not message:
+
+        # Yalnızca düz metin: dizi/nesne mesaj OpenAI'ye çok parçalı içerik
+        # olarak gidebiliyordu (1000 karakter sınırını aşarak).
+        if not isinstance(message, str) or not message.strip():
             return jsonify({'error': 'Message is required'}), 400
+        if not isinstance(session_id, str) or not (1 <= len(session_id) <= 64):
+            return jsonify({'error': 'Invalid session_id'}), 400
+        message = message[:MAX_MESSAGE_CHARS]
         
         # Kural motoru gudumlu diyalog: tam sonucu al (sadece metni degil)
         result = chat_engine.chat(message, session_id=session_id)
@@ -205,7 +227,7 @@ def chat_endpoint():
         traceback.print_exc()
         return jsonify({
             'success': False,
-            'error': str(e)
+            'error': 'internal_error'
         }), 500
 
 @app.route('/api/chat/reset', methods=['POST'])
@@ -226,7 +248,7 @@ def reset_chat():
     except Exception as e:
         return jsonify({
             'success': False,
-            'error': str(e)
+            'error': 'internal_error'
         }), 500
 
 @app.route('/api/health', methods=['GET'])
@@ -273,7 +295,7 @@ def get_stats():
     
     except Exception as e:
         return jsonify({
-            'error': str(e),
+            'error': 'internal_error',
             'machines': 0,
             'manufacturers': 0,
             'rules': 0,
@@ -299,7 +321,7 @@ def get_unknown_questions():
             'error': 'Unknown questions handler not available'
         }), 503
     except Exception as e:
-        return jsonify({'success': False, 'error': str(e)}), 500
+        return jsonify({'success': False, 'error': 'internal_error'}), 500
 
 @app.route('/api/unknown-questions/<int:question_id>/answer', methods=['POST'])
 def answer_unknown_question(question_id):
@@ -327,7 +349,7 @@ def answer_unknown_question(question_id):
             'error': 'Unknown questions handler not available'
         }), 503
     except Exception as e:
-        return jsonify({'success': False, 'error': str(e)}), 500
+        return jsonify({'success': False, 'error': 'internal_error'}), 500
 
 @app.route('/api/learned-knowledge', methods=['GET'])
 def get_learned_knowledge():
@@ -345,7 +367,7 @@ def get_learned_knowledge():
             'error': 'Knowledge handler not available'
         }), 503
     except Exception as e:
-        return jsonify({'success': False, 'error': str(e)}), 500
+        return jsonify({'success': False, 'error': 'internal_error'}), 500
 
 if __name__ == '__main__':
     # Development server

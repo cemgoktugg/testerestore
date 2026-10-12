@@ -1,4 +1,9 @@
-import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http";
+import type {
+  AuthenticatedMedusaRequest,
+  MedusaRequest,
+  MedusaResponse,
+} from "@medusajs/framework/http";
+import { ContainerRegistrationKeys } from "@medusajs/framework/utils";
 import { z } from "zod";
 import type ProductReviewService from "../../../../../modules/product-review/service";
 import { PRODUCT_REVIEW_MODULE } from "../../../../../modules/product-review";
@@ -8,7 +13,18 @@ const PostSchema = z.object({
   title: z.string().min(1).max(120).optional(),
   body: z.string().min(3).max(2000),
   author_name: z.string().min(2).max(120),
-  customer_id: z.string().nullable().optional(),
+});
+
+/** Herkese açık yanıtta gösterilecek alanlar (customer_id vb. gizli kalır). */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const publicReview = (r: any) => ({
+  id: r.id,
+  rating: r.rating,
+  title: r.title,
+  body: r.body,
+  author_name: r.author_name,
+  is_verified_purchase: r.is_verified_purchase,
+  created_at: r.created_at,
 });
 
 /** GET /store/products/:id/reviews — onaylı yorumlar + özet istatistik. */
@@ -32,13 +48,13 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
     count: list.filter((r) => Number(r.rating) === star).length,
   }));
   res.json({
-    reviews: list,
+    reviews: list.map(publicReview),
     stats: { count, average: avg, distribution },
   });
 }
 
 /** POST /store/products/:id/reviews — yeni yorum (default: onay bekliyor). */
-export async function POST(req: MedusaRequest, res: MedusaResponse) {
+export async function POST(req: AuthenticatedMedusaRequest, res: MedusaResponse) {
   const productId = req.params.id as string;
   const parsed = PostSchema.safeParse(req.body);
   if (!parsed.success) {
@@ -48,6 +64,18 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     });
     return;
   }
+  // Var olmayan/yayında olmayan ürüne yorum yazılmasın.
+  const query = req.scope.resolve(ContainerRegistrationKeys.QUERY);
+  const { data: products } = await query.graph({
+    entity: "product",
+    fields: ["id", "status"],
+    filters: { id: productId },
+  });
+  if (products?.[0]?.status !== "published") {
+    res.status(404).json({ message: "Ürün bulunamadı." });
+    return;
+  }
+
   const svc = req.scope.resolve<ProductReviewService>(PRODUCT_REVIEW_MODULE);
   const [created] = await svc.createProductReviews([
     {
@@ -56,10 +84,12 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
       rating: parsed.data.rating,
       title: parsed.data.title?.trim() ?? null,
       body: parsed.data.body.trim(),
-      customer_id: parsed.data.customer_id ?? null,
+      // Yalnızca oturumdan — istemci başka bir müşterinin kimliğini yazamasın.
+      customer_id:
+        req.auth_context?.actor_type === "customer" ? req.auth_context.actor_id : null,
       is_verified_purchase: false,
       is_approved: false, // admin approve etmeli
     },
   ]);
-  res.status(201).json({ review: created });
+  res.status(201).json({ review: publicReview(created) });
 }

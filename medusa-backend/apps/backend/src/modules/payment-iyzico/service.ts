@@ -131,6 +131,15 @@ class IyzicoPaymentProviderService extends AbstractPaymentProvider<Options> {
     throw lastErr;
   }
 
+  /** Üretimde anahtarsız "test başarılı" taklidine asla izin verme. */
+  private assertDryModeAllowed(): void {
+    if (process.env.NODE_ENV === "production") {
+      throw new Error(
+        "[payment-iyzico] IYZICO_API_KEY / IYZICO_SECRET_KEY tanımlı değil — üretimde ödeme alınamaz."
+      );
+    }
+  }
+
   // ---- Medusa lifecycle (v2.15 input/output contract) ----
 
   async initiatePayment(
@@ -142,14 +151,15 @@ class IyzicoPaymentProviderService extends AbstractPaymentProvider<Options> {
     const customer = input.context?.customer as PaymentCustomerDTO | undefined;
     const billing = (customer?.billing_address as Record<string, unknown>) || {};
 
+    // session_id'yi Medusa yazar (istemci verisinin ÜZERİNE) — önce o.
     const conversationId = String(
-      data.conversationId ||
-        data.session_id ||
+      data.session_id ||
         customer?.id ||
         `medusa-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
     );
 
     if (!this.iyzipay_) {
+      this.assertDryModeAllowed();
       // DRY MODE — anahtar yok, test başarılı taklidi
       return {
         id: conversationId,
@@ -256,6 +266,9 @@ class IyzicoPaymentProviderService extends AbstractPaymentProvider<Options> {
         token: result.token,
         paymentPageUrl: result.paymentPageUrl,
         conversationId,
+        // authorize'da iyzico'nun bildirdiği tutarla karşılaştırılır.
+        expectedPrice: amountTl.toFixed(2),
+        dryMode: false,
       },
     };
   }
@@ -266,7 +279,13 @@ class IyzicoPaymentProviderService extends AbstractPaymentProvider<Options> {
     const data = (input.data as Record<string, unknown>) || {};
     const token = String(data.token || "");
 
-    if (!this.iyzipay_ || data.dryMode) {
+    // GÜVENLİK: `data` istemcinin oturum oluştururken gönderdiği alanları da
+    // içerir (Medusa `{ ...input.data, ...provider.data }` diye birleştirir).
+    // Eskiden `data.dryMode` true gönderilerek iyzico'ya hiç sorulmadan
+    // ödemesiz sipariş oluşturulabiliyordu. DRY MODE yalnızca yapılandırmadan
+    // (anahtar yok) gelir ve üretimde hiç çalışmaz.
+    if (!this.iyzipay_) {
+      this.assertDryModeAllowed();
       return {
         status: "authorized" as PaymentSessionStatus,
         data: { ...data, dryAuthorized: true },
@@ -306,6 +325,28 @@ class IyzicoPaymentProviderService extends AbstractPaymentProvider<Options> {
       throw new Error(
         result.errorMessage ||
           `Iyzico ödeme başarısız (paymentStatus=${result.paymentStatus})`
+      );
+    }
+
+    // Ödenen sepet bu oturumun sepeti mi ve tutar aynı mı? (paidPrice taksit
+    // farkı içerebilir; sepet tutarı `price` ile karşılaştırılır.)
+    if (data.conversationId && result.basketId && String(result.basketId) !== String(data.conversationId)) {
+      this.logger_.error(
+        `[payment-iyzico] authorize basketId uyuşmuyor: beklenen=${data.conversationId} gelen=${result.basketId}`
+      );
+      throw new Error("Ödeme bu siparişe ait değil.");
+    }
+    if (data.expectedPrice != null && Math.abs(Number(result.price) - Number(data.expectedPrice)) > 0.01) {
+      this.logger_.error(
+        `[payment-iyzico] authorize tutar uyuşmuyor: beklenen=${data.expectedPrice} gelen=${result.price}`
+      );
+      throw new Error("Ödeme tutarı sipariş tutarıyla uyuşmuyor.");
+    }
+    if (result.fraudStatus !== undefined && Number(result.fraudStatus) !== 1) {
+      // 0 = iyzico incelemede, -1 = reddedildi. Para çekilmiş olabilir; sipariş
+      // oluşur ama panelde kontrol edilmesi için iz bırakılır.
+      this.logger_.warn(
+        `[payment-iyzico] fraudStatus=${result.fraudStatus} paymentId=${result.paymentId} — iyzico panelinden kontrol edin`
       );
     }
 
@@ -361,16 +402,18 @@ class IyzicoPaymentProviderService extends AbstractPaymentProvider<Options> {
         Number(data.paidPrice ?? (data.rawResult as any)?.paidPrice) || 0;
     }
 
-    if (!this.iyzipay_ || data.dryMode) {
+    if (!this.iyzipay_) {
+      this.assertDryModeAllowed();
       return { data: { ...data, refundedAmount: refundAmount } };
     }
 
     // iyzico paymentTransactionId'yi `itemTransactions`'tan al. rawResult tam
     // retrieve yanıtını taşıdığından eski siparişler için de çalışır.
+    // Yalnızca authorize'da iyzico'dan gelen alanlar (istemcinin oturuma
+    // koyabileceği `data.paymentTransactionId` dikkate alınmaz).
     const paymentTransactionId = String(
-      data.paymentTransactionId ||
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (data.itemTransactions as any)?.[0]?.paymentTransactionId ||
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (data.itemTransactions as any)?.[0]?.paymentTransactionId ||
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (data.rawResult as any)?.itemTransactions?.[0]?.paymentTransactionId ||
         ""
@@ -440,7 +483,7 @@ class IyzicoPaymentProviderService extends AbstractPaymentProvider<Options> {
     input: GetPaymentStatusInput
   ): Promise<GetPaymentStatusOutput> {
     const data = (input.data as Record<string, unknown>) || {};
-    if (data.paymentId || data.dryAuthorized) {
+    if (data.paymentId || (!this.iyzipay_ && data.dryAuthorized)) {
       return { status: "authorized" as PaymentSessionStatus, data };
     }
     return { status: "pending" as PaymentSessionStatus, data };

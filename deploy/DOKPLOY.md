@@ -108,8 +108,10 @@ kalıcı **`files/backend-static`** klasörüne koy:
 
 Dokploy → `backend` servisi → **Terminal** (container'a exec):
 ```bash
-npx medusa user -e admin@testere.com -p GucluSifre123
+npx medusa user -e admin@testere.com -p '<en az 16 karakterlik rastgele şifre>'
 ```
+> Örnek şifre kullanma; ilk admin oluştuktan sonra `ADMIN_EMAIL`/`ADMIN_PASSWORD`
+> env'lerini Dokploy'dan silebilirsin (her deploy'da yalnızca "yoksa oluştur" çalışır).
 - Admin panel: **https://api.testere.com/app** → giriş yap.
 - **Settings → Publishable API Keys** → anahtarı kopyala.
 - Dokploy Environment'ta `NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY`'i gerçek key ile
@@ -132,6 +134,40 @@ Kod değişince: `git push` → Dokploy **Redeploy** (veya otomatik deploy webho
 - **Yeni ürün eklendiğinde storefront'u yeniden deploy et** — ürün sayfaları
   `dynamicParams=false` ile build'de üretiliyor (gerçek 404 için); yeni ürün ancak
   yeniden build sonrası yayında olur.
+
+## Güvenlik
+- **`JWT_SECRET` ve `COOKIE_SECRET` zorunlu:** üretimde boşsa veya "supersecret"
+  ile başlıyorsa backend AÇILMAZ (eskiden bilinen varsayılana düşüyordu → herkes
+  admin oturumu üretebilirdi). Her biri için uzun rastgele değer:
+  `openssl rand -hex 32`. Değiştirirsen tüm oturumlar kapanır (beklenen).
+- **Hız sınırları Traefik'te** (docker-compose.yml label'ları): giriş/kayıt/şifre
+  sıfırlama dakikada 10, form uçları dakikada 5, danışman dakikada 30 (IP başına).
+- **Danışman günlük tavanı:** `ADVISOR_DAILY_LIMIT` (varsayılan 3000 mesaj/gün).
+  Ayrıca OpenAI panelinde projeye **aylık bütçe limiti** koy.
+- **Dokploy paneli** (`:3000`) düz HTTP ile herkese açık olmamalı: Dokploy →
+  Settings → Web Server'dan bir alan adı + HTTPS tanımla, 2FA'yı aç ve sağlayıcı
+  güvenlik duvarında 3000 portunu yalnızca kendi IP'ne aç.
+
+## Yedekler
+`db-backup` servisi her gün `db_backups` volume'una yedek alır:
+`db_YYYY-MM-DD_HHMM.dump` (veritabanı, 14 gün) ve `static_….tar.gz` (ürün
+görselleri, 3 gün). Loglar: Dokploy → servis → Logs → `db-backup`
+(`[yedek] … tamam` satırları).
+
+**Sunucu dışına kopya şart** (sunucu kaybolursa aynı diskteki yedek de gider):
+Dokploy → Compose → **Volume Backups** → `db_backups` volume'u → S3 uyumlu bir
+hedef (Cloudflare R2, Backblaze B2, AWS S3) → günlük.
+
+**Geri yükleme** (Dokploy → `db-backup` servisi → Terminal):
+```sh
+ls -lh /backups                       # yedekleri listele
+# DİKKAT: mevcut veritabanının ÜZERİNE yazar. Önce backend'i durdur.
+pg_restore --clean --if-exists --no-owner -d "$PGDATABASE" /backups/db_2026-10-12_0300.dump
+```
+Görseller: `/static` bu serviste kazara silinmesin diye salt okunur bağlı.
+Geri yükleme gerekirse docker-compose.yml'de `db-backup` altındaki
+`backend_static:/static:ro` satırından `:ro`'yu geçici kaldırıp redeploy et,
+sonra aynı terminalde: `tar -xzf /backups/static_….tar.gz -C /static`.
 
 ## Notlar
 - **Test edilmedi:** İlk deploy'da Medusa v2 build yolları / native bağımlılıklar

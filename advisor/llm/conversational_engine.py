@@ -86,6 +86,31 @@ from pathlib import Path
 from typing import Dict, List, Optional
 import uuid
 import logging
+from collections import OrderedDict
+
+
+class _BoundedSessions(OrderedDict):
+    """En eski oturumu atarak sınırlı boyutta kalan oturum sözlüğü.
+
+    Eskiden her yeni session_id için oluşturulan oturum (kendi kural motoru
+    kopyasıyla) hiç silinmiyordu: süreç belleği sürekli büyüyordu ve rastgele
+    session_id gönderen biri sunucuyu bellek tükenmesine sürükleyebilirdi.
+    """
+
+    def __init__(self, maxsize: int):
+        super().__init__()
+        self.maxsize = maxsize
+
+    def __setitem__(self, key, value):
+        if key in self:
+            self.move_to_end(key)
+        super().__setitem__(key, value)
+        while len(self) > self.maxsize:
+            self.popitem(last=False)
+
+
+MAX_SESSIONS = int(os.environ.get("ADVISOR_MAX_SESSIONS", "2000"))
+MAX_HISTORY_MESSAGES = 40
 
 # Load .env file if available
 try:
@@ -132,6 +157,9 @@ class ConversationalSession:
             "role": role,
             "content": content
         })
+        # Geçmiş sınırsız büyümesin (bellek + her çağrıda gönderilen bağlam).
+        if len(self.conversation_history) > MAX_HISTORY_MESSAGES:
+            del self.conversation_history[:-MAX_HISTORY_MESSAGES]
     
     def get_state(self) -> Dict:
         """Get current rules engine state."""
@@ -239,7 +267,7 @@ class ConversationalEngine:
             logger.info("RAG engine enabled")
         
         # Session management
-        self.sessions: Dict[str, ConversationalSession] = {}
+        self.sessions: Dict[str, ConversationalSession] = _BoundedSessions(MAX_SESSIONS)
         
         logger.info(f"ConversationalEngine initialized with model: {self.model}")
     
@@ -293,6 +321,7 @@ class ConversationalEngine:
             session_id = self.create_session(session_id)
 
         session = self.sessions[session_id]
+        self.sessions.move_to_end(session_id)  # yeni kullanılan en son atılır
 
         # ------------------------------------------------------------------
         # DOKUMANTASYON SORULARI -> RAG
@@ -313,8 +342,8 @@ class ConversationalEngine:
             logger.error(f"Error in chat: {e}", exc_info=True)
             return {
                 "session_id": session_id,
-                "message": f"Üzgünüm, bir hata oluştu: {str(e)}",
-                "error": str(e),
+                "message": "Üzgünüm, bir hata oluştu. Lütfen tekrar deneyin.",
+                "error": "internal_error",
             }
 
         # Bilinmeyen soru etiketlerini isle (uzman ekibe iletme akisi)
@@ -388,8 +417,8 @@ class ConversationalEngine:
             logger.error(f"Error in RAG chat: {e}")
             return {
                 "session_id": session.session_id,
-                "message": f"Üzgünüm, bir hata oluştu: {str(e)}",
-                "error": str(e),
+                "message": "Üzgünüm, bir hata oluştu. Lütfen tekrar deneyin.",
+                "error": "internal_error",
             }
 
     def _classify_query(self, message: str) -> str:

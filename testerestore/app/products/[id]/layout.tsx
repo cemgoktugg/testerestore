@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { getProductBySlugCached } from '../../../lib/medusa/server/product-cache';
 import { buildProductJsonLd, buildProductMetadata } from '../../../lib/medusa/seo';
 import { listProductReviews } from '../../../lib/medusa/services/reviews';
+import { safeJsonLd } from '../../components/StructuredData';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -26,8 +27,8 @@ export default async function ProductLayout({ children, params }: LayoutProps) {
       {jsonLd && (
         <script
           type="application/ld+json"
-          // Safe: schema serialization, escaped braces only
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+          // Yorumlar kullanıcı içeriği taşır — safeJsonLd "<" karakterini kaçırır.
+          dangerouslySetInnerHTML={{ __html: safeJsonLd(jsonLd) }}
         />
       )}
       {children}

@@ -30,6 +30,68 @@ const backendPort: string | undefined = (() => {
   }
 })();
 
+const isProd = process.env.NODE_ENV === "production";
+
+/**
+ * Content-Security-Policy. Yalnızca gerçekten kullanılan kökenler; analitik /
+ * Sentry kökenleri ancak ilgili ID build anında tanımlıysa eklenir (ID'yi
+ * Dokploy env'ine ekleyip yeniden build edince CSP kendiliğinden genişler).
+ * 'unsafe-inline' script: App Router satır içi `self.__next_f` betikleri
+ * üretir; nonce ise ISR/önbelleği bozar. Yine de dış kökenlere veri kaçırma,
+ * <base> ele geçirme, eklenti ve çerçeveleme engellenir.
+ */
+function buildCsp(): string {
+  const script = ["'self'", "'unsafe-inline'"];
+  const img = ["'self'", "data:", "blob:"];
+  const connect = ["'self'"];
+  const frame: string[] = [];
+  if (backendHost) {
+    const origin = `${backendProtocol}://${backendHost}${backendPort ? ":" + backendPort : ""}`;
+    img.push(origin);
+    connect.push(origin);
+  }
+  if (process.env.NEXT_PUBLIC_GTM_ID || process.env.NEXT_PUBLIC_GA_ID) {
+    script.push("https://*.googletagmanager.com");
+    img.push("https://*.google-analytics.com", "https://*.googletagmanager.com");
+    connect.push(
+      "https://*.google-analytics.com",
+      "https://*.analytics.google.com",
+      "https://*.googletagmanager.com"
+    );
+    frame.push("https://www.googletagmanager.com");
+  }
+  if (process.env.NEXT_PUBLIC_META_PIXEL_ID) {
+    script.push("https://connect.facebook.net");
+    img.push("https://www.facebook.com");
+    connect.push("https://www.facebook.com", "https://connect.facebook.net");
+  }
+  if (process.env.NEXT_PUBLIC_YANDEX_METRIKA_ID) {
+    script.push("https://mc.yandex.ru", "https://yastatic.net");
+    img.push("https://mc.yandex.ru", "https://mc.yandex.com");
+    connect.push("https://mc.yandex.ru", "https://mc.yandex.com", "wss://mc.yandex.ru");
+    frame.push("https://mc.yandex.ru", "https://mc.yandex.com", "blob:");
+  }
+  if (process.env.NEXT_PUBLIC_SENTRY_DSN) {
+    connect.push("https://*.ingest.sentry.io", "https://*.ingest.de.sentry.io");
+  }
+  return [
+    "default-src 'self'",
+    `script-src ${script.join(" ")}`,
+    "style-src 'self' 'unsafe-inline'",
+    `img-src ${img.join(" ")}`,
+    "font-src 'self' data:",
+    `connect-src ${connect.join(" ")}`,
+    `frame-src ${frame.length ? frame.join(" ") : "'none'"}`,
+    "frame-ancestors 'self'",
+    "object-src 'none'",
+    "base-uri 'self'",
+    "form-action 'self'",
+    "manifest-src 'self'",
+    "worker-src 'self' blob:",
+    "upgrade-insecure-requests",
+  ].join("; ");
+}
+
 const nextConfig: NextConfig = {
   // Docker/VPS dağıtımı için yalın, kendi kendine yeten çıktı. Sadece
   // `next build` çıktısını etkiler (.next/standalone üretir); `next dev` ve
@@ -49,6 +111,8 @@ const nextConfig: NextConfig = {
           { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
           { key: "X-Frame-Options", value: "SAMEORIGIN" },
           { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
+          // Geliştirmede HMR/eval gerektiği için yalnızca üretim build'inde.
+          ...(isProd ? [{ key: "Content-Security-Policy", value: buildCsp() }] : []),
         ],
       },
       {
@@ -73,26 +137,18 @@ const nextConfig: NextConfig = {
     // (S3 / Cloudflare R2 / public backend domain — see remotePatterns) so
     // optimization (resize, WebP/AVIF, responsive srcset) is re-enabled.
     unoptimized: process.env.NODE_ENV !== "production",
+    // YALNIZCA kendi backend'imiz. Eskiden *.s3.amazonaws.com, *.cloudfront.net
+    // gibi joker alan adları vardı: herkes oralara dosya koyabildiği için
+    // optimizer'ımız başkalarının resimlerini işleyen açık bir vekile
+    // dönüşüyordu (CPU/bant genişliği + resim işleme açıkları). Yeni bir
+    // depolama (S3/R2) eklenirse buraya TAM alan adıyla eklenmeli.
     remotePatterns: [
-      // Medusa local file provider (current backend)
       {
         protocol: backendProtocol,
         hostname: backendHost ?? "localhost",
         port: backendPort,
         pathname: "/**",
       },
-      // Localhost fallback (covers any port mismatch in env)
-      { protocol: "http", hostname: "localhost", port: "9000", pathname: "/**" },
-      { protocol: "http", hostname: "127.0.0.1", port: "9000", pathname: "/**" },
-      // Common cloud storage CDNs Medusa file providers use
-      { protocol: "https", hostname: "**.medusajs.app", pathname: "/**" },
-      { protocol: "https", hostname: "**.s3.amazonaws.com", pathname: "/**" },
-      { protocol: "https", hostname: "**.s3.eu-west-1.amazonaws.com", pathname: "/**" },
-      { protocol: "https", hostname: "**.s3.us-east-1.amazonaws.com", pathname: "/**" },
-      { protocol: "https", hostname: "medusa-public-images.s3.eu-west-1.amazonaws.com", pathname: "/**" },
-      { protocol: "https", hostname: "**.cloudfront.net", pathname: "/**" },
-      { protocol: "https", hostname: "**.r2.dev", pathname: "/**" },
-      { protocol: "https", hostname: "**.cloudinary.com", pathname: "/**" },
     ],
   },
 };

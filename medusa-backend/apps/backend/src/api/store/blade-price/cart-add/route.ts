@@ -2,6 +2,10 @@ import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http";
 import { z } from "zod";
 import { addToCartWorkflow } from "@medusajs/medusa/core-flows";
 import { computeBladeLine } from "../../../../lib/blade-line";
+import {
+  assertMatrixAllowedForProduct,
+  productForVariant,
+} from "../../../../lib/blade-guard";
 import { MIN_LENGTH_MM, MAX_LENGTH_MM } from "../calculate/route";
 
 const Schema = z.object({
@@ -50,6 +54,22 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
 
   const { cart_id, variant_id, quantity, ...blade } = parsed.data;
 
+  // Matris fiyatı yalnızca bu türdeki ölçüye göre ürüne uygulanabilir —
+  // aksi halde herhangi bir ürün en ucuz matris satırıyla sepete konabilirdi.
+  try {
+    assertMatrixAllowedForProduct(
+      await productForVariant(req.scope, variant_id),
+      blade.blade_type,
+      blade.length_mm
+    );
+  } catch (e) {
+    res.status(400).json({
+      message: e instanceof Error ? e.message : "Geçersiz ürün",
+      code: "BLADE_PRODUCT_MISMATCH",
+    });
+    return;
+  }
+
   const pricing = await computeBladeLine(req.scope, { ...blade, quantity });
   if (!pricing) {
     res.status(404).json({
@@ -85,7 +105,9 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
       result,
     });
   } catch (e) {
-    const msg = e instanceof Error ? e.message : String(e);
-    res.status(500).json({ message: "addToCartWorkflow failed", error: msg });
+    req.scope
+      .resolve("logger")
+      .error(`[blade-price/cart-add] ${e instanceof Error ? e.message : String(e)}`);
+    res.status(500).json({ message: "Ürün sepete eklenemedi." });
   }
 }
