@@ -110,8 +110,12 @@ export async function getProductByHandle(
     const res = await medusa.store.product.list(query);
     return ((res.products?.[0] as StoreProduct) || null) ?? null;
   } catch (e) {
+    // Hata ≠ "ürün yok". Eskiden null dönüyordu → sayfa notFound() verip 404'ü
+    // ISR ile önbelleğe alıyordu (deploy sırasında backend kısa süre kapalıyken
+    // amiral ürün sayfası 404 olarak cache'lendi). Fırlatınca sayfa 500 verir;
+    // Next hatalı sonucu önbelleğe almaz, sonraki istek yeniden dener.
     console.error(`[medusa] getProductByHandle(${handle}) failed`, e);
-    return null;
+    throw e;
   }
 }
 
@@ -128,8 +132,11 @@ export async function getProductById(
     });
     return (res.product as StoreProduct) || null;
   } catch (e) {
+    // Bilinmeyen ID → Medusa 404 → gerçekten "yok". Diğer hatalar fırlatılır
+    // (bkz. getProductByHandle — hata 404 olarak önbelleğe alınmasın).
+    if ((e as { status?: number })?.status === 404) return null;
     console.error(`[medusa] getProductById(${id}) failed`, e);
-    return null;
+    throw e;
   }
 }
 
