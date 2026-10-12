@@ -88,6 +88,10 @@ services:
       - "traefik.http.routers.testere-api.entrypoints=websecure"
       - "traefik.http.routers.testere-api.tls.certResolver=letsencrypt"
       - "traefik.http.services.testere-api.loadbalancer.server.port=9000"
+      # http://panel… → https (301). Middleware storefront servisinde tanımlı.
+      - "traefik.http.routers.testere-api-http.rule=Host(`${API_DOMAIN}`)"
+      - "traefik.http.routers.testere-api-http.entrypoints=web"
+      - "traefik.http.routers.testere-api-http.middlewares=testere-to-https"
 
   storefront:
     build:
@@ -126,6 +130,34 @@ services:
       - "traefik.http.routers.testere-web.entrypoints=websecure"
       - "traefik.http.routers.testere-web.tls.certResolver=letsencrypt"
       - "traefik.http.services.testere-web.loadbalancer.server.port=3000"
+      # ── Yönlendirmeler (hepsi 301 — SEO sinyali yeni adrese aktarılır) ──────
+      # http:// → https:// (apex + www). Eskiden http 404 veriyordu.
+      - "traefik.http.middlewares.testere-to-https.redirectscheme.scheme=https"
+      - "traefik.http.middlewares.testere-to-https.redirectscheme.permanent=true"
+      - "traefik.http.routers.testere-web-http.rule=Host(`${DOMAIN}`) || Host(`www.${DOMAIN}`)"
+      - "traefik.http.routers.testere-web-http.entrypoints=web"
+      - "traefik.http.routers.testere-web-http.middlewares=testere-to-https"
+      # https://www.<domain> → https://<domain>. www için DNS A kaydı gerekir;
+      # kayıt yokken bu router sertifika alamaz ama apex'i etkilemez.
+      - "traefik.http.middlewares.testere-www-to-apex.redirectregex.regex=^https?://www\\.(.+)"
+      - "traefik.http.middlewares.testere-www-to-apex.redirectregex.replacement=https://$${1}"
+      - "traefik.http.middlewares.testere-www-to-apex.redirectregex.permanent=true"
+      - "traefik.http.routers.testere-www.rule=Host(`www.${DOMAIN}`)"
+      - "traefik.http.routers.testere-www.entrypoints=websecure"
+      - "traefik.http.routers.testere-www.tls.certResolver=letsencrypt"
+      - "traefik.http.routers.testere-www.middlewares=testere-www-to-apex"
+      # Eski alan adı (OLD_DOMAIN, varsayılan ecommercore.com) → yeni alan adı,
+      # yol korunarak: ecommercore.com/products/x → testerestore.com/products/x
+      - "traefik.http.middlewares.testere-old-to-new.redirectregex.regex=^https?://(www\\.)?[^/]+/?(.*)"
+      - "traefik.http.middlewares.testere-old-to-new.redirectregex.replacement=https://${DOMAIN}/$${2}"
+      - "traefik.http.middlewares.testere-old-to-new.redirectregex.permanent=true"
+      - "traefik.http.routers.testere-old.rule=Host(`${OLD_DOMAIN:-ecommercore.com}`) || Host(`www.${OLD_DOMAIN:-ecommercore.com}`)"
+      - "traefik.http.routers.testere-old.entrypoints=websecure"
+      - "traefik.http.routers.testere-old.tls.certResolver=letsencrypt"
+      - "traefik.http.routers.testere-old.middlewares=testere-old-to-new"
+      - "traefik.http.routers.testere-old-http.rule=Host(`${OLD_DOMAIN:-ecommercore.com}`) || Host(`www.${OLD_DOMAIN:-ecommercore.com}`)"
+      - "traefik.http.routers.testere-old-http.entrypoints=web"
+      - "traefik.http.routers.testere-old-http.middlewares=testere-old-to-new"
 
   # ── Şerit Testere Danışmanı (Rules Engine + RAG) ────────────────────────
   # Mevcut servislerin hiçbirine dokunulmadı; bu tamamen eklenti.
