@@ -7,12 +7,17 @@ import { listBlogPosts } from "../../lib/medusa/services/blog";
 import { ArrowRight, Calendar, User } from "lucide-react";
 import { pageMetadata } from "../../lib/seo";
 
-export const metadata: Metadata = pageMetadata({
-  title: "Blog",
-  description:
-    "Şerit testere seçimi, kullanım ipuçları, sektör haberleri ve teknik makaleler.",
-  path: "/blog",
-});
+export async function generateMetadata(): Promise<Metadata> {
+  const base = pageMetadata({
+    title: "Blog",
+    description:
+      "Şerit testere seçimi, kullanım ipuçları, sektör haberleri ve teknik makaleler.",
+    path: "/blog",
+  });
+  // Yazı yokken boş sayfa indekslenmesin (ince içerik); teknik içerik /rehber altında.
+  const posts = await listBlogPosts(1);
+  return posts.length ? base : { ...base, robots: { index: false, follow: true } };
+}
 
 // ISR: sayfa statik render edilir, 5 dakikada bir arka planda yenilenir.
 export const revalidate = 300;
@@ -41,7 +46,11 @@ export default async function BlogIndexPage() {
           {posts.length === 0 ? (
             <div className="text-center py-20 rounded-2xl border border-dashed border-border bg-metallic-card p-10">
               <p className="text-sm text-muted-foreground">
-                Henüz yayınlanmış blog yazısı yok. Yakında!
+                Henüz yayınlanmış blog yazısı yok. Teknik konular için{" "}
+                <Link href="/rehber" className="font-semibold text-accent hover:underline">
+                  şerit testere rehberimize
+                </Link>{" "}
+                göz atın.
               </p>
             </div>
           ) : (

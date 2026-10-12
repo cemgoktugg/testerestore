@@ -75,6 +75,31 @@ export async function listProducts(
   }
 }
 
+/**
+ * Sitemap / llms için hafif liste: fiyat ve varyant yok, güncelleme tarihi
+ * ve görseller var. Hata fırlatır (sessizce boş dönmez) — çağıran karar versin.
+ */
+export async function listProductsForSitemap(): Promise<
+  Array<{ handle: string; title: string; updated_at?: string; thumbnail?: string | null; images?: { url: string }[] }>
+> {
+  if (!MEDUSA_READY) return [];
+  const res = await medusa.store.product.list({
+    fields: "handle,title,updated_at,thumbnail,*images",
+    limit: 200,
+  });
+  return res.products as Array<{ handle: string; title: string; updated_at?: string; thumbnail?: string | null; images?: { url: string }[] }>;
+}
+
+/** llms.txt / llms-full.txt için: fiyatsız, içerik alanları dahil. Hata fırlatır. */
+export async function listProductsForLlms(): Promise<StoreProduct[]> {
+  if (!MEDUSA_READY) return [];
+  const res = await medusa.store.product.list({
+    fields: "handle,title,subtitle,description,metadata,*categories",
+    limit: 200,
+  });
+  return res.products as StoreProduct[];
+}
+
 /** Fetch a single product by handle (preferred for SEO-friendly URLs). */
 export async function getProductByHandle(
   handle: string

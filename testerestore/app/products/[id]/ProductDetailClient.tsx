@@ -461,7 +461,7 @@ export default function ProductDetailClient({
                                   : 'border-white/15 opacity-60 hover:opacity-100'
                               }`}
                             >
-                              <Image src={img} alt="" fill className="object-cover" sizes="48px" />
+                              <Image src={img} alt={`${product.name} – küçük görsel ${i + 1}`} fill className="object-cover" sizes="48px" />
                             </button>
                           ))}
                         </div>

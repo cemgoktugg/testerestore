@@ -23,3 +23,12 @@ export function resolveLegacyCategoryHref(href: string | undefined | null): stri
     return href;
   }
 }
+
+/** Ana kategori sayfaları (JSON-LD katalog, menü vb. için hafif liste). */
+export const CATEGORY_NAV: ReadonlyArray<{ slug: string; name: string }> = [
+  { slug: 'bi-metal-serit-testere', name: 'Bi-Metal Şerit Testere Bıçakları' },
+  { slug: 'karbur-uclu-serit-testere', name: 'Karbür Uçlu Şerit Testereler' },
+  { slug: 'ahsap-serit-testere', name: 'Ahşap Kesim Şerit Testereleri' },
+  { slug: 'et-kemik-serit-testere', name: 'Et ve Kemik Kesim Şerit Testereleri' },
+  { slug: 'sunger-tekstil-serit-testere', name: 'Sünger ve Tekstil Kesim Şerit Bıçakları' },
+];

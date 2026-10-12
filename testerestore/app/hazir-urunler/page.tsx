@@ -3,7 +3,8 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import HazirUrunlerClient from './HazirUrunlerClient';
 import { listReadyMade } from '../../lib/medusa/services/products';
-import { pageMetadata } from '../../lib/seo';
+import { pageMetadata, canonicalUrl } from '../../lib/seo';
+import { JsonLd } from '../components/StructuredData';
 
 // SSR + ISR: hazır boy listesi sunucuda çekilir → ilk HTML dolu, SEO dostu.
 export const revalidate = 300;
@@ -45,6 +46,26 @@ export default async function HazirUrunlerPage() {
         <HazirUrunlerClient initialReadyMade={readyMade} />
       </main>
       <Footer />
+      <JsonLd
+        data={{
+          '@context': 'https://schema.org',
+          '@type': 'CollectionPage',
+          '@id': `${canonicalUrl('/hazir-urunler')}#page`,
+          url: canonicalUrl('/hazir-urunler'),
+          name: 'Hazır Boy Şerit Testere',
+          inLanguage: 'tr-TR',
+          mainEntity: {
+            '@type': 'ItemList',
+            numberOfItems: readyMade.length,
+            itemListElement: readyMade.map((p, i) => ({
+              '@type': 'ListItem',
+              position: i + 1,
+              url: canonicalUrl(`/products/${p.handle || p.id}`),
+              name: p.title,
+            })),
+          },
+        }}
+      />
     </>
   );
 }

@@ -17,6 +17,7 @@ import {
   categoryHref,
 } from '../../../lib/category-pages';
 import type { StoreProduct } from '../../../lib/medusa/types';
+import { GUIDES, GUIDES_BY_CATEGORY } from '../../../lib/guides';
 
 /**
  * Kategori landing sayfası — tamamen sunucuda render edilir (SSR/ISR): H1,
@@ -59,6 +60,9 @@ export default async function CategoryPage({ params }: PageProps) {
   const products = await productsFor(page.handles);
   const url = canonicalUrl(categoryHref(page));
   const related = CATEGORY_PAGES.filter((c) => c.slug !== page.slug);
+  const relatedGuides = (GUIDES_BY_CATEGORY[page.slug] || [])
+    .map((s) => GUIDES.find((g) => g.slug === s))
+    .filter((g): g is (typeof GUIDES)[number] => !!g);
 
   return (
     <>
@@ -151,6 +155,25 @@ export default async function CategoryPage({ params }: PageProps) {
               </div>
             </section>
           </div>
+
+          {relatedGuides.length > 0 && (
+            <section aria-labelledby="rehberler" className="mt-14">
+              <h2 id="rehberler" className="text-lg font-bold text-foreground mb-4">İlgili rehberler</h2>
+              <ul className="grid gap-3 md:grid-cols-3">
+                {relatedGuides.map((g) => (
+                  <li key={g.slug}>
+                    <Link
+                      href={`/rehber/${g.slug}`}
+                      className="block h-full rounded-xl border border-border p-4 hover:border-accent/50"
+                    >
+                      <span className="block text-sm font-semibold text-foreground">{g.h1}</span>
+                      <span className="mt-1 block text-xs text-muted-foreground">{g.summary}</span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
 
           {/* Diğer kategoriler (iç linkleme) */}
           <nav aria-label="Diğer kategoriler" className="mt-14 border-t border-border pt-8">

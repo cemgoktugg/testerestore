@@ -188,6 +188,16 @@ export default function Footer() {
               </Link>
             </li>
             <li>
+              <Link href="/rehber" className="font-semibold text-muted-foreground hover:text-primary">
+                Şerit Testere Rehberi
+              </Link>
+            </li>
+            <li>
+              <Link href="/hakkimizda" className="font-semibold text-muted-foreground hover:text-primary">
+                Hakkımızda
+              </Link>
+            </li>
+            <li>
               <Link href="/iletisim" className="font-semibold text-muted-foreground hover:text-primary">
                 İletişim Formu
               </Link>

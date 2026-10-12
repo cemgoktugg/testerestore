@@ -1,23 +1,39 @@
 import React from "react";
-import type { StoreProduct } from "../../lib/medusa/types";
+import { companyInfo } from "../../lib/company-info";
+import { siteContent } from "../../lib/content-config";
+import { CATEGORY_NAV } from "../../lib/category-links";
 
 const SITE_URL = (
   process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3001"
 ).replace(/\/$/, "");
 
+// Şirket künyesi TEK KAYNAKTAN (lib/company-info.ts) okunur.
 const COMPANY = {
-  name: "Testere Store",
-  legalName: "Testere Store Ticaret Ltd. Şti.",
+  name: companyInfo.brand,
+  legalName: companyInfo.legalName,
   url: SITE_URL,
   logo: `${SITE_URL}/images/logo.png`,
-  email: "destek@testerestore.com",
-  phone: "+90-212-555-10-20",
-  street: "İkitelli O.S.B. Metal İş Sanayi Sitesi, 14. Blok No: 45",
-  district: "Başakşehir",
-  city: "İstanbul",
-  country: "TR",
-  postalCode: "34490",
+  email: companyInfo.email,
+  phone: companyInfo.phone,
+  street: companyInfo.streetAddress,
+  district: companyInfo.district,
+  city: companyInfo.city,
+  country: companyInfo.country,
+  postalCode: companyInfo.postalCode,
 };
+
+/** AI asistanları ve arama motorları için markanın uzmanlık alanları. */
+const KNOWS_ABOUT = [
+  'Şerit testere',
+  'Şerit testere bıçağı',
+  'Bi-metal şerit testere (M42, M51)',
+  'Karbür uçlu (TCT) şerit testere',
+  'Ahşap şerit testere',
+  'Et ve kemik şerit testere',
+  'Sünger ve tekstil kesim bıçağı',
+  'Şerit testere diş adımı (TPI) seçimi',
+  'Şerit testere alın kaynağı',
+];
 
 /**
  * Tek bir <script type="application/ld+json"> render eder. Çocuk olarak
@@ -48,9 +64,30 @@ export function OrganizationJsonLd() {
             name: COMPANY.name,
             legalName: COMPANY.legalName,
             url: COMPANY.url,
-            logo: COMPANY.logo,
+            logo: { "@type": "ImageObject", url: COMPANY.logo, width: 512, height: 512 },
+            description: siteContent.seo.defaultDescription,
             email: COMPANY.email,
             telephone: COMPANY.phone,
+            knowsAbout: KNOWS_ABOUT,
+            areaServed: { "@type": "Country", name: "Türkiye" },
+            ...(companyInfo.socialProfiles.length && { sameAs: companyInfo.socialProfiles }),
+            contactPoint: {
+              "@type": "ContactPoint",
+              contactType: "customer service",
+              email: COMPANY.email,
+              telephone: COMPANY.phone,
+              areaServed: "TR",
+              availableLanguage: ["Turkish"],
+            },
+            hasOfferCatalog: {
+              "@type": "OfferCatalog",
+              name: "Şerit testere bıçakları",
+              itemListElement: CATEGORY_NAV.map((c) => ({
+                "@type": "OfferCatalog",
+                name: c.name,
+                url: `${SITE_URL}/kategori/${c.slug}`,
+              })),
+            },
             address: {
               "@type": "PostalAddress",
               streetAddress: COMPANY.street,
@@ -65,6 +102,7 @@ export function OrganizationJsonLd() {
             "@id": `${SITE_URL}#website`,
             url: COMPANY.url,
             name: COMPANY.name,
+            inLanguage: "tr-TR",
             publisher: { "@id": `${SITE_URL}#organization` },
             potentialAction: {
               "@type": "SearchAction",
@@ -109,69 +147,6 @@ export function OrganizationJsonLd() {
       }}
     />
   );
-}
-
-interface ProductJsonLdProps {
-  product: StoreProduct;
-  /** İlgili AggregateRating zaten yorum bölümünde varsa true ver. */
-  hasReviewsBlock?: boolean;
-}
-
-/** Ürün detayı için Schema.org Product. */
-export function ProductJsonLd({ product, hasReviewsBlock }: ProductJsonLdProps) {
-  const v = product.variants?.[0];
-  const minPrice =
-    product.variants
-      ?.map((va) => va.calculated_price?.calculated_amount)
-      .filter((x): x is number => typeof x === "number" && x > 0)
-      .reduce((min, p) => (p < min ? p : min), Infinity) ?? null;
-  const price = Number.isFinite(minPrice) ? minPrice : null;
-  const currency = (
-    v?.calculated_price?.currency_code || "try"
-  ).toUpperCase();
-  const url = `${SITE_URL}/products/${product.handle || product.id}`;
-  const image =
-    product.thumbnail ||
-    product.images?.[0]?.url ||
-    `${SITE_URL}/images/bimetal_blade.png`;
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const inv = (v as any)?.inventory_quantity;
-  const inStock =
-    typeof inv === "number"
-      ? inv > 0
-      : true; // bilinmiyorsa stokta varsay
-
-  const data: Record<string, unknown> = {
-    "@context": "https://schema.org",
-    "@type": "Product",
-    name: product.title,
-    description: product.subtitle || product.description || undefined,
-    image: typeof image === "string" ? image : undefined,
-    sku: v?.sku || product.handle,
-    brand: { "@type": "Brand", name: "Testere Store" },
-    url,
-  };
-
-  if (typeof price === "number" && price > 0) {
-    data.offers = {
-      "@type": "Offer",
-      url,
-      priceCurrency: currency,
-      price: price.toFixed(2),
-      availability: inStock
-        ? "https://schema.org/InStock"
-        : "https://schema.org/OutOfStock",
-      itemCondition: "https://schema.org/NewCondition",
-      seller: { "@type": "Organization", name: "Testere Store" },
-    };
-  }
-
-  // AggregateRating ayrıca yorum bölümünden basılıyor (ProductReviews).
-  // hasReviewsBlock=true ise burada tekrar basmıyoruz, çift sayım olmasın.
-  void hasReviewsBlock;
-
-  return <JsonLd data={data} />;
 }
 
 interface BreadcrumbItem {

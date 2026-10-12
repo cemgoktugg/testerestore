@@ -143,6 +143,7 @@ export const siteContent: SiteContent = {
     defaultTitle: "Testere Store — Premium Şerit Testereler ve Bıçaklar",
     defaultDescription:
       "Bi-metal M42/M51, karbür uçlu, ahşap ve et-kemik şerit testere bıçakları. İstediğiniz ölçüde kaynaklı özel boy veya stoktan hazır boy, online sipariş.",
-    ogImage: "/images/hero_bandsaw.png",
+    // 1200×630 marka görseli (public/og.jpg, ~90 KB). Eskisi 842 KB kare PNG idi.
+    ogImage: "/og.jpg",
   },
 };

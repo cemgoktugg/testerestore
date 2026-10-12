@@ -6,6 +6,7 @@ import HeroSlider from './components/HeroSlider';
 import PremiumCatalog from './components/PremiumCatalog';
 import HazirBoySection from './components/HazirBoySection';
 import BestSellersSlider from './components/BestSellersSlider';
+import HomeDiscovery from './components/HomeDiscovery';
 import { listHeroSlides } from '../lib/medusa/services/hero-slides';
 import { listBestSellers, listProducts, listReadyMade } from '../lib/medusa/services/products';
 import { listCategories } from '../lib/medusa/services/categories';
@@ -48,6 +49,9 @@ export default async function Home() {
 
         {/* Best Sellers — Horizontal Slider */}
         <BestSellersSlider initialBestSellers={bestSellers.map(slimProductForCard)} />
+
+        {/* Kategori ve rehber sayfalarına SSR iç link */}
+        <HomeDiscovery />
 
         {/* Quick Parametric Calculator CTA Callout */}
         <section className="py-20 border-t border-border bg-chrome relative overflow-hidden">

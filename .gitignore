@@ -42,3 +42,6 @@ Thumbs.db
 
 # ── Yerel araç ayarları ──
 .claude/
+
+# Canlı veri yedekleri (sipariş/müşteri bilgisi içerebilir — repo PUBLIC, asla commit etme)
+docs/yedekler/

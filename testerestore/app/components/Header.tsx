@@ -26,6 +26,7 @@ export default function Header() {
     { name: 'Karbür Uçlu', href: '/kategori/karbur-uclu-serit-testere' },
     { name: 'Sünger & Tekstil', href: '/kategori/sunger-tekstil-serit-testere' },
     { name: 'Hazır Boy', href: '/hazir-urunler' },
+    { name: 'Rehber', href: '/rehber' },
     { name: 'İletişim', href: '/iletisim' },
   ];
 

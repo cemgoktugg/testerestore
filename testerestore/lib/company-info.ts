@@ -11,7 +11,17 @@ export const companyInfo = {
   mersisNumber: "0000000000000000",
   address:
     "İkitelli O.S.B. Metal İş Sanayi Sitesi, 14. Blok No: 45, Başakşehir / İstanbul",
+  // JSON-LD (Organization / LocalBusiness) için yapısal adres alanları
+  streetAddress: "İkitelli O.S.B. Metal İş Sanayi Sitesi, 14. Blok No: 45",
+  district: "Başakşehir",
+  city: "İstanbul",
+  postalCode: "34490",
+  country: "TR",
   phone: "+90 (212) 555 10 20",
+  // Resmî sosyal medya / pazar yeri profilleri (Instagram, LinkedIn, YouTube,
+  // Google İşletme Profili…). JSON-LD sameAs'a girer; AI asistanları ve Google
+  // markayı bu profillerle eşleştirir. Hesap açıldıkça tam URL ekleyin.
+  socialProfiles: [] as string[],
   email: "destek@testerestore.com",
   kvkkEmail: "kvkk@testerestore.com",
   // www için DNS kaydı yok → sözleşmeler apex alan adını göstermeli.

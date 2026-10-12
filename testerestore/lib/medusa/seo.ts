@@ -46,7 +46,11 @@ export async function buildProductMetadata(
   // Kök layout'un şablonu "%s | <site adı>" ekler. Admin'deki seo_title marka
   // içeriyorsa şablon atlanır (absolute), yoksa marka şablondan gelir. Eskiden
   // burada da "— Testere Store" eklendiği için başlıkta marka iki kez çıkıyordu.
-  const rawTitle = meta.seo_title || product.title;
+  // Hazır ürünlerin seo_title'ı alt sistem tarafından uzun üretiliyor (90+ karakter,
+  // Google ~60'ta keser) → 60'ı aşıyorsa kısa ölçü başlığı kullanılır.
+  const adminTitle =
+    meta.seo_title && !(isReadyMade(product) && meta.seo_title.length > 60) ? meta.seo_title : null;
+  const rawTitle = adminTitle || readyMadeShortTitle(product) || product.title;
   const hasBrand = BRAND_RE.test(rawTitle);
   const title: Metadata["title"] = hasBrand ? { absolute: rawTitle } : rawTitle;
   const ogTitle = hasBrand ? rawTitle : `${rawTitle} | ${siteName}`;
@@ -83,6 +87,17 @@ export async function buildProductMetadata(
       ...(seo.twitter_handle && { creator: seo.twitter_handle }),
     },
   };
+}
+
+/** Hazır boy ürün için ~50 karakterlik başlık: "M51 Hazır Şerit Testere 27×0,9 2/3 TPI 1660 mm". */
+function readyMadeShortTitle(product: StoreProduct): string | null {
+  if (!isReadyMade(product)) return null;
+  const m = (product.metadata || {}) as Record<string, unknown>;
+  const grade = /m51/i.test(product.title || '') ? 'M51' : /m42/i.test(product.title || '') ? 'M42' : 'Bi-Metal';
+  const tr = (v: unknown) => String(v).replace('.', ',');
+  if (!m.width_mm || !m.thickness_mm || !m.length_mm) return null;
+  const tooth = m.tooth_pitch ? ` ${tr(m.tooth_pitch)} TPI` : '';
+  return `${grade} Hazır Şerit Testere ${tr(m.width_mm)}×${tr(m.thickness_mm)}${tooth} ${m.length_mm} mm`;
 }
 
 function absoluteUrl(u: string): string {
@@ -153,6 +168,35 @@ export function buildProductJsonLd(
     }
   }
 
+  // Teknik özellikler yapısal veri olarak: AI asistanları ve Google ölçüleri
+  // metinden çıkarmak zorunda kalmaz (ürün sayfasındaki tabloyla aynı kaynak).
+  const meta = (product.metadata || {}) as Record<string, unknown>;
+  const specs = Array.isArray(meta.technical_specs)
+    ? (meta.technical_specs as Array<{ label?: string; value?: string }>).filter((x) => x?.label && x?.value)
+    : [];
+  const additionalProperty: Record<string, unknown>[] = specs.map((x) => ({
+    '@type': 'PropertyValue',
+    name: x.label,
+    value: x.value,
+  }));
+  if (isReadyMade(product)) {
+    const dims: [string, unknown, string][] = [
+      ['Genişlik', meta.width_mm, 'mm'],
+      ['Kalınlık', meta.thickness_mm, 'mm'],
+      ['Boy', meta.length_mm, 'mm'],
+    ];
+    for (const [name, v, unit] of dims) {
+      if (typeof v === 'number') additionalProperty.push({ '@type': 'PropertyValue', name, value: v, unitText: unit });
+    }
+    if (meta.tooth_pitch) additionalProperty.push({ '@type': 'PropertyValue', name: 'Diş adımı (TPI)', value: String(meta.tooth_pitch) });
+  } else {
+    const range = meta.min_length_mm && meta.max_length_mm ? `${meta.min_length_mm}–${meta.max_length_mm} mm` : null;
+    if (range) additionalProperty.push({ '@type': 'PropertyValue', name: 'Sipariş edilebilir boy', value: range });
+    const pitches = Array.isArray(meta.tooth_pitch) ? (meta.tooth_pitch as string[]) : [];
+    if (pitches.length) additionalProperty.push({ '@type': 'PropertyValue', name: 'Diş adımı seçenekleri (TPI)', value: pitches.join(', ') });
+  }
+  const material = typeof meta.blade_type === 'string' && meta.blade_type !== 'bi-metal' ? meta.blade_type : undefined;
+
   const stats = reviewData?.stats;
   const approved = (reviewData?.reviews || []).filter((r) => r.is_approved !== false);
   const hasReviews = !!stats && stats.count > 0 && approved.length > 0;
@@ -170,6 +214,8 @@ export function buildProductJsonLd(
       : product.handle || product.id,
     brand: { "@type": "Brand", name: siteName },
     ...(product.categories?.[0]?.name && { category: product.categories[0].name }),
+    ...(material && { material }),
+    ...(additionalProperty.length && { additionalProperty }),
     ...(offers && { offers }),
     ...(hasReviews && {
       aggregateRating: {
