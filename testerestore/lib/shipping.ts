@@ -1,38 +1,53 @@
 /**
- * Shipping rules — single source of truth for the storefront.
+ * Kargo kuralları — storefront için tek kaynak.
  *
- * Mirrors the backend. Asıl kural Medusa'da: "Standart Kargo" seçeneğinin
- * koşullu fiyatı (price rule `item_total >= 2400` — item_total KDV DAHİL;
- * KDV %20 ile 2.400 KDV dahil = 2.000 KDV hariç). Buradaki değerler yalnızca
- * gösterim (sepet ilerleme çubuğu, kargo seçenekleri gelmeden önceki özet)
- * içindir; eşik değişirse ikisi birlikte güncellenmeli.
- *   - item subtotal (KDV-exclusive) >= 2000 TL  ->  free shipping
- *   - below 2000 TL                              ->  79.90 TL flat fee
+ * KURAL: ürün toplamı KDV DAHİL 2.000 TL ve üzeri → standart kargo ücretsiz;
+ * altında 79,90 TL + KDV.
  *
- * KDV (20%) is charged on items + shipping, exactly as Medusa computes it, so
- * the summary shown here equals the amount charged at checkout.
+ * Asıl kural Medusa'da: "Standart Kargo" seçeneğinin koşullu fiyatı (price
+ * rule `item_total >= 2000`; item_total KDV dahil ürün toplamıdır). Buradaki
+ * değerler yalnızca gösterim içindir (sepet ilerleme çubuğu, kargo seçenekleri
+ * gelmeden önceki özet); eşik değişirse ikisi birlikte güncellenmeli
+ * (backend: src/lib/auto-shipping.ts).
+ *
+ * Fonksiyonlar sepetteki KDV HARİÇ ara toplamı alır (sepet öyle tutuluyor) ve
+ * eşikle karşılaştırmak için KDV'yi ekler. KDV (%20) ürün + kargo üzerinden
+ * Medusa'nın hesapladığı gibi uygulanır; özet ödeme tutarıyla aynıdır.
  */
+/** Ücretsiz kargo eşiği — KDV DAHİL ürün toplamı. */
 export const FREE_SHIPPING_THRESHOLD = 2000;
+/** Standart kargo ücreti — KDV hariç. */
 export const STANDARD_SHIPPING_FEE = 79.9;
 export const KDV_RATE = 0.2;
 
 const round2 = (n: number) => Math.round(n * 100) / 100;
 
-/** Shipping base fee (KDV-exclusive) for a given item subtotal. */
-export function shippingFeeFor(itemSubtotal: number): number {
-  if (itemSubtotal <= 0) return 0;
-  return itemSubtotal >= FREE_SHIPPING_THRESHOLD ? 0 : STANDARD_SHIPPING_FEE;
+/** KDV hariç ara toplamın KDV dahil karşılığı. */
+export function withKdv(itemSubtotal: number): number {
+  return round2(itemSubtotal * (1 + KDV_RATE));
 }
 
 /** True once the cart qualifies for free shipping. */
 export function qualifiesForFreeShipping(itemSubtotal: number): boolean {
-  return itemSubtotal >= FREE_SHIPPING_THRESHOLD;
+  return itemSubtotal > 0 && withKdv(itemSubtotal) >= FREE_SHIPPING_THRESHOLD;
 }
 
-/** How much more (KDV-exclusive) is needed to reach free shipping. */
+/** Shipping base fee (KDV-exclusive) for a given item subtotal. */
+export function shippingFeeFor(itemSubtotal: number): number {
+  if (itemSubtotal <= 0) return 0;
+  return qualifiesForFreeShipping(itemSubtotal) ? 0 : STANDARD_SHIPPING_FEE;
+}
+
+/** Ücretsiz kargoya kalan tutar — KDV DAHİL (eşikle aynı birimde). */
 export function amountToFreeShipping(itemSubtotal: number): number {
   if (itemSubtotal <= 0) return FREE_SHIPPING_THRESHOLD;
-  return Math.max(0, FREE_SHIPPING_THRESHOLD - itemSubtotal);
+  return Math.max(0, round2(FREE_SHIPPING_THRESHOLD - withKdv(itemSubtotal)));
+}
+
+/** Ücretsiz kargoya ilerleme yüzdesi (0–100). */
+export function freeShippingProgress(itemSubtotal: number): number {
+  if (itemSubtotal <= 0) return 0;
+  return Math.min(100, Math.round((withKdv(itemSubtotal) / FREE_SHIPPING_THRESHOLD) * 100));
 }
 
 export interface OrderSummary {

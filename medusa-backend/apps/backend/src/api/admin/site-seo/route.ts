@@ -16,7 +16,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
           "Testere Store — Endüstriyel Şerit Testere ve Bıçaklar",
         title_template: "%s | Testere Store",
         default_description:
-          "Türkiye'nin lider şerit testere ve şerit testere bıçağı satış platformu. Bi-metal, karbür uçlu, ahşap kesim ve özel boy kaynaklı çözümler.",
+          "Bi-metal, karbür uçlu, ahşap kesim ve et-kemik şerit testere bıçakları. İstediğiniz ölçüde kaynaklı üretim ve stoktan hazır boy ürünler.",
         default_keywords:
           "şerit testere, bi-metal şerit testere, karbür uçlu testere, ahşap kesim, endüstriyel kesim",
         robots_default: "index, follow",

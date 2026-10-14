@@ -32,8 +32,8 @@ const ITEMS = [
   },
   {
     icon: Truck,
-    title: "Aynı Gün Kargo",
-    desc: "14:00'a kadar siparişler",
+    title: "Ücretsiz Kargo",
+    desc: "KDV dahil 2.000 TL ve üzeri",
   },
   {
     icon: RotateCcw,

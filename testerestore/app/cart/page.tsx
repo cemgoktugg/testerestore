@@ -14,6 +14,7 @@ import {
   summarizeOrder,
   amountToFreeShipping,
   qualifiesForFreeShipping,
+  freeShippingProgress,
   FREE_SHIPPING_THRESHOLD,
 } from '../../lib/shipping';
 import CrossSell from '../components/CrossSell';
@@ -98,10 +99,7 @@ export default function CartPage() {
   const grandTotal = summary.total;
   const freeShipping = qualifiesForFreeShipping(subTotal);
   const remainingForFree = amountToFreeShipping(subTotal);
-  const freeProgress = Math.min(
-    100,
-    Math.round((subTotal / FREE_SHIPPING_THRESHOLD) * 100)
-  );
+  const freeProgress = freeShippingProgress(subTotal);
 
   if (loading && cart.length === 0) {
     return (
@@ -269,7 +267,9 @@ export default function CartPage() {
               </div>
 
               <div className="lg:col-span-4 space-y-4">
-                {/* Aciliyet rozetleri */}
+                {/* Güven rozetleri — yalnızca doğru, bağlayıcı olabilecek ifadeler.
+                    Eskiden "14 gün koşulsuz iade" (kişiye özel ölçüde cayma hakkı
+                    yoktur) ve sahte aciliyet ("Stoktaki son ürünleriniz") vardı. */}
                 <div className="rounded-xl bg-gradient-to-br from-emerald-500/10 to-blue-500/10 border border-emerald-500/30 p-3 space-y-1.5">
                   <div className="flex items-center gap-2 text-xs font-bold text-emerald-700 dark:text-emerald-400">
                     <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
@@ -277,11 +277,11 @@ export default function CartPage() {
                   </div>
                   <div className="flex items-center gap-2 text-xs font-bold text-blue-700 dark:text-blue-400">
                     <span className="h-1.5 w-1.5 rounded-full bg-blue-500" />
-                    14 gün koşulsuz iade hakkı
+                    Hazır boy ürünlerde 14 gün cayma hakkı
                   </div>
                   <div className="flex items-center gap-2 text-xs font-bold text-orange-700 dark:text-orange-400">
                     <span className="h-1.5 w-1.5 rounded-full bg-orange-500" />
-                    Stoktaki son ürünleriniz hazır
+                    iyzico ile 3D Secure güvenli ödeme
                   </div>
                 </div>
 
@@ -326,7 +326,9 @@ export default function CartPage() {
                         <p className="text-[11px] text-primary/95 leading-snug">
                           Ücretsiz kargoya{' '}
                           <strong>{formatMoney(remainingForFree, currency)}</strong>{' '}
-                          kaldı! Sepetinize bu tutarda ürün daha ekleyin, kargo bizden.
+                          (KDV dahil) kaldı! KDV dahil{' '}
+                          {formatMoney(FREE_SHIPPING_THRESHOLD, currency)} ve üzeri
+                          siparişlerde kargo bizden.
                         </p>
                         <div className="h-1.5 w-full rounded-full bg-primary/10 overflow-hidden">
                           <div

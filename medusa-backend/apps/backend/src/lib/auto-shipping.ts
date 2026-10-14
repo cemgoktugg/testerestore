@@ -1,9 +1,10 @@
 /**
  * Sunucu-güvenli kargo seçimi — TEK KAYNAK.
  *
- * Ücretsiz kargo artık AYRI bir seçenek değil, "Standart Kargo"nun koşullu
- * fiyatıdır (Medusa price rule: Türkiye bölgesi + `item_total >= 2400` → 0 TL;
- * item_total KDV DAHİL, KDV %20 ile 2.400 KDV dahil = 2.000 KDV hariç).
+ * KURAL: ürün toplamı KDV DAHİL 2.000 TL ve üzeri → standart kargo ücretsiz.
+ * Ücretsiz kargo AYRI bir seçenek değil, "Standart Kargo"nun koşullu
+ * fiyatıdır (Medusa price rule: Türkiye bölgesi + `item_total >= 2000` → 0 TL;
+ * item_total KDV dahil ürün toplamıdır).
  * Fiyatı her zaman Medusa hesaplar; müşteri seçeneği standart uç noktadan
  * (`POST /store/carts/:id/shipping-methods`) doğrudan seçse bile küçük sepette
  * 0 TL alamaz. Eskiden 0 TL'lik ayrı "Ücretsiz Kargo" seçeneği vardı ve
@@ -17,12 +18,19 @@ import { addShippingMethodToCartWorkflow } from "@medusajs/medusa/core-flows";
 import { Modules, ContainerRegistrationKeys } from "@medusajs/framework/utils";
 
 /**
- * Gösterim amaçlı eşik (ara toplam, KDV hariç) ve taban ücret. Asıl kural
- * Medusa'daki fiyat kuralıdır; değişirse storefront lib/shipping.ts ile
- * birlikte güncellenmeli.
+ * Gösterim amaçlı eşik (KDV DAHİL ürün toplamı) ve taban ücret (KDV hariç).
+ * Asıl kural Medusa'daki fiyat kuralıdır; değişirse storefront
+ * lib/shipping.ts ile birlikte güncellenmeli.
  */
 export const FREE_SHIPPING_THRESHOLD = 2000;
 export const STANDARD_SHIPPING_FEE = 79.9;
+const KDV_RATE = 0.2;
+
+/** Ücretsiz kargoya kalan tutar (KDV dahil), KDV hariç ara toplamdan. */
+export function remainingToFreeShipping(itemSubtotal: number): number {
+  const inclKdv = Math.round(itemSubtotal * (1 + KDV_RATE) * 100) / 100;
+  return Math.max(0, Math.round((FREE_SHIPPING_THRESHOLD - inclKdv) * 100) / 100);
+}
 const STANDARD_OPTION_NAME = "Standart Kargo";
 
 export type AutoShippingResult =

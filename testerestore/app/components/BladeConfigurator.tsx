@@ -19,6 +19,7 @@
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { ShoppingCart, Eye, Sparkles, AlertCircle } from 'lucide-react';
+import FreeShippingNote from './FreeShippingNote';
 import { useCart } from '../context/CartContext';
 import {
   buildOptionMatrix,
@@ -1084,6 +1085,7 @@ export default function BladeConfigurator({
             {addError}
           </p>
         )}
+        <FreeShippingNote className="mt-2" />
       </div>
     </div>
     </>

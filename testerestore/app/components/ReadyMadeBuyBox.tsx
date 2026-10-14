@@ -12,6 +12,7 @@
 
 import { useState } from 'react';
 import { PackageCheck, Truck, ShoppingCart, Sparkles, Ruler } from 'lucide-react';
+import FreeShippingNote from './FreeShippingNote';
 import { useCart } from '../context/CartContext';
 import { formatMoney } from '../../lib/medusa/format';
 import { mapReadyMadeCard } from '../../lib/ready-made';
@@ -224,6 +225,7 @@ export default function ReadyMadeBuyBox({ product, image, categoryLabel }: Props
           {addError}
         </p>
       )}
+      <FreeShippingNote />
     </div>
   );
 }

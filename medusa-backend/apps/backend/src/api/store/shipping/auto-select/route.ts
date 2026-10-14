@@ -3,6 +3,7 @@ import { z } from "zod";
 import {
   applyAutoShipping,
   FREE_SHIPPING_THRESHOLD,
+  remainingToFreeShipping,
   STANDARD_SHIPPING_FEE,
 } from "../../../../lib/auto-shipping";
 
@@ -39,9 +40,8 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     free: result.free,
     threshold: FREE_SHIPPING_THRESHOLD,
     item_subtotal: result.item_subtotal,
-    remaining: result.free
-      ? 0
-      : Math.max(0, FREE_SHIPPING_THRESHOLD - result.item_subtotal),
+    // KDV dahil (eşikle aynı birimde)
+    remaining: result.free ? 0 : remainingToFreeShipping(result.item_subtotal),
     shipping_option_id: result.shipping_option_id,
     shipping_fee: result.shipping_fee,
   });

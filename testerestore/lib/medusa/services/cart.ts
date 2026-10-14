@@ -398,7 +398,7 @@ export interface CartShippingOption {
 /**
  * Sepet için seçilebilir kargo seçenekleri ve SUNUCUDA hesaplanmış fiyatları.
  * Ücretsiz kargo eşiği "Standart Kargo"nun koşullu fiyatıdır (Medusa price rule:
- * item_total >= 2400 KDV dahil ≡ 2000 KDV hariç) — tarayıcı fiyata karar vermez.
+ * item_total >= 2000, KDV dahil ürün toplamı) — tarayıcı fiyata karar vermez.
  */
 export async function listShippingOptions(): Promise<CartShippingOption[]> {
   if (!MEDUSA_READY) return [];
@@ -478,11 +478,20 @@ export async function initializePayment(
 
 // ---------- Complete ----------
 
+/** Sipariş onay ekranı için özet (tam sipariş nesnesi değil). */
+export interface CompletedOrderSummary {
+  email?: string;
+  total: number;
+  currency: string;
+  items: { title: string; subtitle?: string; quantity: number; total: number }[];
+}
+
 export interface CompleteResult {
   type: "order" | "cart";
   orderId?: string;
   /** Müşteriye gösterilen sipariş numarası (#1, #2 …) */
   displayId?: number;
+  summary?: CompletedOrderSummary;
   cart?: StoreCart;
   error?: string;
 }
@@ -499,7 +508,24 @@ export async function completeCart(): Promise<CompleteResult> {
     if (r.type === "order") {
       // Order completed — clear stored cart id so a fresh cart starts next.
       clearStoredCartId();
-      return { type: "order", orderId: r.order?.id, displayId: r.order?.display_id };
+      const o = r.order || {};
+      return {
+        type: "order",
+        orderId: o.id,
+        displayId: o.display_id,
+        summary: {
+          email: o.email,
+          total: Number(o.total ?? 0),
+          currency: o.currency_code || "try",
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          items: (o.items || []).map((it: any) => ({
+            title: it.product_title || it.title,
+            subtitle: it.variant_title && it.variant_title !== "Default" ? it.variant_title : undefined,
+            quantity: Number(it.quantity ?? 1),
+            total: Number(it.total ?? 0),
+          })),
+        },
+      };
     }
     return { type: "cart", cart: r.cart, error: r.error?.message };
   } catch (e) {

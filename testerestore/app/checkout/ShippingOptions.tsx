@@ -26,6 +26,10 @@ export default function ShippingOptions({
   currency: string;
 }) {
   const remaining = amountToFreeShipping(itemSubtotal);
+  // İpucu yalnızca sunucu standart kargoyu gerçekten ücretli hesapladıysa
+  // gösterilir (tarayıcıdaki KDV yuvarlaması eşik sınırında sunucuyla
+  // çelişmesin).
+  const standardPaid = options.some((o) => o.typeCode === 'standard' && o.amount > 0);
 
   if (loading && !options.length) {
     return <p className="text-xs text-muted-foreground">Kargo seçenekleri yükleniyor…</p>;
@@ -74,10 +78,11 @@ export default function ShippingOptions({
           );
         })}
       </div>
-      {remaining > 0 && itemSubtotal > 0 && (
+      {standardPaid && remaining > 0 && itemSubtotal > 0 && (
         <p className="text-[11px] text-muted-foreground">
-          Sepetinize <strong className="text-foreground">{formatMoney(remaining, currency)}</strong> (KDV hariç) daha
-          ürün eklerseniz standart kargo ücretsiz olur. Ücretsiz kargo sınırı: {formatMoney(FREE_SHIPPING_THRESHOLD, currency)} + KDV.
+          Sepetinize KDV dahil <strong className="text-foreground">{formatMoney(remaining, currency)}</strong> daha
+          ürün eklerseniz standart kargo ücretsiz olur (KDV dahil {formatMoney(FREE_SHIPPING_THRESHOLD, currency)} ve
+          üzeri siparişlerde kargo ücretsiz).
         </p>
       )}
     </div>

@@ -41,7 +41,7 @@ const FALLBACK: SiteSeo = {
     "Testere Store — Endüstriyel Şerit Testere ve Bıçaklar",
   title_template: "%s | Testere Store",
   default_description:
-    "Türkiye'nin lider şerit testere ve şerit testere bıçağı satış platformu.",
+    "Bi-metal, karbür uçlu, ahşap ve et-kemik şerit testere bıçakları; özel boy kaynaklı üretim ve hazır boy ürünler.",
   default_keywords:
     "şerit testere, bi-metal şerit testere, karbür uçlu testere",
   default_og_image: null,
