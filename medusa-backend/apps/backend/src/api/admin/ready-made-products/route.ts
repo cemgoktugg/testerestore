@@ -31,6 +31,55 @@ const fmtNum = (n: number) =>
 const round2 = (n: number) => Math.round(n * 100) / 100;
 
 /**
+ * Ana üründen hazır ürüne AYNEN geçen tanıtım/teknik alanlar (ürün sayfasındaki
+ * Teknik Bilgiler, Özellikler, Kullanım Alanları, Kesim Hızları, Dokümanlar).
+ * Bilerek KOPYALANMAYANLAR: is_best_seller / best_seller_rank (hazır ürün
+ * kendiliğinden "çok satan" olmasın), min/max_length_mm (hazır üründe
+ * "Üretilebilir Boy Aralığı" satırı çıkmasın), blade_type / tooth_pitch /
+ * custom_length_enabled / seo_* / fiyat alanları (hazır ürünün kendi değerleri).
+ */
+const INHERITED_METADATA_KEYS = [
+  "technical_specs",
+  "technical_features",
+  "applications",
+  "material_usage",
+  "cutting_speeds",
+  "documents",
+] as const;
+
+/**
+ * Ölçüye göre ürüne özgü teknik satırlar ("Genişlik seçenekleri: 6, 10, 13…",
+ * "Diş adımı (TPI): 2/3, 3/4…", boy aralığı). Hazır üründe tek bir ölçü var ve
+ * genişlik/kalınlık/diş adımı tabloda zaten kendi değerleriyle gösteriliyor;
+ * bu satırlar kalsa ürünle çelişen bilgi verirdi.
+ */
+const CONFIGURABLE_ONLY_SPEC_LABEL = /seçenek|aralı[gğ]|diş adımı/i;
+
+function inheritedMetadata(
+  parentMeta: Record<string, unknown> | null | undefined,
+  copyDescription: boolean
+): Record<string, unknown> {
+  const meta = parentMeta || {};
+  const out: Record<string, unknown> = {};
+  for (const key of INHERITED_METADATA_KEYS) {
+    const v = meta[key];
+    if (Array.isArray(v) ? v.length > 0 : v != null && v !== "") out[key] = v;
+  }
+  if (Array.isArray(out.technical_specs)) {
+    const specs = (out.technical_specs as Array<{ label?: unknown }>).filter(
+      (s) => !CONFIGURABLE_ONLY_SPEC_LABEL.test(String(s?.label ?? ""))
+    );
+    if (specs.length) out.technical_specs = specs;
+    else delete out.technical_specs;
+  }
+  // Uzun açıklama (ürün sayfası "Açıklama" sekmesi) açıklamayla aynı kurala uyar.
+  if (copyDescription && typeof meta.long_description === "string" && meta.long_description) {
+    out.long_description = meta.long_description;
+  }
+  return out;
+}
+
+/**
  * POST /admin/ready-made-products
  *
  * Bir ANA üründen (parent_id) ölçü + bir veya birden çok uzunluk vererek toplu
@@ -207,6 +256,12 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
                 },
               ],
               metadata: {
+                // Önce ana üründen gelenler; aşağıdaki hazır ürüne özgü
+                // alanlar her zaman bunların üzerine yazılır.
+                ...inheritedMetadata(
+                  parent.metadata as Record<string, unknown> | null,
+                  !!copy_description
+                ),
                 is_ready_made: true,
                 blade_type,
                 width_mm,
