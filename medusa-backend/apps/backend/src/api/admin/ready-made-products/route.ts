@@ -79,6 +79,89 @@ function inheritedMetadata(
   return out;
 }
 
+/** Diş adımı karşılaştırması için sade biçim: "6/10 TPI" → "6/10", boş → "". */
+const normTooth = (t: unknown) =>
+  String(t ?? "")
+    .replace(/tpi/i, "")
+    .replace(/\s+/g, "")
+    .toLowerCase();
+
+const sameNum = (a: unknown, b: unknown) =>
+  Math.abs(Number(a) - Number(b)) < 1e-6;
+
+type ReadyMadeSibling = {
+  id: string;
+  title: string;
+  handle: string;
+  status: string;
+  width_mm: number;
+  thickness_mm: number;
+  tooth_pitch: string | null;
+  length_mm: number;
+};
+
+/**
+ * Bu ana üründen daha önce oluşturulmuş hazır ürünler (silinmemiş; taslaklar
+ * dahil). Aynı ölçü + uzunluğun ikinci kez eklenmesini önlemek için.
+ */
+async function readyMadeSiblings(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  query: any,
+  parentId: string
+): Promise<ReadyMadeSibling[]> {
+  const { data } = await query.graph({
+    entity: "product",
+    fields: ["id", "title", "handle", "status", "metadata"],
+  });
+  return (data as Array<{ id: string; title: string; handle: string; status: string; metadata?: Record<string, unknown> | null }>)
+    .filter((p) => {
+      const m = p.metadata || {};
+      return (m.is_ready_made === true || m.is_ready_made === "true") && m.source_product_id === parentId;
+    })
+    .map((p) => {
+      const m = p.metadata || {};
+      return {
+        id: p.id,
+        title: p.title,
+        handle: p.handle,
+        status: p.status,
+        width_mm: Number(m.width_mm),
+        thickness_mm: Number(m.thickness_mm),
+        tooth_pitch: (m.tooth_pitch as string | null) ?? null,
+        length_mm: Number(m.length_mm),
+      };
+    });
+}
+
+function findDuplicate(
+  siblings: ReadyMadeSibling[],
+  spec: { width_mm: number; thickness_mm: number; tooth_pitch?: string | null; length_mm: number }
+): ReadyMadeSibling | undefined {
+  return siblings.find(
+    (s) =>
+      sameNum(s.width_mm, spec.width_mm) &&
+      sameNum(s.thickness_mm, spec.thickness_mm) &&
+      normTooth(s.tooth_pitch) === normTooth(spec.tooth_pitch) &&
+      sameNum(s.length_mm, spec.length_mm)
+  );
+}
+
+/**
+ * GET /admin/ready-made-products?parent_id=…
+ *
+ * Seçilen ana ürünün mevcut hazır ürünleri — panel önizlemesi aynı ölçüyü
+ * kaydetmeden önce "Zaten var" diye işaretlesin.
+ */
+export async function GET(req: MedusaRequest, res: MedusaResponse) {
+  const parentId = String(req.query.parent_id || "");
+  if (!parentId) {
+    res.status(400).json({ message: "parent_id gerekli" });
+    return;
+  }
+  const query = req.scope.resolve(ContainerRegistrationKeys.QUERY);
+  res.json({ ready_made: await readyMadeSiblings(query, parentId) });
+}
+
 /**
  * POST /admin/ready-made-products
  *
@@ -212,10 +295,29 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
   const dimLabel = `${fmtNum(width_mm)} × ${fmtNum(thickness_mm)} × ${toothLabel}`.trim();
 
   const created: Array<{ id: string; title: string; handle: string; price: number }> = [];
-  const skipped: Array<{ length_mm: number; reason: string }> = [];
+  const skipped: Array<{
+    length_mm: number;
+    reason: string;
+    duplicate?: boolean;
+    existing?: { id: string; title: string; handle: string };
+  }> = [];
+
+  // Aynı ana üründen aynı ölçü + uzunlukta hazır ürün varsa tekrar ekleme.
+  const siblings = await readyMadeSiblings(query, parent.id as string);
 
   // 4) Her uzunluk için bir hazır ürün oluştur
-  for (const length_mm of lengths_mm) {
+  for (const length_mm of Array.from(new Set(lengths_mm))) {
+    const dup = findDuplicate(siblings, { width_mm, thickness_mm, tooth_pitch, length_mm });
+    if (dup) {
+      skipped.push({
+        length_mm,
+        reason: `Bu ölçüde hazır ürün zaten var: "${dup.title}"`,
+        duplicate: true,
+        existing: { id: dup.id, title: dup.title, handle: dup.handle },
+      });
+      continue;
+    }
+
     const unitPrice = round2((perMeter as number) * (length_mm / 1000) + weldingFee);
 
     const title = `${title_prefix} Hazır — ${dimLabel} × ${length_mm} mm`;
@@ -281,6 +383,10 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
       });
       const prod = result[0];
       created.push({ id: prod.id, title, handle, price: unitPrice });
+      siblings.push({
+        id: prod.id, title, handle, status: "published",
+        width_mm, thickness_mm, tooth_pitch: tooth_pitch || null, length_mm,
+      });
     } catch (e) {
       skipped.push({
         length_mm,

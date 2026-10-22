@@ -69,6 +69,19 @@ const fmtMoney = (n: number) =>
   })} TL`;
 
 /** "1650, 2000  2500\n3000" → [1650, 2000, 2500, 3000] (tekilleştirilmiş). */
+/** Seçili ana ürünün mevcut hazır ürünü (aynı ölçüyü tekrar eklememek için). */
+interface ExistingReadyMade {
+  id: string;
+  title: string;
+  width_mm: number;
+  thickness_mm: number;
+  tooth_pitch: string | null;
+  length_mm: number;
+}
+
+const normTooth = (t: unknown) =>
+  String(t ?? "").replace(/tpi/i, "").replace(/\s+/g, "").toLowerCase();
+
 function parseLengths(raw: string): number[] {
   const nums = raw
     .split(/[\s,;]+/)
@@ -92,6 +105,7 @@ export default function ReadyMadePage() {
   const [lengthsRaw, setLengthsRaw] = useState("");
   const [inventory, setInventory] = useState("10");
   const [copyDesc, setCopyDesc] = useState(true);
+  const [existing, setExisting] = useState<ExistingReadyMade[]>([]);
 
   useEffect(() => {
     (async () => {
@@ -111,6 +125,25 @@ export default function ReadyMadePage() {
       }
     })();
   }, []);
+
+  // Seçili ana ürünün mevcut hazır ürünleri — önizlemede "Zaten var" için.
+  async function loadExisting(id: string) {
+    if (!id) {
+      setExisting([]);
+      return;
+    }
+    try {
+      const r = await api<{ ready_made: ExistingReadyMade[] }>(
+        `/admin/ready-made-products?parent_id=${encodeURIComponent(id)}`
+      );
+      setExisting(r.ready_made);
+    } catch {
+      setExisting([]); // önizleme işareti olmasa da sunucu tekrarı yine engeller
+    }
+  }
+  useEffect(() => {
+    loadExisting(parentId);
+  }, [parentId]);
 
   // Ana ürün seçilince başlık öneki + tahmini tip otomatik dolsun.
   function pickParent(id: string) {
@@ -174,11 +207,26 @@ export default function ReadyMadePage() {
     if (!matchedRow) return [];
     const perMeter = Number(matchedRow.price_per_meter);
     const welding = Number(matchedRow.welding_fee ?? 0);
+    const toothSel = tooths.length === 0 ? null : tooth;
     return lengths.map((len) => ({
       len,
       price: Math.round((perMeter * (len / 1000) + welding) * 100) / 100,
+      // Aynı ölçü + uzunlukta zaten var olan hazır ürün (bu ana üründen).
+      duplicate: existing.find(
+        (e) =>
+          Math.abs(Number(e.width_mm) - Number(width)) < 1e-6 &&
+          Math.abs(Number(e.thickness_mm) - Number(thickness)) < 1e-6 &&
+          normTooth(e.tooth_pitch) === normTooth(toothSel) &&
+          Math.abs(Number(e.length_mm) - len) < 1e-6
+      ),
     }));
-  }, [matchedRow, lengths]);
+  }, [matchedRow, lengths, existing, width, thickness, tooth, tooths.length]);
+
+  // Gönderilecekler: zaten var olanlar hariç.
+  const newLengths = preview.length
+    ? preview.filter((x) => !x.duplicate).map((x) => x.len)
+    : lengths;
+  const duplicateCount = preview.filter((x) => x.duplicate).length;
 
   const canSubmit =
     !!parentId &&
@@ -187,7 +235,7 @@ export default function ReadyMadePage() {
     !!thickness &&
     (tooths.length === 0 || !!tooth) &&
     !!matchedRow &&
-    lengths.length > 0 &&
+    newLengths.length > 0 &&
     !saving;
 
   async function submit() {
@@ -201,26 +249,33 @@ export default function ReadyMadePage() {
         width_mm: Number(width),
         thickness_mm: Number(thickness),
         tooth_pitch: tooths.length === 0 ? null : tooth,
-        lengths_mm: lengths,
+        lengths_mm: newLengths,
         inventory: Number(inventory) || 0,
         copy_description: copyDesc,
       };
       const r = await api<{
         created_count: number;
-        skipped: Array<{ length_mm: number; reason: string }>;
+        skipped: Array<{ length_mm: number; reason: string; duplicate?: boolean }>;
       }>("/admin/ready-made-products", {
         method: "POST",
         body: JSON.stringify(body),
       });
-      toast.success(`${r.created_count} hazır ürün oluşturuldu`, {
-        description:
-          r.skipped.length > 0
-            ? `${r.skipped.length} tanesi atlandı (${r.skipped
-                .map((s) => s.length_mm)
-                .join(", ")} mm)`
-            : "Resimler ve açıklama ana üründen kopyalandı.",
-      });
-      setLengthsRaw("");
+      if (r.created_count > 0) {
+        toast.success(`${r.created_count} hazır ürün oluşturuldu`, {
+          description: "Resimler, açıklama ve teknik bilgiler ana üründen kopyalandı.",
+        });
+      }
+      if (r.skipped.length > 0) {
+        const allDup = r.skipped.every((x) => x.duplicate);
+        toast.warning(
+          allDup
+            ? `${r.skipped.length} ölçü zaten vardı, tekrar eklenmedi`
+            : `${r.skipped.length} uzunluk eklenemedi`,
+          { description: r.skipped.map((x) => `${x.length_mm} mm: ${x.reason}`).join(" · ") }
+        );
+      }
+      if (r.created_count > 0) setLengthsRaw("");
+      loadExisting(parentId);
     } catch (e) {
       toast.error("Oluşturulamadı", { description: String(e) });
     } finally {
@@ -434,18 +489,32 @@ export default function ReadyMadePage() {
                       key={p.len}
                       className="flex items-center justify-between py-2"
                     >
-                      <Text size="small">
+                      <Text
+                        size="small"
+                        className={p.duplicate ? "text-ui-fg-muted line-through" : undefined}
+                      >
                         {titlePrefix} · {fmtNum(Number(width))} ×{" "}
                         {fmtNum(Number(thickness))}
                         {tooth ? ` × ${tooth}` : ""} ×{" "}
                         <span className="font-medium">{p.len} mm</span>
                       </Text>
-                      <Badge size="small">{fmtMoney(p.price)}</Badge>
+                      {p.duplicate ? (
+                        <Badge size="small" color="red" title={p.duplicate.title}>
+                          Zaten var
+                        </Badge>
+                      ) : (
+                        <Badge size="small">{fmtMoney(p.price)}</Badge>
+                      )}
                     </div>
                   ))}
                 </div>
+                {duplicateCount > 0 && (
+                  <Text size="small" className="text-ui-fg-error">
+                    {duplicateCount} ölçü bu ana üründe zaten var; tekrar eklenmeyecek.
+                  </Text>
+                )}
                 <Text size="small" weight="plus">
-                  Toplam {preview.length} ürün oluşturulacak
+                  Toplam {newLengths.length} ürün oluşturulacak
                 </Text>
               </>
             )}
@@ -456,8 +525,10 @@ export default function ReadyMadePage() {
               disabled={!canSubmit}
               isLoading={saving}
             >
-              {lengths.length > 1
-                ? `${lengths.length} Hazır Ürün Oluştur`
+              {matchedRow && lengths.length > 0 && newLengths.length === 0
+                ? "Bu ölçüler zaten mevcut"
+                : newLengths.length > 1
+                ? `${newLengths.length} Hazır Ürün Oluştur`
                 : "Hazır Ürün Oluştur"}
             </Button>
           </div>
