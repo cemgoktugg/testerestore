@@ -10,10 +10,53 @@ import type { StoreProduct } from '../../lib/medusa/types';
 
 const ACCENT = '#f97316';
 
-type SortKey = 'length-asc' | 'price-asc' | 'price-desc';
+type SortKey = 'length-asc' | 'length-desc' | 'price-asc' | 'price-desc';
+type FacetKey = 'width' | 'thickness' | 'tooth' | 'length';
 
 const fmtNum = (n: number) =>
   Number.isInteger(n) ? String(n) : String(n);
+
+/** Diş adımı sıralaması: kaba (düşük TPI) → ince. "1.4/2" < "4/6" < "10/14" < "18". */
+const toothOrder = (t: string) => parseFloat(t.split('/')[0].replace(',', '.')) || 0;
+
+/**
+ * Filtre açılır listesi — temanın renk değişkenleriyle (açık/koyu temada
+ * okunur). Eskiden sabit beyaz yazı + koyu gradyan zemin vardı; Windows'ta
+ * açılan seçenek listesi beyaz zemin üzerinde beyaz yazı olarak görünmüyordu.
+ */
+function FilterSelect({
+  label,
+  value,
+  onChange,
+  children,
+  active = !!value,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  children: React.ReactNode;
+  /** Seçili filtre vurgusu (sıralama kutusunda kapalı). */
+  active?: boolean;
+}) {
+  return (
+    <label className="flex flex-col gap-1 min-w-0">
+      <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+        {label}
+      </span>
+      <select
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className={`w-full rounded-lg border bg-background px-3 py-2 text-sm text-foreground cursor-pointer focus:outline-none focus:ring-2 focus:ring-accent/30 ${
+          active ? 'border-accent' : 'border-border hover:border-accent/50'
+        }`}
+      >
+        {children}
+      </select>
+    </label>
+  );
+}
+
+const OPTION_CLASS = 'bg-background text-foreground';
 
 export default function HazirUrunlerClient({
   initialReadyMade,
@@ -29,43 +72,54 @@ export default function HazirUrunlerClient({
     () => Array.from(new Set(all.map((c) => c.family))).sort((a, b) => a.localeCompare(b, 'tr')),
     [all]
   );
-  const widths = useMemo(
-    () =>
-      Array.from(new Set(all.map((c) => c.width).filter((w): w is number => w != null))).sort(
-        (a, b) => a - b
-      ),
-    [all]
-  );
-  const lengths = useMemo(
-    () =>
-      Array.from(new Set(all.map((c) => c.length).filter((l): l is number => l != null))).sort(
-        (a, b) => a - b
-      ),
-    [all]
-  );
-
   const [family, setFamily] = useState<string>('Tümü');
   const [width, setWidth] = useState<string>('');
+  const [thickness, setThickness] = useState<string>('');
+  const [tooth, setTooth] = useState<string>('');
   const [length, setLength] = useState<string>('');
   const [sort, setSort] = useState<SortKey>('length-asc');
 
+  /** Ürün seçili filtrelere uyuyor mu (`except` alanı yok sayılarak). */
+  const matches = (c: ReadyMadeCard, except?: FacetKey) =>
+    (family === 'Tümü' || c.family === family) &&
+    (except === 'width' || !width || c.width === Number(width)) &&
+    (except === 'thickness' || !thickness || c.thickness === Number(thickness)) &&
+    (except === 'tooth' || !tooth || c.tooth === tooth) &&
+    (except === 'length' || !length || c.length === Number(length));
+
+  /**
+   * Bir ölçünün TÜM değerleri (her zaman listede) + diğer seçimlere göre kaç
+   * ürün kaldığı. Sonuç vermeyecek değerler listede kalır ama seçilemez.
+   */
+  function facet<T extends string | number>(key: FacetKey, get: (c: ReadyMadeCard) => T | null, order: (a: T, b: T) => number) {
+    const values = Array.from(new Set(all.map(get).filter((v): v is T => v != null))).sort(order);
+    return values.map((value) => ({
+      value,
+      count: all.filter((c) => matches(c, key) && get(c) === value).length,
+    }));
+  }
+  const widthOpts = facet('width', (c) => c.width, (a, b) => a - b);
+  const thicknessOpts = facet('thickness', (c) => c.thickness, (a, b) => a - b);
+  const toothOpts = facet('tooth', (c) => c.tooth, (a, b) => toothOrder(a) - toothOrder(b) || a.localeCompare(b));
+  const lengthOpts = facet('length', (c) => c.length, (a, b) => a - b);
+
   const filtered = useMemo(() => {
-    let out = all;
-    if (family !== 'Tümü') out = out.filter((c) => c.family === family);
-    if (width) out = out.filter((c) => c.width === Number(width));
-    if (length) out = out.filter((c) => c.length === Number(length));
-    out = [...out].sort((a, b) => {
+    const out = all.filter((c) => matches(c));
+    return [...out].sort((a, b) => {
       if (sort === 'price-asc') return a.price - b.price;
       if (sort === 'price-desc') return b.price - a.price;
+      if (sort === 'length-desc') return (b.length ?? 0) - (a.length ?? 0);
       return (a.length ?? 0) - (b.length ?? 0);
     });
-    return out;
-  }, [all, family, width, length, sort]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [all, family, width, thickness, tooth, length, sort]);
 
-  const hasFilter = family !== 'Tümü' || !!width || !!length;
+  const hasFilter = family !== 'Tümü' || !!width || !!thickness || !!tooth || !!length;
   const reset = () => {
     setFamily('Tümü');
     setWidth('');
+    setThickness('');
+    setTooth('');
     setLength('');
   };
 
@@ -80,10 +134,11 @@ export default function HazirUrunlerClient({
             key={f}
             type="button"
             onClick={() => setFamily(f)}
+            aria-pressed={family === f}
             className={`rounded-full px-4 py-2 text-xs font-semibold transition-all cursor-pointer border ${
               family === f
                 ? 'text-white border-transparent'
-                : 'text-muted-foreground border-white/10 hover:text-foreground'
+                : 'bg-background text-foreground/80 border-border hover:border-accent/50 hover:text-foreground'
             }`}
             style={family === f ? { background: `linear-gradient(90deg, ${ACCENT}, #ea580c)` } : undefined}
           >
@@ -93,51 +148,64 @@ export default function HazirUrunlerClient({
       </div>
 
       {/* Ölçü filtreleri + sıralama */}
-      <div className="flex flex-wrap items-center gap-3 mb-8 pb-6 border-b border-border">
-        <div className="inline-flex items-center gap-1.5 text-xs text-muted-foreground">
-          <SlidersHorizontal className="h-3.5 w-3.5" /> Filtre:
+      <div className="mb-8 pb-6 border-b border-border">
+        <div className="flex items-center justify-between gap-3 mb-3">
+          <div className="inline-flex items-center gap-1.5 text-xs font-semibold text-foreground">
+            <SlidersHorizontal className="h-3.5 w-3.5 text-accent" /> Filtrele
+          </div>
+          <div className="flex items-center gap-3">
+            {hasFilter && (
+              <button
+                type="button"
+                onClick={reset}
+                className="text-xs text-accent font-semibold cursor-pointer hover:underline"
+              >
+                Filtreleri temizle
+              </button>
+            )}
+            <span className="text-xs text-muted-foreground">{filtered.length} ürün</span>
+          </div>
         </div>
-        <select
-          value={width}
-          onChange={(e) => setWidth(e.target.value)}
-          className="rounded-lg border border-white/10 bg-premium-card px-3 py-2 text-xs text-white cursor-pointer"
-        >
-          <option value="">Tüm genişlikler</option>
-          {widths.map((w) => (
-            <option key={w} value={w}>{fmtNum(w)} mm genişlik</option>
-          ))}
-        </select>
-        <select
-          value={length}
-          onChange={(e) => setLength(e.target.value)}
-          className="rounded-lg border border-white/10 bg-premium-card px-3 py-2 text-xs text-white cursor-pointer"
-        >
-          <option value="">Tüm boylar</option>
-          {lengths.map((l) => (
-            <option key={l} value={l}>{l} mm boy</option>
-          ))}
-        </select>
-        <select
-          value={sort}
-          onChange={(e) => setSort(e.target.value as SortKey)}
-          className="rounded-lg border border-white/10 bg-premium-card px-3 py-2 text-xs text-white cursor-pointer"
-        >
-          <option value="length-asc">Boya göre (kısa→uzun)</option>
-          <option value="price-asc">Fiyat (artan)</option>
-          <option value="price-desc">Fiyat (azalan)</option>
-        </select>
-        {hasFilter && (
-          <button
-            type="button"
-            onClick={reset}
-            className="text-xs text-accent font-semibold cursor-pointer hover:underline"
-          >
-            Filtreleri temizle
-          </button>
-        )}
-        <span className="ml-auto text-xs text-muted-foreground">
-          {filtered.length} ürün
-        </span>
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+          <FilterSelect label="Genişlik" value={width} onChange={setWidth}>
+            <option value="" className={OPTION_CLASS}>Tümü</option>
+            {widthOpts.map((o) => (
+              <option key={o.value} value={o.value} disabled={o.count === 0 && String(o.value) !== width} className={OPTION_CLASS}>
+                {fmtNum(o.value)} mm ({o.count})
+              </option>
+            ))}
+          </FilterSelect>
+          <FilterSelect label="Kalınlık" value={thickness} onChange={setThickness}>
+            <option value="" className={OPTION_CLASS}>Tümü</option>
+            {thicknessOpts.map((o) => (
+              <option key={o.value} value={o.value} disabled={o.count === 0 && String(o.value) !== thickness} className={OPTION_CLASS}>
+                {fmtNum(o.value)} mm ({o.count})
+              </option>
+            ))}
+          </FilterSelect>
+          <FilterSelect label="Diş (TPI)" value={tooth} onChange={setTooth}>
+            <option value="" className={OPTION_CLASS}>Tümü</option>
+            {toothOpts.map((o) => (
+              <option key={o.value} value={o.value} disabled={o.count === 0 && o.value !== tooth} className={OPTION_CLASS}>
+                {o.value} TPI ({o.count})
+              </option>
+            ))}
+          </FilterSelect>
+          <FilterSelect label="Boy" value={length} onChange={setLength}>
+            <option value="" className={OPTION_CLASS}>Tümü</option>
+            {lengthOpts.map((o) => (
+              <option key={o.value} value={o.value} disabled={o.count === 0 && String(o.value) !== length} className={OPTION_CLASS}>
+                {o.value} mm ({o.count})
+              </option>
+            ))}
+          </FilterSelect>
+          <FilterSelect label="Sırala" value={sort} onChange={(v) => setSort(v as SortKey)} active={false}>
+            <option value="length-asc" className={OPTION_CLASS}>Boy: kısa → uzun</option>
+            <option value="length-desc" className={OPTION_CLASS}>Boy: uzun → kısa</option>
+            <option value="price-asc" className={OPTION_CLASS}>Fiyat: artan</option>
+            <option value="price-desc" className={OPTION_CLASS}>Fiyat: azalan</option>
+          </FilterSelect>
+        </div>
       </div>
 
       {/* Grid */}
