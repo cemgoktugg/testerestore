@@ -1,9 +1,10 @@
 import { z } from "zod";
 
-// Ready-made uzunluk sınırları (mm). Store /calculate ile aynı global aralık:
-// 1000 mm alt, 15000 mm üst. Girdi tek tek doğrulanır ki uçuk bir boy
-// yanlışlıkla ürün oluşturmasın.
-export const MIN_LENGTH_MM = 1000;
+// Hazır ürün uzunluk sınırları (mm). Ölçüye göre siparişin 1000 mm alt
+// sınırından (store /calculate) BİLEREK ayrı: stokta 733 mm gibi kısa hazır
+// bıçaklar var. Alt sınır yalnızca yazım hatasını yakalamak için ("73" gibi);
+// girdi tek tek doğrulanır ki uçuk bir boy yanlışlıkla ürün oluşturmasın.
+export const MIN_LENGTH_MM = 300;
 export const MAX_LENGTH_MM = 15000;
 
 /**

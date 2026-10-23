@@ -442,7 +442,8 @@ export default function ReadyMadePage() {
                   placeholder="1650, 2000, 2500, 3000"
                 />
                 <Text size="xsmall" className="text-ui-fg-subtle">
-                  Virgülle birden fazla gir → hepsi tek seferde oluşur.
+                  Virgülle birden fazla gir → hepsi tek seferde oluşur. İzin
+                  verilen aralık: 300 – 15.000 mm.
                 </Text>
               </div>
               <div className="flex flex-col gap-1">
