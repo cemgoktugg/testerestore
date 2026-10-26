@@ -205,8 +205,12 @@ class RuleExecutor:
         for key, value_spec in placeholders.items():
             # Simple field reference
             if isinstance(value_spec, str):
-                resolved_values[key] = getattr(self.state, value_spec, None)
-            
+                value = getattr(self.state, value_spec, None)
+                # Makine veritabanı genişliği 27.0 diye verir; SKU "27-…" olmalı
+                if isinstance(value, float) and value.is_integer():
+                    value = int(value)
+                resolved_values[key] = value
+
             # Nested operation (e.g., fixed2)
             elif isinstance(value_spec, dict):
                 if "fixed2" in value_spec:

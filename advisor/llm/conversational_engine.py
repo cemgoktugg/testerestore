@@ -129,6 +129,7 @@ from llm.message_parser import MessageParser
 from llm.unknown_questions_handler import UnknownQuestionsHandler, process_ai_response
 from llm.dialog_manager import DialogManager
 from llm.front_desk import FrontDesk
+from llm.store_client import StoreClient
 
 # RAG Engine is optional (requires chromadb)
 try:
@@ -243,17 +244,22 @@ class ConversationalEngine:
             logger.warning(f"Machine database unavailable: {exc}")
             self.machine_db = None
 
+        # Mağaza API'si (fiyat, hazır stok, satılan diş adımları) — ön masa ve
+        # huni aynı istemciyi (ve önbelleği) paylaşır.
+        store = StoreClient()
+
         # Konusmayi kural motoru yonetir; LLM sadece esleme ve dogal dil uretir
         self.dialog_manager = DialogManager(
             openai_client=self.openai_client,
             api_key=openai_api_key,
             model=self.model,
             machine_db=self.machine_db,
+            store=store,
         )
         
         # Ön masa: huniden ÖNCE müşterinin sorduğunu cevaplar (mağaza, fiyat,
         # stok, arıza, metal dışı, konu dışı). LLM kullanmaz.
-        self.front_desk = FrontDesk()
+        self.front_desk = FrontDesk(store=store)
 
         # RAG engine (optional)
         self.rag_engine: Optional[RAGEngine] = None

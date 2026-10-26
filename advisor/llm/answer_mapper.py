@@ -120,6 +120,9 @@ class MappingResult:
     machine_candidates: List[Dict] = field(default_factory=list)
     machine_manufacturer: Optional[str] = None              # cümlede tanınan üretici
     off_topic_text: Optional[str] = None                    # ürün dışı soru metni
+    # Ölçü sorularında kullanıcının yazdığı ham mm (kovaya çevrilmeden önce);
+    # ör. {"solid_max_diameter_bucket": 40.0} — llm/tpi_refine.py kullanır.
+    measured_mm: Dict[str, float] = field(default_factory=dict)
 
     @property
     def has_values(self) -> bool:
@@ -340,6 +343,7 @@ class AnswerMapper:
             bucket = bucket_from_mm(mm, question.options or [])
             if bucket:
                 measured[target] = bucket
+                result.measured_mm[target] = mm
             else:
                 result.rejected[target] = value
 

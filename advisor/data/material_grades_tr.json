@@ -1,0 +1,133 @@
+{
+  "_kaynak": "Malzeme kalite eşdeğerleri (EN 10025 / EN 10083 / EN 10088 / EN 573 / EN 1561-1563 adlandırmaları, DIN ve AISI karşılıkları). family: kural motorunun metal_family değeri; null → huni sorar. Kalıplar llm/front_desk.norm() ile sadeleşmiş (küçük harf, Türkçe harfsiz) metne uygulanır. Danışman yalnızca grubu söyler, sertlik/hız sayısı vermez.",
+  "grades": [
+    {
+      "id": "s235",
+      "name_tr": "S235JR (eski DIN St37-2, 1.0038)",
+      "group_tr": "yapı çeliği",
+      "family": "CARBON_STEEL",
+      "patterns": ["\\bst\\s?-?37\\b", "\\brst\\s?37\\b", "\\bs\\s?235\\w*", "(?<![\\d.])1\\.0038\\b"],
+      "note_tr": "Düşük karbonlu yapı çeliği; kolay kesilir."
+    },
+    {
+      "id": "s275",
+      "name_tr": "S275JR (eski DIN St44-2, 1.0044)",
+      "group_tr": "yapı çeliği",
+      "family": "CARBON_STEEL",
+      "patterns": ["\\bst\\s?-?44\\b", "\\bs\\s?275\\w*", "(?<![\\d.])1\\.0044\\b"],
+      "note_tr": "Yapı çeliği; kolay kesilir."
+    },
+    {
+      "id": "s355",
+      "name_tr": "S355 (eski DIN St52-3, 1.0570 / 1.0577)",
+      "group_tr": "yapı çeliği",
+      "family": "CARBON_STEEL",
+      "patterns": ["\\bst\\s?-?52\\b", "\\bs\\s?355\\w*", "(?<![\\d.])1\\.05(70|77)\\b"],
+      "note_tr": "Yüksek dayanımlı yapı çeliği; karbon çeliği grubunda kesilir."
+    },
+    {
+      "id": "c45",
+      "name_tr": "C45 (1.0503 / Ck45 1.1191, AISI 1045)",
+      "group_tr": "orta karbonlu ıslah çeliği",
+      "family": "CARBON_STEEL",
+      "patterns": ["\\bc\\s?k?45e?\\b", "(?<![\\d.])1\\.(0503|1191)\\b", "\\b(aisi|sae)\\s?1045\\b"],
+      "note_tr": "Islah edilmiş (sertleştirilmiş) hâlde tavlı hâline göre daha yavaş kesilir."
+    },
+    {
+      "id": "free_cutting",
+      "name_tr": "Otomat çeliği (11SMnPb30 / 9SMnPb28, 1.0718 / 1.0715)",
+      "group_tr": "otomat çeliği",
+      "family": "CARBON_STEEL",
+      "patterns": ["otomat celi\\w*", "\\b11\\s?smn\\w*", "\\b9\\s?smn\\w*", "(?<![\\d.])1\\.07(15|18)\\b"],
+      "note_tr": "Talaşlı imalata uygun, kolay kesilen çelik."
+    },
+    {
+      "id": "alloy_qt",
+      "name_tr": "Alaşımlı ıslah çeliği (42CrMo4 1.7225 / AISI 4140, 34CrNiMo6 1.6582 / AISI 4340, 41Cr4, 34CrMo4)",
+      "group_tr": "alaşımlı çelik",
+      "family": "CARBON_STEEL",
+      "patterns": ["\\b42\\s?crmo\\s?4\\b", "(?<![\\d.])1\\.7225\\b", "\\b(aisi|sae)\\s?(4140|4340)\\b", "\\b4140\\b", "\\b4340\\b", "\\b34\\s?crnimo\\s?6\\b", "(?<![\\d.])1\\.6582\\b", "\\b41\\s?cr\\s?4\\b", "\\b34\\s?crmo\\s?4\\b", "(?<![\\d.])1\\.7(035|220)\\b"],
+      "note_tr": "Karbon çeliğinden daha zor kesilir; bi-metal M42 uygundur. Sertleştirilmiş (ıslah/indüksiyon) parçalarda karbür uçlu bıçak gerekebilir."
+    },
+    {
+      "id": "case_hardening",
+      "name_tr": "Sementasyon çeliği (16MnCr5 1.7131, 20MnCr5 1.7147)",
+      "group_tr": "alaşımlı çelik",
+      "family": "CARBON_STEEL",
+      "patterns": ["\\b(16|20)\\s?mncr\\s?5\\b", "(?<![\\d.])1\\.71(31|47)\\b", "sementasyon celi\\w*"],
+      "note_tr": "Sertleştirilmemiş hâlde bi-metal ile kesilir; sementasyonlu (yüzeyi sertleştirilmiş) parçalar çok daha zordur."
+    },
+    {
+      "id": "spring_bearing",
+      "name_tr": "Yay ve rulman çeliği (50CrV4 1.8159, 100Cr6 1.3505 / AISI 52100)",
+      "group_tr": "yüksek karbonlu alaşımlı çelik",
+      "family": "CARBON_STEEL",
+      "patterns": ["\\b50\\s?crv\\s?4\\b", "(?<![\\d.])1\\.(8159|3505)\\b", "\\b100\\s?cr\\s?6\\b", "\\b52100\\b", "yay celi\\w*", "rulman celi\\w*"],
+      "note_tr": "Tavlı hâlde bi-metal ile kesilir; sertleştirilmiş hâlde karbür uçlu bıçak gerekebilir."
+    },
+    {
+      "id": "tool_steel",
+      "name_tr": "Takım çeliği (1.2379 / D2, 1.2080 / D3, 1.2344 / H13, 1.2311 / P20, 1.2510 / O1)",
+      "group_tr": "takım çeliği",
+      "family": "CARBON_STEEL",
+      "patterns": ["(?<![\\d.])1\\.2(379|080|344|311|312|738|842|510|767|436|083|085)\\b", "\\bx\\s?153\\s?crmov\\s?12\\b", "\\bx\\s?40\\s?crmov\\s?5\\w*", "\\baisi\\s?(d2|d3|h13|p20|o1|o2)\\b", "\\b(h13|p20)\\b", "takim celi\\w*", "sicak is celi\\w*", "soguk is celi\\w*"],
+      "note_tr": "Yumuşak tavlı hâlde bi-metal (tercihen M51) ile kesilir; sertleştirilmiş hâlde karbür uçlu bıçak gerekir. Malzemenin sertlik durumunu yazarsanız daha net öneririm."
+    },
+    {
+      "id": "ss_austenitic",
+      "name_tr": "Östenitik paslanmaz (AISI 304 / 1.4301, 304L / 1.4307, 316 / 1.4401, 316L / 1.4404, 316Ti / 1.4571, 321 / 1.4541, 303 / 1.4305)",
+      "group_tr": "östenitik paslanmaz",
+      "family": "STAINLESS",
+      "patterns": ["(?<![\\d.])1\\.4(301|307|401|404|571|541|305|845)\\b", "\\b(aisi|sus|ss|inox|krom)\\s?-?(304|316|321|303|310)\\w*", "\\b(304|316)l?\\s?(paslanmaz|krom|kalite|inox|celik|ti)\\b", "\\bv[24]a\\b"],
+      "note_tr": "Kesim sırasında sertleşmeye yatkındır: bıçağı malzeme üzerinde boşta sürtmeyin, sürekli ve yeterli ilerlemeyle, soğutma sıvısı kullanarak kesin."
+    },
+    {
+      "id": "ss_martensitic_ferritic",
+      "name_tr": "Martenzitik / ferritik paslanmaz (AISI 420 / 1.4021-1.4028, 430 / 1.4016, 410, 440C)",
+      "group_tr": "paslanmaz",
+      "family": "STAINLESS",
+      "patterns": ["(?<![\\d.])1\\.4(021|028|016|034|006|125)\\b", "\\b(aisi|sus|ss|inox)\\s?-?(420|430|410|440c?)\\b"],
+      "note_tr": "Sertleştirilmiş martenzitik (420, 440C) parçalar daha zor kesilir; sertleştirilmişse bize yazın."
+    },
+    {
+      "id": "ss_duplex_ph",
+      "name_tr": "Dubleks ve çökelme sertleşmeli paslanmaz (2205 / 1.4462, 17-4PH / 1.4542)",
+      "group_tr": "zor işlenen paslanmaz",
+      "family": "STAINLESS",
+      "patterns": ["\\b(super\\s?)?(duplex|dubleks)\\b", "\\b2205\\b", "(?<![\\d.])1\\.4(462|410|542)\\b", "\\b17\\s?-\\s?4\\s?ph\\b"],
+      "note_tr": "Standart paslanmazdan daha zor kesilir; soğutma ve doğru ilerleme özellikle önemlidir."
+    },
+    {
+      "id": "aluminium",
+      "name_tr": "Alüminyum alaşımı (6060 / 6063 / 6061 / 6082 / 5083 / 5754 / 7075 / 2024)",
+      "group_tr": "alüminyum",
+      "family": "ALUMINUM",
+      "patterns": ["\\b(6061|6063|6082|7075|5083|5754)\\b(?!\\s*(mm|milim))", "\\b(al|alu|aluminyum|aa|en\\s?aw)\\s?-?(2024|1050|6060|6005|6061|6063|6082|7075|5083|5754)\\b", "\\balmgsi\\w*", "\\balzn\\s?mg\\w*", "\\balmg\\s?\\d\\w*", "\\balcu\\s?mg\\w*", "(?<![\\d.])3\\.(3211|3206|2315|4365|3547|3535|1355)\\b"],
+      "note_tr": "Talaşın dişe yapışmasını önlemek için yağlama/soğutma ve talaş fırçası önemlidir."
+    },
+    {
+      "id": "cast_iron",
+      "name_tr": "Dökme demir (gri döküm GG / EN-GJL, sfero döküm GGG / EN-GJS)",
+      "group_tr": "döküm",
+      "family": "CAST_IRON",
+      "patterns": ["\\bggg?\\s?-?\\d{2}\\b", "\\ben\\s?-?gj[ls]\\w*", "\\bsfero\\w*", "\\bpik\\s?dokum\\w*", "\\bgri\\s?dokum\\w*", "\\bdokme\\s?demir\\w*"],
+      "note_tr": "Aşındırıcıdır; genellikle kuru kesilir."
+    },
+    {
+      "id": "copper_alloys",
+      "name_tr": "Bakır alaşımları (pirinç Ms58 / CuZn39Pb3, bronz CuSn, alüminyum bronzu CuAl)",
+      "group_tr": "demir dışı metal",
+      "family": null,
+      "patterns": ["\\bpirinc\\w*", "\\bbronz\\w*", "\\bbakir\\w*", "\\bms\\s?58\\b", "\\bcu\\s?zn\\w*", "\\bcu\\s?sn\\w*", "\\bcu\\s?al\\d*\\w*"],
+      "note_tr": "Bi-metal bıçaklarımızla kesilir; kesit ölçüsünü yazarsanız diş adımını belirleriz."
+    },
+    {
+      "id": "special_alloys",
+      "name_tr": "Titanyum ve nikel esaslı alaşımlar (Ti-6Al-4V, Inconel, Hastelloy, Monel)",
+      "group_tr": "özel alaşım",
+      "family": null,
+      "patterns": ["\\btitanyum\\w*", "\\bti\\s?-?6\\s?al\\w*", "\\binconel\\w*", "\\bhastelloy\\w*", "\\bmonel\\w*", "\\bnimonic\\w*", "nikel alasim\\w*"],
+      "note_tr": "Zor işlenen özel alaşımlar; doğru bıçak için parçayı ve kesit ölçüsünü İletişim sayfamızdan ya da WhatsApp'tan bize yazmanızı öneririm."
+    }
+  ]
+}

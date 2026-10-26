@@ -1,5 +1,5 @@
 {
- "_kaynak": "bycuttech_rag_v2/bycuttech_encyclopedia_v2.json → troubleshooting (Starrett kataloğu tabanlı arıza tablosu). Danışmanın ön masa katmanı (llm/front_desk.py) kullanır.",
+ "_kaynak": "bycuttech_rag_v2/bycuttech_encyclopedia_v2.json → troubleshooting (Starrett kataloğu tabanlı arıza tablosu). Danışmanın ön masa katmanı (llm/front_desk.py) kullanır. 2026-10-26: 6 belirti eklendi (rough_cut_surface, blade_off_wheel, chip_welding, overheating, stalling, back_edge_cracks).",
  "troubleshooting": [
   {
    "id": "blade_break",
@@ -435,6 +435,188 @@
      "cause_tr": "Kılavuz kollar çok uzakta",
      "action_tr": "Kılavuz kolları iş parçasına yaklaştırın.",
      "order": 7
+    }
+   ]
+  },
+  {
+   "id": "rough_cut_surface",
+   "symptom_tr": "Kesim yüzeyi pürüzlü / kötü",
+   "source": "TestereStore eki (Starrett / LENOX sorun giderme tabloları)",
+   "causes_and_actions": [
+    {
+     "cause_tr": "Diş adımı malzemeye göre çok kaba",
+     "action_tr": "Kesite uygun, daha ince diş adımı (daha yüksek TPI) seçin.",
+     "order": 1
+    },
+    {
+     "cause_tr": "İlerleme çok yüksek",
+     "action_tr": "İlerlemeyi azaltın.",
+     "order": 2
+    },
+    {
+     "cause_tr": "Dişler körelmiş",
+     "action_tr": "Bıçağı değiştirin.",
+     "order": 3
+    },
+    {
+     "cause_tr": "Bant hızı malzemeye göre düşük",
+     "action_tr": "Hızı malzemeye uygun değere getirin.",
+     "order": 4
+    },
+    {
+     "cause_tr": "Kılavuzlar gevşek veya aşınmış",
+     "action_tr": "Kılavuzları bıçağa yaklaştırıp ayarlayın; aşınmışsa yenileyin.",
+     "order": 5
+    }
+   ]
+  },
+  {
+   "id": "blade_off_wheel",
+   "symptom_tr": "Bıçak kasnaktan çıkıyor / atıyor",
+   "source": "TestereStore eki (Starrett / LENOX sorun giderme tabloları)",
+   "causes_and_actions": [
+    {
+     "cause_tr": "Bıçak gerginliği düşük",
+     "action_tr": "Gerginliği makine kılavuzundaki değere getirin.",
+     "order": 1
+    },
+    {
+     "cause_tr": "Kasnak hizası (eğim ayarı) bozuk",
+     "action_tr": "Kasnak eğimini, bıçak kasnak üzerinde ortalı dönecek şekilde ayarlayın.",
+     "order": 2
+    },
+    {
+     "cause_tr": "Kasnak yüzeyi veya bandajı aşınmış",
+     "action_tr": "Kasnak yüzeyini kontrol edin; aşınmışsa yenileyin.",
+     "order": 3
+    },
+    {
+     "cause_tr": "Kılavuz rulmanları bıçağı yana itiyor",
+     "action_tr": "Kılavuz rulmanlarını bıçak hattına göre yeniden ayarlayın.",
+     "order": 4
+    },
+    {
+     "cause_tr": "Bıçak boyu veya genişliği makineye uygun değil",
+     "action_tr": "Makine etiketindeki bıçak ölçüsünü kontrol edin.",
+     "order": 5
+    }
+   ]
+  },
+  {
+   "id": "chip_welding",
+   "symptom_tr": "Talaş dişlere yapışıyor / kaynıyor",
+   "source": "TestereStore eki (Starrett / LENOX sorun giderme tabloları)",
+   "causes_and_actions": [
+    {
+     "cause_tr": "Soğutma sıvısı yok, az veya oranı uygun değil",
+     "action_tr": "Soğutma sıvısının akışını ve karışım oranını kontrol edin; sıvıyı dişlere yönlendirin.",
+     "order": 1
+    },
+    {
+     "cause_tr": "Talaş fırçası çalışmıyor",
+     "action_tr": "Fırçanın diş boşluklarını temizlediğini doğrulayın; aşınmışsa değiştirin.",
+     "order": 2
+    },
+    {
+     "cause_tr": "Bant hızı çok yüksek",
+     "action_tr": "Hızı bir kademe düşürün.",
+     "order": 3
+    },
+    {
+     "cause_tr": "Diş adımı çok ince, diş boşluğu talaşı alamıyor",
+     "action_tr": "Daha kaba diş adımı seçin.",
+     "order": 4
+    }
+   ]
+  },
+  {
+   "id": "overheating",
+   "symptom_tr": "Bıçak aşırı ısınıyor / talaş mavi-yanık renkli",
+   "source": "TestereStore eki (Starrett / LENOX sorun giderme tabloları)",
+   "causes_and_actions": [
+    {
+     "cause_tr": "İlerleme çok yüksek",
+     "action_tr": "Önce ilerlemeyi azaltın.",
+     "order": 1
+    },
+    {
+     "cause_tr": "Bant hızı çok yüksek",
+     "action_tr": "Hızı bir kademe düşürün.",
+     "order": 2
+    },
+    {
+     "cause_tr": "Soğutma yetersiz",
+     "action_tr": "Soğutma sıvısının akışını ve oranını kontrol edin.",
+     "order": 3
+    },
+    {
+     "cause_tr": "Dişler körelmiş",
+     "action_tr": "Bıçağı değiştirin.",
+     "order": 4
+    }
+   ]
+  },
+  {
+   "id": "stalling",
+   "symptom_tr": "Bıçak kesimde duruyor / makine zorlanıyor",
+   "source": "TestereStore eki (Starrett / LENOX sorun giderme tabloları)",
+   "causes_and_actions": [
+    {
+     "cause_tr": "İlerleme veya kesme basıncı çok yüksek",
+     "action_tr": "İlerlemeyi azaltın.",
+     "order": 1
+    },
+    {
+     "cause_tr": "Kalın kesitte diş adımı çok ince",
+     "action_tr": "Kesite uygun, daha kaba diş adımı seçin.",
+     "order": 2
+    },
+    {
+     "cause_tr": "Bıçak gerginliği düşük, bıçak kasnakta kayıyor",
+     "action_tr": "Gerginliği makine kılavuzundaki değere getirin.",
+     "order": 3
+    },
+    {
+     "cause_tr": "Tahrik kayışı gevşek veya aşınmış",
+     "action_tr": "Kayış gerginliğini ve durumunu kontrol edin.",
+     "order": 4
+    },
+    {
+     "cause_tr": "Dişler körelmiş",
+     "action_tr": "Bıçağı değiştirin.",
+     "order": 5
+    }
+   ]
+  },
+  {
+   "id": "back_edge_cracks",
+   "symptom_tr": "Bıçak sırtında çatlaklar",
+   "source": "TestereStore eki (Starrett / LENOX sorun giderme tabloları)",
+   "causes_and_actions": [
+    {
+     "cause_tr": "Bıçak sırtı kasnak flanşına veya sırt desteğine sürtüyor",
+     "action_tr": "Kasnak eğimini ve sırt destek (baskı) bloklarını ayarlayın.",
+     "order": 1
+    },
+    {
+     "cause_tr": "Kılavuz rulmanları veya baskı blokları fazla sıkı",
+     "action_tr": "Kılavuzları bıçağı sıkıştırmayacak şekilde ayarlayın.",
+     "order": 2
+    },
+    {
+     "cause_tr": "Bıçak gerginliği çok yüksek",
+     "action_tr": "Gerginliği makine kılavuzundaki değere düşürün.",
+     "order": 3
+    },
+    {
+     "cause_tr": "İlerleme çok yüksek",
+     "action_tr": "İlerlemeyi azaltın.",
+     "order": 4
+    },
+    {
+     "cause_tr": "Kasnak çapı bıçak kalınlığına göre küçük",
+     "action_tr": "Makine etiketindeki bıçak kalınlığını kullanın; daha kalın bıçak takmayın.",
+     "order": 5
     }
    ]
   }

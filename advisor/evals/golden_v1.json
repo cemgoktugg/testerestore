@@ -67,6 +67,23 @@
 
     {"id": "idn-01", "slice": "identity", "turns": ["Sen kimsin, insan mısın?"], "contains_any": ["testerestore", "yapay zeka", "asistan"]},
     {"id": "idn-02", "slice": "identity", "turns": ["Starrett bıçak satıyor musunuz?"], "not_contains": ["intenss", "tennax"]},
-    {"id": "idn-03", "slice": "identity", "turns": ["Teşekkürler"], "not_contains": ["kesin bir urun kodu uretemedim"]}
+    {"id": "idn-03", "slice": "identity", "turns": ["Teşekkürler"], "not_contains": ["kesin bir urun kodu uretemedim"]},
+    {"id": "tpi-01", "slice": "funnel", "turns": ["40 mm dolu paslanmaz mil kesiyorum"], "contains_all": ["6/10"], "not_contains": ["10/14", "4/6 tpi"]},
+    {"id": "tpi-02", "slice": "funnel", "turns": ["80 mm çapında dolu karbon çelik mil kesiyorum"], "contains_all": ["4/6"]},
+    {"id": "tpi-03", "slice": "funnel", "turns": ["150 mm dolu karbon çelik kesiyorum"], "contains_all": ["2/3"]},
+    {"id": "tpi-04", "slice": "funnel", "turns": ["15 mm dolu karbon çelik çubuk kesiyorum"], "contains_all": ["10/14"]},
+    {"id": "idn-04", "slice": "identity", "turns": ["Canlı destek istiyorum"], "contains_all": ["yapay zeka asistaniyim", "whatsapp", "iletisim"]},
+    {"id": "idn-05", "slice": "identity", "turns": ["Bot musun?"], "contains_all": ["insan degilim"]},
+    {"id": "fun-09", "slice": "funnel", "turns": ["merhaba", "Emin değilim"], "contains_all": ["tarif eder misiniz"], "not_contains": ["kesin bir urun kodu uretemedim"]},
+    {"id": "kb-01", "slice": "knowledge", "turns": ["Bıçak boyunu nasıl ölçerim?"], "contains_all": ["kasnak", "etiket"]},
+    {"id": "kb-02", "slice": "knowledge", "turns": ["Kasnak çapı 350 mm, merkezler arası 1200 mm, bıçak boyu ne olur?"], "contains_all": ["3.500 mm"]},
+    {"id": "kb-03", "slice": "knowledge", "turns": ["Yeni bıçağı nasıl alıştırırım?"], "contains_all": ["rodaj", "ilerleme"]},
+    {"id": "kb-04", "slice": "knowledge", "turns": ["Bıçak gerginliği ne kadar olmalı?"], "contains_all": ["kilavuz"], "not_contains": ["fiyati"]},
+    {"id": "kb-05", "slice": "knowledge", "turns": ["Bor yağı oranı ne olmalı?"], "contains_all": ["sogutma sivisi"]},
+    {"id": "kb-06", "slice": "knowledge", "turns": ["St37 nedir?"], "contains_all": ["s235jr", "karbon celigi"]},
+    {"id": "kb-07", "slice": "knowledge", "turns": ["1.4301 mil kesiyorum, hangi bıçak?"], "contains_all": ["paslanmaz"]},
+    {"id": "trb-08", "slice": "troubleshoot", "turns": ["Bıçak kasnaktan çıkıyor"], "contains_all": ["kasnak"], "regex": ["1\\."]},
+    {"id": "trb-09", "slice": "troubleshoot", "turns": ["Talaş mavi renkte çıkıyor, bıçak çok ısınıyor"], "contains_all": ["ilerleme"]},
+    {"id": "trb-10", "slice": "troubleshoot", "turns": ["Bıçağın sırtında çatlaklar var"], "contains_all": ["sirt"]}
   ]
 }

@@ -218,3 +218,53 @@ def test_post_process_wood_category_redirects(fd):
            "next_question": {"text": "x"}}
     out = fd.post_process(s, res)
     assert "Ahşap Kesim" in out["message"] and out["next_question"] is None
+
+
+def test_post_process_tpi_mentions_diameter_and_comma(fd):
+    s = Session()
+    s.solid_diameter_mm = 40.0
+    res = {"message": "x", "state": {"tooth_pitch": "1.4/2", "metal_part_type": "SOLID"},
+           "recommendation": None}
+    out = fd.post_process(s, res)
+    assert out["message"].startswith("Ø40 mm dolu malzeme için önerilen diş adımı: **1,4/2 TPI**")
+
+
+def test_post_process_unknown_category_asks_to_describe(fd):
+    from rules_engine.engine import RulesEngine
+    s = Session()
+    s.rules_engine = RulesEngine(os.path.join(os.path.dirname(__file__), "..", "rules.json"))
+    s.rules_engine.update_state("material_category", "UNKNOWN")
+    res = {"message": "Elimdeki bilgilerle kesin bir ürün kodu üretemedim.",
+           "state": s.rules_engine.get_state(), "recommendation": None, "next_question": None}
+    out = fd.post_process(s, res)
+    assert "kesin bir ürün kodu" not in out["message"]
+    assert "tarif eder misiniz" in out["message"] and "kereste" in out["message"]
+    assert out["next_question"]["id"] == "Q_MATERIAL_CATEGORY"      # butonlar geri gelir
+    assert s.rules_engine.get_state()["material_category"] is None
+
+
+# --------------------------------------------------------------------------- #
+# Kimlik
+# --------------------------------------------------------------------------- #
+
+@pytest.mark.parametrize("msg", ["sen kimsin?", "insan mısın", "bot musun", "gerçek bir insanla mı konuşuyorum",
+                                 "ChatGPT misin"])
+def test_identity_question(fd, msg):
+    r = ask(fd, msg)
+    assert r and r.final and r.kinds == ["identity"]
+    assert "TestereStore'un yapay zekâ asistanıyım; insan değilim" in r.text
+    assert "BYCUTTECH" not in r.text.upper()
+
+
+@pytest.mark.parametrize("msg", ["canlı destek istiyorum", "bir yetkiliyle görüşmek istiyorum",
+                                 "müşteri temsilcisine bağlar mısın"])
+def test_human_request_gets_contact_routes(fd, msg):
+    r = ask(fd, msg)
+    assert r and r.kinds == ["identity"]
+    assert "/iletisim" in r.text and "WhatsApp" in r.text
+
+
+@pytest.mark.parametrize("msg", ["makinemi temsilci bayiden aldım", "yetkili servis arıyorum"])
+def test_identity_no_false_positive(fd, msg):
+    r = ask(fd, msg)
+    assert r is None or "identity" not in r.kinds

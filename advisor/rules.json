@@ -176,11 +176,11 @@
       "text": "Keseceğiniz dolu malzemenin maksimum çapı nedir?",
       "type": "single_select",
       "options": [
-        { "value": "D1", "label": "< 50 mm" },
-        { "value": "D2", "label": "50 - 100 mm" },
-        { "value": "D3", "label": "100 - 150 mm" },
-        { "value": "D4", "label": "150 - 250 mm" },
-        { "value": "D5", "label": "> 250 mm" },
+        { "value": "D1", "label": "< 25 mm" },
+        { "value": "D2", "label": "25 - 50 mm" },
+        { "value": "D3", "label": "50 - 100 mm" },
+        { "value": "D4", "label": "100 - 200 mm" },
+        { "value": "D5", "label": "> 200 mm" },
         { "value": "UNKNOWN", "label": "Emin değilim" }
       ],
       "writes_to": "solid_max_diameter_bucket"
@@ -770,10 +770,10 @@
                 "solid_max_diameter_bucket",
                 {
                   "D1": "10/14",
-                  "D2": "8/12",
-                  "D3": "6/10",
-                  "D4": "5/8",
-                  "D5": "4/6",
+                  "D2": "6/10",
+                  "D3": "4/6",
+                  "D4": "2/3",
+                  "D5": "1.4/2",
                   "UNKNOWN": "6/10"
                 }
               ]
@@ -807,10 +807,10 @@
                 "solid_max_diameter_bucket",
                 {
                   "D1": "10/14",
-                  "D2": "8/12",
-                  "D3": "6/10",
-                  "D4": "5/8",
-                  "D5": "4/6",
+                  "D2": "6/10",
+                  "D3": "4/6",
+                  "D4": "2/3",
+                  "D5": "1.4/2",
                   "UNKNOWN": "8/12"
                 }
               ]
@@ -843,11 +843,11 @@
               "map": [
                 "solid_max_diameter_bucket",
                 {
-                  "D1": "14/18",
-                  "D2": "10/14",
-                  "D3": "8/12",
-                  "D4": "6/10",
-                  "D5": "5/8",
+                  "D1": "10/14",
+                  "D2": "6/10",
+                  "D3": "4/6",
+                  "D4": "2/3",
+                  "D5": "1.4/2",
                   "UNKNOWN": "8/12"
                 }
               ]
@@ -880,11 +880,11 @@
               "map": [
                 "solid_max_diameter_bucket",
                 {
-                  "D1": "8/12",
+                  "D1": "10/14",
                   "D2": "6/10",
-                  "D3": "5/8",
-                  "D4": "4/6",
-                  "D5": "3/4",
+                  "D3": "4/6",
+                  "D4": "2/3",
+                  "D5": "1.4/2",
                   "UNKNOWN": "5/8"
                 }
               ]
@@ -918,10 +918,10 @@
                 "solid_max_diameter_bucket",
                 {
                   "D1": "10/14",
-                  "D2": "8/12",
-                  "D3": "6/10",
-                  "D4": "5/8",
-                  "D5": "4/6",
+                  "D2": "6/10",
+                  "D3": "4/6",
+                  "D4": "2/3",
+                  "D5": "1.4/2",
                   "UNKNOWN": "6/10"
                 }
               ]
@@ -950,7 +950,7 @@
         {
           "append_warning_if": {
             "cond": { "in": ["solid_max_diameter_bucket", ["D4", "D5"]] },
-            "message": "Kalın dolu malzeme (>150mm) keserken ilerlemeyi azaltın ve kesimde ara verin (ısınmayı önlemek için)."
+            "message": "Kalın dolu malzeme (>100 mm) keserken ilerlemeyi azaltın ve kesimde ara verin (ısınmayı önlemek için)."
           }
         }
       ]
@@ -1738,7 +1738,7 @@
       },
       "then": [
         {
-          "append_warning": "Büyük kesitlerde (>100mm) düşük TPI tercih edin. Yüksek TPI ile kalın kesitte diş başına aşırı yük biner ve diş kökü yorulması riski artar. Önerilen TPI: 3/6 veya 4/6."
+          "append_warning": "Büyük kesitlerde (>100mm) düşük TPI tercih edin. Yüksek TPI ile kalın kesitte diş başına aşırı yük biner ve diş kökü yorulması riski artar. Bu çaplarda çizelge 2/3 ve daha kaba diş adımlarını önerir."
         }
       ]
     },
@@ -2021,14 +2021,14 @@
         "material_family": "CARBON_STEEL",
         "part_type": "SOLID",
         "blade_type": "BI_METAL_M42_FLEXBACK",
-        "tooth_pitch": "8/12",
+        "tooth_pitch": "6/10",
         "blade_width_mm": 16,
         "blade_thickness_mm": 0.9,
-        "sku": "16-0.90-8/12-2240",
+        "sku": "16-0.90-6/10-2240",
         "confidence": "HIGH",
         "warnings_count": 0
       },
-      "__comment": "SOLID için ilk test - 50-100mm çap aralığı"
+      "__comment": "SOLID için ilk test - 25-50 mm çap aralığı (Starrett: 6/10)"
     },
 
     {
@@ -2046,15 +2046,15 @@
         "material_family": "ALUMINUM",
         "part_type": "SOLID",
         "blade_type": "BI_METAL_M42_FLEXBACK",
-        "tooth_pitch": "6/10",
+        "tooth_pitch": "2/3",
         "blade_width_mm": 27,
         "blade_thickness_mm": 1.1,
-        "sku": "27-1.10-6/10-3660",
+        "sku": "27-1.10-2/3-3660",
         "confidence": "HIGH",
         "warnings_count": 1
       },
       "expected_warnings": [
-        "Kalın dolu malzeme (>150mm) keserken ilerlemeyi azaltın ve kesimde ara verin (ısınmayı önlemek için)."
+        "Kalın dolu malzeme (>100 mm) keserken ilerlemeyi azaltın ve kesimde ara verin (ısınmayı önlemek için)."
       ],
       "__comment": "Kalın dolu malzeme uyarısı testi"
     },

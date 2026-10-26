@@ -23,6 +23,8 @@ import logging
 import re
 from typing import Any, Dict, List, Optional
 
+from llm import knowledge, tpi_refine
+from llm.front_desk import norm
 from llm.answer_mapper import AnswerMapper
 
 logger = logging.getLogger(__name__)
@@ -90,16 +92,18 @@ class DialogManager:
     """Kural motoru güdümlü konuşma yöneticisi."""
 
     def __init__(self, openai_client, api_key: str, model: Optional[str] = None,
-                 machine_db: Any = None):
+                 machine_db: Any = None, store: Any = None):
         """
         Args:
             openai_client: Metin üretimi için OpenAIClient (retry'lı)
             api_key: OpenAI API anahtarı (AnswerMapper için)
             model: Kullanılacak model
             machine_db: Paylaşılan makine veritabanı örneği
+            store: StoreClient — satılan diş adımları için (yoksa anlık görüntü)
         """
         self.openai_client = openai_client
         self.mapper = AnswerMapper(api_key=api_key, model=model, machine_db=machine_db)
+        self.store = store
 
     # ==================================================================
     # ANA TUR DÖNGÜSÜ
@@ -131,12 +135,26 @@ class DialogManager:
         for fieldname, value in mapping.values.items():
             engine.update_state(fieldname, value)
 
+        # Malzeme kalitesi (St37, C45, 1.4301, 6082 …) tablodan → metal grubu.
+        # Tablo LLM tahmininden önce gelir; müşteriye bir kez söylenir.
+        grade_note = self._apply_grade(session, message, mapping)
+
         # Metal ailesi geldiyse kategori otomatik METAL olur
         if mapping.values.get("metal_family") and not engine.get_state().get("material_category"):
             engine.update_state("material_category", "METAL")
 
+        self._remember_solid_diameter(session, message, mapping, pending)
+
         if mapping.values:
             engine.execute_rules()
+
+        # Dolu kesitte gerçek çap (Starrett) + bu bıçakta satılan dişler.
+        # Kurallar her çalıştığında TPI'yi kova değerine döndürür; bu yüzden
+        # her turda uygulanır (idempotent).
+        try:
+            tpi_refine.refine(engine, session, self._price_tree())
+        except Exception as exc:  # inceltme başarısızsa motorun değeri kalır
+            logger.warning(f"TPI inceltme atlandı: {exc}")
 
         # --- 3) Motorun yeni durumunu oku ---
         state = engine.get_state()
@@ -165,6 +183,9 @@ class DialogManager:
                 session=session,
             )
 
+        if grade_note:
+            reply = grade_note + "\n\n" + reply
+
         session.add_message("user", message)
         session.add_message("assistant", reply)
 
@@ -179,6 +200,62 @@ class DialogManager:
             "rejected_fields": mapping.rejected,
             "machine_found": mapping.machine_found,
         }
+
+    # ==================================================================
+    # DOLU KESİT ÇAPI / SATILAN DİŞLER
+    # ==================================================================
+
+    @staticmethod
+    def _remember_solid_diameter(session, message: str, mapping, pending) -> None:
+        """
+        Müşterinin yazdığı dolu kesit çapını (mm) oturumda tut. Önce eşleştiricinin
+        ölçtüğü değer, yoksa metinden ("40 mm mil", "Ø40", çap sorusuna "40").
+        Kova da sayıdan hesaplanır; LLM'in kova tahmini sayıyı ezemez.
+        """
+        field = "solid_max_diameter_bucket"
+        expecting = getattr(pending, "writes_to", None) == field
+        mm = mapping.measured_mm.get(field) if getattr(mapping, "measured_mm", None) else None
+        if mm is None:
+            mm = tpi_refine.parse_solid_diameter(message, expecting=expecting)
+        if mm is None:
+            return
+        session.solid_diameter_mm = float(mm)
+        engine = session.rules_engine
+        state = engine.get_state()
+        solid = "SOLID" in (state.get("part_type"), state.get("metal_part_type"),
+                            mapping.values.get("metal_part_type"), mapping.values.get("part_type"))
+        if expecting or solid:
+            bucket = tpi_refine.bucket_for(float(mm))
+            if mapping.values.get(field) != bucket:
+                mapping.values[field] = bucket
+                engine.update_state(field, bucket)
+
+    @staticmethod
+    def _apply_grade(session, message: str, mapping) -> Optional[str]:
+        grade = knowledge.detect_grade(norm(message))
+        if not grade:
+            return None
+        family = grade.get("family")
+        engine = session.rules_engine
+        if family:
+            if mapping.values.get("metal_family") not in (None, family):
+                logger.info(f"kalite tablosu LLM'i düzeltti: {mapping.values.get('metal_family')} -> {family}")
+            mapping.values["metal_family"] = family
+            engine.update_state("metal_family", family)
+        if getattr(session, "grade_shown", None) == grade["id"]:
+            return None
+        session.grade_shown = grade["id"]
+        return knowledge.grade_line(grade)
+
+    def _price_tree(self) -> Optional[Dict[str, Any]]:
+        store = self.store
+        if store is None or not getattr(store, "enabled", False):
+            return None
+        try:
+            return store.price_options()
+        except Exception as exc:
+            logger.warning(f"fiyat listesi alınamadı: {exc}")
+            return None
 
     # ==================================================================
     # CEVAP KURMA

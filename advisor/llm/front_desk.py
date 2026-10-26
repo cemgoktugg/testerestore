@@ -30,6 +30,7 @@ import re
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional, Tuple
 
+from llm import knowledge
 from llm.store_client import StoreClient
 
 SITE_URL = os.environ.get("ADVISOR_SITE_URL", "https://testerestore.com").rstrip("/")
@@ -162,6 +163,23 @@ _OFF_TOPIC = (r"\b(siir|sarki|hikaye|masal|fikra|hava durumu|hava nasil|futbol|b
 _DOMAIN = (r"serit|testere|bica[kg]|tpi|\bdis|kesim|kesiyor|kesece|kesmek|makine|metal|celik|"
            r"paslanmaz|aluminyum|dokum|profil|boru|\bmil\b|lama|\bsac\b|kaynak|bimetal|"
            r"bi-metal|m42|m51|karbur|siparis|kargo|fiyat|stok|hazir|odeme|iade|fatura|\d+\s*mm")
+# Kimlik / insan desteği: "sen kimsin", "bot musun", "canlı destek"
+_IDENTITY = (r"\bkimsin|kiminle konusuyorum|\binsan mi(sin|siniz)?\b|gercek (bir )?(insan|kisi)|"
+             r"\b(bot|robot)\s*mu(sun|sunuz)?\b|yapay zeka mi(sin)?\b|chat\s?gpt|\bgpt\b|"
+             r"canli (destek|biri|kisi|temsilci)|musteri temsilci|temsilci(yle|ye|nize) (gorus|konus|bagla|aktar)|"
+             r"yetkili (biri|kisi)|\boperator|(insan|biri|birisi|yetkili)(yle|ile) gorus")
+_HUMAN_REQUEST = r"canli|temsilci|yetkili|operator|gorus"
+# Bilgi paketleri (llm/knowledge.py)
+_LENGTH_HELP = (r"(boy|uzunlu)\w*\s*(\w+\s+){0,3}(nasil|nereden|nerden)\s*(olc|hesap|bul|ogren|anla)|"
+                r"(boy|uzunlu)\w*\s*(\w+\s+){0,2}bilmiyorum|(boy|uzunlu)\w*\s*hesap\w*|"
+                r"kasnak\w*\s*(\w+\s+){0,3}(cap|merkez|aras)")
+_RUN_IN = (r"rodaj|alistir\w*|\brun-?in\b|\bbreak-?in\b|"
+           r"yeni bica[kg]\w*\s*(\w+\s+){0,3}(ilk|nasil kullan)")
+_QUESTION = r"(nasil|ne kadar|\bkac\b|ayar\w*|olmali|gerek\w*|\bsart\b|lazim|oran\w*|hangi|\bmi\b|\bmu\b|\?)"
+_TENSION = (rf"(gergi\w*|gergin\w*|gerdir\w*|germe\w*|geril\w*)\s*(\w+\s+){{0,4}}{_QUESTION}|"
+            r"ne kadar ger\w*|tansiyon")
+_COOLANT_Q = (rf"(sogutma\w*|bor yag\w*|kesme yag\w*|emulsiyon\w*|kuru kes\w*)\s*(\w+\s+){{0,4}}{_QUESTION}")
+_GRADE_Q = r"nedir|ne demek|hangi (malzeme|grup|metal|celik|sinif)|esdeger|karsilig|muadil|ne tur"
 _SHIPPING = r"kargo|teslimat|ne zaman gel|kac gunde|gonderim|gonderi|kargoya"
 _RETURN = r"\biade|cayma|geri gonder|degisim|degistir|geri al"
 _PAYMENT = r"odeme|taksit|kredi kart|banka kart|havale|\beft\b|kapida|nakit|kartla|kart ile"
@@ -175,6 +193,7 @@ _SELECTION = (r"paslanmaz|karbon|celik|aluminyum|dokum|pirinc|bakir|titanyum|\bd
 
 # Arıza belirtileri (RAG v2 diagnostics.py kalıpları) → arıza tablosu id
 _SYMPTOMS: List[Tuple[str, str]] = [
+    ("back_edge_cracks", r"sirt\w*\s*(\w+\s+){0,3}catla\w*|arka\s*kenar\w*\s*(\w+\s+){0,2}catla\w*"),
     ("blade_break", r"(bica[kg]|serit|band)\w*\s*(\w+\s+){0,2}(kopt|kop\w*|kiril\w*|catla\w*)|kaynak yerinden"),
     ("tooth_breakage", r"dis(ler)?\w*\s*(\w+\s+){0,2}(kopt|kop\w*|kiril\w*|doku\w*)|dis\s*kaybi"),
     ("tooth_back_breakout", r"dis(in)?\s*arka|arka\s*taraf.{0,12}kiril"),
@@ -191,6 +210,13 @@ _SYMPTOMS: List[Tuple[str, str]] = [
     ("blade_back_wear", r"sirt.{0,10}asin|bica[kg]\w*\s*sirti"),
     ("blade_surface_damage", r"govde.{0,12}(hasar|cizik)|yuzey.{0,10}hasar"),
     ("twisted_blade", r"burul|bica[kg]\w*\s*bukul|kivril"),
+    ("rough_cut_surface", r"(kesim|yuzey)\w*\s*(\w+\s+){0,2}(puruz\w*|kotu|bozuk|tirtik\w*)|puruzlu"),
+    ("blade_off_wheel", r"kasnak\w*\s*(\w+\s+){0,2}(cik\w*|atiyor|atti|kayiyor|kaciyor)|"
+                        r"(bica[kg]|serit)\w*\s*(\w+\s+){0,2}(atiyor|firliyor)"),
+    ("chip_welding", r"talas\w*\s*(\w+\s+){0,3}(yapis\w*|kayn\w*)|dis\w*\s*(\w+\s+){0,2}(yapis\w*|sivan\w*)"),
+    ("overheating", r"(asiri\s*)?isin(iyor|ma\w*)|talas\w*\s*(\w+\s+){0,2}(mavi|yanik|kahverengi|mor)|duman"),
+    ("stalling", r"(bica[kg]|serit|testere)\w*\s*(\w+\s+){0,2}(duruyor|durdu|takiliyor)|"
+                 r"(makine|motor)\w*\s*(\w+\s+){0,2}(zorlan\w*|bogul\w*|duruyor)"),
 ]
 _TROUBLE_GENERIC = r"(sorun|problem|ariza|bozul|neden boyle)"
 
@@ -255,6 +281,28 @@ class FrontDesk:
         parts: List[str] = []
         kinds: List[str] = []
 
+        if _any(_IDENTITY, n):
+            parts.append(self._identity(n))
+            kinds.append("identity")
+
+        link_fn = link
+        if _any(_LENGTH_HELP, n):
+            parts.append(knowledge.length_answer(n, link_fn))
+            kinds.append("length_help")
+        if _any(_RUN_IN, n):
+            parts.append(knowledge.run_in_answer(link_fn))
+            kinds.append("run_in")
+        if _any(_TENSION, n):
+            parts.append(knowledge.tension_answer(link_fn))
+            kinds.append("tension")
+        if _any(_COOLANT_Q, n):
+            parts.append(knowledge.coolant_answer(link_fn))
+            kinds.append("coolant")
+        grade = knowledge.detect_grade(n)
+        if grade and _any(_GRADE_Q, n):
+            parts.append(knowledge.grade_answer(grade, link_fn))
+            kinds.append("grade")
+
         symptoms = self._symptoms(n)
         if symptoms:
             parts.append(self._trouble_answer(symptoms))
@@ -275,12 +323,14 @@ class FrontDesk:
         if _any(_INVOICE, n):
             parts.append(self._invoice())
             kinds.append("invoice")
-        if _any(_CONTACT, n) and "shipping" not in kinds:
+        if _any(_CONTACT, n) and "shipping" not in kinds and "identity" not in kinds:
             parts.append(self._contact())
             kinds.append("contact")
 
         family = detect_family(n)
-        wants_price = _any(_PRICE, n) and not ("shipping" in kinds and not parse_width_thickness(n))
+        # "gergi ne kadar olmalı", "boy ne kadar olmalı" fiyat sorusu değil
+        info_only = {"shipping", "length_help", "run_in", "tension", "coolant", "grade", "identity"} & set(kinds)
+        wants_price = _any(_PRICE, n) and not (info_only and not parse_width_thickness(n))
         wants_stock = _any(_STOCK, n) and (parse_length(n) or _any(r"hazir|stok", n))
 
         if wants_stock and "troubleshoot" not in kinds:
@@ -318,6 +368,16 @@ class FrontDesk:
         state = result.get("state") or {}
         if not result.get("recommendation"):
             cat = state.get("material_category")
+            if cat == "UNKNOWN" and not result.get("next_question"):
+                # "Emin değilim" seçilince huni sorusuz kalıyordu ("kesin bir
+                # ürün kodu üretemedim"). Seçimi sıfırla, örneklerle tarif ettir.
+                engine = getattr(session, "rules_engine", None)
+                if engine is not None:
+                    engine.state_manager.update_field("material_category", None)
+                    result["next_question"] = _question_payload(engine.get_next_question())
+                    result["state"] = engine.get_state()
+                result["message"] = self._unknown_material()
+                return result
             if cat in ("WOOD", "ORGANIC_BONE", "PLASTIC_COMPOSITE"):
                 fam = {"WOOD": "woodcut", "ORGANIC_BONE": "meat-bone"}.get(cat)
                 if fam:
@@ -330,8 +390,12 @@ class FrontDesk:
             tpi = state.get("tooth_pitch")
             if tpi and getattr(session, "front_desk_tpi_shown", None) != tpi:
                 session.front_desk_tpi_shown = tpi
+                d = getattr(session, "solid_diameter_mm", None)
+                solid = "SOLID" in (state.get("part_type"), state.get("metal_part_type"))
+                basis = f"Ø{mm(d)} mm dolu malzeme için" if d and solid else "Verdiğiniz bilgilere göre"
                 result["message"] = (
-                    f"Verdiğiniz bilgilere göre önerilen diş adımı: **{tpi} TPI**. "
+                    f"{basis} önerilen diş adımı: **{tpi.replace('.', ',')} TPI** "
+                    "(kesin değer makinenizin bıçak ölçüsüne göre netleşir). "
                     "Size uygun bıçağı ve ölçüyü kesinleştirmek için:\n\n"
                     + (result.get("message") or "")
                 )
@@ -385,6 +449,33 @@ class FrontDesk:
         return (
             f"**İletişim:** {link('İletişim sayfamızdan', '/iletisim')} mesaj gönderebilir ya da sayfanın sağ "
             "altındaki WhatsApp butonuyla bize yazabilirsiniz."
+        )
+
+    @staticmethod
+    def _identity(n: str) -> str:
+        text = (
+            "Ben TestereStore'un yapay zekâ asistanıyım; insan değilim. Bıçak seçimi, fiyat ve hazır stok, "
+            "kargo-ödeme-iade ve kesim sorunlarında hemen yardımcı olabilirim. Yanıtlarım hata içerebilir; "
+            "siparişten önce ürün sayfasını kontrol etmenizi öneririm."
+        )
+        if _any(_HUMAN_REQUEST, n):
+            text += (
+                " Bir yetkilimizle görüşmek isterseniz "
+                f"{link('İletişim sayfamızdan', '/iletisim')} yazabilir ya da sayfanın sağ altındaki "
+                "WhatsApp butonunu kullanabilirsiniz."
+            )
+        return text
+
+    @staticmethod
+    def _unknown_material() -> str:
+        return (
+            "Sorun değil, birlikte bulalım. Keseceğiniz parçayı kısaca tarif eder misiniz? Örneğin:\n"
+            "- **Metal:** demir profil, paslanmaz mil, alüminyum boru, döküm parça\n"
+            "- **Ahşap:** kereste, tomruk, MDF\n"
+            "- **Et / kemik:** donuk et, kemikli et, balık\n"
+            "- **Sünger / tekstil:** sünger blok, köpük, kumaş\n\n"
+            "Emin olamıyorsanız " + link("İletişim sayfamızdan", "/iletisim")
+            + " ya da WhatsApp'tan bize yazabilirsiniz."
         )
 
     @staticmethod
@@ -642,6 +733,19 @@ class FrontDesk:
             return FrontDeskReply(text + "\n\n" + self._soft_continue(["stock"]), final=True,
                                   kinds=["stock"])
         return None
+
+
+def _question_payload(question) -> Optional[Dict[str, Any]]:
+    """DialogManager._question_payload ile aynı biçim (döngüsel içe aktarma yok)."""
+    if question is None:
+        return None
+    return {
+        "id": question.id,
+        "text": question.text,
+        "type": question.type,
+        "writes_to": question.writes_to,
+        "options": [{"value": o.value, "label": o.label} for o in (question.options or [])],
+    }
 
 
 # --------------------------------------------------------------------------- #
