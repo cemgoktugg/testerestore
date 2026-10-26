@@ -10,7 +10,7 @@ import { GUIDES } from '../../lib/guides';
 export const metadata: Metadata = pageMetadata({
   title: 'Şerit Testere Rehberi',
   description:
-    'Şerit testere seçimi ve kullanımı üzerine teknik rehberler: TPI (diş adımı) seçimi, M42–M51–karbür karşılaştırması, bıçak boyu ölçme, kırılma nedenleri, rodaj ve bakım.',
+    'Şerit testere teknik rehberleri: TPI seçimi, M42–M51–karbür, çelik eşdeğerleri, boy ölçme, arızalar, gerginlik ve soğutma, rodaj; ahşap, et-kemik ve sünger bıçakları.',
   path: '/rehber',
 });
 

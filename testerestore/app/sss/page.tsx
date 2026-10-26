@@ -10,7 +10,7 @@ import { CATEGORY_PAGES, categoryHref } from '../../lib/category-pages';
 export const metadata: Metadata = pageMetadata({
   title: 'Sık Sorulan Sorular',
   description:
-    'Şerit testere ölçüsü nasıl alınır, hangi diş adımı (TPI) seçilir, özel boy ve hazır boy farkı, ödeme, kargo ve cayma hakkı hakkında sık sorulan sorular.',
+    'Şerit testere boyu nasıl ölçülür, hangi TPI ve kalite (M42, M51, karbür) seçilir, rodaj, kaynak yerinden kopma, hazır boy ve özel boy farkı, kargo ve cayma hakkı.',
   path: '/sss',
 });
 
@@ -18,6 +18,8 @@ export const metadata: Metadata = pageMetadata({
  * Cevaplar yalnızca sitenin gerçekten sunduğu hizmetlere dayanır. Kesin teslim
  * süresi, garanti süresi gibi doğrulanmamış vaatler BİLEREK yazılmadı; iade ve
  * cayma metni yasal sayfayla (lib/legal-content.ts) tutarlı tutulmalı.
+ * Teknik cevaplar lib/guides.ts'deki rehberlerle tutarlı tutulmalı (TPI,
+ * rodaj, gerginlik, soğutma aralıkları; kaynakların ayrıştığı yerler tarafsız).
  */
 const SECTIONS: { title: string; items: { q: string; a: string }[] }[] = [
   {
@@ -36,12 +38,49 @@ const SECTIONS: { title: string; items: { q: string; a: string }[] }[] = [
         a: 'Temel kural, kesit içinde aynı anda en az üç dişin çalışmasıdır. İnce cidarlı boru ve profillerde sık diş (yüksek TPI), büyük kesitli dolu malzemede seyrek diş (düşük TPI) seçilir. Ürün sayfasındaki diş profili ve TPI danışmanı, malzemenize göre öneri verir.',
       },
       {
+        q: 'Eski bıçağım ve makine etiketim yok; bıçak boyunu nasıl hesaplarım?',
+        a: 'İki eşit kasnaklı makinelerde boy L = 2 × C + π × D formülüyle hesaplanır (C: kasnak merkezleri arası mesafe, D: kasnak çapı, mm). Ölçümden önce gerdirme ayarını orta konuma getirin. Örneğin 1.200 mm merkez mesafesi ve 350 mm kasnakta boy yaklaşık 3.500 mm’dir. Farklı çaplı ve üç kasnaklı makineler için Şerit Testere Boyu rehberimize bakın. Ölçünüze göre kaynaklanan bıçaklar iade edilemediğinden sonucu mümkünse makine kılavuzuyla doğrulayın.',
+      },
+      {
+        q: 'Bıçak genişliğini ve kalınlığını nasıl ölçerim?',
+        a: 'Genişliği bıçağın sırtından diş ucuna kadar, kalınlığı ise kumpasla dişlerden ve kaynak yerinden uzakta, gövde üzerinden ölçün. Metal kesim makinelerinde 27 × 0,9, 34 × 1,1 ve 41 × 1,3 mm gibi standart genişlik–kalınlık çiftleri yaygındır; ölçtüğünüz değeri makine kılavuzuyla karşılaştırın.',
+      },
+      {
         q: 'Hazır boy ile özel boy arasındaki fark nedir?',
-        a: 'Hazır boy bıçaklar standart ölçülerde önceden kaynaklanmış ve stokta bekleyen ürünlerdir; ölçünüz tutuyorsa doğrudan sipariş edebilirsiniz. Özel boy bıçaklar ise siparişinizdeki ölçüye göre kesilip kaynaklanır.',
+        a: 'Hazır boy bıçaklar standart ölçülerde önceden kaynaklanmış ve stokta bekleyen ürünlerdir; ölçünüz birebir tutuyorsa doğrudan sipariş edebilirsiniz ve teslimden itibaren 14 gün cayma hakkınız vardır. Özel boy bıçaklar ise siparişinizdeki ölçüye göre kesilip kaynaklanır; kişiye özel üretildikleri için cayma hakkı kapsamı dışındadır. Ölçünüz hazır boylardan biriyle tutmuyorsa ölçüye göre sipariş verin.',
       },
       {
         q: 'Hangi bıçak hangi malzemeyi keser?',
         a: 'Genel metal, profil ve boru kesiminde bi-metal (M42, M51); sertleştirilmiş çelik ve zor alaşımlarda karbür uçlu; ahşapta karbon çeliği ahşap bıçakları; gıda sektöründe et-kemik bıçakları; sünger ve tekstilde dişsiz veya dalgalı ağızlı bıçaklar kullanılır. Kategori sayfalarında her türün seçim ipuçlarını bulabilirsiniz.',
+      },
+      {
+        q: 'M42 ile M51 arasındaki fark nedir, hangisini seçmeliyim?',
+        a: 'İkisi de bi-metal bıçaktır; fark diş malzemesindedir. Bi-Metal M42; yapı çeliği, profil, boru ve genel atölye kesimleri için dengeli ve ekonomik bir seçimdir. Bi-Metal M51 daha yüksek sıcak sertlik ve aşınma direnci sunar; paslanmaz, alaşımlı ve takım çeliklerinde, büyük kesitlerde ve seri kesimde tercih edilir. Yaklaşık 45 HRC’nin üzerindeki sertleştirilmiş malzemelerde ise karbür uçlu bıçak gerekir.',
+      },
+      {
+        q: 'Sertleştirilmiş mil veya Hardox kesmek için hangi bıçak gerekir?',
+        a: 'Bi-metal bıçaklar yaklaşık 45 HRC’ye kadar olan malzemeler içindir. İndüksiyonla sertleştirilmiş krom kaplı miller, sertleştirilmiş takım çelikleri ve Hardox 500 ve üzeri aşınma plakaları için karbür uçlu bıçak kullanın; Hardox 400 ve 450 sınır bölgesindedir ve düzenli kesimde karbür uçlu bıçak önerilir. Karbür uçlu bıçak rijit ve yeterli gerginlik sağlayan bir makine gerektirir.',
+      },
+    ],
+  },
+  {
+    title: 'Kullanım, alıştırma ve arızalar',
+    items: [
+      {
+        q: 'Yeni şerit testere bıçağı nasıl alıştırılır (rodaj)?',
+        a: 'İlk kesimlerde ilerlemeyi (kesme basıncını) belirgin şekilde azaltın; çoğu üretici normal değerin yaklaşık yarısını önerir. Toplam yaklaşık 150–500 cm² kesit alanını bu şekilde kesin, ardından ilerlemeyi kademeli olarak normale çıkarın. Bant hızı konusunda üreticiler ayrışır: bazıları normal hızı korumayı, bazıları hızı yaklaşık %70–75’e düşürmeyi önerir. Makine ve bıçak kılavuzunuzdaki değeri esas alın.',
+      },
+      {
+        q: 'Bıçak kaynak yerinden koptu, ne yapmalıyım?',
+        a: 'Kaynak yerinden kopma, kaynak veya tavlama kusurundan ya da gövdeyi de kırabilecek zorlanmalardan (aşırı gerginlik, kasnak çapına göre kalın bıçak, kılavuz sorunları) kaynaklanabilir. Bıçağın, kırık yüzeyinin ve makine etiketinin fotoğraflarını iletişim sayfasından bize gönderin; inceleme sonucunda ayıplı ürün söz konusuysa değişim, onarım veya iade süreci yasal haklarınız çerçevesinde yürütülür. Yeni bıçağı takmadan önce gerginlik ve kılavuz ayarını da kontrol edin.',
+      },
+      {
+        q: 'Bıçağım neden eğri kesiyor?',
+        a: 'En sık nedenler yüksek ilerleme, düşük bıçak gerginliği, parçadan uzak veya aşınmış kılavuzlar ve bir tarafı körelmiş ya da çaprazı bozulmuş dişlerdir. Önce ilerlemeyi azaltın, gerginliği ve kılavuz ayarını kontrol edin; sorun sürüyorsa bıçağı değiştirin.',
+      },
+      {
+        q: 'Bıçak gerginliği ve bor yağı oranı ne olmalı?',
+        a: 'Kaynaklar farklı değerler verir: bi-metal bıçaklar için Alman bıçak üreticileri 250–300 N/mm², ABD’deki yaygın uygulama yaklaşık 170–210 N/mm² önerir. Soğutma sıvısında Türkiye’deki atölyelerde %4–5 yaygınken bazı bıçak üreticileri genel çelikler için %8–12, paslanmaz ve takım çelikleri için %15 ve üzerini önerir. Makinenizin, bıçağın ve sıvının üreticisinin değerini esas alın; gerginliği gerginlik ölçerle, oranı refraktometreyle ölçün.',
       },
     ],
   },
@@ -88,10 +127,14 @@ export default function SssPage() {
             Sık Sorulan Sorular
           </h1>
           <p className="mt-3 text-sm text-muted-foreground leading-relaxed">
-            Şerit testere seçimi, sipariş, ödeme, teslimat ve iade hakkında en çok sorulanlar.
-            Cevabını bulamadığınız sorular için{' '}
+            Şerit testere seçimi, kullanımı, sipariş, ödeme, teslimat ve iade hakkında en çok sorulanlar.
+            Ayrıntılı teknik bilgi için{' '}
+            <Link href="/rehber" className="font-semibold text-accent hover:underline">
+              şerit testere rehberine
+            </Link>{' '}
+            bakabilir, cevabını bulamadığınız sorular için{' '}
             <Link href="/iletisim" className="font-semibold text-accent hover:underline">
-              bize yazın
+              bize yazabilirsiniz
             </Link>
             .
           </p>
