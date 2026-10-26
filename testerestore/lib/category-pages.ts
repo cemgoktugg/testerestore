@@ -84,8 +84,8 @@ export const CATEGORY_PAGES: CategoryPage[] = [
     ],
     tipsTitle: 'M42 için ipuçları',
     tips: [
-      'Profil ve borularda kesitteki en ince et kalınlığına göre diş seçin; bu kesimlerde 5/8 veya 6/10 TPI gibi sık dişler uygundur.',
-      'Orta ve büyük çaplı dolu malzemede 3/4 veya 2/3 TPI gibi seyrek dişler talaşı daha iyi boşaltır.',
+      'Profil ve borularda diş adımını et kalınlığı ve dış ölçüye birlikte bakarak seçin; 2 mm gibi ince cidarlarda çoğu ölçüde 10/14 veya daha sık diş gerekir.',
+      'Orta ve büyük çaplı (yaklaşık 70–180 mm) dolu malzemede 3/4 veya 2/3 TPI gibi seyrek dişler talaşı daha iyi boşaltır.',
       'Yeni bıçağı ilk birkaç kesimde düşük ilerlemeyle alıştırmak (rodaj) bıçak ömrünü uzatır.',
     ],
     faqs: [{ q: 'M42 bıçak için doğru TPI nasıl seçilir?', a: TPI_RULE }, LENGTH_FAQ],

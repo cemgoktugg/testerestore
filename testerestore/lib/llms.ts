@@ -55,7 +55,7 @@ export async function buildLlmsTxt(): Promise<string> {
     ...GUIDES.map((g) => link(g.h1, `/rehber/${g.slug}`, g.summary)),
     '',
     '## Bilgi',
-    link('Sık Sorulan Sorular', '/sss', 'Ölçü alma, TPI seçimi, ödeme, kargo ve cayma hakkı.'),
+    link('Sık Sorulan Sorular', '/sss', 'Ölçü alma, TPI ve kalite seçimi, rodaj, arızalar, ödeme, kargo ve cayma hakkı.'),
     link('Hakkımızda', '/hakkimizda'),
     link('İletişim', '/iletisim'),
     '',
