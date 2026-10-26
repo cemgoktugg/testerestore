@@ -144,6 +144,9 @@ class AnswerMapper:
         self.client = OpenAI(api_key=api_key)
         self.model = model or get_default_model()
         self.machine_db = machine_db
+        # Tur başına maliyet ölçümü için (llm/telemetry.py)
+        self.total_prompt_tokens = 0
+        self.total_completion_tokens = 0
 
     # ------------------------------------------------------------------
     # ŞEMA ÜRETİMİ
@@ -290,6 +293,11 @@ class AnswerMapper:
         except Exception as exc:
             logger.error(f"Answer mapping failed: {exc}")
             return MappingResult(intent="OFF_TOPIC", off_topic_text=message)
+
+        usage = getattr(response, "usage", None)
+        if usage is not None:
+            self.total_prompt_tokens += int(getattr(usage, "prompt_tokens", 0) or 0)
+            self.total_completion_tokens += int(getattr(usage, "completion_tokens", 0) or 0)
 
         calls = response.choices[0].message.tool_calls
         if not calls:

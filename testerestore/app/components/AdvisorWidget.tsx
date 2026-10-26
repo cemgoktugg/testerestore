@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
   Bot,
@@ -11,6 +12,8 @@ import {
   ShoppingCart,
   CheckCircle2,
   AlertCircle,
+  ThumbsUp,
+  ThumbsDown,
 } from "lucide-react";
 import { useCart } from "../context/CartContext";
 import AdvisorRichText from "./AdvisorRichText";
@@ -54,8 +57,11 @@ import {
 
 const SESSION_KEY = "ts_advisor_session";
 const CART_ID_KEY = "ts_cart_id";
+// Yapay zekâ beyanı ilk mesajda (Ticari Reklam Yönetmeliği değişikliği,
+// 1 Ağustos 2026: satın alma kararını etkileyebilecek YZ kullanımı açıkça
+// belirtilmeli). Kimlik: "TestereStore'un yapay zekâ asistanı".
 const GREETING =
-  "Merhaba! Şerit testere seçiminde yardımcı olayım. Makinenizi, keseceğiniz malzemeyi veya aklınızdaki teknik soruyu yazabilirsiniz.";
+  "Merhaba! Ben TestereStore'un yapay zekâ asistanıyım. Bıçak seçimi, fiyat ve hazır stok, kargo-ödeme-iade ya da kesim sorunları hakkında sorabilirsiniz; makinenizi veya keseceğiniz malzemeyi yazmanız yeterli.";
 
 type Role = "user" | "bot";
 
@@ -80,6 +86,8 @@ interface ChatMessage {
   match?: SuggestResult | null;
   /** Kayıt tamamlandığında basılan özet kartı. */
   receipt?: SignupResponse | null;
+  /** Danışman servisinden gelen cevap (👍/👎 yalnızca bunlarda gösterilir). */
+  fromAdvisor?: boolean;
 }
 
 interface ChatApiResponse {
@@ -198,6 +206,8 @@ export default function AdvisorWidget() {
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
+  // Cevaplara verilen 👍/👎 (mesaj id → oy); yalnızca bu oturumda tutulur.
+  const [ratings, setRatings] = useState<Record<number, "up" | "down">>({});
   const [actions, setActions] = useState<QuickAction[]>([]);
   const [purchase, setPurchase] = useState<PurchaseState | null>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([
@@ -205,6 +215,18 @@ export default function AdvisorWidget() {
   ]);
 
   const sessionRef = useRef<string>("");
+
+  /** Cevaba 👍/👎 — danışmanın olay kaydına gider (cevabın ilk 300 karakteriyle). */
+  const rate = useCallback((m: { id: number; text: string }, rating: "up" | "down") => {
+    setRatings((prev) => ({ ...prev, [m.id]: rating }));
+    void fetch("/api/advisor/chat/feedback", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ session_id: sessionRef.current, rating, bot_text: m.text.slice(0, 300) }),
+    }).catch(() => {
+      /* geri bildirim gidemese de sohbet sürer */
+    });
+  }, []);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const nextId = useRef(1);
@@ -462,7 +484,7 @@ export default function AdvisorWidget() {
         const rec = data.recommendation ?? null;
         const match = rec ? await fetchMatch(rec) : null;
 
-        push({ role: "bot", text: reply, recommendation: rec, match });
+        push({ role: "bot", text: reply, recommendation: rec, match, fromAdvisor: res.ok });
 
         // Sohbetten satın alma teklifi — yalnızca somut bir ürüne
         // bağlanabiliyorsak. Bağlanamıyorsak kart yine de ürün linki gösterir.
@@ -557,7 +579,7 @@ export default function AdvisorWidget() {
               <p className="truncate text-xs opacity-80">
                 {purchase
                   ? "Sipariş bilgilerinizi alıyorum"
-                  : "Makine ve malzemenize göre bıçak önerisi"}
+                  : "Yapay zekâ destekli bıçak danışmanı"}
               </p>
             </div>
             <button
@@ -596,7 +618,7 @@ export default function AdvisorWidget() {
               <div
                 key={m.id}
                 className={
-                  m.role === "user" ? "flex justify-end" : "flex justify-start"
+                  m.role === "user" ? "flex justify-end" : "flex flex-col items-start"
                 }
               >
                 <div
@@ -623,6 +645,32 @@ export default function AdvisorWidget() {
                     />
                   )}
                 </div>
+                {m.role === "bot" && m.fromAdvisor && (
+                  <div className="mt-1 flex items-center gap-1 pl-1 text-muted-foreground">
+                    {ratings[m.id] ? (
+                      <span className="text-[11px]">Geri bildiriminiz için teşekkürler.</span>
+                    ) : (
+                      <>
+                        <button
+                          type="button"
+                          onClick={() => rate(m, "up")}
+                          aria-label="Bu cevap faydalı"
+                          className="rounded p-1 hover:bg-muted hover:text-foreground cursor-pointer"
+                        >
+                          <ThumbsUp className="h-3.5 w-3.5" aria-hidden="true" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => rate(m, "down")}
+                          aria-label="Bu cevap faydalı değil"
+                          className="rounded p-1 hover:bg-muted hover:text-foreground cursor-pointer"
+                        >
+                          <ThumbsDown className="h-3.5 w-3.5" aria-hidden="true" />
+                        </button>
+                      </>
+                    )}
+                  </div>
+                )}
               </div>
             ))}
 
@@ -709,6 +757,13 @@ export default function AdvisorWidget() {
               <Send className="h-4 w-4" aria-hidden="true" />
             </button>
           </form>
+          <p className="border-t border-border px-3 py-1.5 text-[10px] leading-snug text-muted-foreground">
+            Yapay zekâ asistanıdır; yanıtlar hata içerebilir, siparişten önce ürün sayfasını kontrol edin.
+            Kart bilgisi veya TC kimlik numarası yazmayın.{" "}
+            <Link href="/yasal/kvkk-aydinlatma-metni" className="underline hover:text-foreground">
+              KVKK Aydınlatma Metni
+            </Link>
+          </p>
         </div>
       )}
     </>

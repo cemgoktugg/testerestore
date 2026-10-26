@@ -336,7 +336,10 @@ class ConversationalEngine:
         # kullanicinin cevabini "urun mu, sohbet mi" diye tahmin etmeye
         # calismak yerine AnswerMapper dogrulamali olarak karar verir.
         if self.rag_enabled and self._classify_query(message) == "documentation":
-            return self._chat_with_rag(session, message, stream=stream)
+            rag = self._chat_with_rag(session, message, stream=stream)
+            if isinstance(rag, dict):
+                rag.setdefault("route", "rag")
+            return rag
 
         # ------------------------------------------------------------------
         # ÖN MASA -> önce müşterinin sorduğunu cevapla
@@ -369,9 +372,11 @@ class ConversationalEngine:
             result = self.front_desk.post_process(session, result)
         except Exception as e:
             logger.error(f"front desk post-process error: {e}", exc_info=True)
+        result["route"] = "funnel"
         if front:  # karma mesaj: önce soruya cevap, sonra huni
             result["message"] = front.text + "\n\n" + (result.get("message") or "")
             result["front_desk"] = front.kinds
+            result["route"] = "hybrid"
 
         # Bilinmeyen soru etiketlerini isle (uzman ekibe iletme akisi)
         result["message"] = process_ai_response(
@@ -404,6 +409,7 @@ class ConversationalEngine:
             "is_complete": engine.is_complete(),
             "extracted_fields": {},
             "front_desk": front.kinds,
+            "route": "front_desk",
         }
 
     def _chat_with_rag(self, session, message: str, stream: bool = False):

@@ -169,6 +169,19 @@ Geri yükleme gerekirse docker-compose.yml'de `db-backup` altındaki
 `backend_static:/static:ro` satırından `:ro`'yu geçici kaldırıp redeploy et,
 sonra aynı terminalde: `tar -xzf /backups/static_….tar.gz -C /static`.
 
+## Danışman ölçümü (Faz 0)
+Danışman her sohbet turunu `advisor_data` volume'unda `data/events/YYYY-MM-DD.jsonl`
+dosyasına yazar (kişisel veri maskeli, 90 günde otomatik silinir; repoya girmez).
+Haftalık özet — Dokploy → `advisor` servisi → Terminal:
+```sh
+python -m llm.telemetry --days 7      # yol/süre/sonuç dağılımı, token maliyeti, 👎'ler, cevaplanamayanlar
+```
+Altın test seti (yerelden, canlıya karşı; ~6 dk):
+```sh
+python advisor/evals/run_eval.py --base https://testerestore.com/api/advisor/chat
+```
+Kesin kural ihlali (BYCUTTECH adı, Starrett ürün adı, teslim süresi sözü…) 0 olmalı.
+
 ## Notlar
 - **Test edilmedi:** İlk deploy'da Medusa v2 build yolları / native bağımlılıklar
   için ufak ayar gerekebilir — logları izleyip birlikte düzeltebiliriz.

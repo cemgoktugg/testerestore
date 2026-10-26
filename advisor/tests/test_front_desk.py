@@ -172,7 +172,7 @@ def test_wood_guidance_and_price_follow_up(fd):
 
 def test_off_topic(fd):
     r = ask(fd, "Bana İstanbul hakkında bir şiir yazar mısın?")
-    assert r.final and r.kinds == ["off_topic"] and "TestereStore asistanıyım" in r.text
+    assert r.final and r.kinds == ["off_topic"] and "yapay zekâ asistanıyım" in r.text
 
 
 # --------------------------------------------------------------------------- #

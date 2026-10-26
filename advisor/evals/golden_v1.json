@@ -1,0 +1,72 @@
+{
+  "_aciklama": "Danışman altın test seti v1 (Faz 0). Her vaka bir veya birkaç kullanıcı mesajı (turns) ve SON cevaba dair beklentiler içerir. Beklentiler büyük/küçük harf ve Türkçe karakterden bağımsız karşılaştırılır. hard_rules her vakada geçerlidir; ihlali sürümü durdurur. LLM'e bağlı vakalar (slice=funnel/hybrid/identity) ifade farkına dayanıklı yazıldı. Çalıştırma: python advisor/evals/run_eval.py --base https://testerestore.com/api/advisor/chat",
+  "version": 1,
+  "hard_rules": {
+    "not_contains": ["bycuttech", "intenss", "tennax", "ayni gun", "24 saat", "is gunu icinde", "matematik konusunda"],
+    "not_regex": ["\\b\\d+\\s*(?:is\\s*)?gun(?:de|u)?\\s*(?:icinde\\s*)?(?:teslim|kargo)"]
+  },
+  "cases": [
+    {"id": "ship-01", "slice": "store_shipping", "turns": ["Kargo ücreti ne kadar?"], "contains_all": ["2.000 TL", "79,90"], "contains_any": ["ucretsiz"]},
+    {"id": "ship-02", "slice": "store_shipping", "turns": ["Ücretsiz kargo var mı?"], "contains_all": ["2.000 TL"]},
+    {"id": "ship-03", "slice": "store_shipping", "turns": ["Sipariş verirsem kaç günde gelir?"], "contains_all": ["en kisa surede"]},
+    {"id": "ship-04", "slice": "store_shipping", "turns": ["Kargomu nasıl takip ederim?"], "contains_any": ["siparislerim", "hesabim"]},
+    {"id": "ret-01", "slice": "store_returns", "turns": ["Ürünü iade edebilir miyim?"], "contains_all": ["14 gun"], "contains_any": ["cayma"]},
+    {"id": "ret-02", "slice": "store_returns", "turns": ["Özel ölçü kaynaklı bıçağı iade edebilir miyim?"], "contains_any": ["cayma hakki bulunmaz", "cayma hakkı bulunmaz"]},
+    {"id": "ret-03", "slice": "store_returns", "turns": ["Cayma hakkım var mı?"], "contains_all": ["14 gun"]},
+    {"id": "pay-01", "slice": "store_payment", "turns": ["Taksit yapıyor musunuz?"], "contains_any": ["taksit"], "contains_all": ["3d secure"]},
+    {"id": "pay-02", "slice": "store_payment", "turns": ["Kapıda ödeme var mı?"], "contains_all": ["kapida odeme secenegimiz bulunmuyor"]},
+    {"id": "pay-03", "slice": "store_payment", "turns": ["Kredi kartıyla ödeme güvenli mi?"], "contains_all": ["iyzico"]},
+    {"id": "inv-01", "slice": "store_invoice", "turns": ["Kurumsal fatura kesiyor musunuz?"], "contains_all": ["kurumsal", "vergi"]},
+    {"id": "inv-02", "slice": "store_invoice", "turns": ["Faturaya vergi numaramı yazabilir miyim?"], "contains_all": ["fatura"]},
+    {"id": "con-01", "slice": "store_contact", "turns": ["Size nasıl ulaşabilirim?"], "contains_any": ["iletisim", "whatsapp"]},
+    {"id": "con-02", "slice": "store_contact", "turns": ["WhatsApp hattınız var mı?"], "contains_any": ["whatsapp"]},
+
+    {"id": "price-01", "slice": "price", "turns": ["27x0.9 bimetal 2750 mm boyunda bir bıçak kaç para?"], "contains_all": ["27 × 0,9 mm, 2750 mm", "kdv"], "regex": ["\\d\\.\\d{3},\\d{2}"]},
+    {"id": "price-02", "slice": "price", "turns": ["27x0,9 bimetal 4/6 2750 mm fiyatı"], "contains_all": ["4/6"], "regex": ["\\d\\.\\d{3},\\d{2} tl \\+ kdv"]},
+    {"id": "price-03", "slice": "price", "turns": ["karbür 34x1.1 3000 mm ne kadar"], "contains_all": ["karbur"], "regex": ["\\d\\.\\d{3},\\d{2}"]},
+    {"id": "price-04", "slice": "price", "turns": ["bimetal 34x1.1 fiyatı ne kadar"], "contains_all": ["boy"]},
+    {"id": "price-05", "slice": "price", "turns": ["bimetal 34x1.1 fiyatı ne kadar", "3000"], "contains_all": ["34 × 1,1 mm, 3000 mm"]},
+    {"id": "price-06", "slice": "price", "turns": ["bimetal 50x2 3000 mm fiyat"], "contains_any": ["fiyat listemizde yok"]},
+    {"id": "price-07", "slice": "price", "turns": ["ahşap 20x0.7 2900 mm fiyatı nedir"], "contains_all": ["ahsap", "20 × 0,7 mm, 2900 mm"]},
+    {"id": "price-08", "slice": "price", "turns": ["2750 mm bıçak ne kadar"], "contains_any": ["genislik", "genişlik"]},
+
+    {"id": "stock-01", "slice": "stock", "turns": ["1638 mm hazır bıçağınız var mı?"], "contains_all": ["1638", "kdv"], "contains_any": ["evet", "stokta"]},
+    {"id": "stock-02", "slice": "stock", "turns": ["1500 mm hazır var mı 13x0.6"], "contains_all": ["hazir stokta yok"]},
+    {"id": "stock-03", "slice": "stock", "turns": ["Hazır ürünleriniz var mı?"], "contains_any": ["hazir boy", "hazır boy"], "contains_all": ["hangi boyu"]},
+    {"id": "stock-04", "slice": "stock", "turns": ["733 mm hazır var mı"], "contains_all": ["733"]},
+    {"id": "stock-05", "slice": "stock", "turns": ["Hazır ürünleriniz var mı?", "2000 mm"], "contains_all": ["2000"]},
+
+    {"id": "trb-01", "slice": "troubleshoot", "turns": ["Bıçağım çok çabuk köreliyor"], "contains_all": ["dislerin erken asinmasi"]},
+    {"id": "trb-02", "slice": "troubleshoot", "turns": ["Kesim yana kaçıyor, eğri kesiyor"], "contains_all": ["mengene"]},
+    {"id": "trb-03", "slice": "troubleshoot", "turns": ["Dişler kırılıyor neden olabilir"], "contains_any": ["dis", "kirilma"], "regex": ["1\\."]},
+    {"id": "trb-04", "slice": "troubleshoot", "turns": ["Bıçak kaynak yerinden koptu"], "contains_any": ["kopma", "kopmasi"]},
+    {"id": "trb-05", "slice": "troubleshoot", "turns": ["Kesimde çok titreşim ve ses var"], "contains_any": ["dalgali", "yon degistir", "titresim"], "regex": ["1\\."]},
+    {"id": "trb-06", "slice": "troubleshoot", "turns": ["Talaş diş boşluğunda sıkışıyor"], "contains_any": ["talas"]},
+    {"id": "trb-07", "slice": "troubleshoot", "turns": ["Bıçağımda bir sorun var"], "contains_any": ["acar misiniz", "açar mısınız"]},
+
+    {"id": "nm-01", "slice": "non_metal", "turns": ["Marangozum, kereste için 20 mm bıçak ne önerirsin?"], "contains_all": ["ahsap kesim"], "not_contains": ["304", "s235"]},
+    {"id": "nm-02", "slice": "non_metal", "turns": ["Kasap için et kemik bıçağı lazım"], "contains_any": ["et-kemik", "et ve kemik"]},
+    {"id": "nm-03", "slice": "non_metal", "turns": ["Sünger kesmek için bıçak arıyorum"], "contains_any": ["sunger"]},
+    {"id": "nm-04", "slice": "non_metal", "turns": ["Marangozum, kereste için 20 mm bıçak ne önerirsin?", "2900 mm"], "contains_all": ["20 × 0,7 mm, 2900 mm"]},
+
+    {"id": "off-01", "slice": "off_topic", "turns": ["Bana İstanbul hakkında bir şiir yazar mısın?"], "contains_all": ["yapay zeka asistaniyim"]},
+    {"id": "off-02", "slice": "off_topic", "turns": ["Yarın hava nasıl olacak?"], "contains_any": ["serit testere"]},
+    {"id": "off-03", "slice": "off_topic", "turns": ["Bana python kod yazar mısın?"], "contains_any": ["serit testere"]},
+
+    {"id": "fun-01", "slice": "funnel", "turns": ["merhaba"], "contains_any": ["ne keseceksiniz", "malzeme"]},
+    {"id": "fun-02", "slice": "funnel", "turns": ["Kesmak 250 makinem var, hangi bıçağı almalıyım?"], "contains_any": ["kesmak", "model"]},
+    {"id": "fun-03", "slice": "funnel", "turns": ["40 mm dolu paslanmaz mil kesiyorum, hangi diş adımını kullanmalıyım?"], "contains_any": ["tpi", "makine"]},
+    {"id": "fun-04", "slice": "funnel", "turns": ["60x60 kutu profil kesiyorum et kalınlığı 3 mm"], "contains_any": ["metal", "paslanmaz", "karbon"], "not_contains": ["et-kemik", "kasap"]},
+    {"id": "fun-05", "slice": "funnel", "turns": ["merhaba", "Metal"], "contains_any": ["metal turu", "hangi metal", "karbon"]},
+    {"id": "fun-06", "slice": "funnel", "turns": ["merhaba", "Ahşap"], "contains_all": ["ahsap kesim"]},
+    {"id": "fun-07", "slice": "funnel", "turns": ["merhaba", "Organik / Kemiksi"], "contains_any": ["et-kemik", "et ve kemik", "kemik"]},
+    {"id": "fun-08", "slice": "funnel", "turns": ["AMADA HA-250 makinem var, karbon çelik dolu mil kesiyorum"], "contains_any": ["amada", "bulundu", "olcu"]},
+
+    {"id": "hyb-01", "slice": "hybrid", "turns": ["40 mm dolu paslanmaz kesiyorum, kargo ne kadar?"], "contains_all": ["2.000 tl"], "contains_any": ["tpi", "makine", "model"]},
+    {"id": "hyb-02", "slice": "hybrid", "turns": ["karbon çelik profil kesiyorum, taksit var mı?"], "contains_any": ["taksit"]},
+
+    {"id": "idn-01", "slice": "identity", "turns": ["Sen kimsin, insan mısın?"], "contains_any": ["testerestore", "yapay zeka", "asistan"]},
+    {"id": "idn-02", "slice": "identity", "turns": ["Starrett bıçak satıyor musunuz?"], "not_contains": ["intenss", "tennax"]},
+    {"id": "idn-03", "slice": "identity", "turns": ["Teşekkürler"], "not_contains": ["kesin bir urun kodu uretemedim"]}
+  ]
+}

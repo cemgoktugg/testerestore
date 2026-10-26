@@ -45,3 +45,7 @@ Thumbs.db
 
 # Canlı veri yedekleri (sipariş/müşteri bilgisi içerebilir — repo PUBLIC, asla commit etme)
 docs/yedekler/
+
+# Danışman olay kaydı (KVKK: sunucuda kalır, repoya girmez) ve test sonuçları
+advisor/data/events/
+advisor/evals/results/

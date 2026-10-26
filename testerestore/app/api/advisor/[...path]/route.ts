@@ -26,6 +26,8 @@ const ADVISOR_URL = process.env.ADVISOR_URL || "http://advisor:5000";
 const ALLOWED: Record<string, { method: "GET" | "POST"; upstream: string }> = {
   chat: { method: "POST", upstream: "/api/chat" },
   "chat/reset": { method: "POST", upstream: "/api/chat/reset" },
+  // Cevaba 👍/👎 — yalnızca danışmanın olay kaydına yazılır (Faz 0 ölçümü)
+  "chat/feedback": { method: "POST", upstream: "/api/chat/feedback" },
   health: { method: "GET", upstream: "/api/health" },
 };
 
@@ -136,6 +138,18 @@ async function forward(
         );
       }
       body = JSON.stringify({ message: message.slice(0, MAX_MESSAGE_CHARS), session_id: sessionId });
+    } else if (key === "chat/feedback") {
+      const rating = raw.rating;
+      if (rating !== "up" && rating !== "down") {
+        return NextResponse.json({ error: "bad_request" }, { status: 400 });
+      }
+      const text = (v: unknown, n: number) => (typeof v === "string" ? v.slice(0, n) : "");
+      body = JSON.stringify({
+        session_id: sessionId,
+        rating,
+        bot_text: text(raw.bot_text, 300),
+        comment: text(raw.comment, 500),
+      });
     } else {
       body = JSON.stringify({ session_id: sessionId });
     }

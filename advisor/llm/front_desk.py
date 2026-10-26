@@ -158,7 +158,8 @@ _OFF_TOPIC = (r"\b(siir|sarki|hikaye|masal|fikra|hava durumu|hava nasil|futbol|b
               r"siyaset|secim|yemek tarif|tarifi|kod yaz|python|javascript|odevim|"
               r"ceviri yap|tercume et|bilmece|burcum|astroloji|film oner|dizi oner|"
               r"sohbet edelim|fikra anlat)")
-_DOMAIN = (r"serit|testere|bicak|tpi|\bdis|kesim|kesiyor|kesece|kesmek|makine|metal|celik|"
+# Not: "bıçak" çekimde "bıçağım/bıçağı" olur (k→ğ); sade biçimde "bicag".
+_DOMAIN = (r"serit|testere|bica[kg]|tpi|\bdis|kesim|kesiyor|kesece|kesmek|makine|metal|celik|"
            r"paslanmaz|aluminyum|dokum|profil|boru|\bmil\b|lama|\bsac\b|kaynak|bimetal|"
            r"bi-metal|m42|m51|karbur|siparis|kargo|fiyat|stok|hazir|odeme|iade|fatura|\d+\s*mm")
 _SHIPPING = r"kargo|teslimat|ne zaman gel|kac gunde|gonderim|gonderi|kargoya"
@@ -174,7 +175,7 @@ _SELECTION = (r"paslanmaz|karbon|celik|aluminyum|dokum|pirinc|bakir|titanyum|\bd
 
 # Arıza belirtileri (RAG v2 diagnostics.py kalıpları) → arıza tablosu id
 _SYMPTOMS: List[Tuple[str, str]] = [
-    ("blade_break", r"(bicak|serit|band)\w*\s*(\w+\s+){0,2}(kopt|kop\w*|kiril\w*|catla\w*)|kaynak yerinden"),
+    ("blade_break", r"(bica[kg]|serit|band)\w*\s*(\w+\s+){0,2}(kopt|kop\w*|kiril\w*|catla\w*)|kaynak yerinden"),
     ("tooth_breakage", r"dis(ler)?\w*\s*(\w+\s+){0,2}(kopt|kop\w*|kiril\w*|doku\w*)|dis\s*kaybi"),
     ("tooth_back_breakout", r"dis(in)?\s*arka|arka\s*taraf.{0,12}kiril"),
     ("cut_deviation", r"yana\s*kac|sag[ae]\s*kac|sol[ae]\s*kac|kesim\s*kaciyor|egri\s*kes|sapma|"
@@ -185,10 +186,11 @@ _SYMPTOMS: List[Tuple[str, str]] = [
                              r"kesmiyor artik|yavas\s*kesiyor|kesim\s*suresi\s*uz"),
     ("one_sided_tooth_wear", r"tek\s*taraf.{0,10}asin"),
     ("inaccurate_cut", r"olcu\s*(tutmuyor|hatali|sapiyor)|hatali\s*kesim"),
-    ("chips_in_gullet", r"talas\s*(sikis|birik|tikan)|dis\s*boslug.{0,10}talas"),
-    ("blade_back_wear", r"sirt.{0,10}asin|bicak\s*sirti"),
+    # araya kelime girebilir: "talaş diş boşluğunda sıkışıyor"
+    ("chips_in_gullet", r"talas.{0,25}(sikis|birik|tikan|dol)|dis\s*boslug\w*.{0,15}(talas|tikan|dol)"),
+    ("blade_back_wear", r"sirt.{0,10}asin|bica[kg]\w*\s*sirti"),
     ("blade_surface_damage", r"govde.{0,12}(hasar|cizik)|yuzey.{0,10}hasar"),
-    ("twisted_blade", r"burul|bicak\s*bukul|kivril"),
+    ("twisted_blade", r"burul|bica[kg]\w*\s*bukul|kivril"),
 ]
 _TROUBLE_GENERIC = r"(sorun|problem|ariza|bozul|neden boyle)"
 
@@ -257,7 +259,7 @@ class FrontDesk:
         if symptoms:
             parts.append(self._trouble_answer(symptoms))
             kinds.append("troubleshoot")
-        elif _any(_TROUBLE_GENERIC, n) and _any(r"bicak|serit|testere|kesim|makine", n):
+        elif _any(_TROUBLE_GENERIC, n) and _any(r"bica[kg]|serit|testere|kesim|makine", n):
             parts.append(self._trouble_ask())
             kinds.append("troubleshoot")
 
@@ -388,7 +390,8 @@ class FrontDesk:
     @staticmethod
     def _off_topic() -> str:
         return (
-            "Ben TestereStore asistanıyım; yalnızca şerit testere konularında yardımcı olabiliyorum: bıçak "
+            "Ben TestereStore'un yapay zekâ asistanıyım; yalnızca şerit testere konularında yardımcı "
+            "olabiliyorum: bıçak "
             "seçimi, fiyat ve hazır stok, kargo-ödeme-iade ve kesim sorunları. Örneğin \"40 mm dolu paslanmaz "
             "için hangi bıçak?\" ya da \"27×0,9 bi-metal 2750 mm kaç para?\" diye sorabilirsiniz."
         )

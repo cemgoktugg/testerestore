@@ -12,7 +12,9 @@ sys.path.insert(0, parent_dir)
 from rules_engine.engine import RulesEngine
 from rules_engine.machine_database import MachineDatabase
 from llm.conversational_engine import ConversationalEngine
+from llm.telemetry import log_event, turn_event, mask_pii, session_hash
 import json
+import time
 
 app = Flask(__name__, static_folder='.')
 # Danışman yalnızca storefront sunucusundan (iç ağ) çağrılır; tarayıcıya açık
@@ -206,7 +208,27 @@ def chat_endpoint():
         message = message[:MAX_MESSAGE_CHARS]
         
         # Kural motoru gudumlu diyalog: tam sonucu al (sadece metni degil)
-        result = chat_engine.chat(message, session_id=session_id)
+        started = time.perf_counter()
+        tokens_before = _token_counters()
+        error = None
+        result = None
+        try:
+            result = chat_engine.chat(message, session_id=session_id)
+        except Exception as exc:
+            error = exc
+        tokens_after = _token_counters()
+        log_event(turn_event(
+            session_id=session_id,
+            message=message,
+            result=result,
+            latency_ms=(time.perf_counter() - started) * 1000,
+            prompt_tokens=max(0, tokens_after[0] - tokens_before[0]),
+            completion_tokens=max(0, tokens_after[1] - tokens_before[1]),
+            model=getattr(chat_engine, "model", None),
+            error=repr(error) if error else None,
+        ))
+        if error:
+            raise error
 
         return jsonify({
             'success': True,
@@ -229,6 +251,43 @@ def chat_endpoint():
             'success': False,
             'error': 'internal_error'
         }), 500
+
+def _token_counters():
+    """Model token sayaçlarının toplamı (genel istemci + cevap eşleştirici).
+
+    Not: eşzamanlı turlarda fark yaklaşık olur (sayaçlar süreç geneli);
+    düşük trafikte tur başına maliyet için yeterli.
+    """
+    try:
+        client = getattr(chat_engine, "openai_client", None)
+        mapper = getattr(getattr(chat_engine, "dialog_manager", None), "mapper", None)
+        return (
+            int(getattr(client, "total_prompt_tokens", 0) or 0) + int(getattr(mapper, "total_prompt_tokens", 0) or 0),
+            int(getattr(client, "total_completion_tokens", 0) or 0) + int(getattr(mapper, "total_completion_tokens", 0) or 0),
+        )
+    except Exception:
+        return (0, 0)
+
+
+@app.route('/api/chat/feedback', methods=['POST'])
+def chat_feedback():
+    """Cevaba 👍/👎 geri bildirimi (yalnızca kayda yazılır)."""
+    data = request.get_json(silent=True) or {}
+    rating = data.get('rating')
+    session_id = data.get('session_id')
+    if rating not in ('up', 'down') or not isinstance(session_id, str) or not (1 <= len(session_id) <= 64):
+        return jsonify({'error': 'invalid_feedback'}), 400
+    comment = data.get('comment') if isinstance(data.get('comment'), str) else ''
+    bot_text = data.get('bot_text') if isinstance(data.get('bot_text'), str) else ''
+    log_event({
+        'type': 'feedback',
+        'session': session_hash(session_id),
+        'rating': rating,
+        'bot_text': mask_pii(bot_text[:300]),
+        'comment': mask_pii(comment[:500]),
+    })
+    return jsonify({'ok': True})
+
 
 @app.route('/api/chat/reset', methods=['POST'])
 def reset_chat():
