@@ -119,6 +119,10 @@ class MappingResult:
     # DialogManager kullanıcıya hangisi olduğunu sorabilsin.
     machine_candidates: List[Dict] = field(default_factory=list)
     machine_manufacturer: Optional[str] = None              # cümlede tanınan üretici
+    # Marka bir tahminse ("Bimak" -> Beka-Mak) kullanıcıya gösterilecek açıklama
+    machine_brand_note: Optional[str] = None
+    # Eşleşme türü: full | model | partial | capacity_class | fuzzy
+    machine_match_type: Optional[str] = None
     off_topic_text: Optional[str] = None                    # ürün dışı soru metni
     # Ölçü sorularında kullanıcının yazdığı ham mm (kovaya çevrilmeden önce);
     # ör. {"solid_max_diameter_bucket": 40.0} — llm/tpi_refine.py kullanır.
@@ -369,6 +373,8 @@ class AnswerMapper:
                 result.machine_query = str(value).strip()
                 detail = self._resolve_machine(result.machine_query)
                 result.machine_manufacturer = detail.get("manufacturer")
+                result.machine_brand_note = detail.get("brand_note")
+                result.machine_match_type = detail.get("match_type")
                 found = detail.get("machine")
                 if found:
                     result.machine_found = found

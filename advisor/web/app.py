@@ -32,7 +32,7 @@ def _reject_large_body():
 
 # Initialize components
 rules_path = os.path.join(parent_dir, 'rules.json')
-# machines_list.json — DÜZ format (4516 kayıtlık 'machines' listesi). Makine
+# machines_list.json — DÜZ format (~4.500 kayıtlık 'machines' listesi). Makine
 # modülü yalnızca bu formatı okur; eski iç içe machines_database.json
 # yüklendiğinde liste boş kalıyor, /api/health 0 makine gösteriyordu.
 database_path = os.path.join(parent_dir, 'data', 'machines_list.json')
@@ -92,6 +92,9 @@ def search_machines():
             'blade_thickness': machine.get('blade_thickness_mm'),
             'machine_class': machine.get('machine_class'),
             'match_score': machine.get('match_score', 0),
+            # Kaynaktan doğrulandı mı / bilinen çelişki var mı (ek alanlar)
+            'verified': bool(machine.get('verified')),
+            'conflict': (machine.get('conflict') or {}).get('note'),
         } for machine in candidates[:10]]
 
         return jsonify({
@@ -99,6 +102,10 @@ def search_machines():
             'total': len(candidates),
             'status': detail['status'],       # match | ambiguous | none
             'manufacturer': detail['manufacturer'],
+            # "capacity_class": "Kesmak 250" gibi marka + kapasite numarası
+            'match_type': detail.get('match_type'),
+            # Marka tahmin edildiyse ("Bimak" -> Beka-Mak) açıklama
+            'brand_note': detail.get('brand_note'),
             'query': query
         })
     

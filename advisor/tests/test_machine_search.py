@@ -86,6 +86,35 @@ CASES = [
     ("H-1300", AMBIGUOUS),
     ("H-1000", AMBIGUOUS),
 
+    # ---- Türk markaları: tam model kodu -> kesin ----
+    ("Beka-Mak BMSY-270DG", "BMSY 270DG"),
+    ("Kesmak KMY 280", "KMY 280"),
+    ("Kesmak KMY 280 makinem var, hangi bıçak?", "KMY 280"),
+    ("Dispa M-Y 270", "M-Y 270"),
+    ("Karmetal 300 x 400", "KSA 300x400"),       # iki sayı tek modeli tutuyor
+    # "Bimak" gerçek bir marka değil (Beka-Mak tahmini) ama BMSY 270DG kodu
+    # yalnız Beka-Mak'ta var: tam kod tahmini doğrular.
+    ("Bimak BMSY 270DG", "BMSY 270DG"),
+    # Marka adı modelin öneki: KMT ayrı bir üretici ama "KMT 280 OSA"
+    # Karmetal modeli; "BS" Berg & Schmid alias'ı ama "BS 300 PLUS" IMET.
+    # (Eski sürüm ikincisinde Berg & Schmid SBS 300'ü — yanlış bıçağı — veriyordu.)
+    ("KMT 280 OSA", "KMT 280 OSA"),
+    ("BS 300 PLUS", "BS 300 PLUS"),
+
+    # ---- Türk markaları: marka + kapasite numarası -> SOR ----
+    # Model numarası kesme kapasitesi; aynı numarada farklı bıçaklı modeller var.
+    ("Bimak 270", AMBIGUOUS),
+    ("Kesmak 250", AMBIGUOUS),
+    ("Kesmak 250 makinem var, hangi bıçağı almalıyım?", AMBIGUOUS),
+    ("bekamak 320", AMBIGUOUS),   # BMS 320 = 3660x27, BMS 320L = 4160x34
+    ("test ettim, kesmak 250", AMBIGUOUS),
+
+    # ---- Avrupa modelleri hâlâ kesin ----
+    ("Pilous ARG 330 plus S.A.F.", "ARG 330 plus S.A.F."),
+    ("MEP Shark 280", "SHARK 280"),
+    ("Mega BS-250 A", "BS-250 A"),
+    ("Cosen C-250 NC", "C-250 NC"),
+
     # ---- NEGATİF: makine adı yok, hiçbir şey eşleşmemeli ----
     ("merhaba", None),
     ("bıçak önerisi istiyorum", None),
@@ -95,6 +124,10 @@ CASES = [
     ("hangi tpi kullanmalıyım", None),
     ("320 mm çapında dolu mil kesiyorum", None),  # "320" saf sayı: model sanılmamalı
     ("25 mm kalınlığında alüminyum", None),       # "25" gerçek bir model adı, yine de hayır
+    # Marka var ama sayı MALZEME ölçüsü: Kesmak KLE 300 sanılmamalı
+    ("Kesmak makinem var, 300 mm boru kesiyorum", None),
+    # "kamu" bir üretici adı ama burada sıradan kelime
+    ("kamu ihalesi için 300 adet bıçak", None),
 ]
 
 

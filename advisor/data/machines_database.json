@@ -2886,7 +2886,11 @@
           "blade_length_mm": 3660,
           "blade_width_mm": 27.0,
           "blade_thickness_mm": 0.9,
-          "machine_class": "M2"
+          "machine_class": "M2",
+          "verified": true,
+          "verification_status": "distributor-snippet",
+          "source_url": "https://www.makinaturkiye.com/tam-otomatik-serit-testere-makinesi-bmso-320-p-86824",
+          "last_checked": "2026-10-26"
         },
         {
           "model": "BMSO 320GH NC",
@@ -3131,7 +3135,12 @@
           "blade_length_mm": 3160,
           "blade_width_mm": 27.0,
           "blade_thickness_mm": 0.9,
-          "machine_class": "M2"
+          "machine_class": "M2",
+          "verified": true,
+          "verification_status": "oem",
+          "source_url": "https://www.bekamak.com/urun/bmsy-270dg/en",
+          "last_checked": "2026-10-26",
+          "capacity_round_mm": 270
         },
         {
           "model": "BMSY 270DGH",
@@ -9608,13 +9617,6 @@
           "machine_class": "M2"
         },
         {
-          "model": "DG 250 GS 45",
-          "blade_length_mm": 3600,
-          "blade_width_mm": 27.0,
-          "blade_thickness_mm": 0.9,
-          "machine_class": "M2"
-        },
-        {
           "model": "DG 250 M",
           "blade_length_mm": 3600,
           "blade_width_mm": 27.0,
@@ -9753,6 +9755,24 @@
           "blade_width_mm": 67.0,
           "blade_thickness_mm": 1.6,
           "machine_class": "M3"
+        }
+      ]
+    },
+    "DISPA": {
+      "country": "Turkey",
+      "machines": [
+        {
+          "model": "M-Y 270",
+          "blade_length_mm": 3120,
+          "blade_width_mm": 27.0,
+          "blade_thickness_mm": 0.9,
+          "machine_class": "M2",
+          "verified": true,
+          "verification_status": "distributor",
+          "source_url": "https://www.makinahirdavat.com/urun/dispa-m-y-270-yari-otomatik-serit-testere-makinesi",
+          "last_checked": "2026-10-26",
+          "capacity_round_mm": 270,
+          "note": "Yarı otomatik mafsallı, 40-80 m/dak. Aynı ölçü hasmakinahirdavat.com ve makasdunyasi.com.tr ilanlarında da geçiyor."
         }
       ]
     },
@@ -17496,20 +17516,6 @@
           "machine_class": "M2"
         },
         {
-          "model": "S-6240M NC",
-          "blade_length_mm": 5200,
-          "blade_width_mm": 34.0,
-          "blade_thickness_mm": 1.1,
-          "machine_class": "M2"
-        },
-        {
-          "model": "V-18 DM TEC",
-          "blade_length_mm": 5000,
-          "blade_width_mm": 34.0,
-          "blade_thickness_mm": 1.1,
-          "machine_class": "M2"
-        },
-        {
           "model": "V-18 DM TEC",
           "blade_length_mm": 5000,
           "blade_width_mm": 34.0,
@@ -18400,7 +18406,14 @@
           "blade_length_mm": 3360,
           "blade_width_mm": 27.0,
           "blade_thickness_mm": 0.9,
-          "machine_class": "M2"
+          "machine_class": "M2",
+          "conflict": {
+            "note": "Bu model için kaynaklarda farklı bir bıçak boyu da geçiyor (3850 mm). Sipariş öncesi eski bıçağın üzerindeki ölçüyü ya da makine etiketini teyit edin.",
+            "detail": "Bir bayi ilanı (2008 model ikinci el 'Karmetal 280 OSA') bıçağı 3850x27x0,9 veriyor; kayıtta 3360x27x0,9. Aynı makine olup olmadığı doğrulanmadı.",
+            "alt_blade_length_mm": 3850,
+            "source_url": "https://www.kar-tes.com.tr/urunlerimiz/endustriyel-makinalar/ikinci-el-testere-makinalari/karmetal-osa-280-testere-makinasi-ikinci-el/",
+            "last_checked": "2026-10-26"
+          }
         },
         {
           "model": "KMT 300 KDG",
@@ -18470,7 +18483,13 @@
           "blade_length_mm": 6700,
           "blade_width_mm": 54.0,
           "blade_thickness_mm": 1.6,
-          "machine_class": "M3"
+          "machine_class": "M3",
+          "verified": true,
+          "verification_status": "oem",
+          "source_url": "https://www.karmetal.com.tr/urun/9/ksa-600x800.html",
+          "last_checked": "2026-10-26",
+          "capacity_round_mm": 600,
+          "capacity_rect_mm": "540x800"
         },
         {
           "model": "KSA 800x1250-D",
@@ -18624,7 +18643,12 @@
           "blade_length_mm": 6700,
           "blade_width_mm": 54.0,
           "blade_thickness_mm": 1.6,
-          "machine_class": "M3"
+          "machine_class": "M3",
+          "verified": true,
+          "verification_status": "oem-snippet",
+          "source_url": "https://www.karmetal.com.tr/urun/42/wos-600x700.html",
+          "last_checked": "2026-10-26",
+          "capacity_rect_mm": "540x700"
         },
         {
           "model": "WOS 600x700-L",
@@ -18657,7 +18681,12 @@
           "blade_length_mm": 11430,
           "blade_width_mm": 100.0,
           "blade_thickness_mm": 1.6,
-          "machine_class": "M3"
+          "machine_class": "M3",
+          "conflict": {
+            "note": "Model adındaki (100x2) 100 x 2,0 mm bıçağa işaret ediyor; kayıtta kalınlık 1,6 mm. Sipariş öncesi eski bıçağın kalınlığını teyit edin.",
+            "detail": "Kalınlık üretici kaynağından doğrulanamadı (KASTO ürün sayfasında bıçak ölçüsü yok). Aynı boy/genişlikteki 'BBS U 18 x 15' kaydı da 1,6 gösteriyor.",
+            "last_checked": "2026-10-26"
+          }
         },
         {
           "model": "BBS 360/2060 U/AU (41x1.3)",
@@ -20202,14 +20231,23 @@
           "blade_length_mm": 3660,
           "blade_width_mm": 27.0,
           "blade_thickness_mm": 0.9,
-          "machine_class": "M2"
+          "machine_class": "M2",
+          "verified": true,
+          "verification_status": "distributor-snippet",
+          "source_url": "https://www.testeresepeti.com.tr/urunler/kesmak-kme-280-icin-bi-metal-m42-hss-serit-testere-bicagi-bim-42-3660-x-27.html",
+          "last_checked": "2026-10-26",
+          "note": "Kaynak yalnızca boy x en (3660x27) veriyor; kalınlık kaynakta yazmıyor."
         },
         {
           "model": "KME 350",
           "blade_length_mm": 4860,
           "blade_width_mm": 34.0,
           "blade_thickness_mm": 1.1,
-          "machine_class": "M2"
+          "machine_class": "M2",
+          "verified": true,
+          "verification_status": "oem-snippet",
+          "source_url": "https://www.kesmak.com.tr/kme-350.html",
+          "last_checked": "2026-10-26"
         },
         {
           "model": "KME DG 280",
@@ -20265,7 +20303,14 @@
           "blade_length_mm": 3660,
           "blade_width_mm": 27.0,
           "blade_thickness_mm": 0.9,
-          "machine_class": "M2"
+          "machine_class": "M2",
+          "verified": true,
+          "verification_status": "oem",
+          "source_url": "https://www.kesmak.com.tr/kmo-280.html",
+          "last_checked": "2026-10-26",
+          "capacity_round_mm": 280,
+          "capacity_square_mm": 270,
+          "capacity_rect_mm": "210x340"
         },
         {
           "model": "KMO 350",
@@ -20293,7 +20338,14 @@
           "blade_length_mm": 3660,
           "blade_width_mm": 27.0,
           "blade_thickness_mm": 0.9,
-          "machine_class": "M2"
+          "machine_class": "M2",
+          "verified": true,
+          "verification_status": "oem",
+          "source_url": "https://www.kesmak.com.tr/kmy-280.html",
+          "last_checked": "2026-10-26",
+          "capacity_round_mm": 280,
+          "capacity_square_mm": 250,
+          "capacity_rect_mm": "150x340"
         },
         {
           "model": "KMY 2DG 280",
@@ -26452,7 +26504,11 @@
           "blade_length_mm": 3870,
           "blade_width_mm": 34.0,
           "blade_thickness_mm": 1.1,
-          "machine_class": "M2"
+          "machine_class": "M2",
+          "verified": true,
+          "verification_status": "oem",
+          "source_url": "https://www.pilous.cz/en/metal/bandsaws/hydraulic-semi-automatic/arg-330-plus-s-a-f",
+          "last_checked": "2026-10-26"
         },
         {
           "model": "ARG 330 S.A.F.",
@@ -30591,14 +30647,24 @@
           "blade_length_mm": 4160,
           "blade_width_mm": 27.0,
           "blade_thickness_mm": 0.9,
-          "machine_class": "M2"
+          "machine_class": "M2",
+          "conflict": {
+            "note": "Bu model için iki farklı bıçak ölçüsü kayıtlı (4160x27x0,9 ve 4570x34x1,1). Sipariş öncesi eski bıçağın üzerindeki ölçüyü teyit edin.",
+            "detail": "Aynı marka+model iki farklı ölçüyle kayıtlı; hangisinin doğru olduğu ya da iki bıçak seçeneği mi olduğu doğrulanamadı. Arama bu modelde aday listesi döner.",
+            "last_checked": "2026-10-26"
+          }
         },
         {
           "model": "UMSY-O 330",
           "blade_length_mm": 4570,
           "blade_width_mm": 34.0,
           "blade_thickness_mm": 1.1,
-          "machine_class": "M2"
+          "machine_class": "M2",
+          "conflict": {
+            "note": "Bu model için iki farklı bıçak ölçüsü kayıtlı (4160x27x0,9 ve 4570x34x1,1). Sipariş öncesi eski bıçağın üzerindeki ölçüyü teyit edin.",
+            "detail": "Aynı marka+model iki farklı ölçüyle kayıtlı; hangisinin doğru olduğu ya da iki bıçak seçeneği mi olduğu doğrulanamadı. Arama bu modelde aday listesi döner.",
+            "last_checked": "2026-10-26"
+          }
         },
         {
           "model": "UMSY-O 330 G",
@@ -32145,18 +32211,6 @@
           "blade_length_mm": 5300,
           "blade_width_mm": 41.0,
           "blade_thickness_mm": 1.3,
-          "machine_class": "M2"
-        }
-      ]
-    },
-    "TEST": {
-      "country": "Test",
-      "machines": [
-        {
-          "model": "TEST-2000",
-          "blade_length_mm": 2000,
-          "blade_width_mm": 27.0,
-          "blade_thickness_mm": 0.9,
           "machine_class": "M2"
         }
       ]
