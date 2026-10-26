@@ -323,8 +323,8 @@ class DialogManager:
             m = mapping.machine_found
             parts.append(
                 f"✅ **{m.get('manufacturer')} {m.get('model')}** bulundu — "
-                f"bıçak ölçüleri: {m.get('blade_length_mm')} × "
-                f"{m.get('blade_width_mm')} × {m.get('blade_thickness_mm')} mm"
+                f"bıçak ölçüleri: {self._mm(m.get('blade_length_mm'))} × "
+                f"{self._mm(m.get('blade_width_mm'))} × {self._mm(m.get('blade_thickness_mm'))} mm"
             )
             # Kaynaklar arasında çelişki bilinen kayıtta uyar (veri ezilmedi)
             conflict = m.get("conflict")
@@ -489,9 +489,9 @@ class DialogManager:
             "✅ **Öneriniz hazır**",
             "",
             f"**Bıçak tipi:** {self._label(rec.get('blade_type'))}",
-            f"**Diş aralığı (TPI):** {rec.get('tooth_pitch')}",
-            f"**Ölçü:** {rec.get('blade_length_mm')} × {rec.get('blade_width_mm')} × "
-            f"{rec.get('blade_thickness_mm')} mm",
+            f"**Diş aralığı (TPI):** {str(rec.get('tooth_pitch') or '-').replace('.', ',')}",
+            f"**Ölçü:** {self._mm(rec.get('blade_length_mm'))} × {self._mm(rec.get('blade_width_mm'))} × "
+            f"{self._mm(rec.get('blade_thickness_mm'))} mm",
             f"**Ürün kodu (SKU):** `{rec.get('sku')}`",
         ]
 
