@@ -128,6 +128,7 @@ from llm.prompt_builder import PromptBuilder
 from llm.message_parser import MessageParser
 from llm.unknown_questions_handler import UnknownQuestionsHandler, process_ai_response
 from llm.dialog_manager import DialogManager
+from llm.front_desk import FrontDesk
 
 # RAG Engine is optional (requires chromadb)
 try:
@@ -250,6 +251,10 @@ class ConversationalEngine:
             machine_db=self.machine_db,
         )
         
+        # Ön masa: huniden ÖNCE müşterinin sorduğunu cevaplar (mağaza, fiyat,
+        # stok, arıza, metal dışı, konu dışı). LLM kullanmaz.
+        self.front_desk = FrontDesk()
+
         # RAG engine (optional)
         self.rag_engine: Optional[RAGEngine] = None
         self.rag_enabled = enable_rag
@@ -334,6 +339,19 @@ class ConversationalEngine:
             return self._chat_with_rag(session, message, stream=stream)
 
         # ------------------------------------------------------------------
+        # ÖN MASA -> önce müşterinin sorduğunu cevapla
+        # ------------------------------------------------------------------
+        front = None
+        try:
+            front = self.front_desk.handle(session, message)
+        except Exception as e:
+            logger.error(f"front desk error: {e}", exc_info=True)
+        if front and front.final:
+            session.add_message("user", message)
+            session.add_message("assistant", front.text)
+            return self._front_desk_payload(session, front)
+
+        # ------------------------------------------------------------------
         # URUN SECIMI + SOHBET -> kural motoru güdümlü diyalog
         # ------------------------------------------------------------------
         try:
@@ -345,6 +363,15 @@ class ConversationalEngine:
                 "message": "Üzgünüm, bir hata oluştu. Lütfen tekrar deneyin.",
                 "error": "internal_error",
             }
+
+        # Motor diş adımını hesapladıysa hemen söyle; metal dışı seçimleri yönlendir
+        try:
+            result = self.front_desk.post_process(session, result)
+        except Exception as e:
+            logger.error(f"front desk post-process error: {e}", exc_info=True)
+        if front:  # karma mesaj: önce soruya cevap, sonra huni
+            result["message"] = front.text + "\n\n" + (result.get("message") or "")
+            result["front_desk"] = front.kinds
 
         # Bilinmeyen soru etiketlerini isle (uzman ekibe iletme akisi)
         result["message"] = process_ai_response(
@@ -359,6 +386,25 @@ class ConversationalEngine:
             result["message"] += f"\n\n💡 **Ek Bilgi:** {learned['answer']}"
 
         return result
+
+    def _front_desk_payload(self, session, front) -> Dict:
+        """Ön masa cevabını /api/chat sözleşmesine çevir (öneri kartı tekrarlanmaz)."""
+        engine = session.rules_engine
+        next_q = engine.get_next_question()
+        # Takip sorusu sorduysak (ör. "boyu yazar mısınız?") ya da metal dışı
+        # yönlendirme yaptıysak huninin butonları dikkat dağıtmasın.
+        asked = getattr(session, "front_desk_pending", None) is not None
+        non_metal = any(k.startswith("non_metal") for k in front.kinds)
+        return {
+            "session_id": session.session_id,
+            "message": front.text,
+            "state": engine.get_state(),
+            "recommendation": None,
+            "next_question": None if (asked or non_metal) else DialogManager._question_payload(next_q),
+            "is_complete": engine.is_complete(),
+            "extracted_fields": {},
+            "front_desk": front.kinds,
+        }
 
     def _chat_with_rag(self, session, message: str, stream: bool = False):
         """Dokumantasyon sorusunu RAG baglami ile yanitla."""

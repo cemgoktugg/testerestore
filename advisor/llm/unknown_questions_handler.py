@@ -174,7 +174,7 @@ Bu soruyu cevaplamak için admin paneline gidin veya doğrudan
 data/unknown_questions.json dosyasını düzenleyin.
 
 ---
-Bycuttech AI Asistan
+TestereStore Asistanı
             """
             
             msg.attach(MIMEText(body, 'plain', 'utf-8'))

@@ -1,0 +1,442 @@
+{
+ "_kaynak": "bycuttech_rag_v2/bycuttech_encyclopedia_v2.json → troubleshooting (Starrett kataloğu tabanlı arıza tablosu). Danışmanın ön masa katmanı (llm/front_desk.py) kullanır.",
+ "troubleshooting": [
+  {
+   "id": "blade_break",
+   "symptom_tr": "Şerit testere bıçağının kopması",
+   "causes_and_actions": [
+    {
+     "cause_tr": "Yanlış bıçak veya TPI",
+     "action_tr": "Bıçak ailesini ve seçilen TPI'yi kontrol edin.",
+     "order": 1
+    },
+    {
+     "cause_tr": "Yanlış bant gerginliği",
+     "action_tr": "Gerginliği makine üreticisinin önerisine göre ayarlayın.",
+     "order": 2
+    },
+    {
+     "cause_tr": "İlerleme basıncı çok yüksek",
+     "action_tr": "İlerlemeyi azaltın.",
+     "order": 3
+    },
+    {
+     "cause_tr": "Yanlış veya bozulmuş soğutma sıvısı",
+     "action_tr": "Soğutma sıvısını kontrol edin; gerekiyorsa değiştirin.",
+     "order": 4
+    },
+    {
+     "cause_tr": "Baskı blokları fazla sıkı",
+     "action_tr": "Baskı bloklarını gevşetin.",
+     "order": 5
+    },
+    {
+     "cause_tr": "Bıçağın sırtı kasnak flanşına sürtüyor",
+     "action_tr": "Kasnak eğimini, bıçak sırtı flanşa değmeyecek şekilde ayarlayın.",
+     "order": 6
+    },
+    {
+     "cause_tr": "Kılavuz kollar malzemeden çok uzak",
+     "action_tr": "Kılavuz kolları iş parçasına yaklaştırın.",
+     "order": 7
+    },
+    {
+     "cause_tr": "Kılavuzlar fazla sıkı",
+     "action_tr": "Kılavuzları gevşetin.",
+     "order": 8
+    }
+   ]
+  },
+  {
+   "id": "premature_tooth_wear",
+   "symptom_tr": "Dişlerin erken aşınması",
+   "causes_and_actions": [
+    {
+     "cause_tr": "Bıçak ters takılmış",
+     "action_tr": "Dişler kesme yönüne bakacak şekilde bıçağı yeniden takın.",
+     "order": 1
+    },
+    {
+     "cause_tr": "Yanlış alıştırma",
+     "action_tr": "Ürün ailesine ait alıştırma kuralını uygulayın.",
+     "order": 2
+    },
+    {
+     "cause_tr": "Sert malzeme veya aşırı tufal",
+     "action_tr": "Malzeme ve yüzey sertliğini kontrol edin.",
+     "order": 3
+    },
+    {
+     "cause_tr": "Yanlış soğutma sıvısı veya karışım",
+     "action_tr": "Makine ve sıvı üreticisinin karışım oranını uygulayın.",
+     "order": 4
+    },
+    {
+     "cause_tr": "İlerleme veya bant hızı çok yüksek",
+     "action_tr": "İlerlemeyi azaltın; bant hızını doğrulanmış malzeme aralığına getirin.",
+     "order": 5
+    }
+   ]
+  },
+  {
+   "id": "inaccurate_cut",
+   "symptom_tr": "Ölçüsel olarak hatalı kesim",
+   "causes_and_actions": [
+    {
+     "cause_tr": "Kılavuz kollar çok uzakta",
+     "action_tr": "Kılavuz kolları iş parçasına yaklaştırın.",
+     "order": 1
+    },
+    {
+     "cause_tr": "Bıçak aşınmış",
+     "action_tr": "Bıçağı değiştirin.",
+     "order": 2
+    },
+    {
+     "cause_tr": "İlerleme basıncı çok düşük veya yüksek",
+     "action_tr": "Malzeme tablosundaki ilerleme hesabına göre yeniden ayarlayın.",
+     "order": 3
+    },
+    {
+     "cause_tr": "Yanlış TPI",
+     "action_tr": "Temas uzunluğuna ve ürün matrisine göre TPI'yi yeniden seçin.",
+     "order": 4
+    },
+    {
+     "cause_tr": "Soğutma sıvısı kesime ulaşmıyor",
+     "action_tr": "Nozulları ayarlayın veya filtreyi temizleyin.",
+     "order": 5
+    },
+    {
+     "cause_tr": "Kılavuzlar gevşek veya aşınmış",
+     "action_tr": "Kılavuzları sıkın veya değiştirin.",
+     "order": 6
+    }
+   ]
+  },
+  {
+   "id": "cut_deviation",
+   "symptom_tr": "Kesimin yana kaçması",
+   "causes_and_actions": [
+    {
+     "cause_tr": "İlerleme basıncı çok yüksek",
+     "action_tr": "İlerlemeyi azaltın.",
+     "order": 1
+    },
+    {
+     "cause_tr": "Bant gerginliği düşük",
+     "action_tr": "Gerginliği makine kılavuzuna göre artırın.",
+     "order": 2
+    },
+    {
+     "cause_tr": "Diş çaprazlaması hasarlı",
+     "action_tr": "Malzeme sertliğini kontrol edin ve bıçağı değiştirin.",
+     "order": 3
+    },
+    {
+     "cause_tr": "Kılavuz kollar gevşek veya uzakta",
+     "action_tr": "Kılavuzları sıkın ve malzemeye yaklaştırın.",
+     "order": 4
+    }
+   ]
+  },
+  {
+   "id": "chips_in_gullet",
+   "symptom_tr": "Diş boşluklarında talaş birikmesi",
+   "causes_and_actions": [
+    {
+     "cause_tr": "Talaş fırçası yok veya aşınmış",
+     "action_tr": "Fırçayı değiştirin ve diş boşluğuna göre ayarlayın.",
+     "order": 1
+    },
+    {
+     "cause_tr": "Soğutma sıvısı yok veya yanlış",
+     "action_tr": "Soğutma beslemesini ve sıvı karışımını kontrol edin.",
+     "order": 2
+    },
+    {
+     "cause_tr": "Soğutma debisi yetersiz",
+     "action_tr": "Debiyi ve karışım oranını makine üreticisi değerlerine getirin.",
+     "order": 3
+    }
+   ]
+  },
+  {
+   "id": "tooth_back_breakout",
+   "symptom_tr": "Dişlerin arka tarafında kırılma",
+   "causes_and_actions": [
+    {
+     "cause_tr": "İlerleme veya bant hızı çok yüksek",
+     "action_tr": "İlerlemeyi azaltın ve bant hızını doğrulanmış aralığa getirin.",
+     "order": 1
+    },
+    {
+     "cause_tr": "Yanlış TPI",
+     "action_tr": "Temas uzunluğuna göre daha uygun TPI seçin.",
+     "order": 2
+    },
+    {
+     "cause_tr": "Kılavuz ayarı yanlış",
+     "action_tr": "Kılavuzları yeniden ayarlayın.",
+     "order": 3
+    },
+    {
+     "cause_tr": "İlerleme ve bant hızı dengesiz",
+     "action_tr": "Malzeme kesim tablosuna göre iki değeri birlikte ayarlayın.",
+     "order": 4
+    },
+    {
+     "cause_tr": "Yanlış bıçak",
+     "action_tr": "Uygulamaya uygun ürün ailesi ve TPI seçin.",
+     "order": 5
+    },
+    {
+     "cause_tr": "İş parçası mengenede oynuyor",
+     "action_tr": "İş parçasını hareket etmeyecek şekilde sıkın.",
+     "order": 6
+    }
+   ]
+  },
+  {
+   "id": "one_sided_tooth_wear",
+   "symptom_tr": "Dişlerin tek taraflı aşınması",
+   "causes_and_actions": [
+    {
+     "cause_tr": "Kirli veya yüzeyi düzensiz iş parçası",
+     "action_tr": "İş parçasını temizleyin veya uygun yüzey payıyla yeni kesim başlatın.",
+     "order": 1
+    },
+    {
+     "cause_tr": "Kasnak flanşı aşınmış veya kasnak izden çıkmış",
+     "action_tr": "Kasnakları hizalayın veya değiştirin.",
+     "order": 2
+    },
+    {
+     "cause_tr": "Kılavuz diş çaprazlamasına baskı yapıyor",
+     "action_tr": "Kılavuzu doğru konuma ayarlayın.",
+     "order": 3
+    },
+    {
+     "cause_tr": "Kırık dişler kesikte kalmış",
+     "action_tr": "Yeni bıçağı eski kesiğe sokmayın; yeni kesim başlatın ve bıçağı yeniden alıştırın.",
+     "order": 4
+    }
+   ]
+  },
+  {
+   "id": "tooth_breakage",
+   "symptom_tr": "Dişlerin kopması",
+   "causes_and_actions": [
+    {
+     "cause_tr": "Yanlış alıştırma",
+     "action_tr": "Doğru bimetal veya karbür alıştırma kuralını uygulayın.",
+     "order": 1
+    },
+    {
+     "cause_tr": "Bant hızı çok düşük",
+     "action_tr": "Makine ve malzeme sınırları içinde bant hızını artırın.",
+     "order": 2
+    },
+    {
+     "cause_tr": "İlerleme basıncı çok yüksek",
+     "action_tr": "İlerlemeyi azaltın.",
+     "order": 3
+    },
+    {
+     "cause_tr": "Dişler kesitte sıkışıyor",
+     "action_tr": "Bant hızını artırın ve ilerlemeyi azaltın.",
+     "order": 4
+    },
+    {
+     "cause_tr": "Soğutma sıvısı yetersiz",
+     "action_tr": "Kesim bölgesine yeterli sıvı sağlayın.",
+     "order": 5
+    },
+    {
+     "cause_tr": "Sert malzeme veya aşırı tufal",
+     "action_tr": "Malzeme ve yüzey sertliğini kontrol edin.",
+     "order": 6
+    },
+    {
+     "cause_tr": "Yanlış TPI",
+     "action_tr": "Temas uzunluğu ve en az üç diş kuralına göre yeniden seçin.",
+     "order": 7
+    },
+    {
+     "cause_tr": "İş parçası mengenede oynuyor",
+     "action_tr": "İş parçasını hareket etmeyecek şekilde sıkın.",
+     "order": 8
+    }
+   ]
+  },
+  {
+   "id": "blade_back_wear",
+   "symptom_tr": "Bıçak sırtında aşınma",
+   "causes_and_actions": [
+    {
+     "cause_tr": "Kılavuzlar fazla sıkı",
+     "action_tr": "Kılavuzları gevşetin.",
+     "order": 1
+    },
+    {
+     "cause_tr": "Bant gerginliği düşük",
+     "action_tr": "Gerginliği makine üreticisinin önerisine göre ayarlayın.",
+     "order": 2
+    },
+    {
+     "cause_tr": "Bıçak aşınmış",
+     "action_tr": "Bıçağı değiştirin.",
+     "order": 3
+    },
+    {
+     "cause_tr": "İlerleme basıncı çok yüksek",
+     "action_tr": "İlerlemeyi azaltın.",
+     "order": 4
+    },
+    {
+     "cause_tr": "Kılavuz hasarlı veya aşınmış",
+     "action_tr": "Kılavuzu değiştirin.",
+     "order": 5
+    },
+    {
+     "cause_tr": "Kılavuz kollar gevşek veya fazla sıkı",
+     "action_tr": "Kılavuz kolları yeniden ayarlayın.",
+     "order": 6
+    },
+    {
+     "cause_tr": "Bıçak sırtı kasnak flanşına sürtüyor",
+     "action_tr": "Kasnak eğimini bıçak sırtı flanşa değmeyecek şekilde ayarlayın.",
+     "order": 7
+    }
+   ]
+  },
+  {
+   "id": "wandering_or_wavy_cut",
+   "symptom_tr": "Dalgalı veya yön değiştiren kesim",
+   "causes_and_actions": [
+    {
+     "cause_tr": "Yanlış bıçak",
+     "action_tr": "Uygulamaya uygun bıçağı seçin.",
+     "order": 1
+    },
+    {
+     "cause_tr": "Bıçak kör veya hasarlı",
+     "action_tr": "Yeni bıçak takın.",
+     "order": 2
+    },
+    {
+     "cause_tr": "İlerleme veya bant hızı yanlış",
+     "action_tr": "Kesim tablosu ve makine kılavuzuna göre ayarlayın.",
+     "order": 3
+    },
+    {
+     "cause_tr": "Bıçak doğru yönlendirilmiyor",
+     "action_tr": "Kılavuz kolları ve makaralı kılavuzları ayarlayın.",
+     "order": 4
+    },
+    {
+     "cause_tr": "Bant gerginliği düşük",
+     "action_tr": "Gerginliği makine üreticisinin önerisine göre artırın.",
+     "order": 5
+    },
+    {
+     "cause_tr": "Yanlış TPI",
+     "action_tr": "Temas uzunluğuna göre TPI'yi yeniden seçin.",
+     "order": 6
+    },
+    {
+     "cause_tr": "Kılavuz kollar çok uzakta",
+     "action_tr": "Kılavuz kolları malzemeye yaklaştırın.",
+     "order": 7
+    }
+   ]
+  },
+  {
+   "id": "blade_surface_damage",
+   "symptom_tr": "Bıçak gövdesi yüzeyinde hasar",
+   "causes_and_actions": [
+    {
+     "cause_tr": "Makaralı kılavuz fazla sıkı",
+     "action_tr": "Makaralı kılavuzu gevşetin.",
+     "order": 1
+    },
+    {
+     "cause_tr": "Bıçak kılavuzda fazla yukarıda",
+     "action_tr": "Makaraları veya baskı bloklarını yeniden ayarlayın.",
+     "order": 2
+    },
+    {
+     "cause_tr": "Dişler kasnak üzerinde yürüyor",
+     "action_tr": "Kasnak eğimini dişler kasnağa basmayacak şekilde ayarlayın.",
+     "order": 3
+    },
+    {
+     "cause_tr": "Yanlış bıçak genişliği",
+     "action_tr": "Makine kılavuzundaki bıçak genişliğini kullanın.",
+     "order": 4
+    },
+    {
+     "cause_tr": "Talaş yeniden kesime taşınıyor",
+     "action_tr": "Talaş fırçasını temizleyin, ayarlayın veya değiştirin.",
+     "order": 5
+    },
+    {
+     "cause_tr": "Makaralı kılavuz aşınmış",
+     "action_tr": "Kılavuzları değiştirin.",
+     "order": 6
+    },
+    {
+     "cause_tr": "Soğutma sıvısı yetersiz",
+     "action_tr": "Yeterli soğutma sıvısı sağlayın.",
+     "order": 7
+    },
+    {
+     "cause_tr": "Bıçak kesitte sıkışıyor",
+     "action_tr": "İlerlemeyi ve sıkmayı kontrol edin.",
+     "order": 8
+    }
+   ]
+  },
+  {
+   "id": "twisted_blade",
+   "symptom_tr": "Bıçağın burulması",
+   "causes_and_actions": [
+    {
+     "cause_tr": "Kılavuzlar hizasız",
+     "action_tr": "Kılavuzları doğru hizaya getirin.",
+     "order": 1
+    },
+    {
+     "cause_tr": "Kılavuzlar fazla sıkı",
+     "action_tr": "Kılavuzları gevşetin.",
+     "order": 2
+    },
+    {
+     "cause_tr": "İş parçası mengenede oynuyor",
+     "action_tr": "İş parçasını hareket etmeyecek şekilde sıkın.",
+     "order": 3
+    },
+    {
+     "cause_tr": "İlerleme basıncı çok yüksek",
+     "action_tr": "İlerlemeyi azaltın.",
+     "order": 4
+    },
+    {
+     "cause_tr": "Bant gerginliği çok yüksek",
+     "action_tr": "Gerginliği makine üreticisi önerisine göre azaltın.",
+     "order": 5
+    },
+    {
+     "cause_tr": "Kasnaklar aşınmış",
+     "action_tr": "Kasnakları değiştirin.",
+     "order": 6
+    },
+    {
+     "cause_tr": "Kılavuz kollar çok uzakta",
+     "action_tr": "Kılavuz kolları iş parçasına yaklaştırın.",
+     "order": 7
+    }
+   ]
+  }
+ ]
+}

@@ -13,6 +13,7 @@ import {
   AlertCircle,
 } from "lucide-react";
 import { useCart } from "../context/CartContext";
+import AdvisorRichText from "./AdvisorRichText";
 import { setStoredCartId } from "../../lib/medusa/services/cart";
 import {
   CONSENT_ACCEPT,
@@ -606,7 +607,7 @@ export default function AdvisorWidget() {
                       : "rounded-bl-sm bg-muted text-foreground",
                   ].join(" ")}
                 >
-                  {m.text}
+                  {m.role === "user" ? m.text : <AdvisorRichText text={m.text} />}
                   {m.recommendation && (
                     <RecommendationCard
                       rec={m.recommendation}
