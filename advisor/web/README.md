@@ -50,6 +50,11 @@ python app.py
 ```javascript
 fetch('/api/machines/search?q=AMADA H-250')
 ```
+Yanıt: `status` (`match` | `ambiguous` | `none`), `results` (adaylar, bıçak
+ölçüleriyle), `match_type` (`capacity_class` = "Kesmak 250" gibi marka +
+kapasite numarası; tek makine değil, adaylar sorulmalı) ve `brand_note`
+(marka tahmin edildiyse, ör. "Bimak" → Beka-Mak). Marka yazımları
+`data/machine_brand_aliases.json` dosyasından gelir.
 
 ### `/api/analyze`
 **POST** - Bıçak analizi ve öneri

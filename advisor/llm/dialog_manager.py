@@ -27,6 +27,11 @@ from llm.answer_mapper import AnswerMapper
 
 logger = logging.getLogger(__name__)
 
+# Belirsiz makinede gösterilecek en fazla farklı bıçak ölçüsü ve ölçü başına
+# model adı (fazlası "+N" olarak özetlenir).
+_MAX_SIZE_GROUPS = 5
+_MAX_NAMES_PER_GROUP = 4
+
 
 # Motor öneri üretmemişken LLM metninde bulunmaması gereken kalıplar
 _FABRICATION_PATTERNS = [
@@ -203,23 +208,11 @@ class DialogManager:
         # farklı; yanlış olanı seçersek müşteri makinesine takılmayan bıçak
         # sipariş eder. Ölçüleri de yazıyoruz, kullanıcı kendi makinesini
         # model adından değil ölçüsünden tanıyor olabilir.
+        brand_note = getattr(mapping, "machine_brand_note", None)
         if mapping.machine_candidates and not mapping.machine_found:
-            secenekler = "\n".join(
-                f"- **{c.get('display_name') or c.get('model')}** — "
-                f"{c.get('blade_length_mm')} × {c.get('blade_width_mm')} × "
-                f"{c.get('blade_thickness_mm')} mm"
-                for c in mapping.machine_candidates[:5]
-            )
-            kalan = len(mapping.machine_candidates) - 5
-            if kalan > 0:
-                secenekler += f"\n- …ve {kalan} model daha"
-            parts.append(
-                f"\"{mapping.machine_query}\" birden fazla makineye uyuyor ve "
-                "bıçak ölçüleri farklı. Hangisi sizinki?\n\n"
-                f"{secenekler}\n\n"
-                "Tam modeli yazabilir ya da makinenizdeki bıçağın uzunluğunu "
-                "(mm) söyleyebilirsiniz."
-            )
+            if brand_note:
+                parts.append(brand_note)
+            parts.append(self._render_machine_candidates(mapping))
             return "\n\n".join(p for p in parts if p)
 
         # Makine yazıldı ama veritabanında bulunamadıysa bunu açıkça söyle
@@ -227,7 +220,13 @@ class DialogManager:
             # Üretici tanındıysa soruyu daraltarak sor — kullanıcıya
             # "hiç bulamadım" demek, aslında 200 modelini bildiğimiz bir
             # markayı yazmışken gereksiz yere umut kırıcı.
-            if mapping.machine_manufacturer:
+            if brand_note:
+                # Marka tahmin edildi ("Bimak" -> Beka-Mak): "tanıdım" deme
+                parts.append(
+                    f"{brand_note} Model kodunu tam yazar mısınız? "
+                    "Bilmiyorsanız bıçak uzunluğunu mm cinsinden de yazabilirsiniz."
+                )
+            elif mapping.machine_manufacturer:
                 parts.append(
                     f"**{mapping.machine_manufacturer}** markasını tanıdım ama "
                     f"\"{mapping.machine_query}\" içinden modeli çıkaramadım. "
@@ -250,6 +249,10 @@ class DialogManager:
                 f"bıçak ölçüleri: {m.get('blade_length_mm')} × "
                 f"{m.get('blade_width_mm')} × {m.get('blade_thickness_mm')} mm"
             )
+            # Kaynaklar arasında çelişki bilinen kayıtta uyar (veri ezilmedi)
+            conflict = m.get("conflict")
+            if isinstance(conflict, dict) and conflict.get("note"):
+                parts.append(f"⚠️ {conflict['note']}")
 
         if next_question is None:
             # Sorulacak soru kalmadı ama motor öneri üretemedi — hangi verinin
@@ -277,6 +280,78 @@ class DialogManager:
         # Sorunun kendisi ve şıklar — TAMAMEN deterministik
         parts.append(self._format_question(next_question))
         return "\n\n".join(p for p in parts if p)
+
+    @staticmethod
+    def _mm(value: Any) -> str:
+        """27.0 -> '27', 0.9 -> '0.9' (ölçü gösterimi)."""
+        if isinstance(value, float) and value.is_integer():
+            return str(int(value))
+        return str(value)
+
+    @classmethod
+    def _render_machine_candidates(cls, mapping) -> str:
+        """
+        Belirsiz makine için "hangisi?" sorusu — TAMAMEN deterministik.
+
+        Adaylar BIÇAK ÖLÇÜSÜNE göre gruplanır: müşteri için asıl soru hangi
+        bıçağın takılı olduğu. Aynı ölçüyü kullanan beş modeli ayrı satırda
+        göstermek, farklı ölçüdeki adayları listenin dışına itiyordu
+        ("Bimak 270": üç Beka-Mak 270 modeli aynı bıçağı kullanıyor).
+        """
+        candidates = mapping.machine_candidates
+        groups: Dict[tuple, List[str]] = {}
+        for c in candidates:
+            key = (c.get("blade_length_mm"), c.get("blade_width_mm"),
+                   c.get("blade_thickness_mm"))
+            name = c.get("display_name") or c.get("model")
+            groups.setdefault(key, [])
+            if name not in groups[key]:
+                groups[key].append(name)
+
+        lines = []
+        for (length, width, thick), names in list(groups.items())[:_MAX_SIZE_GROUPS]:
+            shown = ", ".join(names[:_MAX_NAMES_PER_GROUP])
+            extra = len(names) - _MAX_NAMES_PER_GROUP
+            if extra > 0:
+                shown += f" (+{extra} model)"
+            lines.append(f"- **{cls._mm(length)} × {cls._mm(width)} × "
+                         f"{cls._mm(thick)} mm** — {shown}")
+        hidden = len(groups) - _MAX_SIZE_GROUPS
+        if hidden > 0:
+            lines.append(f"- …ve {hidden} farklı ölçü daha")
+        options = "\n".join(lines)
+
+        query = mapping.machine_query
+        example = candidates[0].get("model") if candidates else ""
+        capacity = getattr(mapping, "machine_match_type", None) == "capacity_class"
+        capacity_hint = (" Model numarası çoğu zaman makinenin kesme kapasitesini "
+                         "gösterir; aynı numarada birden çok model olabilir."
+                         if capacity else "")
+        brands = {c.get("manufacturer") for c in candidates}
+        other_brands = (" Aynı kapasitedeki başka marka modelleri de listede."
+                        if getattr(mapping, "machine_brand_note", None)
+                        and len(brands) > 1 else "")
+
+        if len(candidates) == 1:
+            intro = (f"\"{query}\" için birebir eşleşen bir model bulamadım."
+                     f"{capacity_hint} En yakın kayıt:")
+            outro = ("Makineniz bu mu? Değilse makine etiketindeki tam model "
+                     "kodunu ya da eski bıçağın üzerinde yazan ölçüyü yazar mısınız?")
+        elif len(groups) == 1:
+            intro = f"\"{query}\" için şu modeller uyuyor:{capacity_hint}{other_brands}"
+            outro = ("Makinenizin bunlardan biri olduğunu teyit eder misiniz? "
+                     "Makine etiketindeki model kodu yeterli.")
+        else:
+            intro = (f"\"{query}\" birden fazla makineye uyuyor ve bıçak "
+                     f"ölçüleri farklı. Hangisi sizinki?{capacity_hint}{other_brands}")
+            outro = ("Tam modeli yazabilir ya da makinenizdeki bıçağın "
+                     "uzunluğunu (mm) söyleyebilirsiniz.")
+            if capacity:
+                outro = ("Makine etiketindeki tam model kodunu "
+                         f"(ör. {example}) ya da eski bıçağın üzerinde yazan "
+                         "ölçüyü (boy × en × kalınlık) yazar mısınız?")
+
+        return f"{intro}\n\n{options}\n\n{outro}"
 
     @staticmethod
     def _drop_duplicate_question(text: str, question) -> str:

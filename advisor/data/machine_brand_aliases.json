@@ -1,0 +1,39 @@
+{
+  "__comment": "Müşterinin yazdığı marka adı -> machines_list.json'daki üretici adı. Anahtarlar büyük/küçük harf, Türkçe karakter, boşluk ve tire duyarsız eşleşir (rules_engine/machine_database.py _aggressive_normalize). Dosya okunamazsa kod gömülü asgari listeyle çalışır.",
+  "version": "1.0.0",
+  "last_updated": "2026-10-26",
+  "brands": {
+    "BEKAMAK": ["beka-mak", "beka mak", "bekamak makina", "bekamak makine", "beka-mak makina", "beka mak makina", "beka makina", "beka makine"],
+    "KESMAK": ["kes-mak", "kes mak", "kesmak makina", "kesmak makine"],
+    "KARMETAL": ["kar metal", "kar-metal", "karmetal makina", "karmetal makine"],
+    "UZAY MAKINA": ["uzay", "uzay mak", "uzay makine"],
+    "DG METAL": ["dg-metal", "dg metal makina", "dg metal makine"],
+    "DISPA": ["dispa makina", "dispa makine", "dispa döküm"],
+    "BEHRINGER": ["behringer", "behrınger", "beringer", "behringer makina"],
+    "BERG & SCHMID": ["b&s", "bs", "berg schmid", "berg und schmid"],
+    "AMADA": ["amadda", "amada makina"],
+    "DoALL": ["doall", "do all", "do-all"],
+    "HYD MECH": ["hydmech", "hyd-mech"],
+    "KASTO": ["kasto makina"],
+    "MÜLLER": ["mueller", "müller"],
+    "RÜSCH": ["ruesch"],
+    "MÖSSNER": ["moessner"],
+    "KÖLLE": ["koelle"],
+    "Weisser-Bärwinkel": ["weisser barwinkel", "weisser baerwinkel"]
+  },
+  "uncertain": [
+    {
+      "aliases": ["bimak", "bimak makina", "bimak makine"],
+      "brands": ["BEKAMAK", "DISPA"],
+      "note": "“Bimak” adında kayıtlı bir şerit testere üreticisi bulamadım; büyük olasılıkla Beka-Mak (BEKAMAK) makinesini kastediyorsunuz.",
+      "_why": "Bimak adlı bir şerit testere üreticisi bulunamadı (Bimak Makina iş makinesi parçası, Bimak Adana servis); 'Bimak' araması Beka-Mak sonuçları döndürüyor. Belirsiz alias: kapasite numarasından bıçak ölçüsü asla kesin verilmez, aday listesi döner. Tam model kodu (ör. BMSY 270DG) yazılırsa eşleşme kesinleşir. DISPA, aynı kapasite sınıfındaki ikinci olası makine (M-Y 270 = 3120x27x0,9; BMSY 270DG'den yalnız 40 mm farklı) olduğu için aday havuzunda; sıralamada Beka-Mak önce gelir."
+    }
+  ],
+  "generic_word_brands": ["KAMU", "SAW", "ULTRA", "RES", "DELTA", "FORTE", "RAPID", "MARATHON"],
+  "_generic_word_brands_why": "Bu üretici adları aynı zamanda yaygın kelimeler ('kamu ihalesi', 'band saw', 'ultra dayanıklı'). Cümlede geçmeleri tek başına marka sayılmaz; yalnızca model de eşleşirse makine bulunur.",
+  "_not_aliased": {
+    "mega makina": "Veritabanındaki MEGA modellerinin (BS-250…, H-260…) Türk Mega Makina ile aynı firma olduğu doğrulanmadı.",
+    "çağlayan": "Çağlayan Makas Makina Hırdavat, Dispa ürünlerini de satan bir bayi; üretici değil.",
+    "mastercut": "Everising ile aynı model listesine sahip olduğu doğrulanmadı."
+  }
+}
