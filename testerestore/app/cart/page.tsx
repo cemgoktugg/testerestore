@@ -79,9 +79,8 @@ export default function CartPage() {
     setPromoMessage(null);
   }
 
-  // Order summary. Shipping follows the free-over-2000 rule and KDV is charged
-  // on items + shipping, so this breakdown equals exactly what Medusa charges
-  // at checkout (the server attaches the same shipping method there).
+  // Sipariş özeti: KDV satırı yalnızca ürünlerin KDV'si, kargo KDV dahil tek satır
+  // (2.000 TL eşiği kuralı). Ödeme adımında sunucunun kargo fiyatı kullanılır.
   const currency = (medusaCart?.currency_code as string | undefined) || 'try';
   const subTotal =
     typeof medusaCart?.item_subtotal === 'number'
@@ -292,19 +291,19 @@ export default function CartPage() {
 
                 <div className="space-y-3 text-xs">
                   <div className="flex justify-between text-muted-foreground">
-                    <span>Ara Toplam {medusaCart ? '' : '(KDV Hariç)'}</span>
+                    <span>Ara Toplam (KDV hariç)</span>
                     <span className="font-semibold text-foreground">
                       {formatMoney(subTotal, currency)}
                     </span>
                   </div>
                   <div className="flex justify-between text-muted-foreground">
-                    <span>KDV {medusaCart ? '' : '(%20)'}</span>
+                    <span>KDV (%20)</span>
                     <span className="font-semibold text-foreground">
                       {formatMoney(kdv, currency)}
                     </span>
                   </div>
                   <div className="flex justify-between text-muted-foreground">
-                    <span>Kargo Ücreti</span>
+                    <span>Kargo Ücreti{shippingCost === 0 ? '' : ' (KDV dahil)'}</span>
                     <span className="font-semibold text-foreground">
                       {shippingCost === 0 ? (
                         <strong className="text-emerald-500 font-bold uppercase">

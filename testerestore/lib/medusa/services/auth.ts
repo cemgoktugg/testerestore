@@ -222,6 +222,8 @@ const ORDER_DETAIL_EXTRA_FIELDS = [
   // metadata store retrieve varsayılanlarında YOK — açıkça ekle, yoksa
   // widget'ın yazdığı kargo bilgisi (carrier_name/tracking_number) gelmez.
   "+metadata",
+  "+item_tax_total",
+  "+shipping_tax_total",
   "+fulfillment_status",
   "+*fulfillments",
   "+*fulfillments.labels",

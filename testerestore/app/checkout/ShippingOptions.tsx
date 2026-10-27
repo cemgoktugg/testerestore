@@ -2,7 +2,7 @@
 
 import { Truck, Zap } from 'lucide-react';
 import { formatMoney } from '../../lib/medusa/format';
-import { amountToFreeShipping, FREE_SHIPPING_THRESHOLD } from '../../lib/shipping';
+import { amountToFreeShipping, FREE_SHIPPING_THRESHOLD, shippingWithKdv } from '../../lib/shipping';
 import type { CartShippingOption } from '../../lib/medusa/services/cart';
 
 /**
@@ -72,7 +72,9 @@ export default function ShippingOptions({
                 <span className="text-sm font-semibold text-foreground">{o.name}</span>
               </span>
               <span className={`text-sm font-bold ${o.amount === 0 ? 'text-emerald-600' : 'text-foreground'}`}>
-                {o.amount === 0 ? 'Ücretsiz' : `${formatMoney(o.amount, currency)} + KDV`}
+                {o.amount === 0
+                  ? 'Ücretsiz'
+                  : `${formatMoney(shippingWithKdv(o.amount, o.taxInclusive), currency)} (KDV dahil)`}
               </span>
             </button>
           );

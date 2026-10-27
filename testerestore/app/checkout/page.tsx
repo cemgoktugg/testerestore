@@ -139,11 +139,16 @@ export default function CheckoutPage() {
     typeof medusaCart?.discount_total === 'number'
       ? (medusaCart.discount_total as number)
       : 0;
-  // KDV ürün + kargo üzerinden; kargo = seçili seçeneğin SUNUCUDA hesaplanmış
-  // ücreti (ücretsiz kargo kuralı Medusa'da). Seçenekler gelmeden önce
-  // lib/shipping'deki gösterim aynası kullanılır.
+  // KDV satırı yalnızca ürünlerin KDV'si; kargo KDV dahil tek satır. Kargo =
+  // seçili seçeneğin SUNUCUDA hesaplanmış ücreti (ücretsiz kargo kuralı Medusa'da).
+  // Seçenekler gelmeden önce lib/shipping'deki gösterim aynası kullanılır.
   const selectedShipping = shippingOptions.find((o) => o.id === selectedShippingId);
-  const summary = summarizeOrder(subTotal, discount, selectedShipping?.amount);
+  const summary = summarizeOrder(
+    subTotal,
+    discount,
+    selectedShipping?.amount,
+    selectedShipping?.taxInclusive ?? true
+  );
   const kdv = summary.kdv;
   const shippingCost = summary.shipping;
   const grandTotal = summary.total;
@@ -600,15 +605,15 @@ export default function CheckoutPage() {
                   {/* Pricing Details */}
                   <div className="space-y-2 border-t border-border pt-4 text-xs">
                     <div className="flex justify-between text-muted-foreground">
-                      <span>Ara Toplam</span>
+                      <span>Ara Toplam (KDV hariç)</span>
                       <span className="font-semibold text-foreground">{formatMoney(subTotal, currency)}</span>
                     </div>
                     <div className="flex justify-between text-muted-foreground">
-                      <span>KDV {medusaCart ? '' : '(%20)'}</span>
+                      <span>KDV (%20)</span>
                       <span className="font-semibold text-foreground">{formatMoney(kdv, currency)}</span>
                     </div>
                     <div className="flex justify-between text-muted-foreground">
-                      <span>Kargo</span>
+                      <span>Kargo{shippingCost === 0 ? '' : ' (KDV dahil)'}</span>
                       <span className="font-semibold text-foreground">
                         {shippingCost === 0 ? 'Ücretsiz' : formatMoney(shippingCost, currency)}
                       </span>

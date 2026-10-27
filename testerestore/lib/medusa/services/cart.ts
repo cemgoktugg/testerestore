@@ -389,8 +389,10 @@ export async function autoSelectShipping(): Promise<{
 export interface CartShippingOption {
   id: string;
   name: string;
-  /** Sunucunun bu sepet için hesapladığı fiyat (KDV hariç). Ücretsiz kargo kuralı Medusa'da. */
+  /** Sunucunun bu sepet için hesapladığı fiyat. Ücretsiz kargo kuralı Medusa'da. */
   amount: number;
+  /** amount KDV dahil mi (Türkiye bölgesi "KDV dahil fiyat" tercihi). Değilse %20 eklenir. */
+  taxInclusive: boolean;
   /** standard | express | … (shipping option type code) */
   typeCode?: string;
 }
@@ -417,6 +419,9 @@ export async function listShippingOptions(): Promise<CartShippingOption[]> {
       id: o.id,
       name: o.name,
       amount: Number(o.calculated_price?.calculated_amount ?? o.amount ?? 0),
+      taxInclusive: Boolean(
+        o.is_tax_inclusive ?? o.calculated_price?.is_calculated_price_tax_inclusive ?? false
+      ),
       typeCode: o.type?.code,
     }));
   } catch (e) {

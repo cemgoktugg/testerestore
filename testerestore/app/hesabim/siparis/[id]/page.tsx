@@ -373,8 +373,17 @@ export default function OrderDetailPage() {
                 </h3>
                 <div className="space-y-2 text-xs">
                   <Row label="Ara Toplam" value={formatMoney(order.item_subtotal as number ?? order.subtotal as number, order.currency_code)} />
-                  <Row label="KDV" value={formatMoney(order.tax_total as number, order.currency_code)} />
-                  <Row label="Kargo" value={formatMoney(order.shipping_total as number, order.currency_code)} />
+                  {/* KDV = ürünlerin KDV'si; kargo KDV dahil gösterilir (shipping_total vergi dahildir) */}
+                  <Row
+                    label="KDV (%20)"
+                    value={formatMoney(
+                      typeof order.item_tax_total === 'number'
+                        ? (order.item_tax_total as number)
+                        : Number(order.tax_total ?? 0) - Number(order.shipping_tax_total ?? 0),
+                      order.currency_code
+                    )}
+                  />
+                  <Row label="Kargo (KDV dahil)" value={formatMoney(order.shipping_total as number, order.currency_code)} />
                   <div className="pt-2 border-t border-border flex justify-between items-center">
                     <span className="font-bold">Toplam</span>
                     <span className="font-black text-orange-grad text-base">

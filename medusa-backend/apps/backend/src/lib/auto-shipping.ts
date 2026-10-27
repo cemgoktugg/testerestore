@@ -23,6 +23,7 @@ import { Modules, ContainerRegistrationKeys } from "@medusajs/framework/utils";
  * lib/shipping.ts ile birlikte güncellenmeli.
  */
 export const FREE_SHIPPING_THRESHOLD = 2000;
+/** KDV DAHİL (Türkiye bölgesi "KDV dahil fiyat" tercihi; kullanıcı kararı 2026-10-27). */
 export const STANDARD_SHIPPING_FEE = 79.9;
 const KDV_RATE = 0.2;
 

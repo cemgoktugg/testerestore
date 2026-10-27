@@ -21,7 +21,7 @@ const INTRO = [
   '> Türkiye’de şerit testere bıçağı satan online mağaza (testerestore.com): bi-metal (M42, M51), karbür uçlu (TCT), ahşap, et-kemik ve sünger/tekstil kesim bıçakları. Bıçaklar müşterinin girdiği ölçüde (genişlik, kalınlık, diş adımı/TPI, boy) kesilip alın kaynağıyla birleştirilerek hazırlanır; standart ölçülerde stoktan hazır boy bıçaklar da satılır. Fiyatlar Türk lirasıdır (TRY).',
   '',
   'Sipariş: ürün sayfasında ölçü seçilir, fiyat anında hesaplanır, kredi/banka kartıyla (iyzico, 3D Secure) ödenir. Kişiye özel ölçüde üretilen bıçaklarda cayma hakkı yoktur; hazır boy ürünlerde teslimden itibaren 14 gün cayma hakkı vardır.',
-  'Kargo: ürün toplamı KDV dahil 2.000 TL ve üzeri siparişlerde standart kargo ücretsizdir; altındaki siparişlerde kargo ücreti 79,90 TL + KDV’dir.',
+  'Kargo: ürün toplamı KDV dahil 2.000 TL ve üzeri siparişlerde standart kargo ücretsizdir; altındaki siparişlerde kargo ücreti 79,90 TL’dir (KDV dahil).',
 ];
 
 async function products(): Promise<StoreProduct[]> {

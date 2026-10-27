@@ -47,7 +47,7 @@ SITE_URL = os.environ.get("ADVISOR_SITE_URL", "https://testerestore.com").rstrip
 
 # Mağaza kargo kuralı — storefront lib/shipping.ts ve Medusa fiyat kuralı ile aynı.
 FREE_SHIPPING_THRESHOLD_INCL_VAT = 2000
-STANDARD_SHIPPING_FEE = 79.9
+STANDARD_SHIPPING_FEE = 79.9   # KDV DAHİL (kullanıcı kararı 2026-10-27)
 KDV_RATE = 0.20
 
 # Ölçüye göre üretimde boy sınırları (mm) — ürün metadata min/max_length_mm,
@@ -792,7 +792,7 @@ class FrontDesk:
         return (
             "**Kargo:** Ürün toplamı KDV dahil "
             f"{tl(FREE_SHIPPING_THRESHOLD_INCL_VAT).replace(',00 TL', ' TL')} ve üzeri siparişlerde "
-            f"standart kargo ücretsizdir; altındaki siparişlerde kargo ücreti {tl(STANDARD_SHIPPING_FEE)} + KDV'dir. "
+            f"standart kargo ücretsizdir; altındaki siparişlerde kargo ücreti {tl(STANDARD_SHIPPING_FEE)}'dir (KDV dahil). "
             "Kargo ücreti siparişi onaylamadan önce sepet ve ödeme adımında gösterilir. "
             "Siparişiniz en kısa sürede kargoya verilir; üye girişi yaptıysanız kargo durumunu "
             f"{link('Hesabım → Siparişlerim', '/hesabim')} sayfasından takip edebilirsiniz."
