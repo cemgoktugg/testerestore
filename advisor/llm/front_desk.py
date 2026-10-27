@@ -9,7 +9,7 @@ alıyordu; konu dışı ve ahşap sorularına anlamsız hazır cümle dönüyord
 Bu katman önce müşterinin SORDUĞUNU cevaplar:
   - mağaza soruları (kargo, iade/cayma, ödeme, fatura, iletişim)
   - fiyat (sitenin fiyat hesaplayıcısıyla) ve hazır stok (gerçek ürün listesi)
-  - arıza teşhisi (Starrett tabanlı arıza tablosu, önce en olası neden)
+  - arıza teşhisi (data/troubleshooting_tr.json kalıpları, önce en olası neden)
   - ahşap / et-kemik / sünger-tekstil yönlendirmesi (metal hunisi bunları
     karşılamıyor)
   - konu dışı sorular
@@ -19,8 +19,17 @@ Kurallar (kullanıcı kararları, 2026-10-26):
   - Kimlik "TestereStore asistanı"; yalnızca BİZİM katalogdaki ürün adları.
   - Teslim süresi VERİLMEZ ("en kısa sürede kargoya verilir").
   - Sayılar uydurulmaz: fiyat backend'den, stok ürün listesinden, kargo
-    kuralı mağazanın tek kaynağından (storefront lib/shipping.ts ile aynı).
+    kuralı mağazanın tek kaynağından (storefront lib/shipping.ts ile aynı),
+    boy sınırları ürün metadata'sından (min/max_length_mm).
   - Hitap "siz".
+
+Kalıp notları (2026-10-27 kapsama ölçümü, 700 müşteri mesajı):
+  - Sade metinde Türkçe harf yok (ç→c ğ→g ı→i ö→o ş→s ü→u); "bıçağım" → "bicag".
+  - Alt dize tuzakları: "parke" ⊂ "yaparken", "alistir" ⊂ "calistir",
+    "hazir" ⊂ "hazirlaniyor", "gonderi" ⊂ "gonderir misiniz", "et" fiili
+    ("tavsiye et") ve profil cidarı ("2 mm et") et-kemik DEĞİL.
+  - Boy ayrıştırması model numarası (Kesmak 350, LB1200F), malzeme kodu
+    (AISI 304, 6082 alüminyum, 1.2379), cm ve "3 metre 66" biçimlerini tanır.
 """
 from __future__ import annotations
 
@@ -40,6 +49,22 @@ SITE_URL = os.environ.get("ADVISOR_SITE_URL", "https://testerestore.com").rstrip
 FREE_SHIPPING_THRESHOLD_INCL_VAT = 2000
 STANDARD_SHIPPING_FEE = 79.9
 KDV_RATE = 0.20
+
+# Ölçüye göre üretimde boy sınırları (mm) — ürün metadata min/max_length_mm,
+# sunucuda zorlanır (catalog_store 2026-10-27). Fiyat API'si genel olarak
+# 1.000–15.000 mm kabul eder; aile sınırları daha dar olabilir.
+GLOBAL_MIN_LENGTH, GLOBAL_MAX_LENGTH = 1000, 15000
+LENGTH_LIMITS: Dict[str, Tuple[int, int]] = {
+    "bi-metal": (1000, 15000),     # Bi-Metal M42 Premium
+    "carbide": (1500, 12000),
+    "woodcut": (1000, 8000),
+    "meat-bone": (1500, 6000),
+    "textile": (1000, 8000),
+}
+M51_LENGTH_LIMITS = (1500, 15000)  # Bi-Metal M51 Endüstriyel (aynı bi-metal fiyat matrisi)
+
+# Adet kademesi indirimi — backend lib/blade-line.ts qtyDiscountPercent ile aynı.
+_QTY_TIERS = ((10, 15), (5, 10), (3, 5))
 
 _DATA = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data")
 
@@ -66,12 +91,24 @@ def mm(value: float) -> str:
     return (str(int(value)) if float(value).is_integer() else str(value)).replace(".", ",")
 
 
+def _th(value: int) -> str:
+    """1500 → "1.500"."""
+    return f"{int(value):,}".replace(",", ".")
+
+
 def link(label: str, path: str) -> str:
     return f"[{label}]({SITE_URL}{path})"
 
 
 def _any(pattern: str, text: str) -> bool:
     return re.search(pattern, text) is not None
+
+
+def qty_discount_percent(quantity: int) -> int:
+    for min_qty, pct in _QTY_TIERS:
+        if quantity >= min_qty:
+            return pct
+    return 0
 
 
 # --------------------------------------------------------------------------- #
@@ -93,22 +130,48 @@ FAMILIES: Dict[str, Dict[str, Any]] = {
     "textile": {"label": "Sünger ve Tekstil",
                 "links": [("Sünger-Tekstil Şerit Testere", "/products/sunger-tekstil-pro")]},
 }
+# Boy sınırı mesajlarında ürün adı
+_PRODUCT_NAME = {"bi-metal": "Bi-Metal M42 Premium", "carbide": "Karbür Uçlu", "woodcut": "Ahşap Kesim",
+                 "meat-bone": "Hijyenik Et-Kemik", "textile": "Sünger-Tekstil"}
+
+# "et" = fiil ("tavsiye et", "yardım eder misiniz") veya profil cidarı ("2 mm et",
+# "et kalınlığı", "kalın et") — aile tespitinden ÖNCE metinden çıkarılır.
+_ET_NOISE = re.compile(
+    r"\b(?:tavsiye|yardim|kontrol|rica|dikkat|teklif|tercih|takip|devam|kabul|iptal|ikna|oner\w*|memnun|"
+    r"test|tespit|tahmin|hesap|sikayet|emin|israr|ifade|elde|terk|kayit|ihmal|merak|tamir|teslim|ziyaret|"
+    r"mudahale|organize|islem|kontak|yardimci)\s*(?:et|eder|ederim|edin|ediniz|eder misiniz|etsem|etmek|"
+    r"etmeli\w*|ettim|etti|ediyor\w*)\b"
+    r"|(?<![\w])\d+(?:[.,]\d+)?\s*(?:mm\s*)?(?:et|eti|etli)\b|\bet\s*(?:kalinli\w*|kalin\w*|cidar\w*)"
+    r"|\b(?:profil|boru|kutu)\w*\s*eti\w*\b|\bet\s*\d|\bkalin\s*et\w*")
 
 _FAMILY_PATTERNS: List[Tuple[str, str]] = [
-    ("carbide", r"karbur|\btct\b|carbide"),
-    ("bi-metal", r"bi-?metal|\bm ?42\b|\bm ?51\b|\bhss\b"),
-    ("woodcut", r"ahsap|kereste|tomruk|marangoz|\bmdf\b|sunta|kontrplak|\bagac|\bodun|kutuk|mobilya|parke"),
-    # "et kalınlığı" (profil cidarı) et-kemik DEĞİL
-    ("meat-bone", r"\bet\b(?!\s*kalin)|et-kemik|kemik|kasap|\bbalik|dondurulmus|donuk et|tavuk"),
-    ("textile", r"sunger|kopuk|tekstil|kumas|strafor|yalitim|\bkece"),
+    ("carbide", r"karbur(?!\s*tutucu)\w*|karbit\w*|\btct\b|carbide|\b[vw][iy]d[iy]a\w*|hartmetall\w*"),
+    ("bi-metal", r"\bbi\s?-?\s?metal\w*|\bbimetal\w*|\bm\s?-?\s?42\b|\bm\s?x?\s?-?\s?51\b|\bhss\b|kobaltl\w*"),
+    ("woodcut", r"ahsap\w*|kereste\w*|tomruk\w*|marangoz\w*|\bmdf\b|\bsunta\w*|kontrplak\w*|\bagac\w*|"
+                r"\bodun\w*|\bkutuk(?!\s*celi)\w*|mobilya\w*|\bparke\w*|\bpalet\w*|\bkalas\w*|\bhizar\w*|"
+                r"\bbicki\w*|\bresaw\b|\bwood\w*|\bholz\w*|\btakoz\w*"),
+    # Çıplak "et" kalıbı YOK: yalnız et-kemik bağlamı (et kesimi, kasap, donuk et…)
+    ("meat-bone", r"et\s*-?\s*kemik|\bkemik\w*|\bkasap\w*|donuk\s*et\w*|dondurulmus\w*|"
+                  r"donmus\s*(?:et|balik|tavuk|gida)\w*|\bbalik(?!esir)\w*|\btavuk\w*|\bhijyenik\w*|\bgida\w*|"
+                  r"\bet\s*(?:kesim|kesme|kesmek|kesiyor|keser|bica[kg]|testere|serit|makine|reyon|urun|"
+                  r"isleme|parcala|dilimle)\w*|\b(?:kirmizi|beyaz|kiyma|dana|kuzu|kemikli|cig)\s*et\b|"
+                  r"\betler\w*|\beti\s*kes\w*"),
+    ("textile", r"sunger\w*|(?<!baglanti )\bkopuk(?!\s*geli)\w*|strafor\w*|\beps\b|tekstil\w*|kumas\w*|"
+                # "dişsiz" tek başına değil: deri/halı için bu ürünü önermeyelim
+                r"\bkece\w*|yalitim\w*|dalgali\s*(?:agiz\w*|bica[kg]\w*)"),
 ]
 
 
 def detect_family(n: str) -> Optional[str]:
+    s = _ET_NOISE.sub(" ", n)
     for fam, pat in _FAMILY_PATTERNS:
-        if _any(pat, n):
+        if _any(pat, s):
             return fam
     return None
+
+
+def _wants_m51(n: str) -> bool:
+    return _any(r"\bm\s?x?\s?-?\s?51\b", n) and not _any(r"\bm\s?-?\s?42\b", n)
 
 
 # --------------------------------------------------------------------------- #
@@ -116,40 +179,192 @@ def detect_family(n: str) -> Optional[str]:
 # --------------------------------------------------------------------------- #
 
 _NUM = r"\d+(?:[.,]\d+)?"
+# Bıçak genişliği/kalınlığı olarak kabul edilen değerler (fiyat ağacı + yaygın ölçüler);
+# ayırıcısız yazımlarda ("27 0.9", "2750lik 27 0,9") yalnız bunlar ölçü sayılır.
+_W_KNOWN = {6, 8, 10, 13, 16, 19, 20, 25, 27, 32, 34, 40, 41, 54, 67, 80}
+_T_KNOWN = {0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.6}
+
+# Makine etiketi: boy × genişlik × kalınlık ("2720x27x0,9", "3660 x 34 x 1,1")
+_TRIPLE_LWT = re.compile(r"(?<![\d.,])(\d{3,5})\s*(?:mm)?\s*[x×*]\s*(\d{1,2}(?:[.,]\d)?)\s*(?:mm)?\s*[x×*]\s*"
+                         r"(\d(?:[.,]\d{1,2})?)(?!\d)")
+# genişlik × kalınlık × boy ("27x0,9x2750")
+_TRIPLE_WTL = re.compile(r"(?<![\d.,])(\d{1,2}(?:[.,]\d)?)\s*[x×*]\s*([01][.,]\d{1,2})\s*[x×*]\s*(\d{3,5})(?![\d])")
+# "27/0.9", "27 ye 0.9", "27'ye 0,9", "34 e 1.1" — ikinci sayı ondalık kalınlık (4/6 TPI değil)
+_WT_SLASH = re.compile(r"(?<![\d.,/])(\d{1,2})\s*(?:/|'?\s*y?e\s)\s*([01][.,]\d{1,2})(?![\d/])")
+# "27 0.9", "27 lik 0.9 luk" — yalnız bilinen genişlik + kalınlık
+_WT_SPACE = re.compile(r"(?<![\d.,/x×*])\b(\d{1,2})\s*'?\s*(?:l[iu]k|lu|li|mm)?\s+([01][.,]\d{1,2})\b(?!\s*[x×*/])")
+# "27x09" — ondalık ayırıcı unutulmuş; tahmin edilmez, teyit istenir
+_WT_AMBIG = re.compile(r"(?<![\d.,])(\d{1,2})\s*[x×*]\s*(0\d|1[0-6])(?![\d.,])")
 
 
 def _f(s: str) -> float:
     return float(s.replace(",", "."))
 
 
+def _valid_wt(w: float, t: float) -> bool:
+    return 3 <= w <= 80 and 0.3 <= t <= 2.0
+
+
+def _parse_triple(n: str) -> Optional[Tuple[float, float, int]]:
+    for m in _TRIPLE_LWT.finditer(n):
+        L, w, t = int(m.group(1)), _f(m.group(2)), _f(m.group(3))
+        if 300 <= L <= 20000 and _valid_wt(w, t):
+            return (w, t, L)
+    for m in _TRIPLE_WTL.finditer(n):
+        w, t, L = _f(m.group(1)), _f(m.group(2)), int(m.group(3))
+        if 300 <= L <= 20000 and _valid_wt(w, t):
+            return (w, t, L)
+    return None
+
+
 def parse_width_thickness(n: str) -> Optional[Tuple[float, float]]:
-    """"27x0.9", "27 x 0,9", "27*0.9", "27×0.9" → (27, 0.9). 60x60 (profil) değil."""
+    """"27x0.9", "27 x 0,9", "27*0.9", "27×0.9", "2720x27x0,9", "27/0,9", "27 ye 0.9" → (27, 0.9).
+    60x60 (profil) ve 4/6 (diş adımı) değil."""
+    full = _parse_triple(n)
+    if full:
+        return (full[0], full[1])
     for m in re.finditer(rf"({_NUM})\s*[x×*]\s*({_NUM})", n):
         w, t = _f(m.group(1)), _f(m.group(2))
-        if 3 <= w <= 80 and 0.3 <= t <= 2.0:
+        if _valid_wt(w, t):
+            return (w, t)
+    for m in _WT_SLASH.finditer(n):
+        w, t = _f(m.group(1)), _f(m.group(2))
+        if _valid_wt(w, t):
+            return (w, t)
+    for m in _WT_SPACE.finditer(n):
+        w, t = _f(m.group(1)), _f(m.group(2))
+        if w in _W_KNOWN and t in _T_KNOWN:
             return (w, t)
     return None
 
 
+def ambiguous_dims(n: str) -> Optional[Tuple[float, float]]:
+    """"27x09" → (27, 0.9) TAHMİNİ (ayırıcı yok). Müşteriden teyit alınmadan kullanılmaz."""
+    if parse_width_thickness(n):
+        return None
+    m = _WT_AMBIG.search(n)
+    if not m or int(m.group(1)) not in _W_KNOWN:
+        return None
+    t = int(m.group(2)) / 10
+    return (float(m.group(1)), t) if t in _T_KNOWN else None
+
+
+# Makine markaları (model numarası boy sanılmasın): glossary makine-modeli +
+# makine veritabanındaki üreticiler. Yaygın kelime olanlar (hem, delta, ultra…) yok.
+_MACHINE_BRANDS = (
+    "karmetal|kesmak|kes-mak|bekamak|beka-?mak|bimak|bianco|mep|imet|bomar|pilous|kasto|behringer|amada|"
+    "makita|einhell|bosch|metabo|jet|optimum|opti|femi|mega|ecomac|dewalt|milwaukee|thomas|ozcelik|cosen|"
+    "meba|danobat|doall|jaespa|pehaka|wagner|daito|everising|sabi|klaeger|bonetti|friggi|hyd ?mech|peerless|"
+    "rusch|kaltenbach|bauer|franho|imas|marvel|soitaab|sofina|pedrazzoli|metora|trennjaeger|heska|"
+    "kalamazoo|missler|eisele|baileigh|dispa|mossner|kolle|uniz|condor|ficep|wellsaw|voortman|metallkraft|"
+    "hais|karmak|uzay|dg metal|berg schmid|mastercut|proma|holzmann|scheppach|bernardo|metallkraft"
+)
+_BRAND_MODEL = re.compile(rf"\b(?:{_MACHINE_BRANDS})\b\s*(?:[a-z]{{1,6}}\s*-?\s*)?\d{{2,5}}[a-z0-9]*\b"
+                          r"(?!\s*(?:mm|milim))")
+_MODEL_WORD = re.compile(r"\bmodel\w*\s*(?:no\w*\s*)?:?\s*(?:[a-z]{1,6}\s*-?\s*)?\d{2,5}[a-z0-9]*")
+_ALNUM_CODE = re.compile(r"\b[a-z]{1,6}-?\d{1,5}[a-z0-9]*\b")       # lb1200f, kmy280, st37, m42
+# Malzeme kodu: önek/nokta biçimleri her zaman; çıplak sayı (6082, 4140) yalnız malzeme bağlamında
+_MAT_CODE_SAFE = re.compile(r"\b(?:aisi|sae|sus|ss|inox|en\s*aw|aa|al|alu)\s*-?\s*\d{3,4}\w*|(?<![\d.,])[1-3]\.\d{4}\b")
+_MAT_CODE_BARE = re.compile(r"\b(?:304|316|321|420|430|2024|2205|5083|5754|6060|6061|6063|6082|7075|1045|4140|"
+                            r"4340|52100)l?\b(?!\s*(?:mm|milim))")
+_MAT_CONTEXT = (r"al[iu]m[iu]n[yi]?um\w*|alimunyum\w*|aliminyum\w*|\balu\b|paslanmaz\w*|\binox\b|celi[gk]\w*|"
+                r"kalite\w*|malzeme\w*|demir\w*|\bkrom\w*|\bdokum\w*|duplex|\bt6\b")
+_UNIT_NOISE = re.compile(
+    r"(?<![\w.,])\d+(?:[.,]\d+)?\s*(?:tl\b|lira\w*|₺|adet\w*|tane\w*|parca\w*|rpm\b|devir\w*|kg\b|kilo\w*|hrc\b|"
+    r"derece\w*|°|yil\w*|gun\w*|saat\w*|dk\b|dakika\w*|watt\b|kw\b|volt\b|bar\b|mpa\b|n/mm\w*|%|"
+    r"m\s*/\s*(?:dk|dak|min|s)\b|m2\b|metrekare)|%\s*\d+(?:[.,]\d+)?")
+_YEAR = re.compile(r"\b(?:19|20)\d{2}\s*'?\s*(?:te|ta|de|da|ten|tan|den|dan|yil\w*|model\w*)\b")
+_GEOMETRY = re.compile(r"(?:\bcap\w*|ø|(?:merkez|aks|eksen|kasnak)\w*\s*aras\w*|mesafe\w*)\s*(?:[:=]\s*)?"
+                       r"\d+(?:[.,]\d+)?\s*(?:mm|cm)?")
+_CHAIN = re.compile(rf"{_NUM}(?:\s*[x×*]\s*{_NUM})+")
+
+
+def _strip_non_length(n: str) -> str:
+    """Boy OLMAYAN sayıları (ölçü zinciri, diş adımı, model, malzeme kodu, para, adet, çap…) çıkar."""
+    s = _CHAIN.sub(" ", n)
+    s = _WT_SLASH.sub(" ", s)
+    s = re.sub(r"\d+(?:[.,]\d+)?\s*/\s*\d+(?:[.,]\d+)?", " ", s)          # 4/6, 1,4/2
+    s = _BRAND_MODEL.sub(" ", s)
+    s = _MODEL_WORD.sub(" ", s)
+    s = _MAT_CODE_SAFE.sub(" ", s)
+    if _any(_MAT_CONTEXT, s):
+        s = _MAT_CODE_BARE.sub(" ", s)
+    s = _ALNUM_CODE.sub(" ", s)
+    s = _UNIT_NOISE.sub(" ", s)
+    s = _YEAR.sub(" ", s)
+    s = _GEOMETRY.sub(" ", s)
+    # binlik ayırıcı: "2.750 mm" → "2750 mm"
+    s = re.sub(r"(?<![\d.,])([1-9]\d?)\.(\d{3})(?![\d.,])", r"\1\2", s)
+    return s
+
+
 def parse_length(n: str) -> Optional[int]:
-    """Boy: "2750 mm", "2750mm", "2,75 m", "1638 mm hazır", tek başına 4 haneli sayı."""
-    cleaned = re.sub(rf"{_NUM}\s*[x×*]\s*{_NUM}", " ", n)  # genişlik×kalınlığı çıkar
-    m = re.search(r"(\d+(?:[.,]\d+)?)\s*(?:metre|mt|m)\b", cleaned)
-    if m and _f(m.group(1)) < 20:
+    """Boy (mm): "2750 mm", "2750mm", "2750'lik", "2,75 m", "275 cm", "3 metre 66", "2720x27x0,9",
+    tek başına 4-5 haneli sayı. Model numarası (Kesmak 350, LB1200F), malzeme kodu (AISI 304,
+    6082 alüminyum, 1.2379), fiyat/adet/çap sayıları boy sayılmaz."""
+    full = _parse_triple(n)
+    if full:
+        return full[2]
+    s = _strip_non_length(n)
+    # Konuşma dili: "3 metre 66" = 3,66 m; "2 m 45 lik" = 2,45 m. "3 metre 34 lük" belirsiz
+    # (34 bıçak genişliği olabilir) → boy okunmaz, müşteriye sorulur.
+    m = re.search(r"(?<![\d.,])(\d{1,2})\s*(?:metre|mt|m)\s+(\d{2})(?![\d.,])(?!\s*(?:mm|cm|santim))", s)
+    if m:
+        if int(m.group(2)) in _W_KNOWN and _any(r"^\s*'?\s*(?:l[iu]k|lu|li|mm)\b", s[m.end():]):
+            return None
+        return int(m.group(1)) * 1000 + int(m.group(2)) * 10
+    m = re.search(r"(?<![\d.,])(\d{1,2}(?:[.,]\d{1,3})?)\s*(?:metre\w*|mt|m)\b(?!\s*/)", s)
+    if m and 0.3 <= _f(m.group(1)) < 20:
         return int(round(_f(m.group(1)) * 1000))
-    for m in re.finditer(r"(\d{3,5})\s*(?:mm|milim\w*)?", cleaned):
+    m = re.search(r"(?<![\d.,])(\d{2,4}(?:[.,]\d)?)\s*(?:cm|santim\w*|santi)\b", s)
+    if m and 500 <= _f(m.group(1)) * 10 <= 20000:
+        return int(round(_f(m.group(1)) * 10))
+    for m in re.finditer(r"(?<![\w.,/'])(\d{3,5})(?!\d)", s):
         v = int(m.group(1))
-        if 300 <= v <= 20000:
-            return v
+        tail = s[m.end():m.end() + 14]
+        if re.match(r"[.,]\d", tail):
+            continue                                                   # ondalık sayı
+        if re.match(r"\s*'?\s*(?:mm\b|milim)", tail):
+            if 300 <= v <= 20000:
+                return v
+            continue
+        if re.match(r"\s*'?\s*(?:l[iu]k|lu|li)\b", tail) or re.match(r"$|[\s,;.?!)]", tail):
+            if 1000 <= v <= 20000:                                     # çıplak 3 hane boy sayılmaz
+                return v
+    return None
+
+
+def ambiguous_metre(n: str) -> Optional[Tuple[int, int]]:
+    """"3 metre 34 lük" → (3, 34): 3.340 mm mi, 3 m boy + 34 mm genişlik mi belirsiz."""
+    s = _strip_non_length(n)
+    m = re.search(r"(?<![\d.,])(\d{1,2})\s*(?:metre|mt|m)\s+(\d{2})(?![\d.,])\s*'?\s*(?:l[iu]k|lu|li|mm)\b", s)
+    if m and int(m.group(2)) in _W_KNOWN:
+        return int(m.group(1)), int(m.group(2))
     return None
 
 
 def parse_tpi(n: str) -> Optional[str]:
-    m = re.search(r"(\d{1,2}(?:[.,]\d{1,2})?\s*/\s*\d{1,2}(?:[.,]\d{1,2})?)", n)
+    s = _WT_SLASH.sub(" ", n)
+    s = re.sub(r"\b\d+\s*/\s*\d+\s*(?:inc\w*|inch\w*|\")", " ", s)
+    m = re.search(r"(?<![\d.,])(\d{1,2}(?:[.,]\d{1,2})?\s*/\s*\d{1,2}(?:[.,]\d{1,2})?)(?![\d])", s)
     if m:
         return re.sub(r"\s+", "", m.group(1)).replace(",", ".")
-    m = re.search(r"\b(\d{1,2})\s*tpi\b", n)
+    m = re.search(r"\b(\d{1,2})\s*tpi\b", s)
     return m.group(1) if m else None
+
+
+_QTY_WORDS = {"bir": 1, "iki": 2, "uc": 3, "dort": 4, "bes": 5, "alti": 6, "yedi": 7, "sekiz": 8,
+              "dokuz": 9, "on": 10}
+
+
+def parse_qty(n: str) -> Optional[int]:
+    """"2 tane", "20 adet", "iki tane" → adet."""
+    m = re.search(r"(?<![\d.,])(\d{1,4})\s*(?:adet|tane|parca)\b", n)
+    if m:
+        q = int(m.group(1))
+        return q if 1 <= q <= 9999 else None
+    m = re.search(r"\b(" + "|".join(_QTY_WORDS) + r")\s*(?:adet|tane)\b", n)
+    return _QTY_WORDS[m.group(1)] if m else None
 
 
 # --------------------------------------------------------------------------- #
@@ -157,42 +372,107 @@ def parse_tpi(n: str) -> Optional[str]:
 # --------------------------------------------------------------------------- #
 
 _OFF_TOPIC = (r"\b(siir|sarki|hikaye|masal|fikra|hava durumu|hava nasil|futbol|basketbol|"
-              r"siyaset|secim|yemek tarif|tarifi|kod yaz|python|javascript|odevim|"
+              r"siyaset|yemek tarif|tarifi|kod yaz|python|javascript|odev\w*|"
               r"ceviri yap|tercume et|bilmece|burcum|astroloji|film oner|dizi oner|"
-              r"sohbet edelim|fikra anlat)")
+              r"sohbet edelim|fikra anlat|matematik|galatasaray|fenerbahce|besiktas|trabzonspor|bitcoin|"
+              r"kripto\w*|borsa\w*|dolar\w*|euro|hangi telefon\w*)\b|"
+              # "seçim" yalnız siyasal bağlamda ("seçim yapmama yardım" = bıçak seçimi)
+              r"\bsecim(?:ler\w*)?\s*(?:sonuc|anket|kazan|ne zaman|kim)\w*|\bsecimi kim|\boy (?:ver|kullan)\w*|"
+              r"\bmac\w*\s*(?:\w+\s+)?(?:kac|skor|sonuc)\w*|telefon\w*\s*(?:\w+\s+)?(?:almal|alayim|alsam|oner|tavsiye)\w*|"
+              r"(?:araba|oto|otomobil)\s*lastig\w*")
 # Not: "bıçak" çekimde "bıçağım/bıçağı" olur (k→ğ); sade biçimde "bicag".
 _DOMAIN = (r"serit|testere|bica[kg]|tpi|\bdis|kesim|kesiyor|kesece|kesmek|makine|metal|celik|"
-           r"paslanmaz|aluminyum|dokum|profil|boru|\bmil\b|\blama\b|\bsac\b|kaynak|bimetal|"
-           r"bi-metal|m42|m51|karbur|siparis|kargo|fiyat|stok|hazir|odeme|iade|fatura|\d+\s*mm")
+           r"paslanmaz|al[iu]m[iu]n[yi]?um|alimunyum|dokum|profil|boru|\bmil\b|\blama\b|\bsac\b|kaynak|bimetal|"
+           r"bi-metal|m42|m51|karbur|siparis|kargo|fiyat|stok|hazir|odeme|iade|fatura|kasnak|kilavuz|\d+\s*mm")
 # Kimlik / insan desteği: "sen kimsin", "bot musun", "canlı destek"
 _IDENTITY = (r"\bkimsin|kiminle konusuyorum|\binsan mi(sin|siniz)?\b|gercek (bir )?(insan|kisi)|"
              r"\b(bot|robot)\s*mu(sun|sunuz)?\b|yapay zeka mi(sin)?\b|chat\s?gpt|\bgpt\b|"
              r"canli (destek|biri|kisi|temsilci)|musteri temsilci|temsilci(yle|ye|nize) (gorus|konus|bagla|aktar)|"
-             r"yetkili (biri|kisi)|\boperator|(insan|biri|birisi|yetkili)(yle|ile) gorus")
-_HUMAN_REQUEST = r"canli|temsilci|yetkili|operator|gorus"
+             r"yetkili (biri|kisi)|\boperator|(insan|biri|birisi|yetkili)(yle|ile) gorus|"
+             r"\b(insan|biri|birisi|gercek kisi)\w*\s*(baglan|aktar)\w*")
+_HUMAN_REQUEST = r"canli|temsilci|yetkili|operator|gorus|baglan|aktar"
 # Bilgi paketleri (llm/knowledge.py)
 _LENGTH_HELP = (r"(boy|uzunlu)\w*\s*(\w+\s+){0,3}(nasil|nereden|nerden)\s*(olc|hesap|bul|ogren|anla)|"
                 r"(boy|uzunlu)\w*\s*(\w+\s+){0,2}bilmiyorum|(boy|uzunlu)\w*\s*hesap\w*|"
+                r"(boy|uzunlu)\w*\s*(olcme\w*|olcmek|olcul\w*|olcer\w*|olcum\w*)|"
+                r"olce(yim|lim|cegim|rim)\w*\s*(\w+\s+)?boy\w*|"
                 r"kasnak\w*\s*(\w+\s+){0,3}(cap|merkez|aras)")
-_RUN_IN = (r"rodaj|alistir\w*|\brun-?in\b|\bbreak-?in\b|"
-           r"yeni bica[kg]\w*\s*(\w+\s+){0,3}(ilk|nasil kullan)")
-_QUESTION = r"(nasil|ne kadar|\bkac\b|ayar\w*|olmali|gerek\w*|\bsart\b|lazim|oran\w*|hangi|\bmi\b|\bmu\b|\?)"
-_TENSION = (rf"(gergi\w*|gergin\w*|gerdir\w*|germe\w*|geril\w*)\s*(\w+\s+){{0,4}}{_QUESTION}|"
+# "çalıştır" (calistir) rodaj DEĞİL
+_RUN_IN = (r"rodaj|(?<!c)alistir\w*|\brun-?in\b|\bbreak-?in\b|"
+           r"yeni bica[kg]\w*\s*(\w+\s+){0,3}(ilk|nasil kullan)|"
+           r"ilk kesim\w*\s*(\w+\s+){0,3}(dikkat|nasil|yeni)|kullanilmaya basla\w*")
+_QUESTION = (r"(nasil|ne kadar|\bkac\b|ayar\w*|olmali|gerek\w*|\bsart\b|lazim|oran\w*|hangi|"
+             r"\bm[iu](yim|yiz|sun|sunuz|sin|siniz|dir)?\b|\?)")
+_TENSION = (rf"(gergi\w*|gergin\w*|gerdir\w*|germe\w*|geril\w*|gevset\w*)\s*(\w+\s+){{0,4}}{_QUESTION}|"
             r"ne kadar ger\w*|tansiyon")
-_COOLANT_Q = (rf"(sogutma\w*|bor yag\w*|kesme yag\w*|emulsiyon\w*|kuru kes\w*)\s*(\w+\s+){{0,4}}{_QUESTION}")
-_GRADE_Q = r"nedir|ne demek|hangi (malzeme|grup|metal|celik|sinif)|esdeger|karsilig|muadil|ne tur"
-_SHIPPING = r"kargo|teslimat|ne zaman gel|kac gunde|gonderim|gonderi|kargoya"
-_RETURN = r"\biade|cayma|geri gonder|degisim|degistir|geri al"
-_PAYMENT = r"odeme|taksit|kredi kart|banka kart|havale|\beft\b|kapida|nakit|kartla|kart ile"
-_INVOICE = r"fatura|vergi no|vergi numara|e-?fatura"
-_CONTACT = (r"telefon|iletisim|ulas(abilir|mak|irim|alim|abilece)|adresiniz|nerdesiniz|"
-            r"neredesiniz|whatsapp|e-?posta|mail adres")
-_PRICE = r"fiyat|kac para|kac tl|kac lira|ne kadar|ucret|tutar|maliyet|kaca"
-_STOCK = r"hazir|stok|elinizde|mevcut mu|var mi|bulunuyor mu"
-_SELECTION = (r"paslanmaz|karbon|celik|aluminyum|dokum|pirinc|bakir|titanyum|\bdolu\b|"
+_COOLANT_TERM = (r"sogutma\w*|bor\s*yag\w*|boron\s*yag\w*|kesme\s*yag\w*|emulsiyon\w*|kuru\s*kes\w*|"
+                 r"sogutmas[iu]z|refraktometre\w*|\byag(?:lama\w*|i|a|in\w*)?\b")
+_COOLANT_Q = (rf"({_COOLANT_TERM})\s*([\w,']+\s+){{0,4}}{_QUESTION}|kaca karis\w*|karisim oran\w*|"
+              r"refraktometre\w*\s*(\w+\s+){0,3}(nasil|olc)\w*")
+# "Bor yağı satıyor musunuz" katalog sorusu, soğutma bilgisi değil
+_COOLANT_EXCL = r"\bsat(iyor|ar|is|mak|tiginiz)\w*|satin al\w*"
+_GRADE_Q = r"nedir|ne demek|hangi (malzeme|grup|metal|celik|sinif)|esdeger|karsilig|muadil|ne tur|\bfark\w*|arasindaki"
+_SHIPPING = (r"\bkargo\w*|teslimat\w*|\bgonderim\b|kargoya|ne zaman (gel|ulas|elime|elimize|cik|kargo|gonder)\w*|"
+             r"kac gun\w*|\bshipping\b|\bgonderiler\w*|hangi gun\w*\s*(\w+\s+)?(cik|kargo|gonder)\w*|"
+             r"(hemen|yenisini)\s*(\w+\s+)?gonderir\w*|teslim (edil|ed|al|ne zaman)\w*|elime (ulas|gec)\w*|elimde (olur|olm)\w*|"
+             r"adrese teslim|kapiya\w*\s*(\w+\s+)?(teslim|gel|getir)\w*|subeden|elden (al|teslim)\w*|"
+             r"gelip al\w*|ne kadar sure\w*\s*(\w+\s+){0,2}(gel|ulas|hazirlan|kargo|teslim|cik)\w*|"
+             r"siparis\w*\s*(\w+\s+){0,5}hazirlan\w*|hazirlan\w*\s*(\w+\s+){0,3}(ne zaman|kac gun|ne kadar)")
+# "cayma hakkım kaç gün" iade sorusu: "kaç gün" tek başına kargo sayılmaz
+_SHIPPING_TIME_ONLY = r"kac gun\w*"
+# Müşteri yanlış ölçü/ürün gönderildiğini söylüyor → iade/ayıplı ürün (makine arızası değil)
+_STORE_ERROR = (r"\d{3,5}\s*(mm\s*)?istedim\s*\d{3,5}\s*(mm\s*)?geldi|yanlis (olcu|urun|boy|bica[kg])\w*\s*(\w+\s+){0,2}"
+                r"(gonder|gel)\w*|gondermissiniz|eksik gonder\w*")
+_RETURN = (r"\biade\w*|cayma\w*|geri (gonder|al|iade)\w*|\bdegisim\b|degistir(ebilir|mek|ir)\s*(mi|is)\w*|"
+           r"para\w*\s*iade|hasarli gel\w*|kirik gel\w*|hasar gor\w*")
+# Bakım/montaj/adres değişikliği iade DEĞİL ("bıçağı nasıl değiştiririm", "adresimi değiştirebilir miyim")
+_RETURN_EXCL = (r"(nasil|ne zaman|ne siklikla|siklikla)\s*(\w+\s+){0,2}degis\w*|degis\w*\s*(\w+\s+){0,2}"
+                r"(nasil|ne zaman)|degistirirken|(lastig|rulman|adres|telefon|kilavuz)\w*\s*(\w+\s+){0,2}degis\w*")
+_PAYMENT = (r"\bodeme\w*|taksit\w*|kredi kart\w*|banka kart\w*|havale\w*|\beft\b|\bkapida\b|nakit|kartla|"
+            r"kart ile|kart bilgi\w*|3\s?d\s*secure|\b3d\b|\btroy\b|\bpaypal\b")
+# "ödeme aldınız ürün yok", "dolandırıcı" → şikâyet/sipariş durumu, ödeme bilgisi değil
+_PAYMENT_EXCL = r"dolandiric\w*|odeme\w*\s*(\w+\s+)?(aldiniz|alindi|cekil\w*|cekti\w*)"
+_INVOICE = r"fatura|vergi no|vergi numara|e-?fatura|e-?arsiv|irsaliye"
+_INVOICE_EXCL = r"fatura\w*\s*(\w+\s+)?(kaybol|kayip)\w*"
+_CONTACT = (r"telefon(?!\w*\s*(?:\w+\s+)?(?:almal|alayim|alsam|oner|tavsiye))|iletisim|"
+            r"ulas(abilir|mak|irim|alim|abilece)|adresiniz|nerdesiniz|neredesiniz|hangi sehir\w*|hangi ilde\w*|"
+            r"whatsapp|e-?posta|mail adres|calisma saat\w*|mesai saat\w*|\bara(yabilir|yin|yiniz|r misiniz)\w*|"
+            r"instagram|facebook|sosyal medya|showroom|magaza\w*\s*(\w+\s+)?(var|nerede|adres)\w*|"
+            r"gelip (gor|bak)\w*|"
+            # kırık/hasarlı ürünün fotoğrafı (makine markası fotoğrafı huniye kalır)
+            r"(bica[kg]|urun|kirik|hasar|kaynag|yuzey)\w*\s*(\w+\s+){0,1}(fotograf|resim|video)\w*\s*(\w+\s+){0,2}"
+            r"(gonder|at|yolla|ilet)\w*")
+# Fiyat: güçlü kelimeler her zaman; "ne kadar" yalnız bıçak/ölçü bağlamında ve süre/hız/oran
+# sorusu değilse ("ne kadar dayanır", "kesme hızı ne kadar olmalı", "410 cm ne kadar mm").
+_PRICE_STRONG = (r"fiyat\w*|kac para|kac (tl|lira)|\bucret(?!siz)\w*|maliyet\w*|"
+                 r"\bkaca\b(?!\s*(karis|ayar|getir|indir|dus|cik)\w*)|\bne tutar|kac tutar|\btutari\w*")
+_PRICE_WEAK = (r"ne kadar(?!\s*(sur|dayan|olmal|ger|gev|hiz|uzun|kisa|kalin|genis|bekle|zaman|cm\b|mm\b|"
+               r"metre|derece|isin|sik|yag|oran|ses|dik|aci))")
+_PRICE_WEAK_EXCL = r"(sure\w*|omr\w*|hiz\w*|devri?\w*|oran\w*|gergi\w*|mesafe\w*|aralig\w*)\s*(\w+\s+)?ne kadar"
+_PRICE_CONTEXT = r"bica[kg]\w*|serit\w*|testere\w*|\burun\w*|hazir boy\w*"
+# "Fiyatlarınız KDV dahil mi" — bilgi sorusu; ölçü yoksa fiyat formu açılmaz
+_KDV_INFO = r"\bkdv\w*\s*(\w+\s+)?(dahil|haric)\w*\s*(\w+\s+)?m[iu]\b|fiyat\w*\s*(\w+\s+)?kdv"
+_STOCK = (r"\bhazir(da|daki|dan)?\b(?!\s*ol)|\bhazir\s*(boy|bica|serit|urun|olan|stok)\w*|\bstok\w*|"
+          r"elinizde|mevcut mu|var mi|bulunuyor mu|hemen (gonderil|kargo)\w*")
+# Boy yazılmadıysa stok listesi yalnız açık stok kelimesiyle ("hazırlanıyor" değil)
+_STOCK_WORD = (r"\bhazir(da|daki|dan)?\b(?!\s*ol)|\bhazir\s*(boy|bica|serit|urun|olan|stok)\w*|\bstok\w*|"
+               r"hemen (gonderil|kargo)\w*")
+# "Hazır boy ile özel boy farkı ne" bilgi sorusu (stok listesi değil)
+_STOCK_INFO = r"\bfark\w*|\bnedir\b|ne demek"
+# Makine etiketini okuyan müşteri: "Etikette 3660 x 34 x 1,1 yazıyor"
+_LABEL = r"\betiket\w*|yaziyor|yazili\w*|\bplaka\w*"
+_SELECTION = (r"paslanmaz|karbon|celik|al[iu]m[iu]n[yi]?um|alimunyum|dokum|pirinc|bakir|titanyum|\bdolu\b|"
               r"\bmil\b|profil|boru|\blama\b|\bsac\b|kutu|kesiyorum|keseceg|makinem|modeli")
+_STORE_KINDS = {"shipping", "returns", "payment", "invoice", "contact"}
 
-# Arıza belirtileri (RAG v2 diagnostics.py kalıpları) → arıza tablosu id
+# Takip mesajı işaretleri (son fiyat cevabına göre: "peki 34'lük olsa", "karbür olsa",
+# "4/6 olanı", "2 tane alsam", "KDV dahil ne kadar")
+_FOLLOW_MARK = (r"\bolsa\w*|\bolan(i|lar\w*)?\b|\bolursa\b|\bpeki\b|^ya\b|\balsam\b|\balirsam\b|\btane\b|"
+                r"\badet\b|\bkdv\w*|\bdegil\b|\bayni\w*")
+_NEAREST = r"en yakin\w*|yakin olan\w*|en yakini"
+_YES = r"^(evet|dogru|aynen|tamam|ok|olur|he|hi hi)\b"
+
+# Arıza belirtileri — YEDEK: data/troubleshooting_tr.json'da "patterns" yoksa kullanılır.
 _SYMPTOMS: List[Tuple[str, str]] = [
     ("back_edge_cracks", r"sirt\w*\s*(\w+\s+){0,3}catla\w*|arka\s*kenar\w*\s*(\w+\s+){0,2}catla\w*"),
     ("blade_break", r"(bica[kg]|serit|band)\w*\s*(\w+\s+){0,2}(kopt|kop\w*|kiril\w*|catla\w*)|kaynak yerinden"),
@@ -206,7 +486,6 @@ _SYMPTOMS: List[Tuple[str, str]] = [
                              r"kesmiyor artik|yavas\s*kesiyor|kesim\s*suresi\s*uz"),
     ("one_sided_tooth_wear", r"tek\s*taraf.{0,10}asin"),
     ("inaccurate_cut", r"olcu\s*(tutmuyor|hatali|sapiyor)|hatali\s*kesim"),
-    # araya kelime girebilir: "talaş diş boşluğunda sıkışıyor"
     ("chips_in_gullet", r"talas.{0,25}(sikis|birik|tikan|dol)|dis\s*boslug\w*.{0,15}(talas|tikan|dol)"),
     ("blade_back_wear", r"sirt.{0,10}asin|bica[kg]\w*\s*sirti"),
     ("blade_surface_damage", r"govde.{0,12}(hasar|cizik)|yuzey.{0,10}hasar"),
@@ -272,6 +551,27 @@ def _load_troubleshooting() -> Dict[str, Dict[str, Any]]:
         return {}
 
 
+def _symptom_table(trouble: Dict[str, Dict[str, Any]]) -> List[Tuple[str, List[re.Pattern]]]:
+    """Belirti kalıpları: JSON'daki "patterns" (priority sırasıyla, özelden genele); JSON'da hiç
+    kalıp yoksa gömülü _SYMPTOMS listesi."""
+    rows = sorted(trouble.values(), key=lambda t: t.get("priority", 10 ** 6))   # sıralama kararlı
+    if not any(t.get("patterns") for t in rows):
+        return [(sid, [re.compile(p)]) for sid, p in _SYMPTOMS if sid in trouble]
+    builtin = dict(_SYMPTOMS)
+    table = []
+    for t in rows:
+        pats = list(t.get("patterns") or ([builtin[t["id"]]] if t["id"] in builtin else []))
+        compiled = []
+        for p in pats:
+            try:
+                compiled.append(re.compile(p))
+            except re.error:
+                continue
+        if compiled:
+            table.append((t["id"], compiled))
+    return table
+
+
 # --------------------------------------------------------------------------- #
 # Ön masa
 # --------------------------------------------------------------------------- #
@@ -288,6 +588,7 @@ class FrontDesk:
     def __init__(self, store: Optional[StoreClient] = None, kb: Optional[KnowledgeBase] = None):
         self.store = store or StoreClient()
         self.trouble = _load_troubleshooting()
+        self.symptom_table = _symptom_table(self.trouble)
         self.kb = kb if kb is not None else _safe_kb()
 
     # ------------------------------------------------------------------ #
@@ -298,6 +599,9 @@ class FrontDesk:
         n = norm(message)
         if not n:
             return None
+        # Tur sayacı: son fiyat/stok cevabına takip yalnız HEMEN sonraki turda geçerli
+        # (arada huniye cevap verildiyse "41'lik olan" çap cevabıdır, fiyat takibi değil).
+        session.front_desk_turn = (getattr(session, "front_desk_turn", None) or 0) + 1
 
         # Önceki turda eksik bilgi istendiyse (fiyat için boy gibi) tamamla
         pending = getattr(session, "front_desk_pending", None)
@@ -306,6 +610,10 @@ class FrontDesk:
             follow = self._follow_up(session, pending, n)
             if follow:
                 return follow
+        # Son fiyat/stok cevabına takip ("peki 34'lük olsa", "en yakını hangisi")
+        follow = self._context_follow_up(session, n)
+        if follow:
+            return follow
 
         if _any(_OFF_TOPIC, n) and not _any(_DOMAIN, n):
             return FrontDeskReply(self._off_topic(), final=True, kinds=["off_topic"])
@@ -318,7 +626,8 @@ class FrontDesk:
             kinds.append("identity")
 
         link_fn = link
-        if _any(_LENGTH_HELP, n):
+        length = parse_length(n)
+        if _any(_LENGTH_HELP, n) and not self._length_help_excluded(n, length):
             parts.append(knowledge.length_answer(n, link_fn))
             kinds.append("length_help")
         if _any(_RUN_IN, n):
@@ -327,32 +636,46 @@ class FrontDesk:
         if _any(_TENSION, n):
             parts.append(knowledge.tension_answer(link_fn))
             kinds.append("tension")
-        if _any(_COOLANT_Q, n):
+        if _any(_COOLANT_Q, n) and not _any(_COOLANT_EXCL, n):
             parts.append(knowledge.coolant_answer(link_fn))
             kinds.append("coolant")
-        grade = knowledge.detect_grade(n)
-        if grade and _any(_GRADE_Q, n):
-            parts.append(knowledge.grade_answer(grade, link_fn))
-            kinds.append("grade")
+        if _any(_GRADE_Q, n):
+            grades = knowledge.detect_grades(n)[:2]
+            alias = None if grades else knowledge.alias_grade_answer(n, link_fn)
+            if grades:
+                parts.extend(knowledge.grade_answer(g, link_fn) for g in grades)
+                kinds.append("grade")
+            elif alias:
+                parts.append(alias)
+                kinds.append("grade")
 
-        symptoms = self._symptoms(n)
+        store_error = _any(_STORE_ERROR, n)
+        symptoms = self._symptoms(n, skip=("blade_length_misfit",) if store_error else ())
         if symptoms:
             parts.append(self._trouble_answer(symptoms))
-            kinds.append("troubleshoot")
-        elif _any(_TROUBLE_GENERIC, n) and _any(r"bica[kg]|serit|testere|kesim|makine", n):
+            # Soğutma sıvısı arızaları (köpürme, koku, ayrışma…) soğutma konusu olarak işaretlenir
+            if all(self.trouble[s].get("family") == "coolant" for s in symptoms):
+                if "coolant" not in kinds:
+                    kinds.append("coolant")
+            else:
+                kinds.append("troubleshoot")
+        elif _any(_TROUBLE_GENERIC, n) and _any(r"bica[kg]|serit|testere|kes|makine", n):
             parts.append(self._trouble_ask())
             kinds.append("troubleshoot")
 
-        if _any(_SHIPPING, n):
+        shipping = _any(_SHIPPING, n)
+        if shipping and _any(r"\b(cayma|iade)\w*", n):
+            shipping = _any(_SHIPPING, re.sub(_SHIPPING_TIME_ONLY, " ", n))
+        if shipping:
             parts.append(self._shipping())
             kinds.append("shipping")
-        if _any(_RETURN, n):
+        if (_any(_RETURN, n) and not _any(_RETURN_EXCL, n)) or store_error:
             parts.append(self._returns())
             kinds.append("returns")
-        if _any(_PAYMENT, n):
+        if _any(_PAYMENT, n) and not _any(_PAYMENT_EXCL, n):
             parts.append(self._payment(n))
             kinds.append("payment")
-        if _any(_INVOICE, n):
+        if _any(_INVOICE, n) and not _any(_INVOICE_EXCL, n):
             parts.append(self._invoice())
             kinds.append("invoice")
         if _any(_CONTACT, n) and "shipping" not in kinds and "identity" not in kinds:
@@ -360,19 +683,37 @@ class FrontDesk:
             kinds.append("contact")
 
         family = detect_family(n)
-        # "gergi ne kadar olmalı", "boy ne kadar olmalı" fiyat sorusu değil
-        info_only = {"shipping", "length_help", "run_in", "tension", "coolant", "grade", "identity"} & set(kinds)
-        wants_price = _any(_PRICE, n) and not (info_only and not parse_width_thickness(n))
-        wants_stock = _any(_STOCK, n) and (parse_length(n) or _any(r"hazir|stok", n))
+        dims = parse_width_thickness(n)
+        triple = _parse_triple(n)
+        # Bilgi bloğu verildiyse ("gergi ne kadar olmalı", "peşin fiyatına taksit") ölçü yoksa fiyat formu açılmaz
+        info_kinds = set(kinds) - {"troubleshoot"}
+        wants_price = ((_any(_PRICE_STRONG, n)
+                        or (_any(_PRICE_WEAK, n) and not _any(_PRICE_WEAK_EXCL, n)
+                            and (dims or length or family or _any(_PRICE_CONTEXT, n))))
+                       and not (info_kinds and not dims)
+                       and not (_any(_KDV_INFO, n) and not (dims or length))
+                       # "Teklif alabilir miyim, 20 adet 34x1.1 4115" (tam ölçüyle teklif = fiyat)
+                       or bool(_any(r"\bteklif\w*", n) and dims and length and not info_kinds))
+        wants_stock = (_any(_STOCK, n) and (length or _any(_STOCK_WORD, n))
+                       and not (_any(_STOCK_INFO, n) and not length)
+                       and not ({"returns", "payment", "invoice"} & set(kinds) and not length))
+        # Etiketteki tam ölçü ("Etikette 3660 x 34 x 1,1 yazıyor") → stok + fiyat
+        if triple and _any(_LABEL, n) and not wants_price:
+            wants_stock = True
 
         if wants_stock and "troubleshoot" not in kinds:
-            parts.append(self._stock_answer(session, n))
+            text, quoted = self._stock_answer(session, n)
+            parts.append(text)
             kinds.append("stock")
+            # Stok cevabına eklenen özel üretim fiyatı ancak fiyat sorulduysa "price" sayılır
+            if quoted and (wants_price or (triple and _any(_LABEL, n))):
+                kinds.append("price")
         elif wants_price:
             parts.append(self._price_answer(session, n, family))
             kinds.append("price")
 
-        if family in ("woodcut", "meat-bone", "textile") and not {"price", "stock"} & set(kinds):
+        if (family in ("woodcut", "meat-bone", "textile")
+                and not ({"price", "stock"} | _STORE_KINDS) & set(kinds)):
             parts.append(self._non_metal(session, family, n))
             kinds.append(f"non_metal:{family}")
 
@@ -387,6 +728,15 @@ class FrontDesk:
         if not hybrid:
             text += "\n\n" + self._soft_continue(kinds)
         return FrontDeskReply(text, final=not hybrid, kinds=kinds)
+
+    @staticmethod
+    def _length_help_excluded(n: str, length: Optional[int]) -> bool:
+        # "kasnak çapına göre kalınlık" boy sorusu değil; boy yazılmışsa "boy ölçüsü 2750" yardım istemez
+        if _any(r"kalinli\w*", n) and not _any(r"\b(boy|uzunlu)\w*", n):
+            return True
+        if length and not knowledge.parse_wheel_geometry(n) and not _any(r"nasil|bilmiyorum|hesap", n):
+            return True
+        return False
 
     def post_process(self, session: Any, result: Dict[str, Any]) -> Dict[str, Any]:
         """
@@ -467,6 +817,12 @@ class FrontDesk:
         )
         if _any(r"kapida|nakit", n):
             text += " Kapıda ödeme seçeneğimiz bulunmuyor."
+        if _any(r"kart bilgi\w*|guvenli|guvende", n):
+            # SSS (testerestore/app/sss) ile aynı ifade
+            text += " Kart bilgileriniz sitemize iletilmez ve saklanmaz."
+        if _any(r"(3\s?d|sms|sifre|kod)\w*\s*(\w+\s+){0,2}gelm\w*", n):
+            text += (" 3D Secure doğrulama mesajı kartınızı veren banka tarafından gönderilir; gelmiyorsa "
+                     "bankanızla görüşmenizi öneririm.")
         return text
 
     @staticmethod
@@ -563,15 +919,17 @@ class FrontDesk:
     # Arıza
     # ------------------------------------------------------------------ #
 
-    def _symptoms(self, n: str) -> List[str]:
-        found = [sid for sid, pat in _SYMPTOMS if _any(pat, n)]
+    def _symptoms(self, n: str, skip: Tuple[str, ...] = ()) -> List[str]:
+        found = [sid for sid, pats in self.symptom_table
+                 if sid not in skip and any(p.search(n) for p in pats)]
         return [s for s in found if s in self.trouble][:2]
 
     def _trouble_answer(self, symptoms: List[str]) -> str:
         blocks = []
         for sid in symptoms:
             t = self.trouble[sid]
-            causes = [(c["cause_tr"], c["action_tr"]) for c in t["causes_and_actions"]]
+            causes = [(c["cause_tr"], c["action_tr"])
+                      for c in sorted(t["causes_and_actions"], key=lambda c: c.get("order", 0))]
             if sid in ("cut_deviation", "wandering_or_wavy_cut", "inaccurate_cut"):
                 existing = " ".join(norm(c) for c, _ in causes)
                 base = [b for b in _BASELINE_CHECKS
@@ -600,10 +958,21 @@ class FrontDesk:
         dims = parse_width_thickness(n)
         length = parse_length(n)
         tpi = parse_tpi(n)
-        return self._quote(session, family, dims, length, tpi)
+        qty = parse_qty(n)
+        m51 = family == "bi-metal" and _wants_m51(n)
+        if not dims and self.store.enabled:
+            guess = ambiguous_dims(n)
+            if guess:
+                session.front_desk_pending = {"kind": "price", "family": family, "dims": None,
+                                              "dims_guess": guess, "length": length, "tpi": tpi,
+                                              "qty": qty, "m51": m51}
+                return (f"Ölçüyü **{mm(guess[0])} × {mm(guess[1])} mm** olarak mı okuyayım? Doğruysa \"evet\" "
+                        "yazmanız yeterli; değilse genişlik × kalınlığı (ör. 27×0,9) yazar mısınız?")
+        return self._quote(session, family, dims, length, tpi, qty=qty, m51=m51)
 
     def _quote(self, session: Any, family: Optional[str], dims: Optional[Tuple[float, float]],
-               length: Optional[int], tpi: Optional[str]) -> str:
+               length: Optional[int], tpi: Optional[str], qty: Optional[int] = None,
+               kdv: bool = False, m51: bool = False) -> str:
         if not self.store.enabled:
             return self._price_fallback(family)
         tree = self.store.price_options() or {}
@@ -615,56 +984,111 @@ class FrontDesk:
             missing.append("boy (mm, ör. 2750)")
         if missing:
             session.front_desk_pending = {"kind": "price", "family": family, "dims": dims,
-                                          "length": length, "tpi": tpi}
+                                          "length": length, "tpi": tpi, "qty": qty, "m51": m51}
             fam_txt = f" {FAMILIES[family]['label']}" if family in FAMILIES else ""
             return (f"Fiyatı{fam_txt} hemen hesaplayabilirim; bunun için " + " ve ".join(missing)
                     + " yazar mısınız?" + ("" if family else " Bıçak tipini de (bi-metal, karbür, ahşap…) "
                                                "belirtirseniz tek fiyat veririm."))
 
-        if length < 1000 or length > 15000:
-            return (f"Ölçüye göre üretimde boy 1.000–15.000 mm arasında olabiliyor; {length} mm için "
+        if length < GLOBAL_MIN_LENGTH:
+            return (f"Ölçüye göre üretimde boy en az {_th(GLOBAL_MIN_LENGTH)} mm olabiliyor; {length} mm için "
                     f"{link('hazır boy ürünlerimize', '/hazir-urunler')} bakabilirsiniz.")
+        if length > GLOBAL_MAX_LENGTH:
+            return (f"Ölçüye göre üretimde boy en fazla {_th(GLOBAL_MAX_LENGTH)} mm olabiliyor; {length} mm için "
+                    f"{link('İletişim sayfamızdan', '/iletisim')} bize yazabilirsiniz.")
 
         w, t = dims
         fams = [family] if family else list(FAMILIES.keys())
         lines: List[str] = []
-        lowest: Optional[float] = None
+        basis: Optional[float] = None        # kargo eşiği için en düşük tutar
+        out_of_range: List[str] = []
+        quoted_tpi = None
         for fam in fams:
             tpis = _tree_tpis(tree, fam, w, t)
             if tpis is None:
                 continue
+            lo_lim, hi_lim = _length_limits(fam, m51)
+            if not lo_lim <= length <= hi_lim:
+                out_of_range.append(fam)
+                continue
             use = [tpi] if tpi and tpi in tpis else (tpis or [None])
-            totals = []
+            rows = []
             for tp in use:
                 r = self.store.calculate(fam, w, t, length, tp)
                 if r and isinstance(r.get("total_price"), (int, float)):
-                    totals.append((tp, float(r["total_price"])))
-            if not totals:
+                    rows.append((tp, r))
+            if not rows:
                 continue
-            lo, hi = min(x[1] for x in totals), max(x[1] for x in totals)
-            lowest = lo if lowest is None else min(lowest, lo)
+            totals = [float(r["total_price"]) for _, r in rows]
+            lo, hi = min(totals), max(totals)
             spec = f"{mm(w)} × {mm(t)} mm, {length} mm"
             if tpi and tpi in tpis:
                 spec += f", {tpi} TPI"
-            price = tl(lo) if lo == hi else f"{tl(lo).replace(' TL', '')} – {tl(hi)}"
+                quoted_tpi = tpi
             note = "" if lo == hi or (tpi and tpi in tpis) else " (diş adımına göre)"
-            links = ", ".join(link(lbl, path) for lbl, path in FAMILIES[fam]["links"])
-            lines.append(f"- **{FAMILIES[fam]['label']}** — {spec}: **{price} + KDV**{note} · {links}")
+            fam_links = FAMILIES[fam]["links"]
+            if fam == "bi-metal" and m51:
+                fam_links = [x for x in fam_links if "m51" in x[1]]
+            elif fam == "bi-metal" and length < M51_LENGTH_LIMITS[0]:
+                fam_links = [x for x in fam_links if "m51" not in x[1]]
+            links = ", ".join(link(lbl, path) for lbl, path in fam_links)
+            label = "Bi-Metal M51 Endüstriyel" if fam == "bi-metal" and m51 else FAMILIES[fam]["label"]
+            lines.append(f"- **{label}** — {spec}: **{_price_text(lo, hi, kdv)}**{note} · {links}")
+            if fam == "bi-metal" and not m51 and length < M51_LENGTH_LIMITS[0]:
+                lines.append(f"  _Bi-Metal M51 Endüstriyel ölçüye göre en az {_th(M51_LENGTH_LIMITS[0])} mm "
+                             "boyda üretiliyor; bu boyda Bi-Metal M42 Premium sipariş edilebilir._")
             if tpi and tpi not in tpis and tpis:
                 lines.append(f"  _{tpi} TPI bu ölçüde yok; mevcut diş adımları: {', '.join(tpis)}._")
+            fam_basis = lo
+            if qty and qty > 1:
+                qline, qlo = _qty_line(qty, rows, kdv)
+                lines.append(qline)
+                if qlo is not None:
+                    fam_basis = qlo / (1 + KDV_RATE) if kdv else qlo
+            basis = fam_basis if basis is None else min(basis, fam_basis)
 
         if not lines:
+            if out_of_range:
+                return self._length_limit_text(out_of_range, length, m51)
             avail = _available_dims(tree, family)
             return (f"{mm(w)} × {mm(t)} mm ölçüsü"
                     + (f" {FAMILIES[family]['label']} ailesinde" if family in FAMILIES else "")
                     + " fiyat listemizde yok. Mevcut genişlik × kalınlıklar: " + avail + ".")
 
+        if out_of_range:
+            lines.append("  _" + "; ".join(
+                f"{_PRODUCT_NAME[f]} ölçüye göre {_th(_length_limits(f, m51)[0])}–"
+                f"{_th(_length_limits(f, m51)[1])} mm boyda üretiliyor" for f in out_of_range)
+                + f"; {length} mm bu aralığın dışında._")
+
+        session.front_desk_last_quote = {"family": family, "dims": dims, "length": length,
+                                         "tpi": quoted_tpi, "qty": qty, "m51": m51,
+                                         "turn": getattr(session, "front_desk_turn", None)}
         ship = ""
-        if lowest is not None:
-            ship = (" Bu tutarla kargo ücretsiz." if lowest * (1 + KDV_RATE) >= FREE_SHIPPING_THRESHOLD_INCL_VAT
+        if basis is not None:
+            ship = (" Bu tutarla kargo ücretsiz." if basis * (1 + KDV_RATE) >= FREE_SHIPPING_THRESHOLD_INCL_VAT
                     else " KDV dahil 2.000 TL ve üzeri siparişlerde kargo ücretsiz.")
-        return ("**Fiyat (1 adet, kaynak dahil, KDV hariç):**\n" + "\n".join(lines)
-                + f"\n\n{_QTY_DISCOUNT_NOTE}{ship}")
+        head = ("**Fiyat (1 adet, kaynak dahil, %20 KDV dahil):**" if kdv
+                else "**Fiyat (1 adet, kaynak dahil, KDV hariç):**")
+        return head + "\n" + "\n".join(lines) + f"\n\n{_QTY_DISCOUNT_NOTE}{ship}"
+
+    @staticmethod
+    def _length_limit_text(fams: List[str], length: int, m51: bool) -> str:
+        limits = [(f, _length_limits(f, m51)) for f in fams]
+        if len(limits) == 1:
+            f, (lo, hi) = limits[0]
+            name = "Bi-Metal M51 Endüstriyel" if f == "bi-metal" and m51 else _PRODUCT_NAME[f]
+            text = (f"Ölçüye göre üretimde {name} bıçaklarımızın boyu {_th(lo)}–{_th(hi)} mm arasında "
+                    f"olabiliyor; {length} mm bu aralığın dışında.")
+        else:
+            text = (f"{length} mm, bu ölçüdeki bıçaklarımızın üretim aralığının dışında: "
+                    + "; ".join(f"{_PRODUCT_NAME[f]} {_th(lo)}–{_th(hi)} mm" for f, (lo, hi) in limits) + ".")
+        if all(length < lo for _, (lo, _hi) in limits):
+            text += f" Daha kısa boylar için {link('hazır boy ürünlerimize', '/hazir-urunler')} bakabilirsiniz."
+        if any(f == "bi-metal" for f in fams) and m51 and length >= LENGTH_LIMITS["bi-metal"][0]:
+            text += " Bu boyda Bi-Metal M42 Premium sipariş edilebilir."
+        text += f" Farklı bir ihtiyacınız varsa {link('İletişim sayfamızdan', '/iletisim')} bize yazabilirsiniz."
+        return text
 
     @staticmethod
     def _price_fallback(family: Optional[str]) -> str:
@@ -676,21 +1100,27 @@ class FrontDesk:
     # Hazır stok
     # ------------------------------------------------------------------ #
 
-    def _stock_answer(self, session: Any, n: str) -> str:
-        length = parse_length(n)
-        dims = parse_width_thickness(n)
-        tpi = parse_tpi(n)
+    def _stock_answer(self, session: Any, n: str, length: Optional[int] = None,
+                      dims: Optional[Tuple[float, float]] = None,
+                      tpi: Optional[str] = None) -> Tuple[str, bool]:
+        """(cevap, aynı ölçünün özel üretim fiyatı da eklendi mi)."""
+        length = length or parse_length(n)
+        dims = dims or parse_width_thickness(n)
+        tpi = tpi or parse_tpi(n)
         items = self.store.ready_made() if self.store.enabled else []
         all_link = link("tüm hazır boy ürünler", "/hazir-urunler")
         if not items:
-            return f"Stoktaki hazır boy ürünlerimizi buradan görebilirsiniz: {all_link}."
+            return f"Stoktaki hazır boy ürünlerimizi buradan görebilirsiniz: {all_link}.", False
 
         if not length and not dims:
             boylar = sorted({int(i["length_mm"]) for i in items if i.get("length_mm")})
             session.front_desk_pending = {"kind": "stock"}
             return (f"Stokta {len(items)} hazır boy ürünümüz var (boylar: "
                     + ", ".join(f"{b}" for b in boylar[:15]) + " mm). Hangi boyu arıyorsunuz? "
-                    f"Hepsi: {all_link}.")
+                    f"Hepsi: {all_link}."), False
+
+        session.front_desk_last_stock = {"length": length, "dims": dims, "tpi": tpi,
+                                         "turn": getattr(session, "front_desk_turn", None)}
 
         def same_dims(i):
             return not dims or (i.get("width_mm") and abs(i["width_mm"] - dims[0]) < 1e-6
@@ -705,7 +1135,7 @@ class FrontDesk:
         if exact:
             rows = [self._ready_row(i) for i in sorted(exact, key=lambda i: (i.get("price") or 0))[:6]]
             more = f"\n…ve {len(exact) - 6} ürün daha: {all_link}" if len(exact) > 6 else ""
-            return f"**Evet, {want.strip()} hazır stokta:**\n" + "\n".join(rows) + more
+            return f"**Evet, {want.strip()} hazır stokta:**\n" + "\n".join(rows) + more, False
 
         near = [i for i in items if same_dims(i) and i.get("length_mm") and length
                 and abs(i["length_mm"] - length) <= 300]
@@ -715,13 +1145,22 @@ class FrontDesk:
             text += " En yakın hazır boylar:\n" + "\n".join(self._ready_row(i) for i in near[:3])
         text += ("\n\nİstediğiniz boyda, ölçünüze göre kaynaklı da üretiyoruz"
                  + (" — genişlik × kalınlığı yazarsanız fiyatını hemen hesaplarım." if not dims else "."))
-        if dims and length and 1000 <= length <= 15000:
+        if not dims and length and GLOBAL_MIN_LENGTH <= length <= GLOBAL_MAX_LENGTH:
+            # Sonraki "27x0.9" bu boyla fiyatlansın
+            session.front_desk_pending = {"kind": "price", "family": detect_family(n), "dims": None,
+                                          "length": length, "tpi": tpi, "qty": None,
+                                          "m51": _wants_m51(n)}
+        quoted = False
+        if dims and length and GLOBAL_MIN_LENGTH <= length <= GLOBAL_MAX_LENGTH:
             # Hazır ürünlerimiz bi-metal; aynı ölçünün özel üretimini de o
             # aileden fiyatla (ahşap/sünger gibi ilgisiz aileler listelenmesin).
             tree = self.store.price_options() or {}
             fam = "bi-metal" if _tree_tpis(tree, "bi-metal", dims[0], dims[1]) is not None else None
-            text += "\n\n" + self._quote(session, detect_family(n) or fam, dims, length, tpi)
-        return text
+            fam = detect_family(n) or fam
+            text += "\n\n" + self._quote(session, fam, dims, length, tpi,
+                                         m51=fam == "bi-metal" and _wants_m51(n))
+            quoted = True
+        return text, quoted
 
     @staticmethod
     def _ready_row(i: Dict[str, Any]) -> str:
@@ -747,15 +1186,7 @@ class FrontDesk:
         text = f"{intro} Ürün: {links}."
         if dims_txt:
             text += f" Mevcut genişlik × kalınlıklar: {dims_txt}."
-        # Genişlik: "20 mm genişlik", "genişlik 20", ya da bu ailenin genişlik
-        # listesinde bulunan herhangi bir "NN mm" ("kereste için 20 mm bıçak").
-        width = None
-        fam_widths = {float(w) for w in (tree.get(family) or {}).keys()}
-        for m in re.finditer(r"(\d{1,2}(?:[.,]\d)?)\s*mm|genislik\w*\s*(\d{1,2})", n or ""):
-            v = _f(m.group(1) or m.group(2))
-            if v in fam_widths or (not fam_widths and 6 <= v <= 60):
-                width = v
-                break
+        width = _width_mention(n or "", tree, family)
         dims = parse_width_thickness(n) if n else None
         if not dims and width is not None:
             th = _thickness_for_width(tree, family, width)
@@ -779,24 +1210,100 @@ class FrontDesk:
     # Takip (önceki turda eksik bilgi istenmişti)
     # ------------------------------------------------------------------ #
 
+    def _new_topic(self, n: str) -> bool:
+        return bool(self._symptoms(n)) or _any(_SHIPPING + "|" + _RETURN + "|" + _PAYMENT, n)
+
     def _follow_up(self, session: Any, pending: Dict[str, Any], n: str) -> Optional[FrontDeskReply]:
         # Yeni bir konu açıldıysa takip değil (kargo, arıza, seçim bilgisi…)
-        if self._symptoms(n) or _any(_SHIPPING + "|" + _RETURN + "|" + _PAYMENT, n):
+        if self._new_topic(n):
             return None
         if pending.get("kind") == "price":
-            dims = parse_width_thickness(n) or pending.get("dims")
-            length = parse_length(n) or pending.get("length")
-            tpi = parse_tpi(n) or pending.get("tpi")
             family = detect_family(n) or pending.get("family")
-            if (dims or length) and (parse_width_thickness(n) or parse_length(n)):
-                text = self._quote(session, family, dims, length, tpi)
+            dims = parse_width_thickness(n)
+            confirmed = False
+            if not dims and pending.get("dims_guess") and _any(_YES, n):
+                dims, confirmed = tuple(pending["dims_guess"]), True
+            if not dims and family:
+                tree = (self.store.price_options() or {}) if self.store.enabled else {}
+                w = _width_mention(n, tree, family, explicit=True)
+                th = _thickness_for_width(tree, family, w) if w is not None else None
+                if th:
+                    dims = (w, th)
+            new_length = parse_length(n)
+            amb = None if new_length else ambiguous_metre(n)
+            if amb:
+                session.front_desk_pending = pending           # soru tekrarlanır, bilgi kaybolmaz
+                return FrontDeskReply(
+                    f"Boyu tam olarak anlayabilmem için mm cinsinden yazar mısınız? \"{amb[0]} metre {amb[1]}\" "
+                    f"{_th(amb[0] * 1000 + amb[1] * 10)} mm mi, yoksa {_th(amb[0] * 1000)} mm boy ve {amb[1]} mm "
+                    "genişlik mi demek istediniz?", final=True, kinds=["price"])
+            length = new_length or pending.get("length")
+            tpi = parse_tpi(n) or pending.get("tpi")
+            qty = parse_qty(n) or pending.get("qty")
+            m51 = pending.get("m51") or (family == "bi-metal" and _wants_m51(n))
+            if (dims or new_length or confirmed) and (dims or pending.get("dims")):
+                text = self._quote(session, family, dims or pending.get("dims"), length, tpi, qty=qty, m51=m51)
+                return FrontDeskReply(text + "\n\n" + self._soft_continue(["price"]), final=True,
+                                      kinds=["price"])
+            if new_length and not (dims or pending.get("dims")):
+                text = self._quote(session, family, None, length, tpi, qty=qty, m51=m51)
                 return FrontDeskReply(text + "\n\n" + self._soft_continue(["price"]), final=True,
                                       kinds=["price"])
         if pending.get("kind") == "stock" and parse_length(n):
-            text = self._stock_answer(session, n + " hazir")
-            return FrontDeskReply(text + "\n\n" + self._soft_continue(["stock"]), final=True,
-                                  kinds=["stock"])
+            text, _quoted = self._stock_answer(session, n + " hazir")
+            return FrontDeskReply(text + "\n\n" + self._soft_continue(["stock"]), final=True, kinds=["stock"])
         return None
+
+    def _context_follow_up(self, session: Any, n: str) -> Optional[FrontDeskReply]:
+        """Son fiyat/stok cevabına göre kısa takip mesajı → yeniden fiyatla / en yakın hazır boy."""
+        if (len(n.split()) > 10 or self._new_topic(n) or _any(_SELECTION, n)
+                or _any(_INVOICE + "|" + _STOCK_WORD, n)):
+            return None
+        prev = (getattr(session, "front_desk_turn", None) or 0) - 1
+
+        def recent(ctx):
+            return ctx if ctx and ctx.get("turn") == prev else None
+
+        last_stock = recent(getattr(session, "front_desk_last_stock", None))
+        if last_stock and _any(_NEAREST, n):
+            text, _quoted = self._stock_answer(session, "", last_stock.get("length"), last_stock.get("dims"),
+                                               last_stock.get("tpi"))
+            return FrontDeskReply(text + "\n\n" + self._soft_continue(["stock"]), final=True, kinds=["stock"])
+        last = recent(getattr(session, "front_desk_last_quote", None))
+        if not last or not _any(_FOLLOW_MARK, n):
+            return None
+        new_dims = parse_width_thickness(n)
+        new_length = parse_length(n)
+        if new_dims and new_length:
+            return None                                 # tam yeni soru → normal akış
+        new_family = detect_family(n)
+        family = new_family or last.get("family")
+        tree = (self.store.price_options() or {}) if self.store.enabled else {}
+        if new_dims:
+            dims, dims_mentioned = new_dims, True
+        else:
+            dims, dims_mentioned = _modify_dims(tuple(last["dims"]), family, n, tree)
+        tpi = parse_tpi(n)
+        qty = parse_qty(n)
+        kdv = _any(r"\bkdv\w*", n) and not _any(r"\bkdv\w*\s*(\w+\s+)?haric", n)
+        # "0.9 değil 1.1 olsa" — ölçü aynı kalsa da açıkça söylendiyse yeniden fiyatla
+        changed = bool(dims_mentioned or new_length or new_family or tpi or qty or kdv)
+        if not changed:
+            return None
+        same_item = not new_family and tuple(dims) == tuple(last["dims"])
+        tpi = tpi or (last.get("tpi") if same_item else None)
+        qty = qty or last.get("qty")
+        m51 = (family == "bi-metal") and (_wants_m51(n) or (not new_family and last.get("m51")))
+        text = self._quote(session, family, dims, new_length or last["length"], tpi, qty=qty, kdv=kdv, m51=m51)
+        # Genişlik değişti, kalınlığı biz seçtik → diğer kalınlıkları da söyle ("34 mm: 1,1 / 1,2")
+        if not new_dims and dims[0] != tuple(last["dims"])[0]:
+            fams = [family] if family else list(tree.keys())
+            ths = sorted({float(k) for f in fams
+                          for k in ((tree.get(f) or {}).get(_tree_key(tree, f, dims[0])) or {})})
+            if len(ths) > 1:
+                text = (f"{mm(dims[0])} mm genişlikte {', '.join(mm(x) for x in ths)} mm kalınlık var; "
+                        f"{mm(dims[1])} mm için fiyat aşağıda (farklı kalınlık için yazmanız yeterli).\n\n" + text)
+        return FrontDeskReply(text + "\n\n" + self._soft_continue(["price"]), final=True, kinds=["price"])
 
 
 def wants_selection(n: str) -> bool:
@@ -825,6 +1332,93 @@ def _question_payload(question) -> Optional[Dict[str, Any]]:
         "writes_to": question.writes_to,
         "options": [{"value": o.value, "label": o.label} for o in (question.options or [])],
     }
+
+
+# --------------------------------------------------------------------------- #
+# Fiyat yardımcıları
+# --------------------------------------------------------------------------- #
+
+def _length_limits(fam: str, m51: bool = False) -> Tuple[int, int]:
+    if fam == "bi-metal" and m51:
+        return M51_LENGTH_LIMITS
+    return LENGTH_LIMITS.get(fam, (GLOBAL_MIN_LENGTH, GLOBAL_MAX_LENGTH))
+
+
+def _price_text(lo: float, hi: float, kdv: bool) -> str:
+    if kdv:
+        a, b = round(lo * (1 + KDV_RATE), 2), round(hi * (1 + KDV_RATE), 2)
+        rng = tl(a) if a == b else f"{tl(a).replace(' TL', '')} – {tl(b)}"
+        return f"{rng} KDV dahil"
+    rng = tl(lo) if lo == hi else f"{tl(lo).replace(' TL', '')} – {tl(hi)}"
+    return f"{rng} + KDV"
+
+
+def _qty_line(qty: int, rows: List[Tuple[Optional[str], Dict[str, Any]]], kdv: bool) -> Tuple[str, Optional[float]]:
+    """N adet toplamı — backend lib/blade-line.ts ile aynı: (birim × adet + kaynak ücreti bir kez)
+    × (100 − adet indirimi) / 100. API birim/kaynak ücretini döndürmezse tutar sepete bırakılır."""
+    d = qty_discount_percent(qty)
+    totals = []
+    for _, r in rows:
+        unit, weld = r.get("unit_price"), r.get("welding_fee")
+        if isinstance(unit, (int, float)) and isinstance(weld, (int, float)):
+            totals.append(round((float(unit) * qty + float(weld)) * (100 - d) / 100, 2))
+    disc = f", %{d} adet indirimi dahil" if d else ""
+    if totals and len(totals) == len(rows):
+        lo, hi = min(totals), max(totals)
+        return (f"  {qty} adet toplam: **{_price_text(lo, hi, kdv)}** (kaynak ücreti satır başına bir kez"
+                f"{disc})"), (lo * (1 + KDV_RATE) if kdv else lo)
+    tail = f"; {qty} adette %{d} adet indirimi uygulanır" if d else ""
+    return f"  {qty} adet için toplam tutar sepette hesaplanır{tail}.", None
+
+
+def _modify_dims(dims: Tuple[float, float], family: Optional[str], n: str,
+                 tree: Dict[str, Any]) -> Tuple[Tuple[float, float], bool]:
+    """Takip mesajındaki tek ölçü değişikliği: "34'lük olsa" (genişlik), "0.9 değil 1.1" (kalınlık).
+    (yeni ölçü, mesajda genişlik/kalınlık açıkça geçti mi)."""
+    w, t = dims
+    mentioned = False
+    s = re.sub(r"\d+(?:[.,]\d+)?\s*/\s*\d+(?:[.,]\d+)?", " ", n)          # diş adımı
+    s = re.sub(r"(?<![\d.,])\d{1,4}\s*(?:adet|tane|parca)\b", " ", s)      # adet
+    thick = [m for m in re.finditer(r"(?<![\d.,])([01][.,]\d{1,2})(?![\d])", s)
+             if not re.match(r"\s*(?:mm\s*)?degil", s[m.end():])]
+    if thick:
+        nt = _f(thick[-1].group(1))
+        if 0.3 <= nt <= 2.0:
+            t, mentioned = nt, True
+    fams = [family] if family else list(tree.keys())
+    widths = {float(k) for f in fams for k in (tree.get(f) or {}).keys()}
+    for m in re.finditer(r"(?<![\d.,/])(\d{1,2})\s*'?\s*(?:l[iu]k|lu|li|mm)?\b(?![.,]\d|\s*(?:tpi|/))", s):
+        v = float(m.group(1))
+        if v not in widths:
+            continue
+        mentioned = True
+        if v != w:
+            w = v
+            ths = sorted(float(k) for f in fams for k in ((tree.get(f) or {}).get(_tree_key(tree, f, v)) or {}))
+            if ths and not any(abs(x - t) < 1e-6 for x in ths) and not thick:
+                t = ths[0]
+        break
+    return (w, t), mentioned
+
+
+def _tree_key(tree: Dict[str, Any], fam: str, w: float) -> Optional[str]:
+    for wk in (tree.get(fam) or {}):
+        if abs(float(wk) - w) < 1e-6:
+            return wk
+    return None
+
+
+def _width_mention(n: str, tree: Dict[str, Any], family: str, explicit: bool = False) -> Optional[float]:
+    """Genişlik: "20 mm genişlik", "genişlik 20", ya da bu ailenin genişlik listesinde bulunan
+    herhangi bir "NN mm" ("kereste için 20 mm bıçak"). explicit=True → yalnız "genişlik" kelimesiyle."""
+    fam_widths = {float(w) for w in (tree.get(family) or {}).keys()}
+    rx = (r"(\d{1,2}(?:[.,]\d)?)\s*(?:mm\s*)?genislik\w*|genislik\w*\s*(\d{1,2})" if explicit
+          else r"(\d{1,2}(?:[.,]\d)?)\s*mm|genislik\w*\s*(\d{1,2})")
+    for m in re.finditer(rx, n or ""):
+        v = _f(m.group(1) or m.group(2))
+        if v in fam_widths or (not fam_widths and 6 <= v <= 60):
+            return v
+    return None
 
 
 # --------------------------------------------------------------------------- #

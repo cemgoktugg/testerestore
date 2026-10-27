@@ -1,9 +1,571 @@
 {
- "_kaynak": "bycuttech_rag_v2/bycuttech_encyclopedia_v2.json → troubleshooting (Starrett kataloğu tabanlı arıza tablosu). Danışmanın ön masa katmanı (llm/front_desk.py) kullanır. 2026-10-26: 6 belirti eklendi (rough_cut_surface, blade_off_wheel, chip_welding, overheating, stalling, back_edge_cracks).",
+ "_kaynak": "usage_care domain (kb-library, 2026-10-27). advisor/data/troubleshooting_tr.json'un süper kümesi: mevcut 18 belirti (id'ler korunarak) + 27 yeni belirti. Biçim aynı (id, symptom_tr, source, causes_and_actions); ek alanlar: source_ids, family, priority, patterns, examples. Tedarikçi kaynaklı satırlar nötr kimlikle (SUPPLIER-TROUBLESHOOT-2024) gösterilir.",
+ "version": "2026-10-27",
+ "normalization": "front_desk.norm(): str.translate('çğıöşüâîûÇĞİÖŞÜÂÎÛ' → 'cgiosuaiuCGIOSUAIU'), lower(), boşluklar tek boşluk, strip. Kalıplar bu metinde re.search ile aranır.",
+ "matching": "Liste priority sırasındadır (özelden genele). Ön masa ilk eşleşen en çok 2 belirtiyi gösterir; her belirtide causes_and_actions order sırasıyla ilk 5 neden gösterilir.",
+ "families": [
+  {
+   "id": "break",
+   "title_tr": "Kopma, çatlama ve burulma",
+   "first_checks_tr": [
+    "Kırığın başladığı yere bakın: sırt mı, diş dibi mi, açılı mı, kaynak bölgesi (taşlama izi) mi?",
+    "Gerginliği ölçün; makine veya bıçak üreticisinin değerinden yüksekse düşürün.",
+    "Kılavuz kolları parçaya yakın mı, sırt rulmanı ve yan kılavuzlar fazla sıkı mı, bıçak sırtı kasnak flanşına sürtüyor mu kontrol edin."
+   ]
+  },
+  {
+   "id": "teeth",
+   "title_tr": "Diş kırılması, dökülmesi, körelme ve aşınma",
+   "first_checks_tr": [
+    "Dişler kesme yönüne bakıyor mu ve yeni bıçağa rodaj yapıldı mı?",
+    "Diş adımı kesite uygun mu: kesitte en az üç diş var mı, talaş diş boşluğuna sığıyor mu?",
+    "Parça mengenede sabit mi; ilerleme ve bant hızı talaş rengine göre uygun mu?"
+   ]
+  },
+  {
+   "id": "geometry",
+   "title_tr": "Eğri, dalgalı, pürüzlü veya ölçü dışı kesim",
+   "first_checks_tr": [
+    "Parça mengenede tam oturmuş ve sıkı mı?",
+    "Kılavuz kolları parçaya yakın, kılavuzlar sıkı ve aşınmamış mı?",
+    "İlerlemeyi azaltıp deneyin; gerginlik doğru mu, dişler körelmiş veya bir tarafı hasarlı mı?"
+   ]
+  },
+  {
+   "id": "chips_heat",
+   "title_tr": "Talaş, ısınma ve renk",
+   "first_checks_tr": [
+    "Soğutma sıvısı kesim noktasına geliyor mu, oranı refraktometreyle doğru mu?",
+    "Talaş fırçası diş dibine değecek şekilde çalışıyor mu?",
+    "Talaşın rengine ve şekline göre ilerleme ve hızı ayarlayın; diş adımı talaşı alabiliyor mu?"
+   ]
+  },
+  {
+   "id": "noise",
+   "title_tr": "Titreşim ve ses",
+   "first_checks_tr": [
+    "Parça sağlam bağlı mı?",
+    "Kılavuz kolları yakın ve gerginlik doğru mu?",
+    "Hızı veya ilerlemeyi biraz değiştirip titreşimin kaybolduğu noktayı bulun; her turda gelen tık sesi için kaynak yerine ve sırt rulmanına bakın."
+   ]
+  },
+  {
+   "id": "machine",
+   "title_tr": "Kasnak, kılavuz, tahrik ve takma sorunları",
+   "first_checks_tr": [
+    "Gerginlik makine kılavuzundaki değerde mi?",
+    "Kasnak iz (eğim) ayarı, kasnak yüzeyi/lastiği ve flanşı aşınmış mı?",
+    "Kılavuz rulmanları, plakaları ve sırt rulmanı aşınmış veya hizasız mı; tahrik kayışı sağlam mı?"
+   ]
+  },
+  {
+   "id": "install",
+   "title_tr": "Takma, boy ve yeni bıçak sorunları",
+   "first_checks_tr": [
+    "Dişlerin yönünü kontrol edin; halka ters yüz olmuş olabilir.",
+    "Bıçak ölçüsünü makine etiketi veya eski bıçakla karşılaştırın.",
+    "Rodajı uygulayın ve ilk kesimlerden sonra gerginliği yeniden kontrol edin."
+   ]
+  },
+  {
+   "id": "coolant",
+   "title_tr": "Soğutma sıvısı sorunları",
+   "first_checks_tr": [
+    "Konsantrasyonu refraktometreyle ölçün (okuma × ürün katsayısı).",
+    "Kokuyu, pH'ı ve bakteri durumunu düzenli kontrol edin; yüzeyde biriken yabancı yağı alın.",
+    "Nozul, filtre ve depo seviyesini kontrol edin; depoya yalnızca su eklenmiş mi?"
+   ]
+  }
+ ],
+ "negative_examples": [
+  "40 mm dolu paslanmaz kesiyorum",
+  "soğutma var",
+  "soğutma yok",
+  "kuru kesiyorum",
+  "evet soğutma kullanıyorum bor yağı ile",
+  "bor yağı var",
+  "emülsiyon kullanıyorum %5",
+  "100 lük mil kesiyorum",
+  "profil kesiyorum 2 mm et kalınlığı",
+  "60x2 paslanmaz boru kesiyorum",
+  "St37 lama 50x10",
+  "1.4301 sac kesiyorum",
+  "alüminyum profil kesiyorum",
+  "döküm kesiyorum",
+  "sertleştirilmiş mil kesmek için hangi bıçak",
+  "paslanmaz için hangi bıçak",
+  "M42 mi M51 mi",
+  "bi-metal bıçak ne demek",
+  "karbür uçlu bıçak fiyatı",
+  "makine modelim Kesmak KMO 350",
+  "Karmetal KMT 300 için bıçak",
+  "makinem 2720x27x0,9",
+  "et kemik bıçağı istiyorum",
+  "donmuş et için 3 diş mi 4 diş mi",
+  "sünger kesmek için dişsiz bıçak var mı",
+  "köpük kesiyorum hangi bıçak",
+  "şerit testere ile köpük kesiyorum",
+  "ahşap kesim bıçağı",
+  "kereste biçmek için hangi testere",
+  "dar kıvrım keseceğim hangi genişlik",
+  "kaç diş almalıyım",
+  "dişler kaç tpi olmalı",
+  "kaç diş olmalı 4 mü 6 mı",
+  "pürüzsüz kesim için hangi bıçak",
+  "titreşimsiz kesim yapan bıçak hangisi",
+  "körelmeyen bıçak hangisi",
+  "en uzun ömürlü bıçak hangisi",
+  "paslanmaz bıçak var mı",
+  "bıçak paslanmaz mı",
+  "et bıçağı paslanır mı",
+  "27x0,9 2750 mm kaç para",
+  "kargo ne kadar",
+  "1638 mm hazır var mı",
+  "sipariş verdim ne zaman gelir",
+  "iade edebilir miyim",
+  "fatura kesiyor musunuz",
+  "kapıda ödeme var mı",
+  "telefon numaranız",
+  "kaynaklı özel boy yapıyor musunuz",
+  "kendi testeremi kaynatabilir misiniz",
+  "kasnak lastiği satıyor musunuz",
+  "rulo halinde satıyor musunuz",
+  "bıçak boyunu nasıl ölçerim",
+  "kasnak çapı 350 merkezler arası 1200",
+  "gerginlik ne kadar olmalı",
+  "bor yağı oranı kaç olmalı",
+  "rodaj nasıl yapılır",
+  "yeni bıçağı nasıl alıştırırım",
+  "kesim hızı ne olmalı",
+  "bant hızı kaç olmalı",
+  "talaş fırçası nasıl ayarlanır",
+  "kılavuz ayarı nasıl yapılır",
+  "bıçağın ömrü ne kadar",
+  "kaç kesim dayanır",
+  "Bıçak ters takılırsa ne olur",
+  "dişlerin yönü hangi tarafa olmalı",
+  "Bıçak gevşek mi gergin mi nasıl anlarım",
+  "iş bitince bıçağı gevşetmek gerekir mi",
+  "Döküm keserken soğutma gerekir mi",
+  "kuru kesebilir miyim paslanmazı",
+  "Bor yağı yerine su kullansam olur mu",
+  "Alüminyum keserken yağ lazım mı",
+  "kesme yağı mı bor yağı mı",
+  "Refraktometre ile nasıl ölçülür bor yağı",
+  "Kullanmadığım bıçakları nasıl saklamalıyım",
+  "Bıçağı nasıl temizlerim",
+  "Bıçak değiştirirken eldiven gerekir mi",
+  "kol iniş hızını nasıl ayarlarım",
+  "bıçak alıştırma ne kadar sürer",
+  "bıçak sırtı kalınlığı nedir",
+  "kaynak yeri nasıl olmalı",
+  "köpürmeyen bor yağı önerir misiniz",
+  "kopmayan sağlam bir bıçak istiyorum",
+  "kırılmayan bıçak hangisi",
+  "çatlamayan bıçak var mı",
+  "çabuk aşınmayan bıçak önerin",
+  "çabuk körelmeyen bıçak lazım",
+  "ısınmayan bıçak var mı",
+  "gürültüsüz kesim istiyorum",
+  "titreşimsiz ve sessiz kesim istiyorum",
+  "titreşim yapmayan bıçak",
+  "kesimin çapaksız olması lazım",
+  "bıçak sıkışmasın diye ne yapmalıyım",
+  "kokusuz bor yağı var mı",
+  "yeni bıçak aldım nasıl takarım",
+  "yeni bıçak siparişi vereceğim",
+  "bıçak kaç günde gelir",
+  "2 günde kargoya verir misiniz",
+  "Bıçağı kasnaktan çıkarıp ölçtüm 2715 mm çıktı",
+  "Sünger için dalgalı bıçak var mı",
+  "dalgalı ağızlı bıçak fiyatı",
+  "körelen bıçağı bilettirebilir miyim",
+  "Körelmeyen uzun ömürlü bıçak hangisi",
+  "paslanmaz sac kesiyorum makine Kesmak",
+  "makine ile paslanmaz kesiyorum",
+  "mengene ile paslanmaz boru sıkıyorum",
+  "50 lik lama kesiyorum dişler kaç olmalı"
+ ],
  "troubleshooting": [
+  {
+   "id": "weld_break",
+   "symptom_tr": "Bıçak kaynak yerinden kopuyor / kaynakta çatlak",
+   "source": "LENOX-GUIDE (gözlem 13), ROENTGEN-GUIDE (15), WIKUS-FAILURES (cracked weld), OLSON-RIKON (9), STORE-GUIDES",
+   "source_ids": [
+    "LENOX-GUIDE",
+    "ROENTGEN-GUIDE",
+    "WIKUS-FAILURES",
+    "OLSON-RIKON",
+    "STORE-GUIDES"
+   ],
+   "family": "break",
+   "priority": 1,
+   "causes_and_actions": [
+    {
+     "cause_tr": "Kopmanın gerçekten kaynakta olup olmadığı belirsiz",
+     "action_tr": "Kırığın iki yanında kaynak sonrası taşlama izi varsa kopma kaynaktadır; yoksa gövde kırılmasıdır. Kırık yüzeyini ve kaynak bölgesini fotoğraflayın.",
+     "order": 1
+    },
+    {
+     "cause_tr": "Gövdeyi kıran zorlanmalar kaynağı da koparır: aşırı gerginlik",
+     "action_tr": "Gerginliği ölçün ve makine/bıçak üreticisinin değerine getirin; kaynak bölgesi bıçağın en hassas noktasıdır.",
+     "order": 2
+    },
+    {
+     "cause_tr": "Kılavuzlar veya sırt rulmanı fazla sıkı, kılavuz kolları çok açık",
+     "action_tr": "Kılavuzları bıçağı sıkıştırmayacak şekilde ayarlayın, kolları parçaya yaklaştırın.",
+     "order": 3
+    },
+    {
+     "cause_tr": "Kasnak çapına göre kalın bıçak veya aşınmış kasnak",
+     "action_tr": "Makine etiketindeki kalınlığı kullanın; kasnak yüzeyini ve rulmanlarını kontrol edin.",
+     "order": 4
+    },
+    {
+     "cause_tr": "Kaynak veya tavlama kusuru şüphesi",
+     "action_tr": "Bıçağı kullanmayın; kırık yüzeyi, kaynak bölgesi ve makine etiketinin fotoğraflarıyla iletişim sayfasından bize ulaşın, inceleyelim.",
+     "order": 5
+    },
+    {
+     "cause_tr": "Kaynak yeri hizasız veya kalın, kılavuzdan geçerken vuruyor",
+     "action_tr": "Bıçağı çalıştırmaya devam etmeyin; kaynak bölgesinin fotoğrafını bize iletin.",
+     "order": 6
+    }
+   ],
+   "patterns": [
+    "kayna[kg]\\w*\\s*(?:yer\\w*\\s*)?(?:\\w+\\s+){0,2}(?:kop(?:tu|uyor|uyo|mus|ma(?!yan|z)\\w*|ar\\w*|unca|acak)|(?:kiril(?!mayan|maz)\\w*|kirik\\w*|kirdi)|ayril\\w*|acil(?:di|mis|iyor)|catl(?!amayan|amaz)\\w*|patla\\w*|hatali|kusurlu|bozuk|kalin|egri|yamuk)",
+    "kayna[kg]\\w* yer\\w*nden",
+    "ek yer\\w*\\s*(?:\\w+\\s+){0,2}(?:kop(?:tu|uyor|uyo|mus|ma(?!yan|z)\\w*|ar\\w*|unca|acak)|(?:kiril(?!mayan|maz)\\w*|kirik\\w*|kirdi)|ayril\\w*|acil\\w*)",
+    "ayni yer\\w*\\s*(?:\\w+\\s+){0,2}(?:kop(?:tu|uyor|uyo|mus|ma(?!yan|z)\\w*|ar\\w*|unca|acak)|(?:kiril(?!mayan|maz)\\w*|kirik\\w*|kirdi))"
+   ],
+   "examples": [
+    "Bıçak kaynak yerinden koptu",
+    "kaynaktan kopuyor hep",
+    "kaynak yeri çatlamış",
+    "Bu kaçıncı sefer kaynak yerinden kopuyor, iade istiyorum",
+    "bıçağım kaynağından ayrıldı",
+    "Bıçak hep aynı yerden kırılıyor",
+    "kaynak hatalı gelmiş takmadan önce fark ettim"
+   ]
+  },
+  {
+   "id": "back_edge_cracks",
+   "symptom_tr": "Bıçak sırtında çatlaklar",
+   "source": "TestereStore eki (STORE-GUIDES; LENOX-GUIDE / ROENTGEN-GUIDE / WIKUS-FAILURES sorun giderme tabloları); LENOX-GUIDE (5), ROENTGEN-GUIDE (13)",
+   "source_ids": [
+    "LENOX-GUIDE",
+    "ROENTGEN-GUIDE",
+    "STORE-GUIDES"
+   ],
+   "family": "break",
+   "priority": 2,
+   "causes_and_actions": [
+    {
+     "cause_tr": "Bıçak sırtı kasnak flanşına veya sırt desteğine sürtüyor",
+     "action_tr": "Kasnak eğimini ve sırt destek (baskı) bloklarını ayarlayın.",
+     "order": 1
+    },
+    {
+     "cause_tr": "Kılavuz rulmanları veya baskı blokları fazla sıkı",
+     "action_tr": "Kılavuzları bıçağı sıkıştırmayacak şekilde ayarlayın.",
+     "order": 2
+    },
+    {
+     "cause_tr": "Bıçak gerginliği çok yüksek",
+     "action_tr": "Gerginliği makine kılavuzundaki değere düşürün.",
+     "order": 3
+    },
+    {
+     "cause_tr": "İlerleme çok yüksek",
+     "action_tr": "İlerlemeyi azaltın.",
+     "order": 4
+    },
+    {
+     "cause_tr": "Kasnak çapı bıçak kalınlığına göre küçük",
+     "action_tr": "Makine etiketindeki bıçak kalınlığını kullanın; daha kalın bıçak takmayın.",
+     "order": 5
+    },
+    {
+     "cause_tr": "Taşıma veya açma sırasında sırtta oluşmuş çentik",
+     "action_tr": "Bıçağı taşırken ve açarken sırtı darbeden koruyun; çentikli bıçakla çalışmayın.",
+     "order": 6
+    }
+   ],
+   "patterns": [
+    "sirt\\w*\\s*(?:\\w+\\s+){0,3}catl(?!amayan|amaz)\\w*",
+    "arka\\s*kenar\\w*\\s*(?:\\w+\\s+){0,2}catl(?!amayan|amaz)\\w*",
+    "catl(?!amayan|amaz)\\w*\\w*\\s*(?:\\w+\\s+){0,2}sirt\\w*"
+   ],
+   "examples": [
+    "Bıçağın sırtında çatlaklar var",
+    "bıçağın sırtı çatlak geldi, sıfır ürün",
+    "sırttan çatlıyor neden",
+    "Sırtından çatlıyor neden?"
+   ]
+  },
+  {
+   "id": "gullet_cracks",
+   "symptom_tr": "Diş diplerinden çatlama veya kırılma",
+   "source": "LENOX-GUIDE (16), ROENTGEN-GUIDE (11), STORE-GUIDES",
+   "source_ids": [
+    "LENOX-GUIDE",
+    "ROENTGEN-GUIDE",
+    "STORE-GUIDES"
+   ],
+   "family": "break",
+   "priority": 3,
+   "causes_and_actions": [
+    {
+     "cause_tr": "Bıçak gerginliği yanlış (çoğunlukla fazla)",
+     "action_tr": "Gerginliği ölçün ve üretici değerine getirin.",
+     "order": 1
+    },
+    {
+     "cause_tr": "Körelmiş bıçakla çalışmaya devam edilmiş",
+     "action_tr": "Körelen bıçağı zamanında değiştirin; kör diş gövdeyi zorlar.",
+     "order": 2
+    },
+    {
+     "cause_tr": "Kılavuz kolları en açık konumda",
+     "action_tr": "Kılavuz kollarını parça ölçüsüne göre yaklaştırın.",
+     "order": 3
+    },
+    {
+     "cause_tr": "Yan kılavuzlar fazla sıkı",
+     "action_tr": "Yan kılavuz boşluğunu makine/bıçak üreticisinin değerine ayarlayın.",
+     "order": 4
+    },
+    {
+     "cause_tr": "Sırt rulmanının ön yükü (bastırması) fazla",
+     "action_tr": "Sırt rulmanını bıçağı fazla itmeyecek şekilde ayarlayın.",
+     "order": 5
+    },
+    {
+     "cause_tr": "Testere kafası/kiriş hizası bozuk",
+     "action_tr": "Makine üreticisine veya servisine danışın.",
+     "order": 6
+    }
+   ],
+   "patterns": [
+    "dis di[pb]\\w*\\s*(?:\\w+\\s+){0,3}(?:catl(?!amayan|amaz)\\w*|(?:kiril(?!mayan|maz)\\w*|kirik\\w*|kirdi))",
+    "dis (?:ara|bosluk)\\w*\\s*(?:\\w+\\s+){0,2}catl(?!amayan|amaz)\\w*",
+    "catl(?!amayan|amaz)\\w*\\w*\\s*(?:\\w+\\s+){0,3}dis di[pb]\\w*"
+   ],
+   "examples": [
+    "diş diplerinden çatlıyor",
+    "diş dibinden kırıldı",
+    "çatlaklar diş diplerinden başlıyor",
+    "diş aralarında çatlak var"
+   ]
+  },
+  {
+   "id": "angular_fracture",
+   "symptom_tr": "Bıçak açılı (eğik) kırılıyor",
+   "source": "LENOX-GUIDE (15), ROENTGEN-GUIDE (12), STORE-GUIDES",
+   "source_ids": [
+    "LENOX-GUIDE",
+    "ROENTGEN-GUIDE",
+    "STORE-GUIDES"
+   ],
+   "family": "break",
+   "priority": 4,
+   "causes_and_actions": [
+    {
+     "cause_tr": "Kılavuz kolları parça için fazla açık; bıçak kasnak ile kılavuz arasında fazla burulmaya zorlanıyor",
+     "action_tr": "Kılavuz kollarını parça ölçüsüne göre yaklaştırın, özellikle küçük kesitlerde.",
+     "order": 1
+    },
+    {
+     "cause_tr": "Kılavuz hizası bozuk",
+     "action_tr": "Kılavuzların bıçak hattına ve birbirine hizasını kontrol edin.",
+     "order": 2
+    },
+    {
+     "cause_tr": "Sırt rulmanının ön yükü fazla",
+     "action_tr": "Sırt rulmanı ayarını düzeltin.",
+     "order": 3
+    },
+    {
+     "cause_tr": "Dikey makinede dar kıvrım için fazla geniş bıçak",
+     "action_tr": "Kıvrım yarıçapına uygun daha dar bıçak kullanın.",
+     "order": 4
+    }
+   ],
+   "patterns": [
+    "(?:acili|egik|verev|capraz|yamuk)\\s*(?:bir\\s*)?(?:(?:kiril(?!mayan|maz)\\w*|kirik\\w*|kirdi)|kop(?:tu|uyor|uyo|mus|ma(?!yan|z)\\w*|ar\\w*|unca|acak)|catl(?!amayan|amaz)\\w*)",
+    "(?:(?:kiril(?!mayan|maz)\\w*|kirik\\w*|kirdi)|kop(?:tu|uyor|uyo|mus|ma(?!yan|z)\\w*|ar\\w*|unca|acak))\\s*(?:\\w+\\s+){0,2}(?:acili|egik|verev)"
+   ],
+   "examples": [
+    "bıçak açılı kırılıyor",
+    "eğik bir kırık var",
+    "kırık verev gidiyor",
+    "bıçak çapraz kırıldı"
+   ]
+  },
+  {
+   "id": "figure_eight_twist",
+   "symptom_tr": "Bıçak halkası 8 şeklini alıyor / düz durmuyor",
+   "source": "LENOX-GUIDE (17, 20), ROENTGEN-GUIDE",
+   "source_ids": [
+    "LENOX-GUIDE",
+    "ROENTGEN-GUIDE"
+   ],
+   "family": "break",
+   "priority": 5,
+   "causes_and_actions": [
+    {
+     "cause_tr": "Bıçak gerginliği çok yüksek",
+     "action_tr": "Gerginliği makine/bıçak üreticisinin değerine düşürün; ölçerle ölçün.",
+     "order": 1
+    },
+    {
+     "cause_tr": "Bıçak diş tarafında uzamış veya kısalmış (kılavuz/kasnak kaynaklı)",
+     "action_tr": "Yan kılavuz boşluğunu, sırt rulmanını ve kasnak aşınmasını kontrol edin.",
+     "order": 2
+    },
+    {
+     "cause_tr": "Dar kıvrım kesimi",
+     "action_tr": "Kıvrım yarıçapına uygun daha dar bıçak kullanın.",
+     "order": 3
+    }
+   ],
+   "patterns": [
+    "\\b8 (?:seklin|gibi|sekl)\\w*",
+    "sekiz (?:seklin|gibi|sekl)\\w*",
+    "halka\\w*\\s*(?:\\w+\\s+){0,3}(?:duz durmuyor|bukul\\w*|kivril\\w*|dalgalan\\w*|yamul\\w*)",
+    "yerde duz durmuyor",
+    "(?:bica[kg]|serit|testere|band\\b)\\w*\\s*(?:\\w+\\s+){0,3}duz durmuyor"
+   ],
+   "examples": [
+    "bıçak 8 şeklini aldı",
+    "halka düz durmuyor, sekiz gibi oldu",
+    "bıçağı yere koyunca düz durmuyor"
+   ]
+  },
+  {
+   "id": "camber_long_short_edge",
+   "symptom_tr": "Bıçak yay gibi eğrilmiş (diş tarafı uzamış/kısalmış)",
+   "source": "LENOX-GUIDE (18, 19), OLSON-RIKON (8, 13)",
+   "source_ids": [
+    "LENOX-GUIDE",
+    "OLSON-RIKON"
+   ],
+   "family": "break",
+   "priority": 6,
+   "causes_and_actions": [
+    {
+     "cause_tr": "Yan kılavuzlar fazla sıkı (diş dibine yakın sürterse diş tarafı uzar, sırta yakın sürterse kısalır)",
+     "action_tr": "Yan kılavuz boşluğunu ayarlayın; aşınmış kılavuzu değiştirin.",
+     "order": 1
+    },
+    {
+     "cause_tr": "Sırt rulmanının ön yükü fazla, bıçak sırt rulmanına çok yükleniyor",
+     "action_tr": "Sırt rulmanı ayarını düzeltin.",
+     "order": 2
+    },
+    {
+     "cause_tr": "Kasnaklar aşınmış, gerginlik bıçak genişliğine eşit dağılmıyor",
+     "action_tr": "Kasnak yüzeyini kontrol ettirin; aşınmışsa yenileyin.",
+     "order": 3
+    },
+    {
+     "cause_tr": "İlerleme çok yüksek",
+     "action_tr": "İlerlemeyi azaltın.",
+     "order": 4
+    },
+    {
+     "cause_tr": "Kılavuz kolları çok açık",
+     "action_tr": "Kılavuz kollarını parçaya yaklaştırın.",
+     "order": 5
+    },
+    {
+     "cause_tr": "Bıçak sırtı kasnak flanşına ağır sürtüyor",
+     "action_tr": "Kasnak iz (eğim) ayarını düzeltin.",
+     "order": 6
+    }
+   ],
+   "patterns": [
+    "(?:bica[kg]|serit|testere|band\\b)\\w*\\s*(?:\\w+\\s+){0,3}(?:yay gibi|kavis\\w*|kambur\\w*|muz gibi|bel ver\\w*)",
+    "(?:dis|sirt) taraf\\w*\\s*(?:\\w+\\s+){0,2}(?:uzamis|uzadi|kisalmis|kisaldi)"
+   ],
+   "examples": [
+    "bıçak yay gibi eğrildi",
+    "çıkardığım bıçak muz gibi olmuş",
+    "diş tarafı uzamış gibi"
+   ]
+  },
+  {
+   "id": "twisted_blade",
+   "symptom_tr": "Bıçağın burulması",
+   "source": "Tedarikçi arıza tablosu (SUPPLIER-TROUBLESHOOT-2024); çapraz kontrol: LENOX-GUIDE, ROENTGEN-GUIDE",
+   "source_ids": [
+    "SUPPLIER-TROUBLESHOOT-2024",
+    "LENOX-GUIDE",
+    "ROENTGEN-GUIDE"
+   ],
+   "family": "break",
+   "priority": 7,
+   "causes_and_actions": [
+    {
+     "cause_tr": "Kılavuzlar hizasız",
+     "action_tr": "Kılavuzları doğru hizaya getirin.",
+     "order": 1
+    },
+    {
+     "cause_tr": "Kılavuzlar fazla sıkı",
+     "action_tr": "Kılavuzları gevşetin.",
+     "order": 2
+    },
+    {
+     "cause_tr": "İş parçası mengenede oynuyor",
+     "action_tr": "İş parçasını hareket etmeyecek şekilde sıkın.",
+     "order": 3
+    },
+    {
+     "cause_tr": "İlerleme basıncı çok yüksek",
+     "action_tr": "İlerlemeyi azaltın.",
+     "order": 4
+    },
+    {
+     "cause_tr": "Bant gerginliği çok yüksek",
+     "action_tr": "Gerginliği makine üreticisi önerisine göre azaltın.",
+     "order": 5
+    },
+    {
+     "cause_tr": "Kasnaklar aşınmış",
+     "action_tr": "Kasnakları değiştirin.",
+     "order": 6
+    },
+    {
+     "cause_tr": "Kılavuz kollar çok uzakta",
+     "action_tr": "Kılavuz kolları iş parçasına yaklaştırın.",
+     "order": 7
+    }
+   ],
+   "patterns": [
+    "burul\\w*",
+    "burk\\w*",
+    "(?:bica[kg]|serit|testere|band\\b)\\w*\\s*bukul\\w*",
+    "kivril\\w*"
+   ],
+   "examples": [
+    "kesim sırasında bıçak burkuluyor",
+    "bıçak burulmuş",
+    "şerit kıvrıldı"
+   ]
+  },
   {
    "id": "blade_break",
    "symptom_tr": "Şerit testere bıçağının kopması",
+   "source": "Tedarikçi arıza tablosu (SUPPLIER-TROUBLESHOOT-2024); çapraz kontrol: LENOX-GUIDE, ROENTGEN-GUIDE, WIKUS-FAILURES",
+   "source_ids": [
+    "SUPPLIER-TROUBLESHOOT-2024",
+    "LENOX-GUIDE",
+    "ROENTGEN-GUIDE",
+    "WIKUS-FAILURES"
+   ],
+   "family": "break",
+   "priority": 8,
    "causes_and_actions": [
     {
      "cause_tr": "Yanlış bıçak veya TPI",
@@ -44,126 +606,137 @@
      "cause_tr": "Kılavuzlar fazla sıkı",
      "action_tr": "Kılavuzları gevşetin.",
      "order": 8
+    },
+    {
+     "cause_tr": "Kasnak çapına göre fazla kalın bıçak",
+     "action_tr": "Makine etiketindeki bıçak kalınlığını kullanın.",
+     "order": 9
+    },
+    {
+     "cause_tr": "Kasnak yüzeyi, konikliği veya rulmanı bozuk; kasnak salgılı",
+     "action_tr": "Kasnağı ve rulmanlarını kontrol ettirin, gerekirse onartın.",
+     "order": 10
     }
+   ],
+   "patterns": [
+    "(?:bica[kg]|serit|testere|band\\b)\\w*\\s*(?:\\w+\\s+){0,2}(?:kop(?:tu|uyor|uyo|mus|ma(?!yan|z)\\w*|ar\\w*|unca|acak)|(?:kiril(?!mayan|maz)\\w*|kirik\\w*|kirdi)|catl(?!amayan|amaz)\\w*)",
+    "neden (?:(?:kiril(?!mayan|maz)\\w*|kirik\\w*|kirdi)|kop(?:tu|uyor|uyo|mus|ma(?!yan|z)\\w*|ar\\w*|unca|acak)|catl(?!amayan|amaz)\\w*)",
+    "(?:kirilan|kopan|catlayan|catlak)\\s+(?:\\w+\\s+)?bica[kg]\\w*"
+   ],
+   "examples": [
+    "Bıçak sürekli kırılıyor",
+    "şerit testere neden kırılır",
+    "bıçak çatladı",
+    "Bıçak çok çabuk kopuyor 2 günde",
+    "bıçak 2 günde koptu bu ne biçim kalite",
+    "Bıçak kopunca makineye zarar verir mi",
+    "şerit testere neden çatlar"
    ]
   },
   {
-   "id": "premature_tooth_wear",
-   "symptom_tr": "Dişlerin erken aşınması",
+   "id": "new_blade_failed_fast",
+   "symptom_tr": "Yeni bıçak kısa sürede köreldi, diş döktü veya koptu",
+   "source": "STAR-BREAKIN, LENOX-BREAKIN, SUPPLIER-TROUBLESHOOT-2024, CTE-TROUBLESHOOT, STORE-GUIDES",
+   "source_ids": [
+    "STAR-BREAKIN",
+    "LENOX-BREAKIN",
+    "SUPPLIER-TROUBLESHOOT-2024",
+    "CTE-TROUBLESHOOT",
+    "STORE-GUIDES"
+   ],
+   "family": "install",
+   "priority": 9,
    "causes_and_actions": [
+    {
+     "cause_tr": "Rodaj (alıştırma) yapılmamış",
+     "action_tr": "Sonraki bıçakta ilk kesimleri düşük ilerlemeyle yapın ve ilerlemeyi kademeli artırın.",
+     "order": 1
+    },
     {
      "cause_tr": "Bıçak ters takılmış",
-     "action_tr": "Dişler kesme yönüne bakacak şekilde bıçağı yeniden takın.",
-     "order": 1
-    },
-    {
-     "cause_tr": "Yanlış alıştırma",
-     "action_tr": "Ürün ailesine ait alıştırma kuralını uygulayın.",
+     "action_tr": "Dişlerin kesme yönüne baktığını kontrol edin.",
      "order": 2
     },
     {
-     "cause_tr": "Sert malzeme veya aşırı tufal",
-     "action_tr": "Malzeme ve yüzey sertliğini kontrol edin.",
+     "cause_tr": "Yeni bıçak eski bıçağın bıraktığı kesiğe sokulmuş",
+     "action_tr": "Yeni bıçakla her zaman yeni bir kesime başlayın.",
      "order": 3
     },
     {
-     "cause_tr": "Yanlış soğutma sıvısı veya karışım",
-     "action_tr": "Makine ve sıvı üreticisinin karışım oranını uygulayın.",
+     "cause_tr": "Diş adımı kesite uygun değil (kesitte üçten az diş veya talaş sığmıyor)",
+     "action_tr": "Diş adımını kesite göre yeniden seçin.",
      "order": 4
     },
     {
-     "cause_tr": "İlerleme veya bant hızı çok yüksek",
-     "action_tr": "İlerlemeyi azaltın; bant hızını doğrulanmış malzeme aralığına getirin.",
-     "order": 5
-    }
-   ]
-  },
-  {
-   "id": "inaccurate_cut",
-   "symptom_tr": "Ölçüsel olarak hatalı kesim",
-   "causes_and_actions": [
-    {
-     "cause_tr": "Kılavuz kollar çok uzakta",
-     "action_tr": "Kılavuz kolları iş parçasına yaklaştırın.",
-     "order": 1
-    },
-    {
-     "cause_tr": "Bıçak aşınmış",
-     "action_tr": "Bıçağı değiştirin.",
-     "order": 2
-    },
-    {
-     "cause_tr": "İlerleme basıncı çok düşük veya yüksek",
-     "action_tr": "Malzeme tablosundaki ilerleme hesabına göre yeniden ayarlayın.",
-     "order": 3
-    },
-    {
-     "cause_tr": "Yanlış TPI",
-     "action_tr": "Temas uzunluğuna ve ürün matrisine göre TPI'yi yeniden seçin.",
-     "order": 4
-    },
-    {
-     "cause_tr": "Soğutma sıvısı kesime ulaşmıyor",
-     "action_tr": "Nozulları ayarlayın veya filtreyi temizleyin.",
+     "cause_tr": "Gerginlik, kılavuz ve mengene ayarı yeni bıçağa göre yapılmamış",
+     "action_tr": "Gerginliği ölçün, kılavuzları yaklaştırın, parçayı sıkıca bağlayın.",
      "order": 5
     },
     {
-     "cause_tr": "Kılavuzlar gevşek veya aşınmış",
-     "action_tr": "Kılavuzları sıkın veya değiştirin.",
+     "cause_tr": "Kopma kaynakta ise veya üretim kusurundan şüpheleniyorsanız",
+     "action_tr": "Bıçağın, kırık yüzeyin ve makine etiketinin fotoğraflarıyla iletişim sayfasından bize ulaşın.",
      "order": 6
     }
+   ],
+   "patterns": [
+    "yeni\\s+(?:bica[kg]\\w*|serit\\w*|testere\\w*|tak\\w*|aldig\\w*|gelen)\\b.{0,60}?(?:korel\\w*|kop(?:tu|uyor|uyo|mus|ma(?!yan|z)\\w*|ar\\w*|unca|acak)|(?:kiril(?!mayan|maz)\\w*|kirik\\w*|kirdi)|dokul\\w*|dokt\\w*|siyir\\w*|bozul\\w*|kesmez\\w*|catl(?!amayan|amaz)\\w*)",
+    "(?:ilk (?:gun|kesim|hafta|saat)\\w*|birkac kesim\\w*|\\b(?:1|2|3|bir|iki|uc|yarim) (?:gun|saat|hafta)\\w*)\\s*(?:\\w+\\s+){0,3}(?:korel\\w*|kop(?:tu|uyor|uyo|mus|ma(?!yan|z)\\w*|ar\\w*|unca|acak)|(?:kiril(?!mayan|maz)\\w*|kirik\\w*|kirdi)|dokul\\w*|siyir\\w*|dayan\\w*)"
+   ],
+   "examples": [
+    "Yeni taktım 2 günde dişleri döküldü",
+    "Yeni taktım 1 saatte dişleri döküldü, ayıplı mı",
+    "aldığım bıçak 3 gün dayandı normal mi",
+    "yeni bıçak ilk gün köreldi",
+    "yeni aldığım testere birkaç kesimde koptu"
    ]
   },
   {
-   "id": "cut_deviation",
-   "symptom_tr": "Kesimin yana kaçması",
+   "id": "blade_backwards",
+   "symptom_tr": "Bıçak ters takılmış / dişler ters yöne bakıyor",
+   "source": "SUPPLIER-TROUBLESHOOT-2024, LENOX-GUIDE (9), OLSON-RIKON (1), STORE-GUIDES",
+   "source_ids": [
+    "SUPPLIER-TROUBLESHOOT-2024",
+    "LENOX-GUIDE",
+    "OLSON-RIKON",
+    "STORE-GUIDES"
+   ],
+   "family": "install",
+   "priority": 10,
    "causes_and_actions": [
     {
-     "cause_tr": "İlerleme basıncı çok yüksek",
-     "action_tr": "İlerlemeyi azaltın.",
+     "cause_tr": "Halka paketten çıkarken ters yüz olmuş (içi dışına dönmüş)",
+     "action_tr": "Makineyi durdurup enerjisini kesin, bıçağı çıkarın, halkayı ters çevirip dişler kesme yönüne bakacak şekilde yeniden takın.",
      "order": 1
     },
     {
-     "cause_tr": "Bant gerginliği düşük",
-     "action_tr": "Gerginliği makine kılavuzuna göre artırın.",
+     "cause_tr": "Bıçak bir süre ters çalışmış, diş uçları hasar görmüş olabilir",
+     "action_tr": "Doğru yönde takıp ilk kesimlerde talaşı ve kesim hızını izleyin; dişler körelmişse bıçağı değiştirin.",
      "order": 2
-    },
-    {
-     "cause_tr": "Diş çaprazlaması hasarlı",
-     "action_tr": "Malzeme sertliğini kontrol edin ve bıçağı değiştirin.",
-     "order": 3
-    },
-    {
-     "cause_tr": "Kılavuz kollar gevşek veya uzakta",
-     "action_tr": "Kılavuzları sıkın ve malzemeye yaklaştırın.",
-     "order": 4
     }
-   ]
-  },
-  {
-   "id": "chips_in_gullet",
-   "symptom_tr": "Diş boşluklarında talaş birikmesi",
-   "causes_and_actions": [
-    {
-     "cause_tr": "Talaş fırçası yok veya aşınmış",
-     "action_tr": "Fırçayı değiştirin ve diş boşluğuna göre ayarlayın.",
-     "order": 1
-    },
-    {
-     "cause_tr": "Soğutma sıvısı yok veya yanlış",
-     "action_tr": "Soğutma beslemesini ve sıvı karışımını kontrol edin.",
-     "order": 2
-    },
-    {
-     "cause_tr": "Soğutma debisi yetersiz",
-     "action_tr": "Debiyi ve karışım oranını makine üreticisi değerlerine getirin.",
-     "order": 3
-    }
+   ],
+   "patterns": [
+    "ters tak(?:mis|tim|ilmis|ildi|miz)\\w*",
+    "\\bdis\\w*\\s*(?:\\w+\\s+){0,2}ters\\b",
+    "ters yon\\w*\\s*(?:\\w+\\s+){0,2}(?:bak|don|calis)\\w*",
+    "ters kayna[kg]\\w*",
+    "ters (?:donuyor|calisiyor)"
+   ],
+   "examples": [
+    "bıçak ters kaynaklanmış dişler ters yönde",
+    "bıçağı ters takmışım",
+    "dişler ters yöne bakıyor",
+    "ters takılmış galiba kesmiyor"
    ]
   },
   {
    "id": "tooth_back_breakout",
    "symptom_tr": "Dişlerin arka tarafında kırılma",
+   "source": "Tedarikçi arıza tablosu (SUPPLIER-TROUBLESHOOT-2024); çapraz kontrol: LENOX-GUIDE, ROENTGEN-GUIDE",
+   "source_ids": [
+    "SUPPLIER-TROUBLESHOOT-2024"
+   ],
+   "family": "teeth",
+   "priority": 11,
    "causes_and_actions": [
     {
      "cause_tr": "İlerleme veya bant hızı çok yüksek",
@@ -195,37 +768,100 @@
      "action_tr": "İş parçasını hareket etmeyecek şekilde sıkın.",
      "order": 6
     }
+   ],
+   "patterns": [
+    "dis(?:in|lerin)?\\s*arka",
+    "arka\\s*taraf.{0,12}kiril"
+   ],
+   "examples": [
+    "dişin arkası kırılıyor",
+    "dişlerin arka tarafı kırık"
    ]
   },
   {
-   "id": "one_sided_tooth_wear",
-   "symptom_tr": "Dişlerin tek taraflı aşınması",
+   "id": "tooth_strippage",
+   "symptom_tr": "Dişler sıra halinde sıyrılıyor / dökülüyor",
+   "source": "LENOX-GUIDE (6), ROENTGEN-GUIDE (6), CTE-TROUBLESHOOT, OLSON-RIKON (7), STORE-GUIDES",
+   "source_ids": [
+    "LENOX-GUIDE",
+    "ROENTGEN-GUIDE",
+    "CTE-TROUBLESHOOT",
+    "OLSON-RIKON",
+    "STORE-GUIDES"
+   ],
+   "family": "teeth",
+   "priority": 12,
    "causes_and_actions": [
     {
-     "cause_tr": "Kirli veya yüzeyi düzensiz iş parçası",
-     "action_tr": "İş parçasını temizleyin veya uygun yüzey payıyla yeni kesim başlatın.",
+     "cause_tr": "Rodaj yapılmamış",
+     "action_tr": "Yeni bıçağı düşük ilerlemeyle alıştırın, ilerlemeyi kademeli artırın.",
      "order": 1
     },
     {
-     "cause_tr": "Kasnak flanşı aşınmış veya kasnak izden çıkmış",
-     "action_tr": "Kasnakları hizalayın veya değiştirin.",
+     "cause_tr": "Talaş fırçası aşınmış, eksik veya yanlış konumda; talaş diş boşluğunda kalıp tekrar kesime giriyor",
+     "action_tr": "Fırçayı diş dibine değecek şekilde ayarlayın veya değiştirin.",
      "order": 2
     },
     {
-     "cause_tr": "Kılavuz diş çaprazlamasına baskı yapıyor",
-     "action_tr": "Kılavuzu doğru konuma ayarlayın.",
+     "cause_tr": "İlerleme veya kesme basıncı çok yüksek",
+     "action_tr": "İlerlemeyi azaltın; talaşın kıvrılarak çıktığı düzeye getirin.",
      "order": 3
     },
     {
-     "cause_tr": "Kırık dişler kesikte kalmış",
-     "action_tr": "Yeni bıçağı eski kesiğe sokmayın; yeni kesim başlatın ve bıçağı yeniden alıştırın.",
+     "cause_tr": "Parça mengenede oynuyor veya titreşiyor",
+     "action_tr": "Parçayı ve demeti sıkıca bağlayın.",
      "order": 4
+    },
+    {
+     "cause_tr": "Diş adımı kesite uygun değil",
+     "action_tr": "Kesitte en az üç diş olacak, talaş da boşluğa sığacak şekilde diş adımını yeniden seçin.",
+     "order": 5
+    },
+    {
+     "cause_tr": "Soğutma yetersiz veya oranı yanlış",
+     "action_tr": "Sıvının kesim noktasına geldiğini ve oranını refraktometreyle kontrol edin.",
+     "order": 6
+    },
+    {
+     "cause_tr": "Malzemede sert nokta veya tufal",
+     "action_tr": "Malzeme yüzeyini ve sertliğini kontrol edin.",
+     "order": 7
+    },
+    {
+     "cause_tr": "Bant hızı malzemeye göre çok düşük",
+     "action_tr": "Hızı malzeme için önerilen aralığa çıkarın.",
+     "order": 8
+    },
+    {
+     "cause_tr": "Yeni bıçak eski kesiğe sokulmuş",
+     "action_tr": "Yeni bıçakla her zaman yeni bir kesime başlayın.",
+     "order": 9
     }
+   ],
+   "patterns": [
+    "\\bdis\\w*\\s*(?:\\w+\\s+){0,2}(?:dokul\\w*|dokuyor|doku\\w*|dok(?:tu|mus|tugu)\\w*|siyir\\w*|siyril\\w*|gitti|gitmis|ucu\\w*|uct\\w*|ucmus|sokul\\w*)",
+    "\\bdis kayb\\w*",
+    "\\bdisler\\w* (?:yok|eksik)"
+   ],
+   "examples": [
+    "Şerit testerem neden dişlerini sıyırıyor?",
+    "dişler sıyırdı",
+    "dişleri döküldü",
+    "birkaç diş gitti",
+    "dişler uçuyor"
    ]
   },
   {
    "id": "tooth_breakage",
    "symptom_tr": "Dişlerin kopması",
+   "source": "Tedarikçi arıza tablosu (SUPPLIER-TROUBLESHOOT-2024); çapraz kontrol: LENOX-GUIDE, ROENTGEN-GUIDE",
+   "source_ids": [
+    "SUPPLIER-TROUBLESHOOT-2024",
+    "LENOX-GUIDE",
+    "WIKUS-FAILURES"
+   ],
+   "family": "teeth",
+   "priority": 13,
    "causes_and_actions": [
     {
      "cause_tr": "Yanlış alıştırma",
@@ -266,12 +902,451 @@
      "cause_tr": "İş parçası mengenede oynuyor",
      "action_tr": "İş parçasını hareket etmeyecek şekilde sıkın.",
      "order": 8
+    },
+    {
+     "cause_tr": "Bıçak açılırken veya taşınırken dişler hasar görmüş",
+     "action_tr": "Sarılı bıçağı dişlere zarar vermeden, kontrollü açın; diş koruyucusunu makineye taktıktan sonra çıkarın.",
+     "order": 9
+    },
+    {
+     "cause_tr": "Yeni bıçak eski kesiğe sokulmuş",
+     "action_tr": "Yeni bıçakla her zaman yeni bir kesime başlayın.",
+     "order": 10
     }
+   ],
+   "patterns": [
+    "\\bdis\\w*\\s*(?:\\w+\\s+){0,2}(?:kop(?:tu|uyor|uyo|mus|ma(?!yan|z)\\w*|ar\\w*|unca|acak)|(?:kiril(?!mayan|maz)\\w*|kirik\\w*|kirdi)|centik\\w*|catla\\w*|yamul\\w*|egril\\w*|bukul\\w*)"
+   ],
+   "examples": [
+    "Dişler kırılıyor neden olabilir",
+    "Dişler yamuldu",
+    "diş uçları kırık",
+    "dişlerde çentik var"
+   ]
+  },
+  {
+   "id": "smallest_gullet_wear",
+   "symptom_tr": "Yalnızca en küçük diş boşluklarında aşınma",
+   "source": "LENOX-GUIDE (14), ROENTGEN-GUIDE (20)",
+   "source_ids": [
+    "LENOX-GUIDE",
+    "ROENTGEN-GUIDE"
+   ],
+   "family": "teeth",
+   "priority": 14,
+   "causes_and_actions": [
+    {
+     "cause_tr": "İlerleme çok yüksek, talaş en küçük boşluğa sığmıyor",
+     "action_tr": "İlerlemeyi azaltın.",
+     "order": 1
+    },
+    {
+     "cause_tr": "Bant hızı çok düşük",
+     "action_tr": "Hızı malzeme için önerilen aralığa çıkarın.",
+     "order": 2
+    },
+    {
+     "cause_tr": "Diş adımı kesite göre çok sık",
+     "action_tr": "Daha seyrek (düşük TPI) diş seçin; en küçük diş boşluğu bıçağın talaş kapasitesini belirler.",
+     "order": 3
+    }
+   ],
+   "patterns": [
+    "(?:en )?kucuk dis bosluk\\w*\\s*(?:\\w+\\s+){0,3}(?:asin\\w*|parla\\w*|dol\\w*)",
+    "kucuk disler\\w*\\s*(?:\\w+\\s+){0,2}asin\\w*"
+   ],
+   "examples": [
+    "en küçük diş boşluklarında aşınma var",
+    "küçük dişler aşınmış, büyükler sağlam"
+   ]
+  },
+  {
+   "id": "tooth_side_wear_both",
+   "symptom_tr": "Dişlerin iki yanında aşınma",
+   "source": "LENOX-GUIDE (2), ROENTGEN-GUIDE (2), OLSON-RIKON (1)",
+   "source_ids": [
+    "LENOX-GUIDE",
+    "ROENTGEN-GUIDE",
+    "OLSON-RIKON"
+   ],
+   "family": "teeth",
+   "priority": 15,
+   "causes_and_actions": [
+    {
+     "cause_tr": "Sırt rulmanı kırık, aşınmış veya eksik; dişler yan kılavuzlara değiyor",
+     "action_tr": "Sırt rulmanını yenileyin ve ayarlayın.",
+     "order": 1
+    },
+    {
+     "cause_tr": "Yan kılavuz (plaka/makara) bıçak genişliğine uygun değil",
+     "action_tr": "Bıçak genişliğine uygun kılavuz kullanın; dişler kılavuzun dışında kalmalı.",
+     "order": 2
+    },
+    {
+     "cause_tr": "Bıçak yarım kalmış kesimden çalışırken geri çekiliyor",
+     "action_tr": "Yarım kesimden bıçağı çalışırken geri çekmeyin; makineyi durdurup parçayı gevşeterek çıkarın.",
+     "order": 3
+    }
+   ],
+   "patterns": [
+    "\\bdis\\w*\\s*(?:\\w+\\s+){0,2}(?:iki|her iki) (?:yan|taraf)\\w*\\s*(?:\\w+\\s+){0,2}asin\\w*",
+    "(?:iki|her iki) (?:yan|taraf)\\w*\\s*(?:\\w+\\s+){0,2}\\bdis\\w*\\s*(?:\\w+\\s+){0,2}asin\\w*"
+   ],
+   "examples": [
+    "dişlerin iki yanı aşınmış",
+    "her iki taraftaki dişler aşınıyor"
+   ]
+  },
+  {
+   "id": "one_sided_tooth_wear",
+   "symptom_tr": "Dişlerin tek taraflı aşınması",
+   "source": "Tedarikçi arıza tablosu (SUPPLIER-TROUBLESHOOT-2024); çapraz kontrol: LENOX-GUIDE, ROENTGEN-GUIDE; LENOX-GUIDE (3)",
+   "source_ids": [
+    "SUPPLIER-TROUBLESHOOT-2024",
+    "LENOX-GUIDE"
+   ],
+   "family": "teeth",
+   "priority": 16,
+   "causes_and_actions": [
+    {
+     "cause_tr": "Kirli veya yüzeyi düzensiz iş parçası",
+     "action_tr": "İş parçasını temizleyin veya uygun yüzey payıyla yeni kesim başlatın.",
+     "order": 1
+    },
+    {
+     "cause_tr": "Kasnak flanşı aşınmış veya kasnak izden çıkmış",
+     "action_tr": "Kasnakları hizalayın veya değiştirin.",
+     "order": 2
+    },
+    {
+     "cause_tr": "Kılavuz diş çaprazlamasına baskı yapıyor",
+     "action_tr": "Kılavuzu doğru konuma ayarlayın.",
+     "order": 3
+    },
+    {
+     "cause_tr": "Kırık dişler kesikte kalmış",
+     "action_tr": "Yeni bıçağı eski kesiğe sokmayın; yeni kesim başlatın ve bıçağı yeniden alıştırın.",
+     "order": 4
+    },
+    {
+     "cause_tr": "Bıçak kesime dik değil",
+     "action_tr": "Bıçağın tablaya/mengeneye dikliğini kontrol edin.",
+     "order": 5
+    },
+    {
+     "cause_tr": "Dişler makinenin bir parçasına (fırça tertibatı, muhafaza) sürtüyor",
+     "action_tr": "Sürtünen parçayı bulun ve ayarlayın.",
+     "order": 6
+    }
+   ],
+   "patterns": [
+    "tek\\s*taraf.{0,10}asin",
+    "tek yan\\w*\\s*(?:\\w+\\s+){0,2}asin\\w*",
+    "bir taraf\\w*\\s*(?:\\w+\\s+){0,2}(?:asin|korel|kor)\\w*"
+   ],
+   "examples": [
+    "tek taraf aşınıyor dişlerde",
+    "dişler bir tarafta aşınmış",
+    "tek yanı aşınıyor"
+   ]
+  },
+  {
+   "id": "premature_tooth_wear",
+   "symptom_tr": "Dişlerin erken aşınması",
+   "source": "Tedarikçi arıza tablosu (SUPPLIER-TROUBLESHOOT-2024); çapraz kontrol: LENOX-GUIDE, ROENTGEN-GUIDE; LENOX-GUIDE (1), OLSON-RIKON (1), STAR-REPLACE",
+   "source_ids": [
+    "SUPPLIER-TROUBLESHOOT-2024",
+    "LENOX-GUIDE",
+    "OLSON-RIKON",
+    "STAR-REPLACE"
+   ],
+   "family": "teeth",
+   "priority": 17,
+   "causes_and_actions": [
+    {
+     "cause_tr": "Bıçak ters takılmış",
+     "action_tr": "Dişler kesme yönüne bakacak şekilde bıçağı yeniden takın.",
+     "order": 1
+    },
+    {
+     "cause_tr": "Yanlış alıştırma",
+     "action_tr": "Ürün ailesine ait alıştırma kuralını uygulayın.",
+     "order": 2
+    },
+    {
+     "cause_tr": "Bant hızı çok yüksek",
+     "action_tr": "Bant hızını malzeme için doğrulanmış aralığa düşürün.",
+     "order": 3
+    },
+    {
+     "cause_tr": "İlerleme uygun değil: çok düşükse diş kesmek yerine sürtünür (özellikle paslanmaz ve takım çeliğinde), çok yüksekse dişi zorlar",
+     "action_tr": "Talaşa bakın: toz veya iğne gibi ince talaşta ilerlemeyi artırın, kalın ve koyu talaşta azaltın.",
+     "order": 4
+    },
+    {
+     "cause_tr": "Yanlış soğutma sıvısı veya karışım",
+     "action_tr": "Makine ve sıvı üreticisinin karışım oranını uygulayın; oranı refraktometreyle ölçün.",
+     "order": 5
+    },
+    {
+     "cause_tr": "Sert malzeme, aşırı tufal, alevle kesilmiş kenar veya aşındırıcı malzeme",
+     "action_tr": "Malzeme ve yüzey sertliğini kontrol edin.",
+     "order": 6
+    },
+    {
+     "cause_tr": "Malzemeye göre yanlış bıçak kalitesi",
+     "action_tr": "Zor malzemede M51, sertleştirilmiş malzemede karbür uçlu bıçak düşünün.",
+     "order": 7
+    }
+   ],
+   "patterns": [
+    "(?:erken|cabuk|hemen|hizli|kisa surede|kisa zamanda|birkac kesimde)\\s*(?:\\w+\\s+){0,2}(?:asin(?!mayan|maz)\\w*|korel(?!meyen|mez)\\w*|korles\\w*|kesmez ol\\w*)",
+    "korel(?:di|iyor|iyo|mis|meye basla)\\w*",
+    "korles(?:ti|iyor|mis)\\w*",
+    "\\bkor oldu",
+    "omr\\w*\\s*(?:\\w+\\s+){0,2}kisa",
+    "ozelligini yitir\\w*",
+    "keskinlig\\w* kaybet\\w*",
+    "kesmiyor artik",
+    "dis uc\\w*\\s*(?:\\w+\\s+){0,2}(?:yuvarlan\\w*|kutlas\\w*|kor\\b|asin\\w*)"
+   ],
+   "examples": [
+    "Bıçağım çok çabuk köreliyor",
+    "bicagim cabuk koreliyo",
+    "Paslanmaz keserken dişler hemen köreliyor",
+    "Diş uçları yuvarlanmış",
+    "Şerit testere neden kısa sürede özelliğini yitirir?",
+    "Bıçaklarınız çok çabuk köreliyor, başka yerden alacağım artık"
+   ]
+  },
+  {
+   "id": "chip_welding",
+   "symptom_tr": "Talaş dişlere yapışıyor / kaynıyor",
+   "source": "TestereStore eki (STORE-GUIDES; LENOX-GUIDE / ROENTGEN-GUIDE / WIKUS-FAILURES sorun giderme tabloları); LENOX-GUIDE (7), ROENTGEN-GUIDE (7)",
+   "source_ids": [
+    "LENOX-GUIDE",
+    "ROENTGEN-GUIDE",
+    "STORE-GUIDES"
+   ],
+   "family": "chips_heat",
+   "priority": 18,
+   "causes_and_actions": [
+    {
+     "cause_tr": "Soğutma sıvısı yok, az veya oranı uygun değil",
+     "action_tr": "Soğutma sıvısının akışını ve karışım oranını kontrol edin; sıvıyı dişlere yönlendirin.",
+     "order": 1
+    },
+    {
+     "cause_tr": "Talaş fırçası çalışmıyor",
+     "action_tr": "Fırçanın diş boşluklarını temizlediğini doğrulayın; aşınmışsa değiştirin.",
+     "order": 2
+    },
+    {
+     "cause_tr": "Bant hızı çok yüksek",
+     "action_tr": "Hızı bir kademe düşürün.",
+     "order": 3
+    },
+    {
+     "cause_tr": "Diş adımı çok ince, diş boşluğu talaşı alamıyor",
+     "action_tr": "Daha kaba diş adımı seçin.",
+     "order": 4
+    }
+   ],
+   "patterns": [
+    "talas\\w*\\s*(?:\\w+\\s+){0,3}(?:yapis\\w*|kayn\\w*|sivan\\w*)",
+    "\\bdis\\w*\\s*(?:\\w+\\s+){0,2}(?:yapis\\w*|sivan\\w*)"
+   ],
+   "examples": [
+    "Talaş dişlere yapışıyor alüminyumda",
+    "talaş kaynağı oluyor",
+    "alüminyum dişlere sıvanıyor"
+   ]
+  },
+  {
+   "id": "chips_in_gullet",
+   "symptom_tr": "Diş boşluklarında talaş birikmesi",
+   "source": "Tedarikçi arıza tablosu (SUPPLIER-TROUBLESHOOT-2024); çapraz kontrol: LENOX-GUIDE, ROENTGEN-GUIDE; LENOX-GUIDE (8)",
+   "source_ids": [
+    "SUPPLIER-TROUBLESHOOT-2024",
+    "LENOX-GUIDE"
+   ],
+   "family": "chips_heat",
+   "priority": 19,
+   "causes_and_actions": [
+    {
+     "cause_tr": "Talaş fırçası yok veya aşınmış",
+     "action_tr": "Fırçayı değiştirin ve diş boşluğuna göre ayarlayın.",
+     "order": 1
+    },
+    {
+     "cause_tr": "Soğutma sıvısı yok veya yanlış",
+     "action_tr": "Soğutma beslemesini ve sıvı karışımını kontrol edin.",
+     "order": 2
+    },
+    {
+     "cause_tr": "Soğutma debisi yetersiz",
+     "action_tr": "Debiyi ve karışım oranını makine üreticisi değerlerine getirin.",
+     "order": 3
+    }
+   ],
+   "patterns": [
+    "talas.{0,25}(?:sikis|birik|tikan|dol|cikmiyor|atilmiyor)",
+    "dis\\s*boslug\\w*.{0,15}(?:talas|tikan|dol)"
+   ],
+   "examples": [
+    "Talaş diş boşluğunda sıkışıyor",
+    "diş boşlukları talaşla doluyor",
+    "talaş çıkmıyor diş aralarında birikiyor"
+   ]
+  },
+  {
+   "id": "overheating",
+   "symptom_tr": "Bıçak aşırı ısınıyor / talaş mavi-yanık renkli",
+   "source": "TestereStore eki (STORE-GUIDES; LENOX-GUIDE / ROENTGEN-GUIDE / WIKUS-FAILURES sorun giderme tabloları); LENOX-GUIDE (9), ROENTGEN-GUIDE",
+   "source_ids": [
+    "LENOX-GUIDE",
+    "ROENTGEN-GUIDE",
+    "STORE-GUIDES"
+   ],
+   "family": "chips_heat",
+   "priority": 20,
+   "causes_and_actions": [
+    {
+     "cause_tr": "İlerleme çok yüksek",
+     "action_tr": "Önce ilerlemeyi azaltın.",
+     "order": 1
+    },
+    {
+     "cause_tr": "Bant hızı çok yüksek",
+     "action_tr": "Hızı bir kademe düşürün.",
+     "order": 2
+    },
+    {
+     "cause_tr": "Soğutma yetersiz",
+     "action_tr": "Soğutma sıvısının akışını ve oranını kontrol edin.",
+     "order": 3
+    },
+    {
+     "cause_tr": "Dişler körelmiş",
+     "action_tr": "Bıçağı değiştirin.",
+     "order": 4
+    }
+   ],
+   "patterns": [
+    "(?:asiri\\s*)?isin(?:iyor|iyo|ma(?!yan|z)\\w*|di|mis)",
+    "talas\\w*\\s*(?:\\w+\\s+){0,2}(?:mavi|yanik|kahverengi|mor)\\w*",
+    "mavi talas",
+    "\\bduman",
+    "\\bdis uc\\w*\\s*(?:\\w+\\s+){0,2}(?:renk|mavi|morar)\\w*"
+   ],
+   "examples": [
+    "Talaş mavi renkte çıkıyor, bıçak çok ısınıyor",
+    "Bıçak ısınıyor",
+    "duman çıkıyor kesimde",
+    "diş uçları morarmış"
+   ]
+  },
+  {
+   "id": "chip_form_abnormal",
+   "symptom_tr": "Talaşın şekli veya rengi normal değil (toz, iğne, kalın, sarı-kahve)",
+   "source": "LENOX-GUIDE (talaş analizi), ROENTGEN-GUIDE, STORE-GUIDES (talaş rengi tablosu)",
+   "source_ids": [
+    "LENOX-GUIDE",
+    "ROENTGEN-GUIDE",
+    "STORE-GUIDES"
+   ],
+   "family": "chips_heat",
+   "priority": 21,
+   "causes_and_actions": [
+    {
+     "cause_tr": "Talaş çok ince, toz veya iğne gibi: ilerleme çok düşük, diş sürtüyor",
+     "action_tr": "İlerlemeyi kademeli olarak artırın.",
+     "order": 1
+    },
+    {
+     "cause_tr": "Talaş altın sarısı veya kahverengi: kesim zorlanıyor, ısı artıyor",
+     "action_tr": "İlerlemeyi biraz azaltın, soğutmayı kontrol edin.",
+     "order": 2
+    },
+    {
+     "cause_tr": "Talaş kalın, sert ve koyu/mavi: ilerleme ve/veya hız çok yüksek",
+     "action_tr": "Önce ilerlemeyi, gerekirse hızı azaltın.",
+     "order": 3
+    },
+    {
+     "cause_tr": "Talaş gümüşten hafif maviye dönüyor: bant hızı muhtemelen yüksek",
+     "action_tr": "Hızı bir kademe düşürün.",
+     "order": 4
+    },
+    {
+     "cause_tr": "Talaş dişe yapışıyor: soğutma yetersiz veya talaş fırçası çalışmıyor",
+     "action_tr": "Soğutma oranını, akışını ve fırçayı kontrol edin.",
+     "order": 5
+    }
+   ],
+   "patterns": [
+    "talas\\w*\\s*(?:\\w+\\s+){0,3}(?:toz\\w*|igne\\w*|pudra|un gibi|kalin\\w*|iri\\w*|kivrim\\w*|sari\\w*|altin\\w*|kahve\\w*|renk\\w*)"
+   ],
+   "examples": [
+    "Talaş toz gibi çıkıyor",
+    "Talaş kalın ve kıvrım kıvrım çıkıyor",
+    "talaşın rengi sarı",
+    "talaş iğne gibi"
+   ]
+  },
+  {
+   "id": "wood_burn_marks",
+   "symptom_tr": "Ahşap kesim yüzeyinde yanık izi",
+   "source": "STORE-GUIDES (ahşap rehberi)",
+   "source_ids": [
+    "STORE-GUIDES"
+   ],
+   "family": "chips_heat",
+   "priority": 22,
+   "causes_and_actions": [
+    {
+     "cause_tr": "Dişler körelmiş",
+     "action_tr": "Bıçağı değiştirin.",
+     "order": 1
+    },
+    {
+     "cause_tr": "Diş kesite göre fazla sık",
+     "action_tr": "Kalın ahşapta daha seyrek dişli bıçak kullanın.",
+     "order": 2
+    },
+    {
+     "cause_tr": "İlerleme çok yavaş, diş sürtüyor",
+     "action_tr": "İlerlemeyi biraz artırın.",
+     "order": 3
+    },
+    {
+     "cause_tr": "Bıçak üzerinde reçine birikmiş",
+     "action_tr": "Bıçağı reçineden temizleyin.",
+     "order": 4
+    }
+   ],
+   "patterns": [
+    "(?:ahsap|kereste|tahta|odun|kontrplak|mdf)\\w*\\s*(?:\\w+\\s+){0,3}(?:yaniyor|yanik\\w*|kararma\\w*|karariyor|is yapiyor)",
+    "yanik iz\\w*",
+    "recine\\w*\\s*(?:\\w+\\s+){0,2}(?:birik|yapis)\\w*"
+   ],
+   "examples": [
+    "ahşap keserken yanık izi kalıyor",
+    "kereste kesiminde yüzey kararıyor",
+    "bıçakta reçine birikiyor"
    ]
   },
   {
    "id": "blade_back_wear",
    "symptom_tr": "Bıçak sırtında aşınma",
+   "source": "Tedarikçi arıza tablosu (SUPPLIER-TROUBLESHOOT-2024); çapraz kontrol: LENOX-GUIDE, ROENTGEN-GUIDE; LENOX-GUIDE (12), OLSON-RIKON (17)",
+   "source_ids": [
+    "SUPPLIER-TROUBLESHOOT-2024",
+    "LENOX-GUIDE",
+    "OLSON-RIKON"
+   ],
+   "family": "machine",
+   "priority": 23,
    "causes_and_actions": [
     {
      "cause_tr": "Kılavuzlar fazla sıkı",
@@ -308,52 +1383,27 @@
      "action_tr": "Kasnak eğimini bıçak sırtı flanşa değmeyecek şekilde ayarlayın.",
      "order": 7
     }
-   ]
-  },
-  {
-   "id": "wandering_or_wavy_cut",
-   "symptom_tr": "Dalgalı veya yön değiştiren kesim",
-   "causes_and_actions": [
-    {
-     "cause_tr": "Yanlış bıçak",
-     "action_tr": "Uygulamaya uygun bıçağı seçin.",
-     "order": 1
-    },
-    {
-     "cause_tr": "Bıçak kör veya hasarlı",
-     "action_tr": "Yeni bıçak takın.",
-     "order": 2
-    },
-    {
-     "cause_tr": "İlerleme veya bant hızı yanlış",
-     "action_tr": "Kesim tablosu ve makine kılavuzuna göre ayarlayın.",
-     "order": 3
-    },
-    {
-     "cause_tr": "Bıçak doğru yönlendirilmiyor",
-     "action_tr": "Kılavuz kolları ve makaralı kılavuzları ayarlayın.",
-     "order": 4
-    },
-    {
-     "cause_tr": "Bant gerginliği düşük",
-     "action_tr": "Gerginliği makine üreticisinin önerisine göre artırın.",
-     "order": 5
-    },
-    {
-     "cause_tr": "Yanlış TPI",
-     "action_tr": "Temas uzunluğuna göre TPI'yi yeniden seçin.",
-     "order": 6
-    },
-    {
-     "cause_tr": "Kılavuz kollar çok uzakta",
-     "action_tr": "Kılavuz kolları malzemeye yaklaştırın.",
-     "order": 7
-    }
+   ],
+   "patterns": [
+    "sirt.{0,15}(?:asin|ezil|capak|parla|mantar|yiv|oluk|kertik|yassil)\\w*",
+    "(?:bica[kg]|serit|testere|band\\b)\\w*\\s*sirt\\w*\\s*(?:\\w+\\s+){0,2}(?:asin|ezil|bozul|parla)\\w*"
+   ],
+   "examples": [
+    "Bıçak sırtı aşınmış parlamış",
+    "sırtında çapak oluşuyor",
+    "bıçağın sırtı ezilmiş"
    ]
   },
   {
    "id": "blade_surface_damage",
    "symptom_tr": "Bıçak gövdesi yüzeyinde hasar",
+   "source": "Tedarikçi arıza tablosu (SUPPLIER-TROUBLESHOOT-2024); çapraz kontrol: LENOX-GUIDE, ROENTGEN-GUIDE; LENOX-GUIDE (10, 11)",
+   "source_ids": [
+    "SUPPLIER-TROUBLESHOOT-2024",
+    "LENOX-GUIDE"
+   ],
+   "family": "machine",
+   "priority": 24,
    "causes_and_actions": [
     {
      "cause_tr": "Makaralı kılavuz fazla sıkı",
@@ -395,53 +1445,280 @@
      "action_tr": "İlerlemeyi ve sıkmayı kontrol edin.",
      "order": 8
     }
+   ],
+   "patterns": [
+    "govde.{0,12}(?:hasar|cizik|cizil|parla|asin|yiv)\\w*",
+    "yuzey.{0,10}hasar",
+    "(?:bica[kg]|serit|testere|band\\b)\\w*\\s*(?:\\w+\\s+){0,2}(?:yuzey\\w*\\s*|yan\\w*\\s*)?(?:cizik|cizil|cizgi|yiv)\\w*",
+    "(?:govde|bica[kg]\\w*|serit\\w*)\\s*(?:\\w+\\s+){0,2}(?:iki|her iki) (?:yan|taraf)\\w*\\s*(?:\\w+\\s+){0,2}(?:asin|cizik|cizil|parla)\\w*"
+   ],
+   "examples": [
+    "Bıçak yüzeyinde çizikler var",
+    "gövdede çizik var",
+    "bıçağın iki yanı parlamış aşınmış"
    ]
   },
   {
-   "id": "twisted_blade",
-   "symptom_tr": "Bıçağın burulması",
+   "id": "blade_pinching",
+   "symptom_tr": "Bıçak kesikte sıkışıyor / kesik kapanıyor",
+   "source": "CTE-TROUBLESHOOT, SUPPLIER-TROUBLESHOOT-2024, OLSON-RIKON (14)",
+   "source_ids": [
+    "CTE-TROUBLESHOOT",
+    "SUPPLIER-TROUBLESHOOT-2024",
+    "OLSON-RIKON"
+   ],
+   "family": "geometry",
+   "priority": 25,
    "causes_and_actions": [
     {
-     "cause_tr": "Kılavuzlar hizasız",
-     "action_tr": "Kılavuzları doğru hizaya getirin.",
+     "cause_tr": "Malzemedeki iç gerilim kesiği kapatıyor (boru, profil, kaynaklı veya ısıl işlem görmüş parça)",
+     "action_tr": "Kesik açıldıkça arkasına kama yerleştirin; gerekirse daha geniş çaprazlı bıçak kullanın.",
      "order": 1
     },
     {
-     "cause_tr": "Kılavuzlar fazla sıkı",
-     "action_tr": "Kılavuzları gevşetin.",
+     "cause_tr": "Parça gevşek bağlı",
+     "action_tr": "Mengeneyi sıkın; demet kesiminde tüm parçaları birlikte sabitleyin.",
      "order": 2
     },
     {
-     "cause_tr": "İş parçası mengenede oynuyor",
-     "action_tr": "İş parçasını hareket etmeyecek şekilde sıkın.",
+     "cause_tr": "Kılavuz kolları açık",
+     "action_tr": "Kılavuz kollarını parçaya yaklaştırın.",
      "order": 3
     },
     {
-     "cause_tr": "İlerleme basıncı çok yüksek",
+     "cause_tr": "İlerleme çok yüksek",
      "action_tr": "İlerlemeyi azaltın.",
      "order": 4
     },
     {
-     "cause_tr": "Bant gerginliği çok yüksek",
-     "action_tr": "Gerginliği makine üreticisi önerisine göre azaltın.",
+     "cause_tr": "Diş çaprazı körelmiş veya bozulmuş, kesik yeterince geniş açılmıyor",
+     "action_tr": "Bıçağı değiştirin.",
+     "order": 5
+    }
+   ],
+   "patterns": [
+    "^(?!.*talas).*?(?:bica[kg]|serit|testere|band\\b)\\w*\\s*(?:\\w+\\s+){0,3}sikis(?!ma(?:sin|yan|z))\\w*",
+    "(?:kesik|kesim yer\\w*|kerf)\\w*\\s*(?:\\w+\\s+){0,2}kapan\\w*",
+    "bicag\\w* sikistir\\w*",
+    "malzeme\\w*\\s*(?:\\w+\\s+){0,2}bicag\\w*\\s*(?:\\w+\\s+){0,2}sikis\\w*"
+   ],
+   "examples": [
+    "bıçak kesikte sıkışıyor",
+    "kesik kapanıyor bıçak sıkışıp kalıyor",
+    "boru bıçağı sıkıştırıyor"
+   ]
+  },
+  {
+   "id": "inaccurate_cut",
+   "symptom_tr": "Ölçüsel olarak hatalı kesim",
+   "source": "Tedarikçi arıza tablosu (SUPPLIER-TROUBLESHOOT-2024); çapraz kontrol: LENOX-GUIDE, ROENTGEN-GUIDE; STORE-GUIDES",
+   "source_ids": [
+    "SUPPLIER-TROUBLESHOOT-2024",
+    "STORE-GUIDES"
+   ],
+   "family": "geometry",
+   "priority": 26,
+   "causes_and_actions": [
+    {
+     "cause_tr": "Kılavuz kollar çok uzakta",
+     "action_tr": "Kılavuz kolları iş parçasına yaklaştırın.",
+     "order": 1
+    },
+    {
+     "cause_tr": "Bıçak aşınmış",
+     "action_tr": "Bıçağı değiştirin.",
+     "order": 2
+    },
+    {
+     "cause_tr": "İlerleme basıncı çok düşük veya yüksek",
+     "action_tr": "Malzeme tablosundaki ilerleme hesabına göre yeniden ayarlayın.",
+     "order": 3
+    },
+    {
+     "cause_tr": "Yanlış TPI",
+     "action_tr": "Temas uzunluğuna ve ürün matrisine göre TPI'yi yeniden seçin.",
+     "order": 4
+    },
+    {
+     "cause_tr": "Soğutma sıvısı kesime ulaşmıyor",
+     "action_tr": "Nozulları ayarlayın veya filtreyi temizleyin.",
      "order": 5
     },
     {
-     "cause_tr": "Kasnaklar aşınmış",
-     "action_tr": "Kasnakları değiştirin.",
+     "cause_tr": "Kılavuzlar gevşek veya aşınmış",
+     "action_tr": "Kılavuzları sıkın veya değiştirin.",
+     "order": 6
+    },
+    {
+     "cause_tr": "Mengene veya tezgâh gönyesi bozuk",
+     "action_tr": "Mengene ve tezgâh gönyesini kontrol edin.",
+     "order": 7
+    }
+   ],
+   "patterns": [
+    "olcu\\w*\\s*(?:tutmuyor|hatali|sapiyor|kaciyor|farkli|degisiyor)",
+    "hatali\\s*kesim",
+    "gonye\\w*\\s*(?:\\w+\\s+){0,2}(?:tutmuyor|bozuk|kaciyor|cikmiyor)",
+    "dik kesmiyor",
+    "90 derece (?:kesmiyor|tutmuyor|cikmiyor)",
+    "kesim (?:acili|egik|yamuk) cik\\w*",
+    "parca\\w* (?:farkli|ayni olmayan) boy\\w*"
+   ],
+   "examples": [
+    "Ölçü tutmuyor, kesilen parçalar farklı boyda",
+    "kesim açılı çıkıyor gönye tutmuyor",
+    "dik kesmiyor"
+   ]
+  },
+  {
+   "id": "cut_deviation",
+   "symptom_tr": "Kesimin yana kaçması",
+   "source": "Tedarikçi arıza tablosu (SUPPLIER-TROUBLESHOOT-2024); çapraz kontrol: LENOX-GUIDE, ROENTGEN-GUIDE; WIKUS-FAILURES, CTE-TROUBLESHOOT",
+   "source_ids": [
+    "SUPPLIER-TROUBLESHOOT-2024",
+    "WIKUS-FAILURES",
+    "CTE-TROUBLESHOOT"
+   ],
+   "family": "geometry",
+   "priority": 27,
+   "causes_and_actions": [
+    {
+     "cause_tr": "İlerleme basıncı çok yüksek",
+     "action_tr": "İlerlemeyi azaltın.",
+     "order": 1
+    },
+    {
+     "cause_tr": "Bant gerginliği düşük",
+     "action_tr": "Gerginliği makine kılavuzuna göre artırın.",
+     "order": 2
+    },
+    {
+     "cause_tr": "Diş çaprazlaması hasarlı",
+     "action_tr": "Malzeme sertliğini kontrol edin ve bıçağı değiştirin.",
+     "order": 3
+    },
+    {
+     "cause_tr": "Kılavuz kollar gevşek veya uzakta",
+     "action_tr": "Kılavuzları sıkın ve malzemeye yaklaştırın.",
+     "order": 4
+    },
+    {
+     "cause_tr": "Bıçak körelmiş",
+     "action_tr": "Bıçağı değiştirin.",
+     "order": 5
+    },
+    {
+     "cause_tr": "Kılavuz hizası bozuk",
+     "action_tr": "Kılavuzların hizasını kontrol edin.",
+     "order": 6
+    },
+    {
+     "cause_tr": "Talaş fırçası hasarlı",
+     "action_tr": "Fırçayı yenileyip diş dibine değecek şekilde ayarlayın.",
+     "order": 7
+    }
+   ],
+   "patterns": [
+    "yana\\s*kac",
+    "sag[ae]\\s*kac",
+    "sol[ae]\\s*kac",
+    "kesim\\s*kaciyor",
+    "egri\\s*kes",
+    "egri gid\\w*",
+    "yamuk kes\\w*",
+    "sap(?:iyor|iyo|ti|ma yapiyor|ma var)",
+    "duz (?:kesmiyor|gitmiyor|kesmez)",
+    "carpik\\s*kes",
+    "kesim\\s*(?:\\w+\\s+){0,2}capraz gid\\w*",
+    "bir yone (?:kac|kay|gid)\\w*",
+    "capraz\\w* (?:bozul|gitti|kapan)\\w*",
+    "kemikten cik\\w*"
+   ],
+   "examples": [
+    "Kesim yana kaçıyor, eğri kesiyor",
+    "testere egri kesiyo",
+    "kesim düz gitmiyor",
+    "testere sapıyor",
+    "Bıçak dönüyor, kesim çapraz gidiyor",
+    "Şerit testere bıçağı neden düz kesmiyor?",
+    "Bıçak sürekli kemikten çıkıyor",
+    "eğri kesiyor gerginlik mi",
+    "Aldığım bıçak eğri kesiyor, para mı bastırıyorum size"
+   ]
+  },
+  {
+   "id": "wandering_or_wavy_cut",
+   "symptom_tr": "Dalgalı veya yön değiştiren kesim",
+   "source": "Tedarikçi arıza tablosu (SUPPLIER-TROUBLESHOOT-2024); çapraz kontrol: LENOX-GUIDE, ROENTGEN-GUIDE; LENOX-GUIDE, STAR-REPLACE",
+   "source_ids": [
+    "SUPPLIER-TROUBLESHOOT-2024",
+    "STAR-REPLACE"
+   ],
+   "family": "geometry",
+   "priority": 28,
+   "causes_and_actions": [
+    {
+     "cause_tr": "Yanlış bıçak",
+     "action_tr": "Uygulamaya uygun bıçağı seçin.",
+     "order": 1
+    },
+    {
+     "cause_tr": "Bıçak kör veya hasarlı",
+     "action_tr": "Yeni bıçak takın.",
+     "order": 2
+    },
+    {
+     "cause_tr": "İlerleme veya bant hızı yanlış",
+     "action_tr": "Kesim tablosu ve makine kılavuzuna göre ayarlayın.",
+     "order": 3
+    },
+    {
+     "cause_tr": "Bıçak doğru yönlendirilmiyor",
+     "action_tr": "Kılavuz kolları ve makaralı kılavuzları ayarlayın.",
+     "order": 4
+    },
+    {
+     "cause_tr": "Bant gerginliği düşük",
+     "action_tr": "Gerginliği makine üreticisinin önerisine göre artırın.",
+     "order": 5
+    },
+    {
+     "cause_tr": "Yanlış TPI",
+     "action_tr": "Temas uzunluğuna göre TPI'yi yeniden seçin.",
      "order": 6
     },
     {
      "cause_tr": "Kılavuz kollar çok uzakta",
-     "action_tr": "Kılavuz kolları iş parçasına yaklaştırın.",
+     "action_tr": "Kılavuz kolları malzemeye yaklaştırın.",
      "order": 7
     }
+   ],
+   "patterns": [
+    "(?:kesim|yuzey|kesik)\\w*\\s*(?:\\w+\\s+){0,2}dalga\\w*",
+    "dalgali (?:kesiyor|cikiyor|kesim|yuzey|gidiyor|oluyor)",
+    "dalga dalga",
+    "camasir tahta\\w*",
+    "yon\\s*degistir",
+    "kesim\\s*dalgalan\\w*",
+    "basamak basamak"
+   ],
+   "examples": [
+    "Kesim dalgalı çıkıyor",
+    "yüzey çamaşır tahtası gibi",
+    "kesim yön değiştiriyor"
    ]
   },
   {
    "id": "rough_cut_surface",
    "symptom_tr": "Kesim yüzeyi pürüzlü / kötü",
-   "source": "TestereStore eki (Starrett / LENOX sorun giderme tabloları)",
+   "source": "TestereStore eki (STORE-GUIDES; LENOX-GUIDE / ROENTGEN-GUIDE / WIKUS-FAILURES sorun giderme tabloları); OLSON-RIKON (15)",
+   "source_ids": [
+    "LENOX-GUIDE",
+    "OLSON-RIKON",
+    "STORE-GUIDES"
+   ],
+   "family": "geometry",
+   "priority": 29,
    "causes_and_actions": [
     {
      "cause_tr": "Diş adımı malzemeye göre çok kaba",
@@ -468,12 +1745,198 @@
      "action_tr": "Kılavuzları bıçağa yaklaştırıp ayarlayın; aşınmışsa yenileyin.",
      "order": 5
     }
+   ],
+   "patterns": [
+    "(?:kesim|yuzey|kesik)\\w*\\s*(?:\\w+\\s+){0,2}(?:puruzlu\\w*|puruzluk|kotu|bozuk|tirtik\\w*|kaba|cizikli)",
+    "puruzlu\\w*",
+    "kesim kalite\\w*\\s*(?:\\w+\\s+){0,2}(?:kotu|dustu|bozuk|berbat)",
+    "yirtarak kes\\w*"
+   ],
+   "examples": [
+    "Kesik yüzeyi pürüzlü çıkıyor",
+    "kesim kalitesi kötü",
+    "yüzey kaba çıkıyor"
+   ]
+  },
+  {
+   "id": "burr_on_workpiece",
+   "symptom_tr": "Kesilen parçada çapak kalıyor",
+   "source": "FABRICATOR-BURR (arama özeti), STAR-REPLACE, OLSON-RIKON (15)",
+   "source_ids": [
+    "FABRICATOR-BURR",
+    "STAR-REPLACE",
+    "OLSON-RIKON"
+   ],
+   "family": "geometry",
+   "priority": 30,
+   "causes_and_actions": [
+    {
+     "cause_tr": "Dişler körelmiş; kesim ısınıyor",
+     "action_tr": "Bıçağı değiştirin; soğutma oranını kontrol edin.",
+     "order": 1
+    },
+    {
+     "cause_tr": "Kesim sonunda kopan parça desteklenmiyor, kesilmeden kırılıp düşüyor",
+     "action_tr": "Kesilen ucu destekleyin.",
+     "order": 2
+    },
+    {
+     "cause_tr": "Kesim sonunda ilerleme yüksek; otomatik iniş keskin bıçağa göre ayarlı kalmış",
+     "action_tr": "Kesim sonuna doğru ilerlemeyi azaltın; bıçak köreldikçe iniş ayarını yeniden yapın.",
+     "order": 3
+    },
+    {
+     "cause_tr": "Diş adımı kaba veya bant hızı düşük",
+     "action_tr": "Daha sık diş seçin, hızı malzemeye uygun değere getirin.",
+     "order": 4
+    }
+   ],
+   "patterns": [
+    "(?<!sirtinda )(?<!sirtta )(?<!sirtinda bir )capak(?!siz)\\w*\\s*(?:kaliyor|yapiyor|olusuyor|birakiyor|var|cok)",
+    "(?:parca|kesim|kesit|malzeme|profil|boru|uc)\\w*\\s*(?:\\w+\\s+){0,3}capak(?!siz)\\w*",
+    "capakli kes\\w*"
+   ],
+   "examples": [
+    "Kesim sonunda parçanın altında çapak kalıyor",
+    "çapak yapıyor",
+    "profilde çok çapak var"
+   ]
+  },
+  {
+   "id": "clicking_noise",
+   "symptom_tr": "Her turda tık tık ses / vuruntu",
+   "source": "OLSON-RIKON (9), LENOX-GUIDE (bakım: kasnaklar)",
+   "source_ids": [
+    "OLSON-RIKON",
+    "LENOX-GUIDE"
+   ],
+   "family": "noise",
+   "priority": 31,
+   "causes_and_actions": [
+    {
+     "cause_tr": "Kaynak yeri hizasız veya kalın; sırt rulmanından/kılavuzdan geçerken vuruyor",
+     "action_tr": "Bıçağı kullanmaya devam etmeyin; kaynak bölgesinin fotoğrafıyla iletişim sayfasından bize ulaşın.",
+     "order": 1
+    },
+    {
+     "cause_tr": "Bıçak sırtında çapak veya çentik",
+     "action_tr": "Makineyi durdurup sırttaki çapağı kontrol edin.",
+     "order": 2
+    },
+    {
+     "cause_tr": "Sırt rulmanı aşınmış",
+     "action_tr": "Rulmanı kontrol edin; aşınmışsa değiştirin.",
+     "order": 3
+    },
+    {
+     "cause_tr": "Kasnak hizası bozuk veya kasnakta talaş birikmiş",
+     "action_tr": "Kasnakları temizleyin, hizasını kontrol edin.",
+     "order": 4
+    }
+   ],
+   "patterns": [
+    "tik tik",
+    "tak tak",
+    "tikirt\\w*",
+    "tikirdi\\w*",
+    "vuruntu\\w*",
+    "her tur\\w*\\s*(?:\\w+\\s+){0,2}(?:ses|vur|tik)\\w*"
+   ],
+   "examples": [
+    "Kaynak yeri kalın, kılavuzdan geçerken tık tık ses yapıyor",
+    "her turda vuruntu var",
+    "tıkırtı yapıyor"
+   ]
+  },
+  {
+   "id": "vibration_noise",
+   "symptom_tr": "Titreşim, ötme, gıcırtı veya yüksek ses",
+   "source": "STORE-GUIDES, OLSON-RIKON (2), WIKUS-BREAKIN, LENOX-BREAKIN, CTE-TROUBLESHOOT, STAR-REPLACE",
+   "source_ids": [
+    "STORE-GUIDES",
+    "OLSON-RIKON",
+    "WIKUS-BREAKIN",
+    "LENOX-BREAKIN",
+    "CTE-TROUBLESHOOT",
+    "STAR-REPLACE"
+   ],
+   "family": "noise",
+   "priority": 32,
+   "causes_and_actions": [
+    {
+     "cause_tr": "Parça sağlam bağlanmamış",
+     "action_tr": "Parçayı ve demeti sıkıca bağlayın.",
+     "order": 1
+    },
+    {
+     "cause_tr": "Bant hızı ile ilerleme uyumsuz",
+     "action_tr": "Hızı veya ilerlemeyi biraz değiştirerek titreşimin kaybolduğu noktayı bulun.",
+     "order": 2
+    },
+    {
+     "cause_tr": "Kılavuz kolları uzak veya gerginlik düşük",
+     "action_tr": "Kılavuzları parçaya yaklaştırın; gerginliği ölçün.",
+     "order": 3
+    },
+    {
+     "cause_tr": "Profil veya boru gibi değişken kesitte sabit diş adımı",
+     "action_tr": "Değişken diş adımlı bıçak kullanın.",
+     "order": 4
+    },
+    {
+     "cause_tr": "Diş kesite göre çok kaba",
+     "action_tr": "Daha sık diş seçin.",
+     "order": 5
+    },
+    {
+     "cause_tr": "Bıçak körelmiş",
+     "action_tr": "Bıçağı değiştirin.",
+     "order": 6
+    },
+    {
+     "cause_tr": "Yeni bıçak rodaj sırasında titriyor",
+     "action_tr": "Titreşim kesilene kadar hızı biraz düşürün, ilerlemeyi kademeli artırın.",
+     "order": 7
+    }
+   ],
+   "patterns": [
+    "titresim(?!siz)\\w*\\s*(?:yap(?!may)\\w*|var|olu\\w*|cok|fazla)",
+    "(?:cok|fazla|asiri) titresim",
+    "titri(?:yor|yo|yer)",
+    "titreme yap\\w*",
+    "otuyor",
+    "\\botme yap\\w*",
+    "cinli\\w*",
+    "cinlama",
+    "vinlama\\w*",
+    "gicirt\\w*",
+    "gicirdi\\w*",
+    "ciyakl\\w*",
+    "gurultu(?!suz)\\w*",
+    "zangir\\w*",
+    "ses\\w*\\s*(?:cikariyor|geliyor|yapiyor|var|cok)",
+    "sarsinti\\w*",
+    "sarsiliyor"
+   ],
+   "examples": [
+    "Kesimde çok titreşim ve ses var",
+    "bıçak titriyor",
+    "Kesimde gıcırtı var",
+    "makine çok gürültü yapıyor",
+    "kesimde ötüyor"
    ]
   },
   {
    "id": "blade_off_wheel",
    "symptom_tr": "Bıçak kasnaktan çıkıyor / atıyor",
-   "source": "TestereStore eki (Starrett / LENOX sorun giderme tabloları)",
+   "source": "TestereStore eki (STORE-GUIDES; LENOX-GUIDE / ROENTGEN-GUIDE / WIKUS-FAILURES sorun giderme tabloları)",
+   "source_ids": [
+    "LENOX-GUIDE",
+    "STORE-GUIDES",
+    "OLSON-RIKON"
+   ],
+   "family": "machine",
+   "priority": 33,
    "causes_and_actions": [
     {
      "cause_tr": "Bıçak gerginliği düşük",
@@ -500,66 +1963,117 @@
      "action_tr": "Makine etiketindeki bıçak ölçüsünü kontrol edin.",
      "order": 5
     }
+   ],
+   "patterns": [
+    "kasnak\\w*\\s*(?:\\w+\\s+){0,2}(?:cik(?:iyor|iyo|ti|mis|acak|ma\\w*)|atiyor|atti|kayiyor|kaciyor|dusuyor|firliyor)",
+    "(?:bica[kg]|serit|testere|band\\b)\\w*\\s*(?:\\w+\\s+){0,2}(?:atiyor|atti|firliyor|yerinden cik\\w*)"
+   ],
+   "examples": [
+    "Bıçak kasnaktan çıkıyor",
+    "bıçak kasnakta kayıyor",
+    "bıçak atıyor sürekli"
    ]
   },
   {
-   "id": "chip_welding",
-   "symptom_tr": "Talaş dişlere yapışıyor / kaynıyor",
-   "source": "TestereStore eki (Starrett / LENOX sorun giderme tabloları)",
+   "id": "blade_stretch_loosening",
+   "symptom_tr": "Bıçak çalışırken gevşiyor / uzamış gibi",
+   "source": "STORE-GUIDES, SAWBLADE-TENSION (B), WIKUS-FAILURES",
+   "source_ids": [
+    "STORE-GUIDES",
+    "SAWBLADE-TENSION",
+    "WIKUS-FAILURES"
+   ],
+   "family": "machine",
+   "priority": 34,
    "causes_and_actions": [
     {
-     "cause_tr": "Soğutma sıvısı yok, az veya oranı uygun değil",
-     "action_tr": "Soğutma sıvısının akışını ve karışım oranını kontrol edin; sıvıyı dişlere yönlendirin.",
+     "cause_tr": "Yeni bıçak ilk çalışmada ısınıp çok az uzar",
+     "action_tr": "Birkaç kesimden sonra gerginliği yeniden ölçün ve ayarlayın.",
      "order": 1
     },
     {
-     "cause_tr": "Talaş fırçası çalışmıyor",
-     "action_tr": "Fırçanın diş boşluklarını temizlediğini doğrulayın; aşınmışsa değiştirin.",
+     "cause_tr": "Gergi sistemi (vida, yay veya hidrolik) değeri tutmuyor",
+     "action_tr": "Gerginliği ölçerle kontrol edin; değer kendiliğinden düşüyorsa makine kılavuzuna göre gergi sistemini kontrol ettirin.",
      "order": 2
     },
     {
-     "cause_tr": "Bant hızı çok yüksek",
-     "action_tr": "Hızı bir kademe düşürün.",
+     "cause_tr": "Gergi ayarı payın sonuna gelmiş; bıçak boyu makineye göre uzun",
+     "action_tr": "Bıçak boyunu makine etiketiyle karşılaştırın.",
      "order": 3
-    },
-    {
-     "cause_tr": "Diş adımı çok ince, diş boşluğu talaşı alamıyor",
-     "action_tr": "Daha kaba diş adımı seçin.",
-     "order": 4
     }
+   ],
+   "patterns": [
+    "(?:bica[kg]|serit|testere|band\\b)\\w*\\s*(?:\\w+\\s+){0,2}(?:uzadi|uzuyor|uzamis|gevsedi|gevsiyor|sarkiyor|boslaniyor|bosaliyor)",
+    "gergi\\w*\\s*(?:\\w+\\s+){0,2}(?:dusuyor|dustu|gevsiyor|kaciyor|kayboluyor|tutmuyor)"
+   ],
+   "examples": [
+    "bıçak çalışırken gevşiyor",
+    "gergi düşüyor kendiliğinden",
+    "şerit uzadı galiba sarkıyor"
    ]
   },
   {
-   "id": "overheating",
-   "symptom_tr": "Bıçak aşırı ısınıyor / talaş mavi-yanık renkli",
-   "source": "TestereStore eki (Starrett / LENOX sorun giderme tabloları)",
+   "id": "blade_length_misfit",
+   "symptom_tr": "Bıçak makineye takılamıyor / boy kısa veya uzun geldi",
+   "source": "STORE-GUIDES (boy rehberi), SAWBLADE-MEASURE, STORE-LEGAL",
+   "source_ids": [
+    "STORE-GUIDES",
+    "SAWBLADE-MEASURE",
+    "STORE-LEGAL"
+   ],
+   "family": "install",
+   "priority": 35,
    "causes_and_actions": [
     {
-     "cause_tr": "İlerleme çok yüksek",
-     "action_tr": "Önce ilerlemeyi azaltın.",
+     "cause_tr": "Sipariş edilen boy makineye uygun değil (ölçü etiketten veya eski bıçaktan alınmamış)",
+     "action_tr": "Boyu makine etiketi, kılavuz veya eski bıçakla karşılaştırın; hesapla bulunan boy yalnızca başlangıç değeridir.",
      "order": 1
     },
     {
-     "cause_tr": "Bant hızı çok yüksek",
-     "action_tr": "Hızı bir kademe düşürün.",
+     "cause_tr": "Gergi takma sırasında yeterince gevşetilmemiş, kılavuzlar kapalı",
+     "action_tr": "Gergiyi tamamen gevşetin, kılavuzları açın ve bıçağı kasnaklara yeniden oturtun.",
      "order": 2
     },
     {
-     "cause_tr": "Soğutma yetersiz",
-     "action_tr": "Soğutma sıvısının akışını ve oranını kontrol edin.",
+     "cause_tr": "Kasnak lastiği değişmiş veya kasnak farklı; hesap eski ölçüye göre yapılmış",
+     "action_tr": "Kasnak çapını bıçağın çalıştığı yüzeyden (lastik dahil) yeniden ölçün.",
      "order": 3
     },
     {
-     "cause_tr": "Dişler körelmiş",
-     "action_tr": "Bıçağı değiştirin.",
+     "cause_tr": "Gelen bıçağın boyu siparişinizden farklı",
+     "action_tr": "Bıçağı kullanmadan sipariş numarası ve etiket fotoğrafıyla iletişim sayfasından bize ulaşın.",
      "order": 4
     }
+   ],
+   "patterns": [
+    "(?:bica[kg]|serit|testere|band\\b)\\w*\\s*(?:\\w+\\s+){0,3}(?:kisa|uzun|buyuk|kucuk) gel\\w*",
+    "\\btakamiyor\\w*",
+    "takilmiyor",
+    "yerine oturmuyor",
+    "gergi pay\\w*\\s*(?:\\w+\\s+){0,2}(?:yetmiyor|yetmedi|kalmadi)",
+    "gerdiremiyor\\w*",
+    "geremiyor\\w*",
+    "boy\\w*\\s*(?:\\w+\\s+){0,2}(?:uymadi|uymuyor|yanlis gel\\w*)",
+    "\\d{3,5} istedim \\d{3,5} geldi"
+   ],
+   "examples": [
+    "Yanlış ölçü göndermişsiniz, ben 2720 istedim 2750 geldi",
+    "bıçak kısa geldi takamıyorum",
+    "gergi payı yetmiyor bıçak uzun",
+    "bıçak makineye takılmıyor"
    ]
   },
   {
    "id": "stalling",
    "symptom_tr": "Bıçak kesimde duruyor / makine zorlanıyor",
-   "source": "TestereStore eki (Starrett / LENOX sorun giderme tabloları)",
+   "source": "TestereStore eki (STORE-GUIDES; LENOX-GUIDE / ROENTGEN-GUIDE / WIKUS-FAILURES sorun giderme tabloları); OLSON-RIKON (4)",
+   "source_ids": [
+    "LENOX-GUIDE",
+    "OLSON-RIKON",
+    "STORE-GUIDES"
+   ],
+   "family": "machine",
+   "priority": 36,
    "causes_and_actions": [
     {
      "cause_tr": "İlerleme veya kesme basıncı çok yüksek",
@@ -586,38 +2100,418 @@
      "action_tr": "Bıçağı değiştirin.",
      "order": 5
     }
+   ],
+   "patterns": [
+    "(?:bica[kg]|serit|testere|band\\b)\\w*\\s*(?:\\w+\\s+){0,2}(?:duruyor|durdu|takiliyor|donmuyor)",
+    "(?:makine|motor)\\w*\\s*(?:\\w+\\s+){0,2}(?:zorlan\\w*|bogul\\w*|duruyor|durdu)",
+    "(?:termik|sigorta)\\w* at\\w*",
+    "kesimde duruyor"
+   ],
+   "examples": [
+    "Makine zorlanıyor, kesim yavaşladı",
+    "Bıçak kesimde takılıyor",
+    "makinede arıza var bıçak dönmüyor",
+    "motor boğuluyor"
    ]
   },
   {
-   "id": "back_edge_cracks",
-   "symptom_tr": "Bıçak sırtında çatlaklar",
-   "source": "TestereStore eki (Starrett / LENOX sorun giderme tabloları)",
+   "id": "slow_cutting",
+   "symptom_tr": "Kesim çok yavaş / bıçak kesmiyor",
+   "source": "STORE-GUIDES, OLSON-RIKON (10), LENOX-GUIDE",
+   "source_ids": [
+    "STORE-GUIDES",
+    "OLSON-RIKON",
+    "LENOX-GUIDE"
+   ],
+   "family": "machine",
+   "priority": 37,
    "causes_and_actions": [
     {
-     "cause_tr": "Bıçak sırtı kasnak flanşına veya sırt desteğine sürtüyor",
-     "action_tr": "Kasnak eğimini ve sırt destek (baskı) bloklarını ayarlayın.",
+     "cause_tr": "Bıçak ters takılmış",
+     "action_tr": "Dişlerin kesme yönüne baktığını kontrol edin.",
      "order": 1
     },
     {
-     "cause_tr": "Kılavuz rulmanları veya baskı blokları fazla sıkı",
-     "action_tr": "Kılavuzları bıçağı sıkıştırmayacak şekilde ayarlayın.",
+     "cause_tr": "Dişler körelmiş",
+     "action_tr": "Bıçağı değiştirin.",
      "order": 2
     },
     {
-     "cause_tr": "Bıçak gerginliği çok yüksek",
-     "action_tr": "Gerginliği makine kılavuzundaki değere düşürün.",
+     "cause_tr": "Diş kesite göre çok sık",
+     "action_tr": "Daha seyrek diş seçin.",
      "order": 3
     },
     {
-     "cause_tr": "İlerleme çok yüksek",
-     "action_tr": "İlerlemeyi azaltın.",
+     "cause_tr": "İlerleme çok düşük",
+     "action_tr": "İlerlemeyi talaş oluşacak düzeye çıkarın.",
      "order": 4
     },
     {
-     "cause_tr": "Kasnak çapı bıçak kalınlığına göre küçük",
-     "action_tr": "Makine etiketindeki bıçak kalınlığını kullanın; daha kalın bıçak takmayın.",
+     "cause_tr": "Bıçak kasnakta kayıyor (gerginlik düşük)",
+     "action_tr": "Gerginliği makine kılavuzundaki değere getirin.",
      "order": 5
+    },
+    {
+     "cause_tr": "Malzeme bıçak türüne göre fazla sert",
+     "action_tr": "Sertleştirilmiş malzemede karbür uçlu bıçak gerekir.",
+     "order": 6
     }
+   ],
+   "patterns": [
+    "yavas\\s*kes\\w*",
+    "kesmiyor(?! ?mu)\\b",
+    "kesmez oldu",
+    "kesim\\s*(?:\\w+\\s+){0,2}(?:yavasladi|uzun suruyor)",
+    "kesim\\s*suresi\\s*(?:uz|art)\\w*",
+    "ilerlemiyor"
+   ],
+   "examples": [
+    "Şerit testere bıçağım neden yavaş kesiyor?",
+    "Testere kesmiyor artık",
+    "Bıçak kesmiyor kayıyor sadece",
+    "kesim süresi uzadı"
+   ]
+  },
+  {
+   "id": "machine_side_wear",
+   "symptom_tr": "Makine kaynaklı arıza: kasnak, rulman, kılavuz veya kafa hareketi",
+   "source": "WIKUS-FAILURES, LENOX-GUIDE, ROENTGEN-GUIDE (makine kontrol formu), KARTES-BLOG",
+   "source_ids": [
+    "WIKUS-FAILURES",
+    "LENOX-GUIDE",
+    "ROENTGEN-GUIDE",
+    "KARTES-BLOG"
+   ],
+   "family": "machine",
+   "priority": 38,
+   "causes_and_actions": [
+    {
+     "cause_tr": "Kasnak yüzeyi bozuk, konik, salgılı veya rulman boşluklu",
+     "action_tr": "Kasnağı ve rulmanlarını onartın veya değiştirin.",
+     "order": 1
+    },
+    {
+     "cause_tr": "Kılavuz makaraları fazla sıkı, bıçağı yuvarlıyor",
+     "action_tr": "Makara boşluğunu düzeltin.",
+     "order": 2
+    },
+    {
+     "cause_tr": "Kılavuz elemanları aşınmış veya hizasız",
+     "action_tr": "Aşınan kılavuzu değiştirin, hizasını kontrol edin.",
+     "order": 3
+    },
+    {
+     "cause_tr": "Bıçak kılavuzlara fazla derin oturuyor",
+     "action_tr": "Dişlerin tamamı ve diş boşluğunun bir kısmı kılavuzun dışında kalmalı.",
+     "order": 4
+    },
+    {
+     "cause_tr": "Testere kafası sarsıntılı veya düzensiz iniyor",
+     "action_tr": "İniş (hidrolik/yay) sistemini makine servisine kontrol ettirin.",
+     "order": 5
+    },
+    {
+     "cause_tr": "Tezgâh veya mengene gönyesi bozuk, makine terazide değil",
+     "action_tr": "Gönyeyi ve makine düzlüğünü kontrol edin.",
+     "order": 6
+    },
+    {
+     "cause_tr": "Gerçek bant hızı göstergedekinden farklı",
+     "action_tr": "Bant hızını bir takometreyle ölçüp göstergeyle karşılaştırın.",
+     "order": 7
+    }
+   ],
+   "patterns": [
+    "kasnak\\w*\\s*(?:\\w+\\s+){0,2}(?:asin\\w*|bozul\\w*|salgi\\w*|yalpa\\w*|egril\\w*|catla\\w*)",
+    "kasnak (?:lastig|bandaj)\\w*\\s*(?:\\w+\\s+){0,2}(?:asin|bozul|yirtil|catla|gitti)\\w*",
+    "rulman\\w*\\s*(?:\\w+\\s+){0,2}(?:bozul\\w*|asin\\w*|dagil\\w*|ses\\w*|donmuyor|sikis\\w*|kilitl\\w*|bitmis|gitmis)",
+    "kilavuz\\w*\\s*(?:\\w+\\s+){0,2}(?:asin\\w*|bozul\\w*|(?:kiril(?!mayan|maz)\\w*|kirik\\w*|kirdi)|yipran\\w*|bosluk yap\\w*|oynuyor)",
+    "(?:kafa|kol)\\w*\\s*(?:\\w+\\s+){0,2}(?:sarsil\\w*|sarsintili|ziplayarak|ani dus\\w*|kendiliginden dus\\w*)",
+    "hidrolik\\w*\\s*(?:\\w+\\s+){0,2}(?:bozul|kacir|ariza|sorun)\\w*"
+   ],
+   "examples": [
+    "kasnak aşınmış galiba",
+    "kılavuz rulmanı dağıldı",
+    "kafa sarsıntılı iniyor",
+    "kasnak lastiği yırtıldı"
+   ]
+  },
+  {
+   "id": "coolant_not_reaching",
+   "symptom_tr": "Soğutma sıvısı gelmiyor veya kesim noktasına ulaşmıyor",
+   "source": "SUPPLIER-TROUBLESHOOT-2024, LENOX-GUIDE (10), ROENTGEN-GUIDE",
+   "source_ids": [
+    "SUPPLIER-TROUBLESHOOT-2024",
+    "LENOX-GUIDE",
+    "ROENTGEN-GUIDE"
+   ],
+   "family": "coolant",
+   "priority": 39,
+   "causes_and_actions": [
+    {
+     "cause_tr": "Nozul veya hortum tıkalı ya da yanlış yöne bakıyor",
+     "action_tr": "Temizleyin ve sıvıyı doğrudan kesim noktasına, dişlere yöneltin.",
+     "order": 1
+    },
+    {
+     "cause_tr": "Filtre veya elek tıkalı",
+     "action_tr": "Filtreyi temizleyin.",
+     "order": 2
+    },
+    {
+     "cause_tr": "Depo seviyesi düşük",
+     "action_tr": "Depoyu yalnızca suyla değil, doğru oranda hazırlanmış karışımla tamamlayın.",
+     "order": 3
+    },
+    {
+     "cause_tr": "Kılavuzlardan sıvı akmıyor",
+     "action_tr": "Kılavuz bölgesine de sıvı geldiğini kontrol edin; yetersiz akış gövdeyi aşındırır.",
+     "order": 4
+    }
+   ],
+   "patterns": [
+    "(?:sogutma|bor yag|emulsiyon|su|sivi)\\w*\\s*(?:\\w+\\s+){0,2}(?:gelmiyor|akmiyor|azaldi|ulasmiyor|cikmiyor|kesildi)",
+    "nozul\\w*\\s*(?:\\w+\\s+){0,2}tika\\w*",
+    "pompa\\w*\\s*(?:\\w+\\s+){0,2}(?:calismiyor|bozul\\w*|basmiyor)",
+    "filtre\\w*\\s*(?:\\w+\\s+){0,2}tikan\\w*"
+   ],
+   "examples": [
+    "soğutma sıvısı gelmiyor",
+    "nozul tıkandı",
+    "bor yağı akmıyor",
+    "pompa basmıyor"
+   ]
+  },
+  {
+   "id": "coolant_smell_bacteria",
+   "symptom_tr": "Soğutma sıvısı (bor yağı) kokuyor / bozuldu",
+   "source": "HSE-MWF-BACTERIA, BLASER-PH, BLASER-REFRACTOMETER",
+   "source_ids": [
+    "HSE-MWF-BACTERIA",
+    "BLASER-PH",
+    "BLASER-REFRACTOMETER"
+   ],
+   "family": "coolant",
+   "priority": 40,
+   "causes_and_actions": [
+    {
+     "cause_tr": "Bakteri üremiş",
+     "action_tr": "Daldırma lamıyla (dip-slide) haftalık kontrol edin; kirlilik yüksekse depoyu boşaltıp temizleyin ve yeni karışım hazırlayın.",
+     "order": 1
+    },
+    {
+     "cause_tr": "pH düşmüş veya konsantrasyon düşük",
+     "action_tr": "pH'ı test şeridiyle, oranı refraktometreyle ölçün; düşük pH koku ve korozyon yapar.",
+     "order": 2
+    },
+    {
+     "cause_tr": "Yüzeyde yabancı yağ (kızak/hidrolik yağı) birikmiş",
+     "action_tr": "Yüzeydeki yağı alın; kaçağın kaynağını bulun.",
+     "order": 3
+    }
+   ],
+   "patterns": [
+    "(?:sogutma|bor yag|emulsiyon|su|sivi|yag)\\w*\\s*(?:\\w+\\s+){0,3}(?:kokuyor|koku yap\\w*|kokmus|kokt\\w*|kokusu(?!z)\\w*|kokusmus|curu\\w*|kufl\\w*|bozuldu|bozulmus)",
+    "kotu koku\\w*",
+    "les gibi"
+   ],
+   "examples": [
+    "bor yağı kokuyor",
+    "soğutma suyu kokuşmuş",
+    "emülsiyon bozuldu kötü koku var"
+   ]
+  },
+  {
+   "id": "coolant_foam",
+   "symptom_tr": "Soğutma sıvısı köpürüyor",
+   "source": "BLASER-PH (A), BLASER-SNIPPET (C, doğrulanmadı)",
+   "source_ids": [
+    "BLASER-PH",
+    "BLASER-SNIPPET"
+   ],
+   "family": "coolant",
+   "priority": 41,
+   "causes_and_actions": [
+    {
+     "cause_tr": "pH çok yüksek",
+     "action_tr": "pH'ı test şeridiyle ölçün; sıvı üreticisinin önerdiği aralığa getirin.",
+     "order": 1
+    },
+    {
+     "cause_tr": "Konsantrasyon çok yüksek",
+     "action_tr": "Oranı refraktometreyle ölçün; yüksekse su değil, düşük oranlı karışımla düzeltin ve sıvı üreticisine danışın.",
+     "order": 2
+    },
+    {
+     "cause_tr": "Su çok yumuşak veya sıvı yüksek basınç/debiye uygun değil",
+     "action_tr": "Sıvı tedarikçinize su sertliği ve köpük önleyici konusunda danışın.",
+     "order": 3
+    }
+   ],
+   "patterns": [
+    "kopur(?:uyor|uyo|du|mus|me yap\\w*|me sorun\\w*|mesi)",
+    "kopuk (?:yapiyor|yapti|olusuyor|tasiyor|tasti)",
+    "kopuk tasmasi"
+   ],
+   "examples": [
+    "soğutma suyu köpürüyor",
+    "bor yağı köpük yapıyor",
+    "depo köpükten taşıyor köpük taşıyor"
+   ]
+  },
+  {
+   "id": "coolant_separation",
+   "symptom_tr": "Emülsiyon ayrışıyor / üstünde yağ toplanıyor / refraktometre bulanık",
+   "source": "BLASER-REFRACTOMETER, BLASER-PH (sertlik), LENOX-GUIDE",
+   "source_ids": [
+    "BLASER-REFRACTOMETER",
+    "BLASER-PH",
+    "LENOX-GUIDE"
+   ],
+   "family": "coolant",
+   "priority": 42,
+   "causes_and_actions": [
+    {
+     "cause_tr": "Emülsiyon kararsız veya yabancı yağla yüklü (refraktometrede çizgi bulanık görünür)",
+     "action_tr": "Yüzeydeki yağı alın; sıvı tedarikçinize danışın.",
+     "order": 1
+    },
+    {
+     "cause_tr": "Su sertliği artmış (buharlaşma ile sert su eklendikçe)",
+     "action_tr": "Mümkünse yumuşatılmış/arıtılmış su kullanın; tedarikçinize danışın.",
+     "order": 2
+    },
+    {
+     "cause_tr": "Karışım yanlış sırayla hazırlanmış (konsantreye su eklenmiş)",
+     "action_tr": "Önce suyu koyun, konsantreyi suya ekleyerek karıştırın.",
+     "order": 3
+    }
+   ],
+   "patterns": [
+    "(?:bor yag|emulsiyon|sogutma\\w* sivi|sivi)\\w*\\s*(?:\\w+\\s+){0,3}(?:ayris\\w*|kesil(?:di|mis)|kaymak\\w*|topaklan\\w*)",
+    "(?:ustun\\w*|yuzey\\w*)\\s*(?:\\w+\\s+){0,2}yag (?:birik\\w*|topla\\w*|tabaka\\w*)",
+    "refraktometre\\w*\\s*(?:\\w+\\s+){0,3}(?:bulanik|okunmuyor|net degil|net gorunmuyor)"
+   ],
+   "examples": [
+    "bor yağı ayrıştı",
+    "emülsiyonun üstünde yağ toplanıyor",
+    "refraktometrede çizgi bulanık okunuyor"
+   ]
+  },
+  {
+   "id": "coolant_corrosion",
+   "symptom_tr": "Makine veya kesilen parçalar paslanıyor",
+   "source": "BLASER-PH, LENOX-GUIDE, ROENTGEN-GUIDE",
+   "source_ids": [
+    "BLASER-PH",
+    "LENOX-GUIDE",
+    "ROENTGEN-GUIDE"
+   ],
+   "family": "coolant",
+   "priority": 43,
+   "causes_and_actions": [
+    {
+     "cause_tr": "Konsantrasyon düşük (karışımda su fazla)",
+     "action_tr": "Oranı refraktometreyle ölçün; sıvı üreticisinin aralığına getirin.",
+     "order": 1
+    },
+    {
+     "cause_tr": "pH düşük",
+     "action_tr": "pH'ı ölçün; düşük pH korozyona yol açar.",
+     "order": 2
+    },
+    {
+     "cause_tr": "Depoya yalnızca su eklenmiş",
+     "action_tr": "Eksilen sıvıyı hazır karışımla tamamlayın.",
+     "order": 3
+    }
+   ],
+   "patterns": [
+    "(?:makine|parca|tezgah|mengene|kizak|malzeme|masa|tabla)\\w*\\s*(?:\\w+\\s+){0,3}(?:paslan(?:di|mis|iyor|iyo|mistir)|pas (?:tuttu|tutmus|tutuyor|yapti|yapmis|yapiyor|lekesi\\w*)|\\bpasli\\b|paslanma sorun\\w*)"
+   ],
+   "examples": [
+    "makine paslanıyor",
+    "kesilen parçalar pas yapıyor",
+    "tezgah ve mengene paslandı"
+   ]
+  },
+  {
+   "id": "coolant_skin_irritation",
+   "symptom_tr": "Soğutma sıvısıyla çalışırken ciltte kaşıntı, kızarıklık veya solunum yakınması",
+   "source": "HSE-MWF-ABOUT, BLASER-PH, HSE-MWF-BACTERIA",
+   "source_ids": [
+    "HSE-MWF-ABOUT",
+    "BLASER-PH",
+    "HSE-MWF-BACTERIA"
+   ],
+   "family": "coolant",
+   "priority": 44,
+   "causes_and_actions": [
+    {
+     "cause_tr": "Sıvıyla uzun süreli cilt teması",
+     "action_tr": "Sıvıya dayanıklı eldiven ve kolluk kullanın, iş sonrası yıkanın; yakınma sürüyorsa işyeri hekimine başvurun.",
+     "order": 1
+    },
+    {
+     "cause_tr": "pH yüksek veya sıvı bozulmuş/bakteri yüklü",
+     "action_tr": "pH'ı ve bakteri düzeyini kontrol edin; gerekirse depoyu boşaltıp temizleyin.",
+     "order": 2
+    },
+    {
+     "cause_tr": "Sıvı buharı/sisi soluluyor",
+     "action_tr": "Sis oluşumunu azaltın, havalandırma veya emiş kullanın; öksürük ve nefes darlığında hekime başvurun.",
+     "order": 3
+    }
+   ],
+   "patterns": [
+    "(?:cilt|elim|ellerim|eller|kol\\w*|deri\\w*)\\s*(?:\\w+\\s+){0,3}(?:kasin\\w*|kizar\\w*|tahris\\w*|yara\\w*|egzama|alerji\\w*|dokuntu\\w*|kabar\\w*)",
+    "\\begzama",
+    "dermatit",
+    "kasinti\\w*",
+    "alerji yap\\w*"
+   ],
+   "examples": [
+    "bor yağı elimi kaşındırıyor ellerim kızardı",
+    "ciltte kaşıntı yaptı",
+    "egzama oldu bor yağından"
+   ]
+  },
+  {
+   "id": "blade_rust",
+   "symptom_tr": "Bıçak paslandı",
+   "source": "WIKUS-FAQ, AIMS-GUIDE (B), ROENTGEN-GUIDE",
+   "source_ids": [
+    "WIKUS-FAQ",
+    "AIMS-GUIDE",
+    "ROENTGEN-GUIDE"
+   ],
+   "family": "coolant",
+   "priority": 45,
+   "causes_and_actions": [
+    {
+     "cause_tr": "Nemli ortamda veya ambalajsız saklanmış",
+     "action_tr": "Yedek bıçakları kapalı ambalajında, kuru ve serin yerde saklayın; ambalajı kullanmadan hemen önce açın.",
+     "order": 1
+    },
+    {
+     "cause_tr": "Üzerinde soğutma sıvısı kalmış halde bekletilmiş",
+     "action_tr": "Sökülen bıçağı silip kurulayın; uzun süre bekleyecekse ince bir koruyucu yağ filmi sürün.",
+     "order": 2
+    },
+    {
+     "cause_tr": "Pas derin çukurlar oluşturmuş",
+     "action_tr": "Gövdede veya diş diplerinde derin pas çukuru ya da çatlak varsa bıçağı kullanmayın.",
+     "order": 3
+    }
+   ],
+   "patterns": [
+    "(?:bica[kg]|serit|testere|band\\b)\\w*\\s*(?:\\w+\\s+){0,3}(?:paslan(?:di|mis|iyor|iyo|mistir)|pas (?:tuttu|tutmus|tutuyor|yapti|yapmis|yapiyor|lekesi\\w*)|\\bpasli\\b|paslanma sorun\\w*)",
+    "yedek\\w*\\s*(?:\\w+\\s+){0,3}(?:paslan(?:di|mis|iyor|iyo|mistir)|pas (?:tuttu|tutmus|tutuyor|yapti|yapmis|yapiyor|lekesi\\w*)|\\bpasli\\b|paslanma sorun\\w*)"
+   ],
+   "examples": [
+    "bıçak paslandı",
+    "yedek bıçaklar pas tutmuş",
+    "şeritler depoda paslanmış"
    ]
   }
  ]

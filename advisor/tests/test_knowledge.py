@@ -65,6 +65,19 @@ def test_grade_without_question_goes_to_funnel(fd):
     assert ask(fd, "C45 mil 40 mm") is None
 
 
+def test_detect_grades_returns_all_in_text_order():
+    assert [g["id"] for g in K.detect_grades(norm("st 52 ile st 37 farkı"))] == ["s355", "s235"]
+    assert [g["id"] for g in K.detect_grades(norm("AISI 316 ile 304 farkı"))] == ["ss_austenitic"]
+    assert K.detect_grades(norm("27x0.9 bıçak")) == []
+
+
+def test_alias_grade_answer_only_for_generic_names():
+    text = K.alias_grade_answer(norm("inox nedir"), lambda lbl, p: f"[{lbl}]({p})")
+    assert text and "paslanmaz" in text and K.GUIDE_GRADES in text
+    assert K.alias_grade_answer(norm("st37 nedir"), lambda lbl, p: p) is None
+    assert K.detect_grade(norm("inox boru")) is None            # huninin kalite tespiti değişmedi
+
+
 def test_funnel_sets_family_from_grade_and_says_it_once():
     e = RulesEngine(RULES)
     session = ConversationalSession("g1", e)

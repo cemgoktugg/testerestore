@@ -61,6 +61,42 @@ def detect_grade(n: str) -> Optional[Dict[str, Any]]:
     return None
 
 
+def detect_grades(n: str) -> List[Dict[str, Any]]:
+    """Metindeki TÜM malzeme kaliteleri, metindeki geçiş sırasıyla ("st 37 ile st 52 farkı")."""
+    found = []
+    for g in GRADES:
+        pos = [m.start() for r in g["_re"] for m in [r.search(n)] if m]
+        if pos:
+            found.append((min(pos), g))
+    return [g for _, g in sorted(found, key=lambda x: x[0])]
+
+
+# Kalite numarası olmadan sorulan genel adlar ("inox nedir"). Yalnızca ön masanın
+# bilgi cevabında kullanılır; huni bunları kendi sorusuyla netleştirir.
+_ALIASES = [
+    {
+        "id": "inox",
+        "re": re.compile(r"\binox\b"),
+        "answer_tr": (
+            "**Inox**, paslanmaz çeliğin yaygın adıdır; bıçak seçiminde **paslanmaz** grubunda "
+            "değerlendirilir. Yaygın kaliteler arasında AISI 304 / 1.4301 ve 316 / 1.4401 gibi östenitik "
+            "paslanmazlar bulunur; bunlar kesim sırasında sertleşmeye yatkındır: bıçağı malzeme üzerinde boşta "
+            "sürtmeyin, sürekli ve yeterli ilerlemeyle, soğutma sıvısı kullanarak kesin. Kaliteyi (ör. 304, 316, "
+            "430) biliyorsanız yazın."
+        ),
+    },
+]
+
+
+def alias_grade_answer(n: str, link: Callable[[str, str], str]) -> Optional[str]:
+    """Genel malzeme adı sorusu ("inox nedir") için sabit cevap; tanınmazsa None."""
+    for a in _ALIASES:
+        if a["re"].search(n):
+            return (a["answer_tr"] + " Eşdeğer kaliteler ve bıçak seçimi: "
+                    + link("çelik kalite eşdeğerleri rehberi", GUIDE_GRADES) + ".")
+    return None
+
+
 def grade_line(g: Dict[str, Any]) -> str:
     """Hunide tek satırlık bilgi: "C45 … → karbon çeliği grubunda değerlendirdim."""
     fam = FAMILY_TR.get(g.get("family") or "")
