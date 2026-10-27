@@ -31,6 +31,7 @@ from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional, Tuple
 
 from llm import knowledge
+from llm.kb import KnowledgeBase, default_kb
 from llm.store_client import StoreClient
 
 SITE_URL = os.environ.get("ADVISOR_SITE_URL", "https://testerestore.com").rstrip("/")
@@ -161,7 +162,7 @@ _OFF_TOPIC = (r"\b(siir|sarki|hikaye|masal|fikra|hava durumu|hava nasil|futbol|b
               r"sohbet edelim|fikra anlat)")
 # Not: "bıçak" çekimde "bıçağım/bıçağı" olur (k→ğ); sade biçimde "bicag".
 _DOMAIN = (r"serit|testere|bica[kg]|tpi|\bdis|kesim|kesiyor|kesece|kesmek|makine|metal|celik|"
-           r"paslanmaz|aluminyum|dokum|profil|boru|\bmil\b|lama|\bsac\b|kaynak|bimetal|"
+           r"paslanmaz|aluminyum|dokum|profil|boru|\bmil\b|\blama\b|\bsac\b|kaynak|bimetal|"
            r"bi-metal|m42|m51|karbur|siparis|kargo|fiyat|stok|hazir|odeme|iade|fatura|\d+\s*mm")
 # Kimlik / insan desteği: "sen kimsin", "bot musun", "canlı destek"
 _IDENTITY = (r"\bkimsin|kiminle konusuyorum|\binsan mi(sin|siniz)?\b|gercek (bir )?(insan|kisi)|"
@@ -189,7 +190,7 @@ _CONTACT = (r"telefon|iletisim|ulas(abilir|mak|irim|alim|abilece)|adresiniz|nerd
 _PRICE = r"fiyat|kac para|kac tl|kac lira|ne kadar|ucret|tutar|maliyet|kaca"
 _STOCK = r"hazir|stok|elinizde|mevcut mu|var mi|bulunuyor mu"
 _SELECTION = (r"paslanmaz|karbon|celik|aluminyum|dokum|pirinc|bakir|titanyum|\bdolu\b|"
-              r"\bmil\b|profil|boru|lama|\bsac\b|kutu|kesiyorum|keseceg|makinem|modeli")
+              r"\bmil\b|profil|boru|\blama\b|\bsac\b|kutu|kesiyorum|keseceg|makinem|modeli")
 
 # Arıza belirtileri (RAG v2 diagnostics.py kalıpları) → arıza tablosu id
 _SYMPTOMS: List[Tuple[str, str]] = [
@@ -230,6 +231,36 @@ _BASELINE_CHECKS = [
      "Fırçanın diş boşluklarını temizlediğini doğrulayın; tıkalı diş boşluğu hem sapma hem diş kırılması yapar."),
 ]
 
+# Mesaj soru mu? (huni cevapları — "Var", "40", "Paslanmaz" — kütüphaneye gitmesin)
+_ASKS = (r"\?|\b(nasil|neden|niye|nedir|ne zaman|ne demek|ne ise|hangi|hangisi|kac|mi|mu|misiniz|musunuz|"
+         r"miyim|muyum|olur mu|gerekir mi|yapilir|yapmali|nelere|ne yapmali|ne yapayim|farki)\b")
+
+# Kütüphane bağlantıları için okunur adlar
+_LINK_LABELS = {
+    "/rehber/serit-testere-tpi-secimi": "TPI seçimi rehberi",
+    "/rehber/m42-mi-m51-mi": "M42 mi M51 mi rehberi",
+    "/rehber/serit-testere-boyu-nasil-olculur": "bıçak boyu rehberi",
+    "/rehber/celik-kalite-esdegerleri-bicak-secimi": "çelik kalite eşdeğerleri rehberi",
+    "/rehber/serit-testere-arizalari-ve-cozumleri": "arızalar ve çözümleri rehberi",
+    "/rehber/serit-testere-kirilma-nedenleri": "kırılma nedenleri rehberi",
+    "/rehber/serit-testere-gerginlik-hiz-sogutma": "gerginlik, hız ve soğutma rehberi",
+    "/rehber/serit-testere-rodaj-ve-bakim": "rodaj ve bakım rehberi",
+    "/rehber/ahsap-serit-testere-secimi": "ahşap bıçak seçimi rehberi",
+    "/rehber/et-kemik-serit-testere-secimi": "et-kemik bıçak seçimi rehberi",
+    "/rehber/sunger-kesim-bicagi-secimi": "sünger kesim bıçağı rehberi",
+    "/products/bimetal-premium": "Bi-Metal M42 Premium",
+    "/products/bimetal-m51": "Bi-Metal M51 Endüstriyel",
+    "/products/carbide-ultimate": "Karbür Uçlu Şerit Testere",
+    "/products/woodcut-classic": "Ahşap Kesim Şerit Testere",
+    "/products/hijyenik-et-kemik-pro": "Hijyenik Et-Kemik Şerit Testere",
+    "/products/sunger-tekstil-pro": "Sünger-Tekstil Şerit Testere",
+    "/hazir-urunler": "hazır boy ürünler",
+    "/iletisim": "İletişim",
+    "/sss": "Sık sorulan sorular",
+    "/yasal/iade-ve-cayma": "İade ve Cayma Politikası",
+    "/yasal/kvkk-aydinlatma-metni": "KVKK Aydınlatma Metni",
+}
+
 _QTY_DISCOUNT_NOTE = "Adet indirimi sepette uygulanır: 3+ adet %5, 5+ adet %10, 10+ adet %15."
 
 
@@ -254,9 +285,10 @@ class FrontDeskReply:
 
 
 class FrontDesk:
-    def __init__(self, store: Optional[StoreClient] = None):
+    def __init__(self, store: Optional[StoreClient] = None, kb: Optional[KnowledgeBase] = None):
         self.store = store or StoreClient()
         self.trouble = _load_troubleshooting()
+        self.kb = kb if kb is not None else _safe_kb()
 
     # ------------------------------------------------------------------ #
     # Ana giriş
@@ -450,6 +482,38 @@ class FrontDesk:
             f"**İletişim:** {link('İletişim sayfamızdan', '/iletisim')} mesaj gönderebilir ya da sayfanın sağ "
             "altındaki WhatsApp butonuyla bize yazabilirsiniz."
         )
+
+    # ------------------------------------------------------------------ #
+    # Bilgi kütüphanesi
+    # ------------------------------------------------------------------ #
+
+    def kb_reply(self, router, message: str) -> Optional[FrontDeskReply]:
+        """
+        Ön masanın deterministik niyetleri susunca bilgi kütüphanesi (llm/kb_router).
+        Yalnızca soru biçimindeki mesajlar; kişiye özel bıçak/ölçü seçimi huniye kalır.
+        """
+        n = norm(message)
+        if router is None or not n or not _any(_ASKS, n) or wants_selection(n):
+            return None
+        hits = [h for h in router.route(message)
+                # Canlı veri isteyen kayıtlar (fiyat/stok) kendi akışlarında cevaplanır
+                if not set(h.entry.requires_data) & {"price_api", "stock_api"}]
+        if not hits:
+            return None
+        kinds = [f"kb:{h.entry.id}" for h in hits]
+        text = "\n\n".join(self._kb_text(h.entry) for h in hits)
+        hybrid = _any(_SELECTION, n)
+        if not hybrid:
+            text += "\n\n" + self._soft_continue(kinds)
+        return FrontDeskReply(text, final=not hybrid, kinds=kinds)
+
+    @staticmethod
+    def _kb_text(entry) -> str:
+        text = entry.answer_tr.strip()
+        links = [(_LINK_LABELS[p], p) for p in entry.links if p in _LINK_LABELS and p not in text]
+        if links:
+            text += "\n\nAyrıntılı bilgi: " + ", ".join(link(lbl, p) for lbl, p in links[:3]) + "."
+        return text
 
     @staticmethod
     def _identity(n: str) -> str:
@@ -732,6 +796,21 @@ class FrontDesk:
             text = self._stock_answer(session, n + " hazir")
             return FrontDeskReply(text + "\n\n" + self._soft_continue(["stock"]), final=True,
                                   kinds=["stock"])
+        return None
+
+
+def wants_selection(n: str) -> bool:
+    """Kişiye özel bıçak/ölçü önerisi isteği (malzeme/kesit + ölçü veya 'hangi bıçak') → huni."""
+    if not _any(_SELECTION, n):
+        return False
+    return bool(re.search(r"\d", n)) or _any(
+        r"hangi (bica[kg]|serit|testere|urun|model|tpi|dis)|ne (almal|onerir)|tavsiye|oneri|oner", n)
+
+
+def _safe_kb() -> Optional[KnowledgeBase]:
+    try:
+        return default_kb()
+    except Exception:   # kütüphane okunamazsa ön masa eskisi gibi çalışır
         return None
 
 

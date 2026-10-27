@@ -43,6 +43,7 @@ COPY llm/          ./llm/
 COPY prompts/      ./prompts/
 COPY web/          ./web/
 COPY docker/       ./docker/
+COPY knowledge/    ./knowledge/
 COPY rules.json    ./rules.json
 COPY wsgi.py       ./wsgi.py
 

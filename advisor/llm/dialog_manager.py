@@ -24,6 +24,7 @@ import re
 from typing import Any, Dict, List, Optional
 
 from llm import knowledge, tpi_refine
+from llm.kb import KnowledgeBase
 from llm.front_desk import norm
 from llm.answer_mapper import AnswerMapper
 
@@ -82,6 +83,19 @@ _OFFTOPIC_SYSTEM = (
 )
 
 
+_GROUNDED_SYSTEM = (
+    "Sen TestereStore'un yapay zekâ asistanısın; kullanıcıya 'siz' diye hitap edersin.\n\n"
+    "GÖREVİN: Kullanıcının sorusunu YALNIZCA aşağıda verilen bilgi kütüphanesi kayıtlarına "
+    "dayanarak kısa ve net cevapla.\n\n"
+    "KURALLAR:\n"
+    "- Kayıtlarda olmayan sayı, ölçü, TPI, fiyat, süre veya ürün adı YAZMA.\n"
+    "- Kayıtlar soruyu karşılamıyorsa bunu açıkça söyle ve İletişim sayfasından ya da "
+    "WhatsApp'tan bize yazmalarını öner; tahmin yürütme.\n"
+    "- Yalnızca TestereStore ürünlerini an; başka marka veya seri adı verme.\n"
+    "- Teslim süresi verme. Garanti veya üstünlük iddiası yazma.\n"
+    "- En fazla 5 cümle ya da kısa bir liste. Türkçe."
+)
+
 _POST_REC_SYSTEM = (
     "Sen TestereStore'un şerit testere uzmanısın; kullanıcıya 'siz' diye hitap "
     "edersin. Kullanıcıya zaten bir öneri "
@@ -97,7 +111,7 @@ class DialogManager:
     """Kural motoru güdümlü konuşma yöneticisi."""
 
     def __init__(self, openai_client, api_key: str, model: Optional[str] = None,
-                 machine_db: Any = None, store: Any = None):
+                 machine_db: Any = None, store: Any = None, kb: Optional[KnowledgeBase] = None):
         """
         Args:
             openai_client: Metin üretimi için OpenAIClient (retry'lı)
@@ -109,6 +123,7 @@ class DialogManager:
         self.openai_client = openai_client
         self.mapper = AnswerMapper(api_key=api_key, model=model, machine_db=machine_db)
         self.store = store
+        self.kb = kb
 
     # ==================================================================
     # ANA TUR DÖNGÜSÜ
@@ -235,6 +250,27 @@ class DialogManager:
                 mapping.values[field] = bucket
                 engine.update_state(field, bucket)
 
+    def _grounded_answer(self, session, message: str) -> Optional[str]:
+        """
+        Kütüphaneden en ilgili 3 kayıtla sınırlı LLM cevabı. Kayıtlarda geçmeyen
+        sayıyı içeren cümle atılır (uydurma ölçü/TPI müşteriye ulaşmaz).
+        """
+        if self.kb is None or not self.kb.entries:
+            return None
+        hits = [h for h in self.kb.search(message, k=3) if h.score >= KB_GROUND_MIN_SCORE]
+        if not hits:
+            return None
+        snippets = []
+        for h in hits:
+            facts = "; ".join(f.get("claim_tr", "") for f in h.entry.facts[:6] if f.get("claim_tr"))
+            snippets.append(f"[{h.entry.title_tr}]\n{h.entry.answer_tr}" + (f"\nOlgular: {facts}" if facts else ""))
+        corpus = "\n\n".join(snippets)
+        answer = self._llm(_GROUNDED_SYSTEM, f"Bilgi kütüphanesi kayıtları:\n{corpus}\n\nKullanıcının sorusu: {message}",
+                           history=session.conversation_history[-4:])
+        if not answer:
+            return None
+        return _keep_supported_numbers(answer, corpus) or None
+
     @staticmethod
     def _apply_grade(session, message: str, mapping) -> Optional[str]:
         grade = knowledge.detect_grade(norm(message))
@@ -272,13 +308,17 @@ class DialogManager:
 
         # Konu dışı soru sorulduysa önce ona cevap ver
         if mapping.intent == "OFF_TOPIC" and not mapping.has_values:
-            answer = self._llm(
-                _OFFTOPIC_SYSTEM,
-                message,
-                history=session.conversation_history[-6:],
-            )
-            if answer:
-                parts.append(self._strip_fabrications(answer, allow=False))
+            grounded = self._grounded_answer(session, message)
+            if grounded:
+                parts.append(grounded)
+            else:
+                answer = self._llm(
+                    _OFFTOPIC_SYSTEM,
+                    message,
+                    history=session.conversation_history[-6:],
+                )
+                if answer:
+                    parts.append(self._strip_fabrications(answer, allow=False))
 
         # Model adı birden çok makineye uyuyorsa TAHMİN ETME, sor.
         # Aynı model adını 102 grup paylaşıyor ve 61'inde bıçak ölçüleri
@@ -575,3 +615,22 @@ class DialogManager:
                 continue
             kept.append(sentence)
         return " ".join(kept).strip()
+
+
+# Kütüphaneye dayalı LLM cevabı için en düşük arama puanı (llm/kb.py, kosinüs 0–1)
+KB_GROUND_MIN_SCORE = 0.2
+
+_NUMBER = re.compile(r"\d+(?:[.,]\d+)?")
+
+
+def _keep_supported_numbers(text: str, corpus: str) -> str:
+    """Kütüphane metninde geçmeyen sayıyı taşıyan cümleleri at."""
+    known = {n.replace(",", ".") for n in _NUMBER.findall(corpus)}
+    kept = []
+    for sentence in re.split(r"(?<=[.!?])\s+", text.strip()):
+        nums = {n.replace(",", ".") for n in _NUMBER.findall(sentence)}
+        if nums - known:
+            logger.warning(f"Kütüphanede olmayan sayı içeren cümle atıldı: {sentence[:80]}")
+            continue
+        kept.append(sentence)
+    return " ".join(kept).strip()

@@ -268,9 +268,11 @@ def _token_counters():
     try:
         client = getattr(chat_engine, "openai_client", None)
         mapper = getattr(getattr(chat_engine, "dialog_manager", None), "mapper", None)
+        router = getattr(chat_engine, "kb_router", None)
+        parts = (client, mapper, router)
         return (
-            int(getattr(client, "total_prompt_tokens", 0) or 0) + int(getattr(mapper, "total_prompt_tokens", 0) or 0),
-            int(getattr(client, "total_completion_tokens", 0) or 0) + int(getattr(mapper, "total_completion_tokens", 0) or 0),
+            sum(int(getattr(x, "total_prompt_tokens", 0) or 0) for x in parts),
+            sum(int(getattr(x, "total_completion_tokens", 0) or 0) for x in parts),
         )
     except Exception:
         return (0, 0)

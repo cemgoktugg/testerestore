@@ -130,6 +130,8 @@ from llm.unknown_questions_handler import UnknownQuestionsHandler, process_ai_re
 from llm.dialog_manager import DialogManager
 from llm.front_desk import FrontDesk
 from llm.store_client import StoreClient
+from llm.kb import default_kb
+from llm.kb_router import KnowledgeRouter
 
 # RAG Engine is optional (requires chromadb)
 try:
@@ -247,6 +249,12 @@ class ConversationalEngine:
         # Mağaza API'si (fiyat, hazır stok, satılan diş adımları) — ön masa ve
         # huni aynı istemciyi (ve önbelleği) paylaşır.
         store = StoreClient()
+        # Bilgi kütüphanesi (advisor/knowledge) — ön masa ve huni paylaşır
+        try:
+            kb = default_kb()
+        except Exception as exc:
+            logger.warning(f"Bilgi kütüphanesi yüklenemedi: {exc}")
+            kb = None
 
         # Konusmayi kural motoru yonetir; LLM sadece esleme ve dogal dil uretir
         self.dialog_manager = DialogManager(
@@ -255,11 +263,14 @@ class ConversationalEngine:
             model=self.model,
             machine_db=self.machine_db,
             store=store,
+            kb=kb,
         )
         
         # Ön masa: huniden ÖNCE müşterinin sorduğunu cevaplar (mağaza, fiyat,
         # stok, arıza, metal dışı, konu dışı). LLM kullanmaz.
-        self.front_desk = FrontDesk(store=store)
+        self.front_desk = FrontDesk(store=store, kb=kb)
+        # Kütüphane yönlendiricisi: hızlı arama + küçük modelle SEÇİM (cevap yazmaz)
+        self.kb_router = KnowledgeRouter(kb, client=getattr(self.dialog_manager.mapper, "client", None))
 
         # RAG engine (optional)
         self.rag_engine: Optional[RAGEngine] = None
@@ -361,6 +372,20 @@ class ConversationalEngine:
             return self._front_desk_payload(session, front)
 
         # ------------------------------------------------------------------
+        # BİLGİ KÜTÜPHANESİ -> ön masanın bilmediği bilgi sorusu
+        # ------------------------------------------------------------------
+        if front is None:
+            try:
+                front = self.front_desk.kb_reply(self.kb_router, message)
+            except Exception as e:
+                logger.error(f"knowledge route error: {e}", exc_info=True)
+                front = None
+            if front and front.final:
+                session.add_message("user", message)
+                session.add_message("assistant", front.text)
+                return self._front_desk_payload(session, front, route="kb")
+
+        # ------------------------------------------------------------------
         # URUN SECIMI + SOHBET -> kural motoru güdümlü diyalog
         # ------------------------------------------------------------------
         try:
@@ -398,7 +423,7 @@ class ConversationalEngine:
 
         return result
 
-    def _front_desk_payload(self, session, front) -> Dict:
+    def _front_desk_payload(self, session, front, route: str = "front_desk") -> Dict:
         """Ön masa cevabını /api/chat sözleşmesine çevir (öneri kartı tekrarlanmaz)."""
         engine = session.rules_engine
         next_q = engine.get_next_question()
@@ -415,7 +440,7 @@ class ConversationalEngine:
             "is_complete": engine.is_complete(),
             "extracted_fields": {},
             "front_desk": front.kinds,
-            "route": "front_desk",
+            "route": route,
         }
 
     def _chat_with_rag(self, session, message: str, stream: bool = False):
