@@ -36,7 +36,11 @@ ve veya ile icin bir bu su o da de mi mu miyim misiniz musunuz ne nasil neden ni
 ben biz siz sen bana bize size benim bizim sizin var yok acaba lutfen merhaba selam tesekkurler
 olur olursa olarak gibi kadar daha cok az en her hic ama fakat yani zaten sadece hem ise eger
 kullan kullanmak yapmak yapilir olmali gerek gerekir lazim istiyorum isterim
+demek demektir nedemek anlami anlama anlamina nedir neymis
 """.split())
+
+# "6/10", "1,4/2" gibi diş yazımı → TPI kavramı (terim kaydı ve TPI kayıtları bulunsun)
+_TPI_NOTATION = re.compile(r"^\d{1,2}(?:[.,]\d{1,2})?/\d{1,2}(?:[.,]\d{1,2})?$")
 
 # Kök kesilince başka sözcükle çakışanlar tam tutulur ("paslanmaz" ≠ "paslanır")
 _PROTECT = ("paslanmaz", "sertles", "sogutma", "aluminyum")
@@ -65,6 +69,7 @@ def _words(text: str) -> List[str]:
 
 def _features(text: str) -> Tuple[Counter, Counter]:
     words = _words(text)
+    words += ["tpi" for w in words if _TPI_NOTATION.match(w)]
     stems = Counter(_stem(w) for w in words)
     grams: Counter = Counter()
     for w in words:

@@ -261,7 +261,8 @@ def test_identity_question(fd, msg):
 def test_human_request_gets_contact_routes(fd, msg):
     r = ask(fd, msg)
     assert r and r.kinds == ["identity"]
-    assert "/iletisim" in r.text and "WhatsApp" in r.text
+    # WhatsApp butonu yer tutucu numaraya gidiyor (OD-06): yalnız İletişim sayfası önerilir
+    assert "/iletisim" in r.text and "WhatsApp" not in r.text
 
 
 @pytest.mark.parametrize("msg", ["makinemi temsilci bayiden aldım", "yetkili servis arıyorum"])

@@ -2,7 +2,7 @@
 Bilgi kütüphanesi yönlendiricisi: hızlı arama + küçük modelle seçim.
 
 1) llm/kb.py ilk 8 adayı getirir (API yok, ms; doğru kayıt %85 ilk 8'de).
-2) Küçük model (varsayılan gpt-4o-mini) yalnızca SEÇER: mesajdaki soruyu
+2) Model (varsayılan gpt-4o; seçim doğruluğu 4o-mini %86, 4o %92) yalnızca SEÇER: mesajdaki soruyu
    doğrudan cevaplayan en fazla 2 kayıt ya da hiçbiri. Cevap YAZMAZ.
 3) Müşteriye kütüphanedeki onaylı metin (answer_tr) gider → uydurma sayı,
    ürün adı veya süre riski yok; site rehberleriyle aynı bilgi.
@@ -14,13 +14,19 @@ from __future__ import annotations
 import json
 import logging
 import os
+import re
 from typing import Any, Callable, List, Optional
 
-from llm.kb import Hit, KnowledgeBase
+from llm.kb import Hit, KnowledgeBase, norm
 
 logger = logging.getLogger(__name__)
 
-RERANK_MODEL = os.environ.get("ADVISOR_KB_RERANK_MODEL", "gpt-4o-mini")
+# Terim tanımı kayıtları ("profil nedir") yalnızca tanım sorularında aday olur;
+# aksi hâlde geniş kapsamlı tanımlar konu sorularını kendine çekiyor.
+_DEFINITION = re.compile(r"\b(nedir|ne demek|ne anlama|anlami|ne demektir|tanimi|ne ise yarar|denir)\b")
+_GLOSSARY_DOMAIN = "questions_glossary"
+
+RERANK_MODEL = os.environ.get("ADVISOR_KB_RERANK_MODEL", "gpt-4o")
 CANDIDATES = 8
 MIN_RECALL_SCORE = float(os.environ.get("ADVISOR_KB_RECALL_MIN", "0.18"))
 # Bu eşiklerin üstünde model çağrılmadan doğrudan cevap (LOO ile ayarlandı)
@@ -59,7 +65,10 @@ class KnowledgeRouter:
         """Mesaja cevap olacak kütüphane kayıtları (boş liste = kütüphane cevaplamıyor)."""
         if self.kb is None or not self.kb.entries:
             return []
-        hits = [h for h in self.kb.search(message, k=CANDIDATES) if h.score >= MIN_RECALL_SCORE]
+        hits = [h for h in self.kb.search(message, k=CANDIDATES + 4) if h.score >= MIN_RECALL_SCORE]
+        if not _DEFINITION.search(norm(message)):
+            hits = [h for h in hits if h.entry.domain != _GLOSSARY_DOMAIN]
+        hits = hits[:CANDIDATES]
         if not hits:
             return []
         top = hits[0]
@@ -81,7 +90,9 @@ class KnowledgeRouter:
         lines = []
         for h in hits:
             e = h.entry
-            lines.append(f"- id: {e.id}\n  başlık: {e.title_tr}\n  cevap: {e.answer_tr[:220]}")
+            examples = " | ".join(e.questions_tr[:3])
+            lines.append(f"- id: {e.id}\n  başlık: {e.title_tr}\n  örnek sorular: {examples}\n"
+                         f"  cevap: {e.answer_tr[:220]}")
         user = f"Müşteri mesajı: {message}\n\nKayıtlar:\n" + "\n".join(lines)
         resp = self.client.chat.completions.create(
             model=RERANK_MODEL,

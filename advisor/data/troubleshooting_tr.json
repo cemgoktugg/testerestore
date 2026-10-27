@@ -1,6 +1,6 @@
 {
  "_kaynak": "usage_care domain (kb-library, 2026-10-27). advisor/data/troubleshooting_tr.json'un süper kümesi: mevcut 18 belirti (id'ler korunarak) + 27 yeni belirti. Biçim aynı (id, symptom_tr, source, causes_and_actions); ek alanlar: source_ids, family, priority, patterns, examples. Tedarikçi kaynaklı satırlar nötr kimlikle (SUPPLIER-TROUBLESHOOT-2024) gösterilir.",
- "version": "2026-10-27",
+ "version": "2026-10-27-merged",
  "normalization": "front_desk.norm(): str.translate('çğıöşüâîûÇĞİÖŞÜÂÎÛ' → 'cgiosuaiuCGIOSUAIU'), lower(), boşluklar tek boşluk, strip. Kalıplar bu metinde re.search ile aranır.",
  "matching": "Liste priority sırasındadır (özelden genele). Ön masa ilk eşleşen en çok 2 belirtiyi gösterir; her belirtide causes_and_actions order sırasıyla ilk 5 neden gösterilir.",
  "families": [
@@ -2514,5 +2514,6 @@
     "şeritler depoda paslanmış"
    ]
   }
- ]
+ ],
+ "_merge_note": "Doğrulayıcı gözden geçirmesi: müşteriye görünen cause_tr/action_tr alanlarında yayıncı, tedarikçi adı, garanti veya teslim süresi yok; 'source' alanı yalnız iç kaynak bilgisidir, müşteriye gösterilmemelidir. İçerik değiştirilmedi."
 }

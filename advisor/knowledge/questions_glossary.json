@@ -1,0 +1,1200 @@
+{
+ "domain": "questions_glossary",
+ "title_tr": "Müşteri soru bankası ve terminoloji",
+ "version": "2026-10-27-merged",
+ "sources": [
+  {
+   "id": "ISO-4875-2-2006",
+   "publisher": "ISO",
+   "title": "ISO 4875-2:2006 Metal-cutting band saw blades — Characteristics and dimensions",
+   "url": "https://www.iso.org/standard/41855.html",
+   "accessed": "2026-10-27",
+   "tier": "A"
+  },
+  {
+   "id": "NIST-SP811",
+   "publisher": "NIST",
+   "title": "Guide for the Use of the International System of Units (SP 811)",
+   "url": "https://www.nist.gov/pml/special-publication-811",
+   "accessed": "2026-10-27",
+   "tier": "A"
+  },
+  {
+   "id": "WIKUS-FAQ",
+   "publisher": "WIKUS",
+   "title": "Band Saw FAQ",
+   "url": "https://www.wikus.de/en/guidebook/faqs",
+   "accessed": "2026-10-27",
+   "tier": "A"
+  },
+  {
+   "id": "TR-KARTES-UZUNLUK",
+   "publisher": "Kar-Tes",
+   "title": "Şerit Testere Bıçağının Uzunluğunu Nasıl Ölçersiniz?",
+   "url": "https://www.kar-tes.com.tr/blog/testereler/serit-testere-bicaginin-uzunlugunu-nasil-olcersiniz/",
+   "accessed": "2026-10-26",
+   "tier": "B"
+  },
+  {
+   "id": "SITE-SSS",
+   "publisher": "TestereStore",
+   "title": "SSS sayfası (testerestore/app/sss/page.tsx)",
+   "url": "https://testerestore.com/sss",
+   "accessed": "2026-10-27",
+   "tier": "A"
+  }
+ ],
+ "entries": [
+  {
+   "id": "questions_glossary.term-serit-testere-bicagi",
+   "title_tr": "şerit testere bıçağı",
+   "intents": [
+    "glossary"
+   ],
+   "questions_tr": [
+    "şerit testere bıçağı nedir",
+    "şerit testere laması ne demek",
+    "band testere ile şerit testere aynı mı"
+   ],
+   "answer_tr": "Şerit testere makinesinde iki kasnak arasında dönen, uçları kaynakla birleştirilmiş sonsuz bant biçimli kesici bıçaktır. Sipariş için boy, genişlik, kalınlık ve diş adımı (TPI) gerekir.",
+   "facts": [
+    {
+     "claim_tr": "Bıçak boyu makine tipine göre belirlenir ve siparişte belirtilmelidir.",
+     "source_ids": [
+      "ISO-4875-2-2006"
+     ],
+     "status": "verified",
+     "conditions": ""
+    }
+   ],
+   "related_products": [
+    "bimetal-premium"
+   ],
+   "links": [
+    "/sss",
+    "/rehber/serit-testere-boyu-nasil-olculur"
+   ],
+   "requires_data": [],
+   "safety": false,
+   "review": {
+    "status": "reviewed"
+   },
+   "glossary": {
+    "synonyms_tr": [
+     "şerit testere",
+     "şerit bıçak",
+     "şerit",
+     "testere şeridi",
+     "band testere",
+     "bant testere",
+     "şerit kesme bıçağı"
+    ],
+    "misspellings": [
+     "serit testere bicagi",
+     "şerit testre",
+     "şeritt",
+     "serıt",
+     "şerit tesrere",
+     "seirt"
+    ],
+    "slang_regional": [
+     "testere laması (Ege/İç Anadolu atölye dili)",
+     "lama (yalnızca 'testere laması' bağlamında)",
+     "bant"
+    ],
+    "en": [
+     "band saw blade",
+     "bandsaw blade",
+     "band"
+    ],
+    "de": [
+     "Sägeband",
+     "Bandsägeblatt"
+    ],
+    "pattern": "\\bserit\\w*|\\bban[dt] ?testere\\w*|testere ?lamas\\w*|\\btestre\\w*|\\btesrere\\w*|band ?saw|s[aä]geband\\w*|bands[aä]geblatt",
+    "exclude": null
+   }
+  },
+  {
+   "id": "questions_glossary.term-lama-malzeme",
+   "title_tr": "lama (yassı demir)",
+   "intents": [
+    "glossary"
+   ],
+   "questions_tr": [
+    "lama ne demek",
+    "yassı demir ne demek",
+    "lama nedir"
+   ],
+   "answer_tr": "Lama, dikdörtgen kesitli yassı dolu çelik çubuktur (ör. 50×10). Bıçak seçiminde dolu malzeme gibi değerlendirilir; kesilen kenarın kalınlığı diş adımını belirler.",
+   "facts": [],
+   "related_products": [],
+   "links": [],
+   "requires_data": [],
+   "safety": false,
+   "review": {
+    "status": "reviewed"
+   },
+   "glossary": {
+    "synonyms_tr": [
+     "yassı lama",
+     "lama demir",
+     "yassı çubuk"
+    ],
+    "misspellings": [],
+    "slang_regional": [],
+    "en": [
+     "flat bar"
+    ],
+    "de": [
+     "Flachstahl",
+     "Flacheisen"
+    ],
+    "pattern": "\\blama\\w*",
+    "exclude": "testere ?lama\\w*"
+   }
+  },
+  {
+   "id": "questions_glossary.term-karbon-celik-bicak",
+   "title_tr": "karbon çeliği bıçak (Alman/İsveç çeliği)",
+   "intents": [
+    "glossary"
+   ],
+   "questions_tr": [
+    "alman çeliği ile isveç çeliği farkı",
+    "karbon çeliği bıçak ne kesir",
+    "alman çeliği bıçak metal keser mi"
+   ],
+   "answer_tr": "Ahşap, plastik ve gıda bıçaklarında kullanılan tek parça karbon çeliği bıçaklardır; Türkiye'de 'Alman çeliği', 'İsveç çeliği' diye anılır. Metal kesiminde bi-metal tercih edilir.",
+   "facts": [
+    {
+     "claim_tr": "Karbon çeliği bıçak düşük alaşımlı çelikten yapılır.",
+     "source_ids": [
+      "ISO-4875-2-2006"
+     ],
+     "status": "verified",
+     "conditions": ""
+    }
+   ],
+   "related_products": [
+    "woodcut-classic"
+   ],
+   "links": [
+    "/kategori/ahsap-serit-testere",
+    "/products/woodcut-classic"
+   ],
+   "requires_data": [],
+   "safety": false,
+   "review": {
+    "status": "reviewed"
+   },
+   "glossary": {
+    "synonyms_tr": [
+     "Alman çeliği",
+     "İsveç çeliği",
+     "karbon çelik şerit"
+    ],
+    "misspellings": [],
+    "slang_regional": [],
+    "en": [
+     "carbon steel band saw blade",
+     "flex back",
+     "hard back"
+    ],
+    "de": [
+     "Werkzeugstahl-Sägeband (WS)"
+    ],
+    "pattern": "(alman|isvec)\\s*celi\\w*|karbon\\s*celi\\w*\\s*(bica\\w*|serit\\w*|testere\\w*)",
+    "exclude": null
+   }
+  },
+  {
+   "id": "questions_glossary.term-rulo",
+   "title_tr": "rulo / metre ile şerit",
+   "intents": [
+    "glossary"
+   ],
+   "questions_tr": [
+    "rulo şerit satıyor musunuz",
+    "metre ile satış var mı",
+    "bimetal metresi kaç para"
+   ],
+   "answer_tr": "Rulo, kaynaklanmamış metre bazlı şerittir; makineye takılmadan önce boyuna kesilip kaynaklanması gerekir. Mağazamız bıçakları boyunuza göre kaynaklı olarak satar.",
+   "facts": [],
+   "related_products": [],
+   "links": [],
+   "requires_data": [],
+   "safety": false,
+   "review": {
+    "status": "reviewed"
+   },
+   "glossary": {
+    "synonyms_tr": [
+     "metraj",
+     "rulo şerit"
+    ],
+    "misspellings": [],
+    "slang_regional": [],
+    "en": [
+     "coil",
+     "band stock"
+    ],
+    "de": [
+     "Coil",
+     "Meterware"
+    ],
+    "pattern": "\\brulo\\w*|\\bcoil\\b|metre\\s*ile|metrelik|metresi",
+    "exclude": null
+   }
+  },
+  {
+   "id": "questions_glossary.term-daire-ve-diger-testereler",
+   "title_tr": "katalog dışı testereler (daire, panter, tilki kuyruğu, spiral)",
+   "intents": [
+    "glossary",
+    "product"
+   ],
+   "questions_tr": [
+    "daire testere satıyor musunuz",
+    "panter bıçağı var mı",
+    "spiral taşı satıyor musunuz"
+   ],
+   "answer_tr": "Mağazamız yalnızca şerit testere bıçakları satar; daire testere, panter (dekupaj) bıçağı, tilki kuyruğu, zincir veya taşlama diski satmıyoruz.",
+   "facts": [],
+   "related_products": [],
+   "links": [],
+   "requires_data": [],
+   "safety": false,
+   "review": {
+    "status": "reviewed"
+   },
+   "glossary": {
+    "synonyms_tr": [
+     "sunta/daire bıçağı",
+     "dekupaj bıçağı"
+    ],
+    "misspellings": [],
+    "slang_regional": [
+     "spiral (avuç taşlama makinesi)",
+     "panter (dekupaj testere)",
+     "tilki kuyruğu (el testeresi)"
+    ],
+    "en": [
+     "circular saw blade",
+     "jigsaw blade",
+     "hand saw",
+     "angle grinder disc"
+    ],
+    "de": [
+     "Kreissägeblatt",
+     "Stichsägeblatt",
+     "Trennscheibe"
+    ],
+    "pattern": "daire\\s*testere\\w*|\\bpanter\\w*|tilki\\s*kuyru\\w*|dekupaj\\w*|\\bzincir\\w*|kesme\\s*tas\\w*|kesme\\s*disk\\w*|\\bspiral\\w*|tasla\\w*\\s*(disk|tas)\\w*|demir\\s*testere\\w*\\s*(lama\\w*|kolu|el\\w*)|hacksaw|el\\s*testere\\w*",
+    "exclude": null
+   }
+  },
+  {
+   "id": "questions_glossary.term-boy",
+   "title_tr": "bıçak boyu (şerit uzunluğu)",
+   "intents": [
+    "glossary"
+   ],
+   "questions_tr": [
+    "boy ne demek",
+    "bıçak boyu ne demek",
+    "şerit uzunluğu ne demek",
+    "2720'lik ne demek"
+   ],
+   "answer_tr": "Bıçak boyu, kaynaklı halkanın toplam çevre uzunluğudur (mm). Türkçede çoğu zaman sayı + \"lik\" ile söylenir: \"2720'lik bıçak\" 2.720 mm boy demektir. En güvenilir değer makine etiketinde veya kılavuzda yazar; ölçme yöntemleri için bıçak boyu rehberimize bakın.",
+   "facts": [
+    {
+     "claim_tr": "Bıçak boyu makine tipine göre belirlenir ve siparişte belirtilmelidir.",
+     "source_ids": [
+      "ISO-4875-2-2006"
+     ],
+     "status": "verified",
+     "conditions": ""
+    },
+    {
+     "claim_tr": "Boy makine etiketinden ya da eski bıçak yuvarlanarak ölçülebilir.",
+     "source_ids": [
+      "SITE-SSS",
+      "TR-KARTES-UZUNLUK"
+     ],
+     "status": "consensus",
+     "conditions": ""
+    }
+   ],
+   "related_products": [],
+   "links": [
+    "/rehber/serit-testere-boyu-nasil-olculur",
+    "/sss"
+   ],
+   "requires_data": [],
+   "safety": false,
+   "review": {
+    "status": "reviewed"
+   },
+   "glossary": {
+    "synonyms_tr": [
+     "uzunluk",
+     "şerit uzunluğu",
+     "çevre",
+     "boyut"
+    ],
+    "misspellings": [
+     "boyu nu",
+     "uzunlugu"
+    ],
+    "slang_regional": [
+     "2720'lik (boy, 4 haneli sayı + lik)",
+     "2 metre 72 (konuşma dili: 2.720 mm)"
+    ],
+    "en": [
+     "blade length"
+    ],
+    "de": [
+     "Bandlänge"
+    ],
+    "pattern": "\\b(boy|boyu|boyunu|boyda|boylu|boylar\\w*|boyutu\\w*)\\b|uzunlu\\w*|serit\\s*boyu|\\b\\d{4}\\s*'?\\s*l[iu]k\\b",
+    "exclude": null
+   }
+  },
+  {
+   "id": "questions_glossary.term-genislik",
+   "title_tr": "genişlik (en)",
+   "intents": [
+    "glossary"
+   ],
+   "questions_tr": [
+    "27 lik ne demek",
+    "27 lik bıçak",
+    "bıçak genişliği ne demek",
+    "bıçak eni ne demek"
+   ],
+   "answer_tr": "Genişlik (en), bıçağın sırtından diş ucuna kadar olan ölçüsüdür (mm). \"27'lik bıçak\" genellikle 27 mm genişlik demektir. Makinenin kabul ettiği genişlik etiketinde yazar; metal makinelerinde 27, 34 ve 41 mm yaygındır.",
+   "facts": [
+    {
+     "claim_tr": "Metal kesim bi-metal bıçaklarında 27×0,9, 34×1,1, 41×1,3 mm olağan kesitlerdir.",
+     "source_ids": [
+      "ISO-4875-2-2006",
+      "SITE-SSS"
+     ],
+     "status": "verified",
+     "conditions": "",
+     "value": "27x0.9;34x1.1;41x1.3",
+     "unit": "mm"
+    }
+   ],
+   "related_products": [],
+   "links": [
+    "/sss"
+   ],
+   "requires_data": [],
+   "safety": false,
+   "review": {
+    "status": "reviewed"
+   },
+   "glossary": {
+    "synonyms_tr": [
+     "en",
+     "şerit eni",
+     "bıçak eni"
+    ],
+    "misspellings": [
+     "genislik",
+     "genişliği nı"
+    ],
+    "slang_regional": [
+     "27'lik / 34'lük (genişlik + lik)",
+     "otuz dörtlük"
+    ],
+    "en": [
+     "blade width"
+    ],
+    "de": [
+     "Bandbreite"
+    ],
+    "pattern": "genislig?\\w*|\\beni\\b|\\beni(ni)?\\s*(kac|ne)|\\ben\\s*(kac|ne kadar)|\\b(13|20|27|34|41|54|67|80)\\s*'?\\s*(l[iu]k|lu|li)\\b",
+    "exclude": null
+   }
+  },
+  {
+   "id": "questions_glossary.term-kalinlik",
+   "title_tr": "kalınlık",
+   "intents": [
+    "glossary"
+   ],
+   "questions_tr": [
+    "bıçak kalınlığı ne demek",
+    "0,9'luk bıçak ne demek",
+    "kalınlık neden önemli"
+   ],
+   "answer_tr": "Kalınlık, bıçak gövdesinin et kalınlığıdır (mm); \"0,9'luk\" gibi söylenir. Dişlerden ve kaynak yerinden uzakta kumpasla ölçülür. Kasnak çapı küçük makinelerde ince bıçak gerekir; doğru değer makine etiketindedir.",
+   "facts": [
+    {
+     "claim_tr": "Kalınlık kumpasla gövdeden, dişlerden ve kaynak yerinden uzakta ölçülür.",
+     "source_ids": [
+      "SITE-SSS"
+     ],
+     "status": "internal",
+     "conditions": ""
+    }
+   ],
+   "related_products": [],
+   "links": [],
+   "requires_data": [],
+   "safety": false,
+   "review": {
+    "status": "reviewed"
+   },
+   "glossary": {
+    "synonyms_tr": [
+     "bıçak kalınlığı",
+     "gövde kalınlığı"
+    ],
+    "misspellings": [],
+    "slang_regional": [
+     "sıfır dokuz (0,9 mm)",
+     "bir bir (1,1 mm)"
+    ],
+    "en": [
+     "blade thickness",
+     "gauge"
+    ],
+    "de": [
+     "Banddicke"
+    ],
+    "pattern": "kalinli\\w*|\\b0[.,]\\d{1,2}\\s*'?\\s*(l[iu]k|mm)\\b|\\b1[.,][1-6]\\s*'?\\s*(l[iu]k|mm)\\b|sifir\\s*(dokuz|bes|alti)",
+    "exclude": "et\\s*kalinli\\w*|cidar|duvar\\s*kalinli\\w*"
+   }
+  },
+  {
+   "id": "questions_glossary.term-birimler",
+   "title_tr": "birimler (mm, cm, metre, inç, parmak)",
+   "intents": [
+    "glossary"
+   ],
+   "questions_tr": [
+    "410 cm kaç mm",
+    "93 1/2 inç bıçak kaç mm",
+    "2 metre 72 lik var mı",
+    "parmak ölçüsü kaç mm"
+   ],
+   "answer_tr": "Ölçüler mağazamızda milimetre ile yazılır. 1 inç 25,4 mm'dir; 410 cm = 4.100 mm, 2,72 m = 2.720 mm. Konuşma dilindeki '2 metre 72' de 2.720 mm demektir.",
+   "facts": [
+    {
+     "claim_tr": "1 inç = 25,4 mm.",
+     "source_ids": [
+      "NIST-SP811",
+      "ISO-4875-2-2006"
+     ],
+     "status": "verified",
+     "conditions": "",
+     "value": "25.4",
+     "unit": "mm"
+    }
+   ],
+   "related_products": [],
+   "links": [],
+   "requires_data": [],
+   "safety": false,
+   "review": {
+    "status": "reviewed"
+   },
+   "glossary": {
+    "synonyms_tr": [
+     "santim",
+     "milim",
+     "inç"
+    ],
+    "misspellings": [],
+    "slang_regional": [
+     "parmak (eski usta dilinde 1 inç)",
+     "2 metre 45 (2.450 mm)",
+     "santim (cm)"
+    ],
+    "en": [
+     "inch",
+     "mm"
+    ],
+    "de": [
+     "Zoll",
+     "Millimeter"
+    ],
+    "pattern": "\\b\\d+(?:[.,]\\d+)?\\s*(cm|santim\\w*)\\b|\\b\\d\\s*(metre|m)\\s*\\d{2}\\b|\\binc\\w*\\b|\\binch\\w*|\\bparmak\\w*|\\d\\s*\\\"|\\bmilim\\w*",
+    "exclude": null
+   }
+  },
+  {
+   "id": "questions_glossary.term-tpi",
+   "title_tr": "TPI / diş sayısı",
+   "intents": [
+    "glossary"
+   ],
+   "questions_tr": [
+    "TPI ne demek",
+    "zpz nedir",
+    "tpi nedir",
+    "zpz ne demek",
+    "tpi açılımı nedir",
+    "diş sayısı ne demek",
+    "6/10 ne demek",
+    "1,4/2 ne anlama geliyor",
+    "4/6 tpi ne demek",
+    "8/12 yazıyor bu ne",
+    "bıçaktaki 5/8 rakamı ne"
+   ],
+   "answer_tr": "TPI (teeth per inch), bıçağın bir inçlik (25,4 mm) boyundaki diş sayısıdır; Almanca kaynaklardaki ZpZ (Zähne pro Zoll) aynı anlamdadır. Yüksek TPI sık diştir (ince cidar, küçük kesit), düşük TPI seyrek diştir (kalın, büyük kesit). \"4/6\" gibi iki sayılı gösterim değişken diş, tek sayı sabit diştir.",
+   "facts": [
+    {
+     "claim_tr": "TPI, 25,4 mm (1 inç) uzunluktaki diş sayısıdır.",
+     "source_ids": [
+      "ISO-4875-2-2006",
+      "NIST-SP811"
+     ],
+     "status": "verified",
+     "conditions": "",
+     "value": "25.4",
+     "unit": "mm",
+     "audit_note": "2026-10-27 denetim: ISO 4875-2 metni ücretli; NIST yalnız 1 inç = 25,4 mm'yi doğruluyor. Tanım gereği doğru; ücretsiz bir birincil kaynak eklenmeli."
+    },
+    {
+     "claim_tr": "Kesitte aynı anda en az üç diş çalışmalıdır.",
+     "source_ids": [
+      "SITE-SSS",
+      "WIKUS-FAQ"
+     ],
+     "status": "consensus",
+     "conditions": ""
+    }
+   ],
+   "related_products": [],
+   "links": [
+    "/rehber/serit-testere-tpi-secimi"
+   ],
+   "requires_data": [
+    "tpi_engine"
+   ],
+   "safety": false,
+   "review": {
+    "status": "reviewed"
+   },
+   "glossary": {
+    "synonyms_tr": [
+     "diş sayısı",
+     "inç başına diş",
+     "diş adımı"
+    ],
+    "misspellings": [
+     "tpı",
+     "t.p.i",
+     "tpi̇"
+    ],
+    "slang_regional": [
+     "dişlik (6 dişlik)",
+     "ZPZ (Almanca kısaltma, bayi dili)"
+    ],
+    "en": [
+     "TPI",
+     "teeth per inch"
+    ],
+    "de": [
+     "ZpZ",
+     "Zähne pro Zoll"
+    ],
+    "pattern": "\\btpi\\b|\\bt\\.p\\.i\\b|\\bzpz\\b|\\bdis\\s*(sayi\\w*|adim\\w*|hatve\\w*)|\\bkac\\s*dis\\w*|\\b\\d{1,2}\\s*dis\\b|\\bdisli\\b(?!\\s*cark)",
+    "exclude": "yurt\\s*dis\\w*|\\bdis\\s*cap\\w*|disari\\w*|\\bdis\\s*(ticaret|kapi|yuzey)\\w*|disli\\s*cark"
+   }
+  },
+  {
+   "id": "questions_glossary.term-kesim-araligi",
+   "title_tr": "kesim aralığı / kesim payı (kerf)",
+   "intents": [
+    "glossary"
+   ],
+   "questions_tr": [
+    "kesim aralığı nedir",
+    "kerf ne demek",
+    "kesim payı ne kadar"
+   ],
+   "answer_tr": "Bıçağın malzemede açtığı yarığın genişliğidir; çapraz genişliğine bağlıdır ve kesim başına kaybolan malzemeyi belirler.",
+   "facts": [],
+   "related_products": [],
+   "links": [],
+   "requires_data": [],
+   "safety": false,
+   "review": {
+    "status": "reviewed"
+   },
+   "glossary": {
+    "synonyms_tr": [
+     "kesim payı",
+     "talaş payı"
+    ],
+    "misspellings": [],
+    "slang_regional": [],
+    "en": [
+     "kerf"
+    ],
+    "de": [
+     "Schnittbreite"
+    ],
+    "pattern": "kesim\\s*(aralig|payi|genislig)\\w*|\\bkerf\\b|testere\\s*izi|schnittbreite",
+    "exclude": null
+   }
+  },
+  {
+   "id": "questions_glossary.term-dis-boslugu",
+   "title_tr": "diş boşluğu (gullet)",
+   "intents": [
+    "glossary"
+   ],
+   "questions_tr": [
+    "diş boşluğu ne",
+    "gullet nedir",
+    "diş dibi ne demek"
+   ],
+   "answer_tr": "İki diş arasındaki talaşın toplandığı boşluktur; kesit büyüdükçe daha büyük boşluk (seyrek diş) gerekir.",
+   "facts": [],
+   "related_products": [],
+   "links": [],
+   "requires_data": [],
+   "safety": false,
+   "review": {
+    "status": "reviewed"
+   },
+   "glossary": {
+    "synonyms_tr": [
+     "talaş cebi"
+    ],
+    "misspellings": [],
+    "slang_regional": [],
+    "en": [
+     "gullet"
+    ],
+    "de": [
+     "Zahnlücke"
+    ],
+    "pattern": "dis\\s*boslu[gk]\\w*|\\bgullet\\b|zahnl[uü]cke",
+    "exclude": null
+   }
+  },
+  {
+   "id": "questions_glossary.term-sirt",
+   "title_tr": "bıçak sırtı",
+   "intents": [
+    "glossary"
+   ],
+   "questions_tr": [
+    "sırt ne demek",
+    "bıçak sırtı nedir",
+    "bıçağın dişsiz kenarı ne",
+    "sırt rulmanı bıçağın neresine değer"
+   ],
+   "answer_tr": "Bıçağın dişsiz arka kenarıdır; kılavuz rulmanına ve sırt desteğine dayanır. Sırtta çatlak veya aşınma kılavuz ayarını gösterir.",
+   "facts": [],
+   "related_products": [],
+   "links": [],
+   "requires_data": [],
+   "safety": false,
+   "review": {
+    "status": "reviewed"
+   },
+   "glossary": {
+    "synonyms_tr": [
+     "arka kenar"
+    ],
+    "misspellings": [],
+    "slang_regional": [],
+    "en": [
+     "back edge"
+    ],
+    "de": [
+     "Bandrücken"
+    ],
+    "pattern": "\\bsirt\\w*|arka\\s*kenar\\w*|bandruck\\w*|back\\s*edge",
+    "exclude": "sirt\\s*canta\\w*"
+   }
+  },
+  {
+   "id": "questions_glossary.term-kasnak",
+   "title_tr": "kasnak",
+   "intents": [
+    "glossary"
+   ],
+   "questions_tr": [
+    "kasnak çapı nedir",
+    "kasnak ne demek",
+    "volan ne demek şerit testerede"
+   ],
+   "answer_tr": "Bıçağın üzerinde döndüğü iki (bazı makinelerde üç) tekerlektir. Kasnak çapı bıçak kalınlığını sınırlar; kasnak çapı ve merkezler arası mesafe ile bıçak boyu hesaplanabilir.",
+   "facts": [
+    {
+     "claim_tr": "İki eşit kasnakta L = 2 × C + π × D.",
+     "source_ids": [
+      "SITE-SSS",
+      "TR-KARTES-UZUNLUK"
+     ],
+     "status": "consensus",
+     "conditions": ""
+    }
+   ],
+   "related_products": [],
+   "links": [
+    "/rehber/serit-testere-boyu-nasil-olculur"
+   ],
+   "requires_data": [],
+   "safety": false,
+   "review": {
+    "status": "reviewed"
+   },
+   "glossary": {
+    "synonyms_tr": [
+     "tekerlek",
+     "kasnak lastiği (bandaj)"
+    ],
+    "misspellings": [],
+    "slang_regional": [
+     "volan",
+     "makara",
+     "çark"
+    ],
+    "en": [
+     "wheel",
+     "pulley"
+    ],
+    "de": [
+     "Bandrolle",
+     "Laufrad"
+    ],
+    "pattern": "kasnak\\w*|\\bvolan\\w*|\\bmakara\\w*|bandrolle|laufrad|\\bpulley\\b|\\bwheel\\b",
+    "exclude": "volandan\\s*yag"
+   }
+  },
+  {
+   "id": "questions_glossary.term-merkez-mesafesi",
+   "title_tr": "kasnak merkezleri arası mesafe",
+   "intents": [
+    "glossary"
+   ],
+   "questions_tr": [
+    "merkezler arası nasıl ölçülür",
+    "kasnaklar arası mesafe",
+    "aks arası ne demek"
+   ],
+   "answer_tr": "İki kasnağın mil merkezleri arasındaki uzaklıktır; gergi orta konumdayken ölçülür ve boy formülünde C olarak kullanılır.",
+   "facts": [],
+   "related_products": [],
+   "links": [],
+   "requires_data": [],
+   "safety": false,
+   "review": {
+    "status": "reviewed"
+   },
+   "glossary": {
+    "synonyms_tr": [
+     "aks mesafesi"
+    ],
+    "misspellings": [],
+    "slang_regional": [],
+    "en": [
+     "center distance"
+    ],
+    "de": [
+     "Achsabstand"
+    ],
+    "pattern": "(merkez|aks|eksen)\\w*\\s*aras\\w*|kasnaklar\\s*aras\\w*|mil\\s*aras\\w*",
+    "exclude": null
+   }
+  },
+  {
+   "id": "questions_glossary.term-kilavuz",
+   "title_tr": "kılavuz / kılavuz rulmanı / karbür tutucu",
+   "intents": [
+    "glossary"
+   ],
+   "questions_tr": [
+    "kılavuz ne işe yarar",
+    "karbür tutucu nedir",
+    "kılavuz bloğu ne demek"
+   ],
+   "answer_tr": "Bıçağı kesim bölgesinde dik tutan rulman ve tutucu sistemidir. Kılavuz kolları parçaya mümkün olduğunca yakın ve sıkı olmalıdır; aşınmış kılavuz eğri kesim ve sırt çatlağı yapar.",
+   "facts": [],
+   "related_products": [],
+   "links": [],
+   "requires_data": [],
+   "safety": false,
+   "review": {
+    "status": "reviewed"
+   },
+   "glossary": {
+    "synonyms_tr": [
+     "kılavuz kolu",
+     "rulman",
+     "tutucu"
+    ],
+    "misspellings": [],
+    "slang_regional": [
+     "pabuç (kılavuz bloğu)",
+     "takoz"
+    ],
+    "en": [
+     "blade guides",
+     "guide bearings"
+    ],
+    "de": [
+     "Bandführung",
+     "Führungsrollen"
+    ],
+    "pattern": "kilavuz\\w*|\\brulman\\w*|\\bpabuc\\w*|karbur\\s*tutucu\\w*|bandfuhrung|fuhrungs\\w*|\\bguide\\w*",
+    "exclude": "rulman\\s*celi\\w*|kullanim\\s*kilavuz\\w*"
+   }
+  },
+  {
+   "id": "questions_glossary.term-makine-tipi",
+   "title_tr": "makine tipi (yatay, dikey, açılı, portatif)",
+   "intents": [
+    "glossary"
+   ],
+   "questions_tr": [
+    "yatay şerit testere ne demek",
+    "dikey şerit testere nedir",
+    "şerit testere makine çeşitleri"
+   ],
+   "answer_tr": "Şerit testere makineleri yatay (metal kesim), dikey (kavisli/kalıp kesimi), açılı-gönyeli, yarı/tam otomatik ve portatif olarak ayrılır; bıçak ölçüsü makine tipine ve modeline bağlıdır.",
+   "facts": [],
+   "related_products": [],
+   "links": [],
+   "requires_data": [],
+   "safety": false,
+   "review": {
+    "status": "reviewed"
+   },
+   "glossary": {
+    "synonyms_tr": [],
+    "misspellings": [],
+    "slang_regional": [],
+    "en": [
+     "horizontal/vertical band saw",
+     "portable band saw"
+    ],
+    "de": [
+     "Horizontal-/Vertikalbandsäge"
+    ],
+    "pattern": "(yatay|dikey|acili|gonyeli|portatif|otomatik|hidrolik|kollu|tezgah)\\s*(tip\\w*\\s*)?(serit\\w*|testere\\w*|makine\\w*)|\\bportaband\\b|\\bhobi\\s*(tip\\w*|makine\\w*)",
+    "exclude": null
+   }
+  },
+  {
+   "id": "questions_glossary.term-profil-boru",
+   "title_tr": "profil / kutu profil / boru (içi boş kesit)",
+   "intents": [
+    "glossary"
+   ],
+   "questions_tr": [
+    "profil ne demek",
+    "kutu profil nedir",
+    "içi boş kesit ne demek"
+   ],
+   "answer_tr": "İçi boş kesitlerdir; bıçak seçiminde dış ölçü ile birlikte et kalınlığı (cidar) belirleyicidir. İnce cidarda sık diş seçilir.",
+   "facts": [],
+   "related_products": [],
+   "links": [
+    "/rehber/serit-testere-tpi-secimi"
+   ],
+   "requires_data": [],
+   "safety": false,
+   "review": {
+    "status": "reviewed"
+   },
+   "glossary": {
+    "synonyms_tr": [
+     "kutu",
+     "boru",
+     "kare profil",
+     "dikdörtgen profil"
+    ],
+    "misspellings": [],
+    "slang_regional": [
+     "kutu demir",
+     "boru demir"
+    ],
+    "en": [
+     "tube",
+     "pipe",
+     "hollow section"
+    ],
+    "de": [
+     "Rohr",
+     "Hohlprofil"
+    ],
+    "pattern": "\\bprofil\\w*|kutu\\s*profil\\w*|\\bboru\\w*|\\b\\d{2,3}\\s*[x×*]\\s*\\d{2,3}\\s*[x×*]\\s*\\d(?:[.,]\\d)?\\b|\\btube\\b|\\brohr\\w*",
+    "exclude": "borusan|profil\\w*\\s*(resm|foto)\\w*"
+   }
+  },
+  {
+   "id": "questions_glossary.term-et-kalinligi",
+   "title_tr": "et kalınlığı / cidar",
+   "intents": [
+    "glossary"
+   ],
+   "questions_tr": [
+    "et kalınlığı ne demek",
+    "boru et kalınlığı nasıl ölçülür",
+    "cidar ne demek",
+    "et kalınlığı ne anlama gelir"
+   ],
+   "answer_tr": "Profil ya da borunun duvar kalınlığıdır; 'et' bu bağlamda gıda değil cidardır. Diş adımı için dış ölçüyle birlikte gereklidir.",
+   "facts": [],
+   "related_products": [],
+   "links": [],
+   "requires_data": [],
+   "safety": false,
+   "review": {
+    "status": "reviewed"
+   },
+   "glossary": {
+    "synonyms_tr": [
+     "cidar",
+     "duvar kalınlığı"
+    ],
+    "misspellings": [
+     "et kalınlıgı",
+     "etkalınlığı"
+    ],
+    "slang_regional": [
+     "et (profil/boru dilinde)"
+    ],
+    "en": [
+     "wall thickness"
+    ],
+    "de": [
+     "Wandstärke"
+    ],
+    "pattern": "et\\s*kalinli\\w*|\\bcidar\\w*|duvar\\s*kalinli\\w*|\\bmm\\s*et\\b|\\bprofil\\s*eti\\b|\\bboru\\s*eti\\b|\\b\\d(?:[.,]\\d)?\\s*et\\b",
+    "exclude": null
+   }
+  },
+  {
+   "id": "questions_glossary.term-dolu-malzeme",
+   "title_tr": "dolu malzeme (mil, çubuk, blok, kare)",
+   "intents": [
+    "glossary"
+   ],
+   "questions_tr": [
+    "dolu malzeme ne demek",
+    "dolu mil nedir",
+    "kütük ne demek"
+   ],
+   "answer_tr": "İçi dolu kesitlerdir; diş adımını kesitin çapı ya da kalınlığı belirler. Büyük çapta seyrek diş seçilir.",
+   "facts": [],
+   "related_products": [],
+   "links": [
+    "/rehber/serit-testere-tpi-secimi"
+   ],
+   "requires_data": [
+    "tpi_engine"
+   ],
+   "safety": false,
+   "review": {
+    "status": "reviewed"
+   },
+   "glossary": {
+    "synonyms_tr": [
+     "mil",
+     "çubuk",
+     "yuvarlak demir",
+     "blok"
+    ],
+    "misspellings": [],
+    "slang_regional": [
+     "transmisyon mili (C45 mil)",
+     "kütük (çelikhane dili)"
+    ],
+    "en": [
+     "solid bar",
+     "round bar",
+     "billet"
+    ],
+    "de": [
+     "Vollmaterial",
+     "Rundstahl"
+    ],
+    "pattern": "\\bmil\\b|\\bmili\\b|\\bmiller\\w*|\\bcubuk\\w*|\\bblok\\w*|\\bdolu\\b|transmisyon\\w*|\\bkare\\s*demir|\\bkutuk\\s*celik|\\bø\\s*\\d+|\\bcap\\w*\\s*\\d+",
+    "exclude": null
+   }
+  },
+  {
+   "id": "questions_glossary.term-yapisal-profil",
+   "title_tr": "yapısal profiller (NPU, NPI, HEA, HEB, IPE, köşebent)",
+   "intents": [
+    "glossary"
+   ],
+   "questions_tr": [
+    "npu ne demek",
+    "hea heb ipe nedir",
+    "putrel ne demek"
+   ],
+   "answer_tr": "Standart çelik inşaat profilleridir (U, I, H ve L kesitler). Kesit değişken et kalınlığı içerdiği için genellikle değişken diş seçilir; huni bunları profil olarak değerlendirir.",
+   "facts": [],
+   "related_products": [],
+   "links": [],
+   "requires_data": [],
+   "safety": false,
+   "review": {
+    "status": "reviewed"
+   },
+   "glossary": {
+    "synonyms_tr": [
+     "kiriş",
+     "köşebent",
+     "U demir",
+     "I demir"
+    ],
+    "misspellings": [],
+    "slang_regional": [
+     "kuşebent (yaygın yazım)"
+    ],
+    "en": [
+     "structural steel sections",
+     "I-beam",
+     "H-beam",
+     "channel",
+     "angle"
+    ],
+    "de": [
+     "Formstahl",
+     "Träger",
+     "Winkelstahl"
+    ],
+    "pattern": "\\b(npu|npi|hea|heb|hem|ipe|upn|unp|ipn)\\s*-?\\s*\\d{2,3}\\b|kosebent\\w*|\\b[lui]\\s*profil\\w*|\\bkiris\\w*",
+    "exclude": null
+   }
+  },
+  {
+   "id": "questions_glossary.term-sac-levha",
+   "title_tr": "sac / levha / plaka",
+   "intents": [
+    "glossary"
+   ],
+   "questions_tr": [
+    "sac ne demek",
+    "levha ile plaka farkı",
+    "saç mı sac mı"
+   ],
+   "answer_tr": "Yassı ince malzemedir; kesilen kalınlık küçükse çok sık diş gerekir.",
+   "facts": [],
+   "related_products": [],
+   "links": [],
+   "requires_data": [],
+   "safety": false,
+   "review": {
+    "status": "reviewed"
+   },
+   "glossary": {
+    "synonyms_tr": [
+     "levha",
+     "plaka"
+    ],
+    "misspellings": [],
+    "slang_regional": [],
+    "en": [
+     "sheet",
+     "plate"
+    ],
+    "de": [
+     "Blech"
+    ],
+    "pattern": "\\bsac\\w*|levha\\w*|\\bplaka\\b|\\bsheet\\b|\\bblech\\w*",
+    "exclude": "\\bsacma\\w*|\\bsaci\\b"
+   }
+  },
+  {
+   "id": "questions_glossary.term-demet-kesim",
+   "title_tr": "demet / paket kesim",
+   "intents": [
+    "glossary"
+   ],
+   "questions_tr": [
+    "boru demeti",
+    "demet kesim ne demek",
+    "paket kesim nedir",
+    "deste kesim ne demek"
+   ],
+   "answer_tr": "Birden çok profil ya da borunun birlikte bağlanıp kesilmesidir; titreşim ve parça dönmesi riski nedeniyle değişken diş ve iyi bağlama gerekir.",
+   "facts": [],
+   "related_products": [],
+   "links": [],
+   "requires_data": [],
+   "safety": false,
+   "review": {
+    "status": "reviewed"
+   },
+   "glossary": {
+    "synonyms_tr": [
+     "paket kesim",
+     "toplu kesim"
+    ],
+    "misspellings": [],
+    "slang_regional": [
+     "deste"
+    ],
+    "en": [
+     "bundle cutting"
+    ],
+    "de": [
+     "Bündelschnitt"
+    ],
+    "pattern": "demet\\w*|paket\\s*(halinde\\s*)?kes\\w*|\\bdeste\\w*|bundel\\w*|\\bbundle\\w*",
+    "exclude": null
+   }
+  },
+  {
+   "id": "questions_glossary.term-insaat-demiri",
+   "title_tr": "inşaat demiri (nervürlü)",
+   "intents": [
+    "glossary"
+   ],
+   "questions_tr": [
+    "inşaat demiri kesmek",
+    "nervürlü demir için hangi bıçak",
+    "32 lik inşaat demiri",
+    "32 lik inşaat demiri kaç diş"
+   ],
+   "answer_tr": "Nervürlü inşaat demiri dolu yuvarlak çelik çubuk gibi değerlendirilir ve yapı çeliği grubunda Bi-Metal M42 Premium ile kesilir. Diş adımını çubuk çapına göre seçin; demet hâlinde kesiyorsanız temas boyu uzadığı için tek çubuğa göre daha seyrek diş gerekir ve demeti sıkıca bağlamanız önemlidir. Çapı ve bir seferde kaç çubuk kestiğinizi yazarsanız diş adımını birlikte belirleyelim.",
+   "facts": [],
+   "related_products": [
+    "bimetal-premium"
+   ],
+   "links": [
+    "/rehber/serit-testere-tpi-secimi",
+    "/products/bimetal-premium"
+   ],
+   "requires_data": [
+    "tpi_engine"
+   ],
+   "safety": false,
+   "review": {
+    "status": "reviewed"
+   },
+   "glossary": {
+    "synonyms_tr": [
+     "nervürlü demir",
+     "donatı"
+    ],
+    "misspellings": [],
+    "slang_regional": [],
+    "en": [
+     "rebar"
+    ],
+    "de": [
+     "Betonstahl"
+    ],
+    "pattern": "insaat\\s*demir\\w*|nervurlu\\w*|\\bdemir\\s*cubu\\w*|\\bdonati\\w*",
+    "exclude": null
+   }
+  }
+ ]
+}

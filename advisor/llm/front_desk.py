@@ -835,8 +835,7 @@ class FrontDesk:
     @staticmethod
     def _contact() -> str:
         return (
-            f"**İletişim:** {link('İletişim sayfamızdan', '/iletisim')} mesaj gönderebilir ya da sayfanın sağ "
-            "altındaki WhatsApp butonuyla bize yazabilirsiniz."
+            f"**İletişim:** {link('İletişim sayfamızdan', '/iletisim')} bize mesaj gönderebilirsiniz."
         )
 
     # ------------------------------------------------------------------ #
@@ -849,7 +848,7 @@ class FrontDesk:
         Yalnızca soru biçimindeki mesajlar; kişiye özel bıçak/ölçü seçimi huniye kalır.
         """
         n = norm(message)
-        if router is None or not n or not _any(_ASKS, n) or wants_selection(n):
+        if router is None or not kb_eligible(n):
             return None
         hits = [h for h in router.route(message)
                 # Canlı veri isteyen kayıtlar (fiyat/stok) kendi akışlarında cevaplanır
@@ -881,8 +880,7 @@ class FrontDesk:
         if _any(_HUMAN_REQUEST, n):
             text += (
                 " Bir yetkilimizle görüşmek isterseniz "
-                f"{link('İletişim sayfamızdan', '/iletisim')} yazabilir ya da sayfanın sağ altındaki "
-                "WhatsApp butonunu kullanabilirsiniz."
+                f"{link('İletişim sayfamızdan', '/iletisim')} bize yazabilirsiniz."
             )
         return text
 
@@ -895,7 +893,7 @@ class FrontDesk:
             "- **Et / kemik:** donuk et, kemikli et, balık\n"
             "- **Sünger / tekstil:** sünger blok, köpük, kumaş\n\n"
             "Emin olamıyorsanız " + link("İletişim sayfamızdan", "/iletisim")
-            + " ya da WhatsApp'tan bize yazabilirsiniz."
+            + " bize yazabilirsiniz."
         )
 
     @staticmethod
@@ -1312,6 +1310,55 @@ def wants_selection(n: str) -> bool:
         return False
     return bool(re.search(r"\d", n)) or _any(
         r"hangi (bica[kg]|serit|testere|urun|model|tpi|dis)|ne (almal|onerir)|tavsiye|oneri|oner", n)
+
+
+# İstek / sorun cümlesi ("iptal etmek istiyorum", "mail gelmedi", "çalışmıyor") — soru eki
+# olmasa da bilgi cevabı bekler. Huni cevapları ("bilmiyorum", "emin değilim") hariç.
+_REQUEST = (r"\b(istiyorum|isterim|istiyoruz|nere\w*|nerden|ogrenmek|iptal|unuttum|giremiyorum)\b|"
+            r"\w+m[iu]yor\w*|\w+m[ae]d[iu]\w*")
+_FUNNEL_ANSWER = r"\b(bilmiyorum|emin degil\w*|hatirlamiyorum)\b"
+# Makine veritabanının çözmesi gereken mesajlar (marka adı geçiyor) kütüphaneye gitmez
+_BRAND_STOP = {"metal", "makina", "makine", "test", "uzay", "kesim", "serit", "testere"}
+
+
+def _load_machine_brands() -> Optional["re.Pattern[str]"]:
+    try:
+        rows = json.load(open(os.path.join(_DATA, "machines_list.json"), encoding="utf-8"))
+        aliases = json.load(open(os.path.join(_DATA, "machine_brand_aliases.json"), encoding="utf-8"))
+    except Exception:
+        return None
+    rows = rows.get("machines") if isinstance(rows, dict) else rows
+    generic = {norm(x) for x in aliases.get("generic_word_brands") or []}
+    names = {norm(r.get("manufacturer", "")) for r in rows or []}
+    for canon, alts in (aliases.get("brands") or {}).items():
+        names.add(norm(canon))
+        names.update(norm(a) for a in alts)
+    names = {x for x in names if len(x) >= 4 and x not in generic and x not in _BRAND_STOP}
+    if not names:
+        return None
+    return re.compile(r"(?<![a-z0-9])(" + "|".join(sorted(map(re.escape, names), key=len, reverse=True))
+                      + r")(?![a-z0-9])")
+
+
+_MACHINE_BRANDS = _load_machine_brands()
+
+
+def mentions_machine(n: str) -> bool:
+    return bool(_MACHINE_BRANDS and _MACHINE_BRANDS.search(n))
+
+
+def kb_eligible(n: str) -> bool:
+    """
+    Mesaj bilgi kütüphanesine gidebilir mi? Soru ya da istek/sorun cümlesi olmalı;
+    kişiye özel seçim, makine adı ve huni cevapları (tek kelime, sayı, 'bilmiyorum') hariç.
+    """
+    if not n or wants_selection(n) or mentions_machine(n):
+        return False
+    if _any(_ASKS, n):
+        return True
+    if _any(_FUNNEL_ANSWER, n) or len(n.split()) < 2:
+        return False
+    return _any(_REQUEST, n)
 
 
 def _safe_kb() -> Optional[KnowledgeBase]:

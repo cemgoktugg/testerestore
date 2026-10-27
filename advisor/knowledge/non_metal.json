@@ -1,0 +1,5428 @@
+{
+ "domain": "non_metal",
+ "title_tr": "Ahşap, et-kemik/gıda, sünger-tekstil, plastik-kompozit kesimi",
+ "version": "2026-10-27-merged",
+ "sources": [
+  {
+   "id": "OLSON-RIKON",
+   "publisher": "The Olson Saw Company (Rikon yeniden basımı)",
+   "title": "How-To's for all Band Saw Blades",
+   "url": "https://info.highlandwoodworking.com/library/manuals/rikon/bandsaw_blade_selection_guide.pdf",
+   "accessed": "2026-10-27",
+   "tier": "A"
+  },
+  {
+   "id": "LAGUNA-EDU",
+   "publisher": "Laguna Tools",
+   "title": "Bandsaw Blade Education",
+   "url": "https://lagunatools.com/education/bandsaw-blade-education/",
+   "accessed": "2026-10-27",
+   "tier": "A"
+  },
+  {
+   "id": "LAGUNA-14BX",
+   "publisher": "Laguna Tools",
+   "title": "14BX Bandsaw Manual (07/2022)",
+   "url": "https://lagunatools.com/wp-content/uploads/2022/07/14BX_Manual_071822.pdf",
+   "accessed": "2026-10-27",
+   "tier": "A"
+  },
+  {
+   "id": "TW-TENSION",
+   "publisher": "Timber Wolf (Suffolk Machinery)",
+   "title": "Blade Tension Guide (Timber Wolf silicon steel blades)",
+   "url": "https://vmtw.com/content/files/Timber%20Wolf/BLADE%20TENSION%20GUIDE%20(1).pdf",
+   "accessed": "2026-10-27",
+   "tier": "A"
+  },
+  {
+   "id": "PSWOOD-LENGTHS",
+   "publisher": "PS Wood Machines (Timber Wolf bayisi)",
+   "title": "Band saw blade length reference",
+   "url": "https://pswood.com/blade-lenghts",
+   "accessed": "2026-10-27",
+   "tier": "B"
+  },
+  {
+   "id": "LENOX-GUIDE",
+   "publisher": "LENOX",
+   "title": "Guide to Band Sawing (2008)",
+   "url": "https://cdn.mscdirect.com/global/media/pdf/search/lenox/lenox-guide-to-band-sawing.pdf",
+   "accessed": "2026-10-27",
+   "tier": "A"
+  },
+  {
+   "id": "ROENTGEN-TM",
+   "publisher": "RÖNTGEN",
+   "title": "Technical Manual – Band Saw Guide",
+   "url": "https://www.roentgen-saw.com/images/pdf/technical_guide.pdf",
+   "accessed": "2026-10-27",
+   "tier": "A"
+  },
+  {
+   "id": "BAHCO-CAT",
+   "publisher": "Bahco (SNA Europe)",
+   "title": "Bahco Bandsaw Blade Catalogue",
+   "url": "https://www.allblades.ca/wp-content/uploads/Catalogues/Bahco%20Bandsaw%20Blade%20Catalogue.pdf",
+   "accessed": "2026-10-27",
+   "tier": "A"
+  },
+  {
+   "id": "AXMINSTER-GUIDE",
+   "publisher": "Axminster Tools",
+   "title": "Choosing The Right Bandsaw Blade (Axcaliber)",
+   "url": "https://www.axminstertools.com/ideas-advice/axcaliber-bandsaw-blades/",
+   "accessed": "2026-10-27",
+   "tier": "B"
+  },
+  {
+   "id": "WM-PROFILE",
+   "publisher": "Wood-Mizer",
+   "title": "How to choose a sawmill blade profile",
+   "url": "https://woodmizer.ca/en/learning-center/how-to-choose-a-sawmill-blade-profile",
+   "accessed": "2026-10-27",
+   "tier": "A"
+  },
+  {
+   "id": "WM-SHARPEN",
+   "publisher": "Wood-Mizer",
+   "title": "Sharpening and setting your own blades – an introduction",
+   "url": "https://woodmizer.eu/learning-center/sharpening-and-setting-your-own-blades-an-introduction",
+   "accessed": "2026-10-27",
+   "tier": "A"
+  },
+  {
+   "id": "WM-WAVY",
+   "publisher": "Wood-Mizer",
+   "title": "How to avoid wavy cuts",
+   "url": "https://woodmizer.co.uk/learning-center/how-to-avoid-wavy-cuts",
+   "accessed": "2026-10-27",
+   "tier": "A"
+  },
+  {
+   "id": "BOZKURT-IU",
+   "publisher": "İstanbul Üniversitesi Orman Fakültesi Dergisi (Prof. Dr. Yılmaz Bozkurt)",
+   "title": "Ağaç biçmede şerit testereler (Seri B, Cilt 30)",
+   "url": "https://dergipark.org.tr/en/download/article-file/175136",
+   "accessed": "2026-10-27",
+   "tier": "B"
+  },
+  {
+   "id": "ORTATESTERE-BLOG",
+   "publisher": "Orta Testere (TR bayi)",
+   "title": "Ahşap şerit testere bıçaklarının kullanımı için öneriler",
+   "url": "https://www.ortatestere.com.tr/blog/ahsap-serit-testere-bicaklarinin-kullanimi-icin-oneriler.html",
+   "accessed": "2026-10-27",
+   "tier": "C"
+  },
+  {
+   "id": "TESTERESEPETI-SSS",
+   "publisher": "Testere Sepeti (TR bayi)",
+   "title": "Sıkça Sorulan Sorular",
+   "url": "https://www.testeresepeti.com.tr/sss.html",
+   "accessed": "2026-10-27",
+   "tier": "C"
+  },
+  {
+   "id": "MEDE-MD113",
+   "publisher": "Me-De Makina (makinaturkiye.com ilanı)",
+   "title": "Me-De MD-113 40'lık şerit testere",
+   "url": "https://www.makinaturkiye.com/40lik-serit-testere-v-23695",
+   "accessed": "2026-10-27",
+   "tier": "B"
+  },
+  {
+   "id": "TUREMAK-40",
+   "publisher": "Turemak",
+   "title": "40'lık şerit testere",
+   "url": "https://www.turemak.com.tr/40-lik-serit-testere",
+   "accessed": "2026-10-27",
+   "tier": "B"
+  },
+  {
+   "id": "OSHA-1910-213",
+   "publisher": "OSHA (ABD Çalışma Bakanlığı)",
+   "title": "29 CFR 1910.213 Woodworking machinery requirements",
+   "url": "https://www.osha.gov/laws-regs/regulations/standardnumber/1910/1910.213",
+   "accessed": "2026-10-27",
+   "tier": "A"
+  },
+  {
+   "id": "EN-ISO-19085-16",
+   "publisher": "CEN/ISO (iTeh katalog kaydı)",
+   "title": "EN ISO 19085-16:2021 Woodworking machines – Safety – Table band saws and band re-saws",
+   "url": "https://standards.iteh.ai/catalog/standards/cen/808321c8-a977-46c4-8381-33e7404031f5/en-1807-1-2013",
+   "accessed": "2026-10-27",
+   "tier": "A"
+  },
+  {
+   "id": "STAR-MKS",
+   "publisher": "Starrett",
+   "title": "Meatkutter Stainless band saw blades",
+   "url": "https://www.starrett.com/products/meat-cutting-and-food-processing/band-saw-blades/meatkutter--stainless",
+   "accessed": "2026-10-27",
+   "tier": "A"
+  },
+  {
+   "id": "STAR-MKF",
+   "publisher": "Starrett",
+   "title": "Meatkutter Frozen band saw blades",
+   "url": "https://www.starrett.com/products/meat-cutting-and-food-processing/band-saw-blades/meatkutter-frozen",
+   "accessed": "2026-10-27",
+   "tier": "A"
+  },
+  {
+   "id": "CBG-MEAT",
+   "publisher": "CBG Acciai (İtalya, gıda bıçağı üreticisi)",
+   "title": "CBG Meatblades – band saw blades",
+   "url": "https://www.cbgacciai.com/en/cbg-meatblades/band-saw-blades/",
+   "accessed": "2026-10-27",
+   "tier": "A"
+  },
+  {
+   "id": "UNITED-NZ",
+   "publisher": "United Products (Yeni Zelanda bayi)",
+   "title": "Fresh vs frozen meat bandsaw blades",
+   "url": "https://unitedproducts.co.nz/fresh-vs-frozen-meat-bandsaw-blades/",
+   "accessed": "2026-10-27",
+   "tier": "B"
+  },
+  {
+   "id": "SIMCUT-BUTCHER",
+   "publisher": "SimCut (bayi blogu)",
+   "title": "SimCut butcher blades – heavy duty meat cutting",
+   "url": "https://simcut.com/2026/03/simcut-butcher-blades-heavy-duty-meat-cutting/",
+   "accessed": "2026-10-27",
+   "tier": "C"
+  },
+  {
+   "id": "BUTCHERSUPPLY-CHART",
+   "publisher": "ButcherSupply.net",
+   "title": "Band saw blade chart",
+   "url": "https://butchersupply.net/band-saw-blade-chart/",
+   "accessed": "2026-10-27",
+   "tier": "B"
+  },
+  {
+   "id": "YILMAZ-ET",
+   "publisher": "Yılmaz Et Makinaları (TR üretici)",
+   "title": "Kemik kesme testeresi modelleri (KTP 165/184/249)",
+   "url": "https://www.yilmazetmakinalari.com/urunler/kemik-kesme-testeresi/",
+   "accessed": "2026-10-27",
+   "tier": "A"
+  },
+  {
+   "id": "HOBART-6614",
+   "publisher": "Hobart",
+   "title": "Model 6614 Meat Saw – Instructions (Form 34527 Rev. D, 2019)",
+   "url": "https://res.katom.com/products/617/617-66142/617-66142_manual.pdf",
+   "accessed": "2026-10-27",
+   "tier": "A"
+  },
+  {
+   "id": "EN12268",
+   "publisher": "CEN (iTeh katalog kaydı)",
+   "title": "EN 12268:2014 Food processing machinery – Band saw machines – Safety and hygiene requirements",
+   "url": "https://standards.iteh.ai/catalog/standards/cen/9dec96d0-4344-4a0f-8b40-8f39a9d4e063/en-12268-2014",
+   "accessed": "2026-10-27",
+   "tier": "A"
+  },
+  {
+   "id": "EN1672-2",
+   "publisher": "CEN (iTeh katalog kaydı)",
+   "title": "EN 1672-2:2020 Food processing machinery – Basic concepts – Hygiene and cleanability requirements",
+   "url": "https://standards.iteh.ai/catalog/standards/cen/1715042d-5c10-42f1-a5d4-085e5be63885/en-1672-2-2020",
+   "accessed": "2026-10-27",
+   "tier": "A"
+  },
+  {
+   "id": "TSE-TSEN12268",
+   "publisher": "Muayene.com (TSE standart listesi)",
+   "title": "Gıda teknolojisi standartları – TS EN 12268, TS EN 1672-2",
+   "url": "https://www.muayene.com/standard/116-tse-standartlari/1205-gida-teknolojisi-standartlari",
+   "accessed": "2026-10-27",
+   "tier": "B"
+  },
+  {
+   "id": "EU-FCM",
+   "publisher": "Avrupa Komisyonu (DG SANTE)",
+   "title": "Food contact materials – legislation",
+   "url": "https://food.ec.europa.eu/food-safety/chemical-safety/food-contact-materials/legislation_en",
+   "accessed": "2026-10-27",
+   "tier": "A"
+  },
+  {
+   "id": "EDQM-METALS",
+   "publisher": "EDQM (Avrupa Konseyi)",
+   "title": "FAQ – EU regulations for food contact materials made from metals",
+   "url": "https://faq.edqm.eu/pages/viewpage.action?pageId=1376777",
+   "accessed": "2026-10-27",
+   "tier": "A"
+  },
+  {
+   "id": "TR-TGK-FCM-2018",
+   "publisher": "T.C. Resmî Gazete / Tarım ve Orman Bakanlığı",
+   "title": "Türk Gıda Kodeksi Gıda ile Temas Eden Madde ve Malzemelere Dair Yönetmelik (RG 05.04.2018, Sayı 30382)",
+   "url": "https://vskn.tarimorman.gov.tr/pendik/Belgeler/-T%C3%BCrk%20G%C4%B1da%20Kodeksi%20G%C4%B1da%20ile%20Temas%20Eden%20Madde%20ve%20Malzemelere%20Dair%20Y%C3%B6netmelik-05.04.2018.pdf",
+   "accessed": "2026-10-27",
+   "tier": "A"
+  },
+  {
+   "id": "TR-TGK-FCM-EK4",
+   "publisher": "Gumruk.com.tr (yönetmelik ekleri kopyası)",
+   "title": "Ek-4 Gıda ile Temas Eden Metal Esaslı Madde ve Malzemeler",
+   "url": "https://www.gumruk.com.tr/files/turk_gida_kodeksi_gida_ile_temaseden_madde_ve_malzemelere_dair_yonetmelik_ekler_30382.htm",
+   "accessed": "2026-10-27",
+   "tier": "B"
+  },
+  {
+   "id": "TS-PRICE-TREE",
+   "publisher": "TestereStore (canlı fiyat matrisi)",
+   "title": "GET /store/blade-price/options (woodcut, meat-bone, textile)",
+   "url": "https://panel.testerestore.com/store/blade-price/options",
+   "accessed": "2026-10-27",
+   "tier": "A"
+  },
+  {
+   "id": "TS-PRODUCT-META",
+   "publisher": "TestereStore (canlı ürün metaverisi)",
+   "title": "Ürün sayfaları: woodcut-classic, hijyenik-et-kemik-pro, sunger-tekstil-pro",
+   "url": "https://testerestore.com/products/woodcut-classic",
+   "accessed": "2026-10-27",
+   "tier": "A"
+  },
+  {
+   "id": "TS-CONFIGURATOR",
+   "publisher": "TestereStore kaynak kodu",
+   "title": "BladeConfigurator.tsx (matris modu: diş listesi boşsa diş seçimi gizlenir)",
+   "url": "https://testerestore.com/products/hijyenik-et-kemik-pro",
+   "accessed": "2026-10-27",
+   "tier": "A"
+  },
+  {
+   "id": "TS-GUIDES",
+   "publisher": "TestereStore rehberleri",
+   "title": "lib/guides.ts – ahşap, et-kemik, sünger rehberleri",
+   "url": "https://testerestore.com/rehber/ahsap-serit-testere-secimi",
+   "accessed": "2026-10-27",
+   "tier": "A"
+  },
+  {
+   "id": "WIKUS-FAILURES",
+   "publisher": "WIKUS",
+   "title": "Guidebook – Cause of failures",
+   "url": "https://www.wikus.de/en/guidebook/practice-tips/cause-of-failures",
+   "accessed": "2026-10-27",
+   "tier": "A"
+  },
+  {
+   "id": "STAR-BANDKNIFE",
+   "publisher": "Starrett",
+   "title": "Band Knives (carbon/stainless; straight, scallop, wavy)",
+   "url": "https://www.starrett.com/products/band-saw-blades/carbon/band-knives",
+   "accessed": "2026-10-27",
+   "tier": "A"
+  },
+  {
+   "id": "DAKIN-FOAM",
+   "publisher": "Dakin-Flathers",
+   "title": "Foam cutting blade (blog) ve scallop/wavy/CNC ürün sayfaları",
+   "url": "https://www.dakin-flathers.com/blog/foam-cutting-blade",
+   "accessed": "2026-10-27",
+   "tier": "A"
+  },
+  {
+   "id": "BAEUMER-KNIVES",
+   "publisher": "Bäumer (Albrecht Bäumer GmbH)",
+   "title": "Ground / toothed band knives, band saws, cutting wire",
+   "url": "https://www.baeumer.com/en/cutting-tools/knife-types/ground-band-knives/",
+   "accessed": "2026-10-27",
+   "tier": "A"
+  },
+  {
+   "id": "BAEUMER-ISL",
+   "publisher": "Bäumer",
+   "title": "IS-L / IS-M vertical knife cutting machines; automatic grinding unit",
+   "url": "https://www.baeumer.us/machines/productfinder/is-l/",
+   "accessed": "2026-10-27",
+   "tier": "A"
+  },
+  {
+   "id": "FK-MACHINES",
+   "publisher": "Fecken-Kirfel",
+   "title": "V 24 / V 51 / T 8 / V 116 / H 51 / F 62 machine pages",
+   "url": "https://www.fecken-kirfel.de/en/products/v_51-2386FA1B50D404DBC1256B140056634D",
+   "accessed": "2026-10-27",
+   "tier": "A"
+  },
+  {
+   "id": "OSHIMA-OB",
+   "publisher": "Oshima",
+   "title": "Band knife machine OB-700A/900A/1200A",
+   "url": "https://www.oshima.com.tw/en/product/cutting/band-knife-machine-ob-700a-900a-1200a",
+   "accessed": "2026-10-27",
+   "tier": "A"
+  },
+  {
+   "id": "KURIS-TEX",
+   "publisher": "Kuris",
+   "title": "TexKnife 492 KR datasheet",
+   "url": "https://kuris.de/wp-content/uploads/2025/08/TexKnife-Dec-10-2022.pdf",
+   "accessed": "2026-10-27",
+   "tier": "A"
+  },
+  {
+   "id": "REXEL-BK",
+   "publisher": "Rexel (Polonya, makine üreticisi)",
+   "title": "Band knife machine characteristics / R1150",
+   "url": "https://www.rexelpoland.com/en/news-2/band-knife-machine-characteristics_-types_-advantages_-disadvantages",
+   "accessed": "2026-10-27",
+   "tier": "A"
+  },
+  {
+   "id": "ALBER-KNIVES",
+   "publisher": "Alber Sägen",
+   "title": "Band knives: untoothed, toothed, wave cut",
+   "url": "https://www.alber-saegen.de/en/band-knives.html",
+   "accessed": "2026-10-27",
+   "tier": "A"
+  },
+  {
+   "id": "SIMCUT-FOAM",
+   "publisher": "SimCut (bayi/teknik blog)",
+   "title": "Breaking down foam cutting blades; wavy/scallop/razorback ürün sayfaları",
+   "url": "https://simcut.com/2025/01/breaking-down-foam-cutting-blades/",
+   "accessed": "2026-10-27",
+   "tier": "B"
+  },
+  {
+   "id": "DIAMONDTOOLS-BK",
+   "publisher": "Diamond Tools (Hindistan, bıçak üreticisi)",
+   "title": "Bandknife blades for foam (SBSE/DBSE/DBDE)",
+   "url": "https://www.bandknife.com/bandknife-blades-for-foam/",
+   "accessed": "2026-10-27",
+   "tier": "B"
+  },
+  {
+   "id": "EDGESWEETS-BLADES",
+   "publisher": "Edge-Sweets",
+   "title": "Blades",
+   "url": "https://www.edge-sweets.com/blades.aspx",
+   "accessed": "2026-10-27",
+   "tier": "A"
+  },
+  {
+   "id": "ARPEL-EPS",
+   "publisher": "Arpel",
+   "title": "EPS cutting line (hot wire)",
+   "url": "https://arpel.rs/en/hotwire-cutters/eps-cutting-line/",
+   "accessed": "2026-10-27",
+   "tier": "A"
+  },
+  {
+   "id": "ZIMLIN-HFC",
+   "publisher": "Zimlin (Çin, makine üreticisi)",
+   "title": "JK-FC05 horizontal foam cutting machine",
+   "url": "https://www.zimlin.com/product/jk-fc05-horizontal-foam-cutting-machine/",
+   "accessed": "2026-10-27",
+   "tier": "B"
+  },
+  {
+   "id": "TEMCO-HOTWIRE",
+   "publisher": "Temco Industrial (bayi)",
+   "title": "Cutting Styrofoam – resistance wire guide",
+   "url": "https://temcoindustrial.com/product-guides/wire-cable-and-accessories/resistance-and-non-resistance-wire/cutting-styrofoam/",
+   "accessed": "2026-10-27",
+   "tier": "B"
+  },
+  {
+   "id": "ROCKWOOL-CUT",
+   "publisher": "ROCKWOOL",
+   "title": "Guidelines for cutting stone wool insulation",
+   "url": "https://www.rockwool.com/siteassets/o2-rockwool/documentation/technical-bulletins/commercial/guidelines-for-cutting-stone-wool-insulation.pdf",
+   "accessed": "2026-10-27",
+   "tier": "A"
+  },
+  {
+   "id": "HSE-FABRIC",
+   "publisher": "UK HSE",
+   "title": "Fabric-cutting machinery",
+   "url": "https://www.hse.gov.uk/textiles/machinery/cutting.htm",
+   "accessed": "2026-10-27",
+   "tier": "A"
+  },
+  {
+   "id": "TR-FOAM-SELLERS",
+   "publisher": "Testere Sepeti / Wellershaus / Orta Testere (TR bayiler)",
+   "title": "Tekstil ve sünger bıçakları kategorileri",
+   "url": "https://www.testeresepeti.com.tr/kategoriler/tekstil-ve-sunger-bicaklari.html",
+   "accessed": "2026-10-27",
+   "tier": "C"
+  },
+  {
+   "id": "ARKEMA-PMMA",
+   "publisher": "Arkema / Altuglas",
+   "title": "PLEXIGLAS Acrylic Sheet Fabrication Manual (2006)",
+   "url": "https://www.eplastics.com/pdf/acrylic-fabrication-manual.pdf",
+   "accessed": "2026-10-27",
+   "tier": "A"
+  },
+  {
+   "id": "ROEHM-PMMA",
+   "publisher": "POLYVANTIS (Röhm)",
+   "title": "Machining PLEXIGLAS, Ref. 311-1 (07/2024)",
+   "url": "https://www.plexiglas.de/files/plexiglas-content/pdf/verarbeitungsrichtlinie/311-1-Machining-PLEXIGLAS.pdf",
+   "accessed": "2026-10-27",
+   "tier": "A"
+  },
+  {
+   "id": "SHEFFIELD-PC",
+   "publisher": "Sheffield Plastics (Bayer Makrolon)",
+   "title": "MAKROLON PC Sheet Fabrication Guide (rev 5/05)",
+   "url": "https://www.tapplastics.com/image/pdf/Polycarbonate%20Fabrication%20Guide.pdf",
+   "accessed": "2026-10-27",
+   "tier": "A"
+  },
+  {
+   "id": "COVESTRO-PC",
+   "publisher": "Covestro",
+   "title": "Makrolon solid sheet Technical Manual MF0261 (2017)",
+   "url": "https://www.exolongroup.com/index.php/fuseaction/download/lrn_file/mf0261_e_170828.pdf",
+   "accessed": "2026-10-27",
+   "tier": "A"
+  },
+  {
+   "id": "TUFFAK-PC",
+   "publisher": "Plaskolite",
+   "title": "TUFFAK PC Fabrication Guide (2019)",
+   "url": "https://www.professionalplastics.com/professionalplastics/content/downloads/Tuffak-PC_fabrication.pdf",
+   "accessed": "2026-10-27",
+   "tier": "A"
+  },
+  {
+   "id": "MCAM-TOOLKIT",
+   "publisher": "Mitsubishi Chemical Group (MCAM)",
+   "title": "Machinist's Toolkit V3",
+   "url": "https://www.mcam.com/en/dam/jcr:5c7660f2-cbf7-4818-bd41-c1c30dbc7053/MCG-Machinist-Toolkit-V3.pdf",
+   "accessed": "2026-10-27",
+   "tier": "A"
+  },
+  {
+   "id": "SIMONA-MACHINING",
+   "publisher": "SIMONA AG",
+   "title": "work.info Machining (07/2018)",
+   "url": "https://www.simona.de/fileadmin/user_upload/Medien/Mediacenter/Verarbeitungshinweise/work.info_-_Machining.pdf",
+   "accessed": "2026-10-27",
+   "tier": "A"
+  },
+  {
+   "id": "KOEMMERLING-PVC",
+   "publisher": "Kömmerling (profine)",
+   "title": "Processing guidelines: PVC-U sheets in use",
+   "url": "https://www.koemmerling.com/cms16/files/Koemmerling-PVC-U-sheets-in-use-brochure-24211700600826-web.pdf?download=1",
+   "accessed": "2026-10-27",
+   "tier": "A"
+  },
+  {
+   "id": "FOREX-PVC",
+   "publisher": "3A Composites",
+   "title": "FOREX processing guidelines (2011)",
+   "url": "https://d2zo35mdb530wx.cloudfront.net/_binary/UCPtkBAMXPlasticsBelgium/nl/viscom/forex/link-EN_FOREX-processing-guidelines.pdf",
+   "accessed": "2026-10-27",
+   "tier": "A"
+  },
+  {
+   "id": "PALRAM-PVC-SDS",
+   "publisher": "Palram",
+   "title": "PSDS Rigid PVC Products (2018)",
+   "url": "https://www.polymershapes.com/wp-content/uploads/2020/04/Polymershapes_PalramAmericas_Safety-Data-Sheet-RigidPVCProducts.pdf",
+   "accessed": "2026-10-27",
+   "tier": "A"
+  },
+  {
+   "id": "ENSINGER-MACH",
+   "publisher": "Ensinger",
+   "title": "Machining recommendations for semi-finished engineering plastics",
+   "url": "https://www.emcoplastics.com/assets/pdf/acetal/Machining%20guidelines%20Ensinger.pdf_02.pdf",
+   "accessed": "2026-10-27",
+   "tier": "A"
+  },
+  {
+   "id": "STRONGWELL-FRP",
+   "publisher": "Strongwell",
+   "title": "FRP Fabrication & Repair Manual (2024) ve SDS",
+   "url": "https://www.strongwell.com/wp-content/uploads/2024/10/Strongwell-Fabrication-and-Repair-Manual.pdf",
+   "accessed": "2026-10-27",
+   "tier": "A"
+  },
+  {
+   "id": "PULTEX-FRP",
+   "publisher": "Creative Pultrusions",
+   "title": "Pultex Global Design Manual, Ch. 9",
+   "url": "https://www.emcoplastics.com/assets/pdf/plexiglas/Pultex%20Design%20Manual.pdf",
+   "accessed": "2026-10-27",
+   "tier": "A"
+  },
+  {
+   "id": "EXEL-FRP",
+   "publisher": "Exel Composites",
+   "title": "Guide to composites: Fabrication methods",
+   "url": "https://investors-fi.exelcomposites.com/guide-to-composites/fabrication-methods/",
+   "accessed": "2026-10-27",
+   "tier": "A"
+  },
+  {
+   "id": "TORAY-CFRP",
+   "publisher": "Toray CMA",
+   "title": "Safety & handling",
+   "url": "https://www.toraycma.com/products/safety-handling/",
+   "accessed": "2026-10-27",
+   "tier": "A"
+  },
+  {
+   "id": "KINGSPAN-PANEL",
+   "publisher": "Kingspan",
+   "title": "Installation Guide Insulated Panels EN (07.2019)",
+   "url": "https://damcdn.kingspan.com/assets/product/public/original/ASS_1373364.pdf",
+   "accessed": "2026-10-27",
+   "tier": "A"
+  },
+  {
+   "id": "ISOPAN-PANEL",
+   "publisher": "Isopan / Manni Group",
+   "title": "Technical Manual Wall Panels (2024)",
+   "url": "https://mannigroup.b-cdn.net/2024/08/TM_WALL_EN_240820_rev01.pdf",
+   "accessed": "2026-10-27",
+   "tier": "A"
+  },
+  {
+   "id": "DOALL-FAQ",
+   "publisher": "DoALL",
+   "title": "Blades FAQ",
+   "url": "https://www.doallsaws.com/faq/blades",
+   "accessed": "2026-10-27",
+   "tier": "A"
+  },
+  {
+   "id": "STAR-SFB",
+   "publisher": "Starrett",
+   "title": "Duratec SFB carbon flex-back",
+   "url": "https://www.starrett.com/products/band-saw-blades/carbon/duratec-sfb/",
+   "accessed": "2026-10-27",
+   "tier": "A"
+  },
+  {
+   "id": "PLASTICSEUROPE-PTFE",
+   "publisher": "PlasticsEurope",
+   "title": "Guide for the Safe Handling of Fluoropolymer Resins (2012)",
+   "url": "https://agcce.com/wp-content/uploads/2023/07/Fluoropolymers_SafeGuide_EN.pdf",
+   "accessed": "2026-10-27",
+   "tier": "A"
+  },
+  {
+   "id": "INT-GUIDE-SPONGE",
+   "publisher": "TestereStore (mağaza kodu)",
+   "title": "Rehber: Sünger kesim bıçağı seçimi",
+   "url": "repo:wt-lib-src@3bec1b5/testerestore/lib/guides.ts#sunger-kesim-bicagi-secimi",
+   "accessed": "2026-10-27",
+   "tier": "A",
+   "kind": "internal_site_text"
+  },
+  {
+   "id": "LIVE-PRICE-OPTIONS",
+   "publisher": "TestereStore (canlı, herkese açık)",
+   "title": "GET /store/blade-price/options (canlı fiyat matrisi ağacı)",
+   "url": "https://panel.testerestore.com/store/blade-price/options",
+   "accessed": "2026-10-27",
+   "tier": "A",
+   "kind": "live_api"
+  },
+  {
+   "id": "INT-CONFIGURATOR",
+   "publisher": "TestereStore (mağaza kodu)",
+   "title": "BladeConfigurator — ürün sayfası ölçü/fiyat seçici",
+   "url": "repo:wt-lib-src@3bec1b5/testerestore/app/components/BladeConfigurator.tsx",
+   "accessed": "2026-10-27",
+   "tier": "A",
+   "kind": "internal_code"
+  },
+  {
+   "id": "LIVE-PRODUCTS",
+   "publisher": "TestereStore (canlı, herkese açık)",
+   "title": "GET /store/products?limit=200 (33 ürün: 7 ölçüye göre + 26 hazır boy)",
+   "url": "https://panel.testerestore.com/store/products?limit=200&fields=handle,title,subtitle,metadata,description,*variants",
+   "accessed": "2026-10-27",
+   "tier": "A",
+   "kind": "live_api"
+  },
+  {
+   "id": "INT-GUIDE-MEAT",
+   "publisher": "TestereStore (mağaza kodu)",
+   "title": "Rehber: Et-kemik şerit testere seçimi",
+   "url": "repo:wt-lib-src@3bec1b5/testerestore/lib/guides.ts#et-kemik-serit-testere-secimi",
+   "accessed": "2026-10-27",
+   "tier": "A",
+   "kind": "internal_site_text"
+  },
+  {
+   "id": "INT-CATEGORY-PAGES",
+   "publisher": "TestereStore (mağaza kodu)",
+   "title": "Kategori sayfaları metinleri",
+   "url": "repo:wt-lib-src@3bec1b5/testerestore/lib/category-pages.ts",
+   "accessed": "2026-10-27",
+   "tier": "A",
+   "kind": "internal_site_text"
+  },
+  {
+   "id": "STORE-GUIDES",
+   "publisher": "TestereStore",
+   "title": "Rehberler (testerestore/lib/guides.ts): arızalar, kırılma, gerginlik-hız-soğutma, rodaj-bakım, boy ölçümü, ahşap",
+   "url": "/rehber",
+   "accessed": "2026-10-27",
+   "tier": "internal"
+  },
+  {
+   "id": "STORE-LEGAL",
+   "publisher": "TestereStore",
+   "title": "Yasal metinler (testerestore/lib/legal-content.ts): iade ve cayma, mesafeli satış",
+   "url": "/yasal/iade-ve-cayma",
+   "accessed": "2026-10-27",
+   "tier": "internal"
+  },
+  {
+   "id": "RESEARCH-TBH",
+   "publisher": "TestereStore araştırma notu",
+   "title": "teknik_bilgi_haritasi.md §2–4",
+   "url": "",
+   "accessed": "2026-10-27",
+   "tier": "internal"
+  },
+  {
+   "id": "ENSINGER-MACHINING",
+   "publisher": "Ensinger",
+   "title": "Machining recommendations for semi-finished engineering plastics",
+   "url": "https://www.emcoplastics.com/assets/pdf/acetal/Machining%20guidelines%20Ensinger.pdf_02.pdf",
+   "accessed": "2026-10-27",
+   "tier": "A"
+  },
+  {
+   "id": "SITE-GUIDE-WOOD",
+   "publisher": "TestereStore",
+   "title": "guides.ts → ahsap-serit-testere-secimi (diş tipleri)",
+   "url": "/rehber/ahsap-serit-testere-secimi",
+   "accessed": "2026-10-27",
+   "tier": "internal"
+  },
+  {
+   "id": "ROHM-PLEXIGLAS",
+   "publisher": "Röhm",
+   "title": "PLEXIGLAS Fabricating Tips for Solid Sheets (311-5)",
+   "url": "https://www.plexiglas.de/files/plexiglas-content/pdf/verarbeitungsrichtlinie/311-5-Fabricating-Tips-for-PLEXIGLAS.pdf",
+   "accessed": "2026-10-27",
+   "tier": "A"
+  },
+  {
+   "id": "SUPPLIER-CATALOG-2025",
+   "publisher": "Tedarikçi kataloğu (gizli)",
+   "title": "Şerit testere kataloğu 2025",
+   "url": "",
+   "accessed": "2026-10-27",
+   "tier": "A"
+  },
+  {
+   "id": "SITE-CAT-CARBIDE",
+   "publisher": "TestereStore",
+   "title": "category-pages.ts → karbur-uclu-serit-testere",
+   "url": "/kategori/karbur-uclu-serit-testere",
+   "accessed": "2026-10-27",
+   "tier": "internal"
+  },
+  {
+   "id": "PLYMOUTH-COMPOSITES-HS",
+   "publisher": "University of Plymouth (MATS347)",
+   "title": "Composites — health and safety",
+   "url": "https://ecm-academics.plymouth.ac.uk/jsummerscales/MATS347/MATS347C4%20safety.htm",
+   "accessed": "2026-10-27",
+   "tier": "B"
+  }
+ ],
+ "entries": [
+  {
+   "id": "non_metal.router-non-metal",
+   "title_tr": "Metal dışı malzemede hangi bıçak ailesi?",
+   "intents": [
+    "non_metal",
+    "selection"
+   ],
+   "questions_tr": [
+    "ahşap için hangi bıçak",
+    "et kemik kesmek için hangi şerit",
+    "plastik kesmek için hangi testere",
+    "metal değil başka şey keseceğim hangi bıçak",
+    "metal dışı malzeme için hangi bıçak ailesi"
+   ],
+   "answer_tr": "Malzemeye göre ailemiz değişir: ahşap ve kereste için Ahşap Kesim, et-kemik, balık ve donuk gıda için paslanmaz gövdeli Hijyenik Et-Kemik, sünger, köpük ve kumaş için dişsiz ağızlı Sünger-Tekstil bıçağı. Plastik ve kompozitte doğru bıçak malzemenin türüne, kalınlığına ve makinenize bağlıdır; malzemeyi (ör. PVC, pleksi, CTP) ve makinenizi yazarsanız birlikte bakalım. Ölçüyü (genişlik × kalınlık × boy) makinenizin etiketinden alın.",
+   "facts": [
+    {
+     "claim_tr": "Ailelerin canlı fiyat matrisinde ayrı ağaçları var: woodcut, meat-bone, textile.",
+     "source_ids": [
+      "TS-PRICE-TREE"
+     ],
+     "status": "internal"
+    },
+    {
+     "claim_tr": "Hijyenik Et-Kemik bıçağının gövdesi AISI 420 paslanmaz çeliktir; Sünger-Tekstil bıçağı dişsiz (dalgalı/tırtıklı/düz) ağızlıdır; Ahşap Kesim yüksek karbonlu çeliktir.",
+     "source_ids": [
+      "TS-PRODUCT-META"
+     ],
+     "status": "internal"
+    }
+   ],
+   "related_products": [
+    "woodcut-classic",
+    "hijyenik-et-kemik-pro",
+    "sunger-tekstil-pro"
+   ],
+   "links": [
+    "/products/woodcut-classic",
+    "/products/hijyenik-et-kemik-pro",
+    "/products/sunger-tekstil-pro",
+    "/iletisim"
+   ],
+   "requires_data": [],
+   "safety": false,
+   "review": {
+    "status": "reviewed"
+   }
+  },
+  {
+   "id": "non_metal.wood-width-radius-table",
+   "title_tr": "Kıvrım yarıçapına göre ahşap bıçak genişliği",
+   "intents": [
+    "selection",
+    "non_metal"
+   ],
+   "questions_tr": [
+    "kıvrımlı kesim için kaç mm bıçak",
+    "13 mm şerit en dar kaç yarıçap keser",
+    "daire kesmek için hangi genişlik",
+    "ahşapta kavisli kesim bıçak genişliği",
+    "ne kadar dar kıvrım kesebilirim"
+   ],
+   "answer_tr": "Keseceğiniz en dar kıvrımın izin verdiği en geniş bıçağı seçin. Yaklaşık en küçük yarıçaplar: 6 mm bıçak ~16 mm, 10 mm ~40 mm, 13 mm ~65 mm, 16 mm ~100 mm, 20 mm ~140 mm, 25 mm ~180 mm. Daha dar kıvrımda bıçak burulur ve kıvrımı takip edemez. Tablolar bıçak ve makineye göre biraz değişir; değerleri yaklaşık kabul edin.",
+   "facts": [
+    {
+     "claim_tr": "Metrik tablo: 3→4, 6→16, 10→40, 13→65, 16→100, 20→140, 25→180 mm yarıçap.",
+     "value": "13 mm → 65 mm",
+     "unit": "mm",
+     "conditions": "dikey makine",
+     "source_ids": [
+      "ROENTGEN-TM"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Ahşap tablosu (inç→mm): 1\"(25)→7\"(178); 3/4\"(19)→5,5\"(140); 5/8\"(16)→4\"(102); 1/2\"(13)→2,5\"(64); 3/8\"(10)→1,5\"(38); 1/4\"(6)→5/8\"(16); 3/16\"(5)→5/16\"(8); 1/8\"(3)→3/16\"(5).",
+     "source_ids": [
+      "OLSON-RIKON"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "1-1/4\"(32 mm)→12\"(305 mm); 1-1/2\"(38 mm)→21\"(533 mm); 1/2\"→2,5\"; her zaman en geniş bıçağı kullanın.",
+     "source_ids": [
+      "LENOX-GUIDE"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Daha dar yarıçap veren tablo: 10 mm→27 mm, 6 mm→19 mm, 3 mm→10 mm, 13 mm→63 mm.",
+     "source_ids": [
+      "AXMINSTER-GUIDE"
+     ],
+     "status": "conflict"
+    },
+    {
+     "claim_tr": "Yarıçap tabloları kaynaktan kaynağa biraz farklıdır ve kaba göstergedir.",
+     "source_ids": [
+      "LAGUNA-14BX"
+     ],
+     "status": "verified"
+    }
+   ],
+   "related_products": [
+    "woodcut-classic"
+   ],
+   "links": [
+    "/rehber/ahsap-serit-testere-secimi",
+    "/products/woodcut-classic"
+   ],
+   "requires_data": [],
+   "safety": false,
+   "review": {
+    "status": "reviewed"
+   }
+  },
+  {
+   "id": "non_metal.wood-tight-curves-gap",
+   "title_tr": "Çok dar kıvrımlar: 3 ve 6 mm ahşap bıçağı",
+   "intents": [
+    "product",
+    "non_metal"
+   ],
+   "questions_tr": [
+    "6 mm ahşap şerit var mı",
+    "3 mm şerit testere bıçağı satıyor musunuz",
+    "oyma ve dar kıvrım için ince bıçak",
+    "10 mm ahşap şerit lazım",
+    "modelcilik için dar şerit"
+   ],
+   "answer_tr": "Sitede seçilebilen en dar Ahşap Kesim bıçağı 13 mm'dir ve yaklaşık 65 mm'den küçük yarıçapları kesmeye uygun değildir. 3, 6 veya 10 mm gibi dar ahşap bıçaklarını şu an sipariş ekranında sunmuyoruz. Böyle bir ihtiyacınız varsa ölçü ve makine bilgisiyle bize yazın; tedarik edip edemeyeceğimizi bildirelim.",
+   "facts": [
+    {
+     "claim_tr": "woodcut matrisinde en dar genişlik 13 mm.",
+     "value": "13",
+     "unit": "mm",
+     "source_ids": [
+      "TS-PRICE-TREE"
+     ],
+     "status": "internal"
+    },
+    {
+     "claim_tr": "13 mm (1/2\") bıçak için en küçük yarıçap ≈ 64–65 mm.",
+     "value": "65",
+     "unit": "mm",
+     "source_ids": [
+      "OLSON-RIKON",
+      "ROENTGEN-TM",
+      "LENOX-GUIDE"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Site rehberi genel kıvrımlarda 6 mm, çok dar kıvrımlarda 3 mm bıçağı önerir (katalogda yok).",
+     "source_ids": [
+      "TS-GUIDES"
+     ],
+     "status": "internal"
+    }
+   ],
+   "related_products": [
+    "woodcut-classic"
+   ],
+   "links": [
+    "/iletisim",
+    "/rehber/ahsap-serit-testere-secimi"
+   ],
+   "requires_data": [],
+   "safety": false,
+   "review": {
+    "status": "reviewed"
+   }
+  },
+  {
+   "id": "non_metal.wood-widest-blade-straight",
+   "title_tr": "Düz kesim ve dilimlemede genişlik",
+   "intents": [
+    "selection",
+    "non_metal"
+   ],
+   "questions_tr": [
+    "düz kesim için kaç mm şerit",
+    "kereste düz biçmek için geniş bıçak mı",
+    "bıçak genişliği kesim düzgünlüğünü etkiler mi",
+    "en geniş bıçak mı almalıyım",
+    "ahşapta düz kesim sapıyor genişlik"
+   ],
+   "answer_tr": "Düz kesimde ve kalın kereste dilimlemede makinenizin izin verdiği en geniş bıçak daha düz keser ve daha hızlı ilerlemeye izin verir; dar bıçak düz kesimde daha kolay sapar. Makine kılavuzundaki en büyük genişliği aşmayın; küçük makineler geniş bıçağı yeterince geremeyebilir. Ahşap bıçağımızda 13–40 mm arası genişlikler var.",
+   "facts": [
+    {
+     "claim_tr": "Kesme (cut-off) işinde bıçak makinenin izin verdiği kadar geniş olmalı; geniş bant daha düz keser ve daha hızlı ilerletilir.",
+     "source_ids": [
+      "OLSON-RIKON"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Dilimlemede (resaw) mümkün olan en geniş bıçak; 1\" bıçağın kiriş dayanımı 1/8\" bıçaktan çok yüksektir.",
+     "source_ids": [
+      "LAGUNA-EDU"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Her zaman mümkün olan en geniş bıçak: daha güçlüdür, eğilmeden daha yüksek ilerleme kuvvetine dayanır.",
+     "source_ids": [
+      "AXMINSTER-GUIDE"
+     ],
+     "status": "single_source"
+    },
+    {
+     "claim_tr": "Matriste ahşap genişlikleri 13–40 mm.",
+     "value": "13-40",
+     "unit": "mm",
+     "source_ids": [
+      "TS-PRICE-TREE"
+     ],
+     "status": "internal"
+    }
+   ],
+   "related_products": [
+    "woodcut-classic"
+   ],
+   "links": [
+    "/products/woodcut-classic",
+    "/rehber/ahsap-serit-testere-secimi"
+   ],
+   "requires_data": [],
+   "safety": false,
+   "review": {
+    "status": "reviewed"
+   }
+  },
+  {
+   "id": "non_metal.wood-tpi-three-teeth",
+   "title_tr": "Ahşapta diş adımı: kesitte en az üç diş",
+   "intents": [
+    "selection",
+    "non_metal"
+   ],
+   "questions_tr": [
+    "ahşapta kaç tpi kullanmalıyım",
+    "18 lik kontrplak için kaç diş",
+    "ince tahta kesmek için kaç dişli bıçak",
+    "tpi ile malzeme kalınlığı tablosu ahşap",
+    "5 cm kereste için kaç diş"
+   ],
+   "answer_tr": "Kesit içinde aynı anda en az üç diş olmalı; kesilebilecek en ince malzeme yaklaşık 3 × 25,4 / TPI mm'dir. Örnek eşleşmeler: 14 TPI ≈ 5,5 mm, 10 TPI ≈ 8 mm, 6 TPI ≈ 13 mm, 4 TPI ≈ 19 mm, 3 TPI ≈ 25 mm. Değişken dişte ortalamayı kullanın (6/10 için 8). Aynı kalınlıkta seyrek diş hızlı ama kaba, sık diş yavaş ama pürüzsüz keser.",
+   "facts": [
+    {
+     "claim_tr": "TPI → en ince malzeme: 32→3/32\"(2,4 mm); 24→1/8\"(3,2); 18→5/32\"(4,0); 14→1/4\"(6,4); 10→5/16\"(7,9); 8→3/8\"(9,5); 6→1/2\"(12,7); 4→3/4\"(19,1); 3→1\"(25,4); 2→1-1/2\"(38,1).",
+     "unit": "TPI/mm",
+     "source_ids": [
+      "OLSON-RIKON"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "İş parçasında en az üç diş bulunmalıdır; daha çok TPI daha pürüzsüz ama yavaş keser.",
+     "value": "≥3",
+     "unit": "diş",
+     "source_ids": [
+      "OLSON-RIKON"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "En az 3 diş kuralı ahşap rehberinde formülle (3 × 25,4 / TPI) verilir.",
+     "source_ids": [
+      "TS-GUIDES"
+     ],
+     "status": "internal"
+    }
+   ],
+   "related_products": [
+    "woodcut-classic"
+   ],
+   "links": [
+    "/rehber/ahsap-serit-testere-secimi",
+    "/rehber/serit-testere-tpi-secimi"
+   ],
+   "requires_data": [],
+   "safety": false,
+   "review": {
+    "status": "reviewed"
+   }
+  },
+  {
+   "id": "non_metal.wood-teeth-in-cut-upper",
+   "title_tr": "Kesitte kaç diş fazla olur? (üst sınır)",
+   "intents": [
+    "selection",
+    "non_metal"
+   ],
+   "questions_tr": [
+    "kesitte en fazla kaç diş olmalı",
+    "çok sık diş ahşabı yakar mı",
+    "kalın ağaçta sık diş olur mu",
+    "kaç diş aynı anda kesmeli ahşap"
+   ],
+   "answer_tr": "Alt sınır nettir: kesitte en az üç diş. Üst sınır için kaynaklar farklı sayı verir (yaklaşık 6, 6–8 veya 12 diş). Pratikte kalın ahşapta çok sık diş talaşı boşaltamaz, bıçak ısınır ve yüzey yanar; bu durumda daha seyrek diş seçin. Kesin değer için bıçak ve makine kılavuzunu esas alın.",
+   "facts": [
+    {
+     "claim_tr": "Normalde kesitte 6–8 dişin çalışması önerilir; daha az diş titreşim ve diş boşluğu taşmasına yol açabilir.",
+     "value": "6-8",
+     "unit": "diş",
+     "source_ids": [
+      "LAGUNA-EDU"
+     ],
+     "status": "conflict"
+    },
+    {
+     "claim_tr": "Kesimde en az 3, en fazla 6 diş temas etmelidir.",
+     "value": "3-6",
+     "unit": "diş",
+     "source_ids": [
+      "AXMINSTER-GUIDE"
+     ],
+     "status": "conflict"
+    },
+    {
+     "claim_tr": "Site rehberi: bazı üreticiler kesitte yaklaşık 12 dişi üst sınır önerir.",
+     "value": "~12",
+     "unit": "diş",
+     "source_ids": [
+      "TS-GUIDES"
+     ],
+     "status": "conflict"
+    },
+    {
+     "claim_tr": "Diş boşlukları doluyorsa diş çok sıktır; daha seyrek diş kullanın.",
+     "source_ids": [
+      "OLSON-RIKON"
+     ],
+     "status": "verified"
+    }
+   ],
+   "related_products": [
+    "woodcut-classic"
+   ],
+   "links": [
+    "/rehber/ahsap-serit-testere-secimi"
+   ],
+   "requires_data": [],
+   "safety": false,
+   "review": {
+    "status": "reviewed"
+   }
+  },
+  {
+   "id": "non_metal.wood-tpi-by-job",
+   "title_tr": "İşe göre ahşap TPI: dilimleme, genel, levha",
+   "intents": [
+    "selection",
+    "non_metal"
+   ],
+   "questions_tr": [
+    "kalın kereste için kaç tpi",
+    "genel marangozluk için hangi diş",
+    "kontrplak mdf için kaç diş",
+    "19 mm tahta hızlı kesim için diş",
+    "dilimleme için seyrek diş mi"
+   ],
+   "answer_tr": "Kalın kereste ve dilimlemede 2–3 TPI gibi seyrek diş talaşı iyi boşaltır. 19 mm ahşapta 4 TPI hızlı, 14 TPI yavaş ama temiz keser. Kontrplak ve MDF'de 10–14 TPI düz (regular) diş temiz yüzey verir; 14 TPI ve üstü ince kesitler (25 mm altı) içindir. Sipariş ekranında ahşap TPI seçeneği görünmüyorsa ihtiyacınızı siparişten önce bize yazın.",
+   "facts": [
+    {
+     "claim_tr": "2–3 TPI dilimleme ve 8\"(203 mm)'e kadar kalın malzeme; 3/4\"(19 mm) ahşapta 4 TPI hızlı, 14 TPI yavaş ve pürüzsüz.",
+     "source_ids": [
+      "OLSON-RIKON"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "6 TPI atlamalı: 150 mm'ye kadar enine, 50 mm'ye kadar boyuna kesim; 10 TPI düz: kontrplak, MDF, plastik; 14 TPI+: kontrplak, plastik, MDF, doğal ahşapta yalnız 25 mm altı.",
+     "source_ids": [
+      "AXMINSTER-GUIDE"
+     ],
+     "status": "single_source"
+    },
+    {
+     "claim_tr": "woodcut ailesinde diş seçimi sipariş ekranında yok.",
+     "source_ids": [
+      "TS-PRICE-TREE",
+      "TS-CONFIGURATOR"
+     ],
+     "status": "internal"
+    }
+   ],
+   "related_products": [
+    "woodcut-classic"
+   ],
+   "links": [
+    "/rehber/ahsap-serit-testere-secimi",
+    "/products/woodcut-classic",
+    "/iletisim"
+   ],
+   "requires_data": [],
+   "safety": false,
+   "review": {
+    "status": "reviewed"
+   }
+  },
+  {
+   "id": "non_metal.wood-hook-tooth",
+   "title_tr": "Kanca diş (hook) ne zaman?",
+   "intents": [
+    "glossary",
+    "selection",
+    "non_metal"
+   ],
+   "questions_tr": [
+    "hook diş ahşapta ne işe yarar",
+    "hızlı kesim için hangi diş tipi",
+    "kancalı diş yaş ağaç",
+    "ahşapta kanca diş ne zaman seçilir"
+   ],
+   "answer_tr": "Kanca diş pozitif talaş açılıdır; talaşı hızlı alır ve yüzey kalitesinin ikinci planda olduğu hızlı kesimde, kalın ve yaş ağaçta tercih edilir. Temiz yüzey istiyorsanız düz açılı (regular/rake) diş daha uygundur.",
+   "facts": [
+    {
+     "claim_tr": "Kanca dişin kesme açısı ilerleyicidir; yüzeyin önemli olmadığı hızlı kesim içindir. Rake dişin açısı düzdür, ince yüzey verir.",
+     "source_ids": [
+      "LAGUNA-EDU"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Kanca diş 10° talaş açılı; demir dışı metal, ahşap ve plastik için.",
+     "value": "10",
+     "unit": "°",
+     "source_ids": [
+      "BAHCO-CAT"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Kanca form metal dışı malzemelerde de kullanılır.",
+     "source_ids": [
+      "LENOX-GUIDE"
+     ],
+     "status": "verified"
+    }
+   ],
+   "related_products": [
+    "woodcut-classic"
+   ],
+   "links": [
+    "/rehber/ahsap-serit-testere-secimi"
+   ],
+   "requires_data": [],
+   "safety": false,
+   "review": {
+    "status": "reviewed"
+   }
+  },
+  {
+   "id": "non_metal.wood-skip-tooth",
+   "title_tr": "Atlamalı diş (skip) ne zaman?",
+   "intents": [
+    "glossary",
+    "selection",
+    "non_metal"
+   ],
+   "questions_tr": [
+    "atlamalı diş nedir",
+    "skip diş reçineli ağaç",
+    "geniş diş boşluklu bıçak",
+    "çam keserken talaş doluyor hangi diş"
+   ],
+   "answer_tr": "Atlamalı dişte dişler seyrek ve diş boşluğu geniştir; çok talaş çıkaran kesimlerde, yumuşak ve reçineli ağaçta, ayrıca mantar ve plastik gibi malzemelerde talaşı daha iyi taşır. Boyuna (lif yönünde) kesimde de sık kullanılır.",
+   "facts": [
+    {
+     "claim_tr": "Geniş diş boşluklu skip form ahşap, mantar, plastik ve kompozisyon malzemeler içindir.",
+     "source_ids": [
+      "LENOX-GUIDE"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Skip 3–4–6 TPI bıçaklar boyuna/derin kesim ve genel amaçlı doğal ahşap içindir.",
+     "source_ids": [
+      "AXMINSTER-GUIDE"
+     ],
+     "status": "single_source"
+    }
+   ],
+   "related_products": [
+    "woodcut-classic"
+   ],
+   "links": [
+    "/rehber/ahsap-serit-testere-secimi"
+   ],
+   "requires_data": [],
+   "safety": false,
+   "review": {
+    "status": "reviewed"
+   }
+  },
+  {
+   "id": "non_metal.wood-regular-tooth",
+   "title_tr": "Düz diş (regular) ve temiz yüzey",
+   "intents": [
+    "glossary",
+    "selection",
+    "non_metal"
+   ],
+   "questions_tr": [
+    "regular diş nedir",
+    "temiz yüzey için hangi diş",
+    "ince levha kesmek için diş tipi",
+    "kontrplakta pürüzsüz kesim"
+   ],
+   "answer_tr": "Düz (regular/rake) diş sık ve düz kesme açılıdır; ince malzemede, kontrplak ve MDF'de, hassas kıvrımlarda daha pürüzsüz yüzey verir. Kalın ahşapta yavaş keser ve talaş boşaltması zayıftır.",
+   "facts": [
+    {
+     "claim_tr": "Rake dişler düz kesme açılıdır, ince yüzey içindir.",
+     "source_ids": [
+      "LAGUNA-EDU"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "10 TPI ve üzeri regular bıçaklar kontrplak, MDF ve plastikte temiz keser; yavaş ilerleme gerekir.",
+     "source_ids": [
+      "AXMINSTER-GUIDE"
+     ],
+     "status": "single_source"
+    }
+   ],
+   "related_products": [
+    "woodcut-classic"
+   ],
+   "links": [
+    "/rehber/ahsap-serit-testere-secimi"
+   ],
+   "requires_data": [],
+   "safety": false,
+   "review": {
+    "status": "reviewed"
+   }
+  },
+  {
+   "id": "non_metal.wood-set",
+   "title_tr": "Çapraz (diş çaprazı) ahşapta neden önemli?",
+   "intents": [
+    "glossary",
+    "troubleshoot",
+    "non_metal"
+   ],
+   "questions_tr": [
+    "çapraz nedir",
+    "bıçağın çaprazı bozuldu",
+    "çapraz az olursa ne olur",
+    "diş çaprazı yanlamasına kaçırır mı",
+    "kıvrım kesince bıçak düz kesmiyor"
+   ],
+   "answer_tr": "Çapraz, dişlerin gövdeden yana bükülerek bıçağa kesik içinde yer açmasıdır. Az çapraz talaşı boşaltamaz ve bıçağı ısıtır; fazla çapraz yüzeyi bozar. Bir taraftaki çaprazın hasar görmesi kesimi o yana çeker. Dar kıvrımlarda kullanılan bıçağın çaprazı bozulabileceği için düz kesimde ayrı bir bıçak kullanmak faydalıdır.",
+   "facts": [
+    {
+     "claim_tr": "Çapraz dişin yalnız üst 1/3'üne verilir; lifli yumuşak ağaçta sert ağaca göre daha çok çapraz gerekir; donuk ağaç daha dar kerf ister.",
+     "source_ids": [
+      "WM-SHARPEN"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Fazla çapraz verimsiz kesim ve kötü yüzey, az çapraz talaşın çıkamaması ve aşırı ısınma demektir.",
+     "source_ids": [
+      "WM-SHARPEN"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Diş çaprazı hasarı kesimde sapmaya (lead) yol açar.",
+     "source_ids": [
+      "OLSON-RIKON"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Kıvrım kesmek dişlerin çaprazını bozar ve bıçağın düz kesmesini engelleyebilir.",
+     "source_ids": [
+      "AXMINSTER-GUIDE"
+     ],
+     "status": "single_source"
+    }
+   ],
+   "related_products": [
+    "woodcut-classic"
+   ],
+   "links": [
+    "/rehber/serit-testere-arizalari-ve-cozumleri"
+   ],
+   "requires_data": [],
+   "safety": false,
+   "review": {
+    "status": "reviewed"
+   }
+  },
+  {
+   "id": "non_metal.wood-resaw",
+   "title_tr": "Kalın keresteyi dilimleme (resaw)",
+   "intents": [
+    "selection",
+    "usage",
+    "non_metal"
+   ],
+   "questions_tr": [
+    "kalın kereste dilimlemek için hangi bıçak",
+    "resaw için bıçak",
+    "tahtayı ince dilimlere ayırmak",
+    "kalasları ikiye bölmek için şerit",
+    "dilimleme yaparken bıçak dalgalanıyor"
+   ],
+   "answer_tr": "Dilimlemede makinenizin taşıyabildiği en geniş bıçağı, seyrek dişi (2–3 TPI) ve kanca veya atlamalı dişi tercih edin. Bıçak keskin ve gerginlik doğru olmalı; büyük kesitlerde gerginliğin bir miktar artırılması önerilir. İlerlemeyi bıçağın talaşı boşaltabildiği hızda tutun. Ahşap bıçağımızda en geniş seçenek 40 mm'dir; seyrek diş ihtiyacınızı siparişten önce bize yazın.",
+   "facts": [
+    {
+     "claim_tr": "2–3 TPI dilimleme ve 8\"(203 mm)'e kadar kalın malzeme için.",
+     "source_ids": [
+      "OLSON-RIKON"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Dilimlemede mümkün olan en geniş bıçak düz keser.",
+     "source_ids": [
+      "LAGUNA-EDU"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Büyük malzeme dilimlerken veya yaş tomruk keserken önerilen gerginlik %20'ye kadar artırılabilir.",
+     "value": "+20",
+     "unit": "%",
+     "source_ids": [
+      "TW-TENSION"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Dalgalı kesimin en sık nedeni kör bıçaktır.",
+     "source_ids": [
+      "WM-WAVY"
+     ],
+     "status": "verified"
+    }
+   ],
+   "related_products": [
+    "woodcut-classic"
+   ],
+   "links": [
+    "/rehber/ahsap-serit-testere-secimi",
+    "/products/woodcut-classic",
+    "/iletisim"
+   ],
+   "requires_data": [],
+   "safety": false,
+   "review": {
+    "status": "reviewed"
+   }
+  },
+  {
+   "id": "non_metal.wood-drift",
+   "title_tr": "Kesim bir yana kaçıyor (sapma / drift)",
+   "intents": [
+    "troubleshoot",
+    "non_metal"
+   ],
+   "questions_tr": [
+    "ahşap keserken bıçak sapıyor",
+    "paralel cetvele göre kayıyor",
+    "bıçak sola çekiyor",
+    "ahşap şerit testere bir yana kaçıyor",
+    "ahşapta düz kesemiyorum bıçak kayıyor"
+   ],
+   "answer_tr": "Önce bıçağı kontrol edin: kör bıçak veya bir tarafında çaprazı bozulmuş dişler kesimi çeker. Sonra gerginliği, kılavuz ve arka rulman ayarını ve ilerleme kuvvetini kontrol edin; fazla bastırmak sapmayı artırır. Keskin bıçakla da sapma sürüyorsa bir deneme kesiminde sapma açısını işaretleyip paralel cetveli bu açıya göre hizalayın.",
+   "facts": [
+    {
+     "claim_tr": "Kesimde sapma nedenleri: fazla ilerleme kuvveti, kılavuz/rulman aşınması veya ayarı, yetersiz gerginlik, diş çaprazı hasarı.",
+     "source_ids": [
+      "OLSON-RIKON"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Sapma (drift/lead) açısı deneme kesiminde masaya işaretlenir ve paralel cetvel bu açıya ayarlanır.",
+     "source_ids": [
+      "LAGUNA-14BX"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Site rehberi: en sık neden körelmiş veya bir tarafı çaprazı bozulmuş bıçaktır.",
+     "source_ids": [
+      "TS-GUIDES"
+     ],
+     "status": "internal"
+    }
+   ],
+   "related_products": [
+    "woodcut-classic"
+   ],
+   "links": [
+    "/rehber/ahsap-serit-testere-secimi",
+    "/rehber/serit-testere-arizalari-ve-cozumleri"
+   ],
+   "requires_data": [],
+   "safety": false,
+   "review": {
+    "status": "reviewed"
+   }
+  },
+  {
+   "id": "non_metal.wood-thickness-vs-wheel",
+   "title_tr": "Kasnak çapına göre ahşap bıçak kalınlığı",
+   "intents": [
+    "selection",
+    "machine",
+    "non_metal"
+   ],
+   "questions_tr": [
+    "40 lık makineye kaç mm kalınlık",
+    "0,7 mm şerit hangi kasnağa uyar",
+    "kasnak 600 mm ise şerit kalınlığı",
+    "ahşap makinesinde kasnak çapına göre bıçak kalınlığı",
+    "ahşap şeritte kalın bıçak küçük kasnakta kırılır mı"
+   ],
+   "answer_tr": "Kalın bıçak küçük kasnakta her turda fazla bükülür ve diş diplerinden ya da kaynaktan çatlar. Kaynaklar farklı sınır verir: temkinli kural kalınlığın kasnak çapının yaklaşık binde biri olmasıdır (600 mm kasnak → 0,6 mm); bazı ahşap makinesi üreticileri aynı kasnakta daha kalın bıçağa izin verir (ör. 280–457 mm kasnakta 0,64 mm). Makine kılavuzundaki değer her zaman önceliklidir; arada kalırsanız ince olanı seçin.",
+   "facts": [
+    {
+     "claim_tr": "Kalınlık kasnak çapının binde birini geçmemeli (700 mm → 0,70 mm).",
+     "value": "D/1000",
+     "unit": "mm",
+     "source_ids": [
+      "ORTATESTERE-BLOG",
+      "TESTERESEPETI-SSS"
+     ],
+     "status": "conflict"
+    },
+    {
+     "claim_tr": "Kasnak → en çok kalınlık: 4–6\"(102–152 mm) .014\"(0,36); 6–8\"(152–203) .018\"(0,46); 8–11\"(203–279) .020\"(0,51); 11–18\"(279–457) .025\"(0,64); 18–24\"(457–610) .032\"(0,81); 24–30\"(610–762) .035\"(0,89); 30\"+ .042–.063\"(1,07–1,60).",
+     "source_ids": [
+      "LAGUNA-EDU"
+     ],
+     "status": "conflict"
+    },
+    {
+     "claim_tr": "Dar şerit testerelerde kasnak 30–45 cm → 0,50 mm; 50–75 cm → 0,64 mm; 90 cm → 0,81 mm; 105 cm → 0,89 mm levha kalınlığı.",
+     "source_ids": [
+      "BOZKURT-IU"
+     ],
+     "status": "conflict"
+    },
+    {
+     "claim_tr": "Kasnak çapına göre fazla kalın bıçak erken kırılma nedenidir.",
+     "source_ids": [
+      "OLSON-RIKON",
+      "LAGUNA-14BX"
+     ],
+     "status": "verified"
+    }
+   ],
+   "related_products": [
+    "woodcut-classic"
+   ],
+   "links": [
+    "/rehber/ahsap-serit-testere-secimi",
+    "/rehber/serit-testere-kirilma-nedenleri"
+   ],
+   "requires_data": [],
+   "safety": false,
+   "review": {
+    "status": "reviewed"
+   }
+  },
+  {
+   "id": "non_metal.wood-our-thickness-fit",
+   "title_tr": "Ahşap bıçak kalınlıklarımız hangi kasnağa uyar?",
+   "intents": [
+    "selection",
+    "product",
+    "machine",
+    "non_metal"
+   ],
+   "questions_tr": [
+    "20x0,7 hangi makineye olur",
+    "13x0,6 küçük makineye uyar mı",
+    "40x1,0 bıçak kaç kasnak ister",
+    "32x0,9 şerit hangi makine",
+    "ahşap bıçağınız küçük kasnağa uygun mu"
+   ],
+   "answer_tr": "Kalınlıklarımız 0,6 (13 ve 16 mm), 0,7 (20 mm), 0,8 (25 mm), 0,9 (32 mm) ve 1,0 mm'dir (40 mm). Temkinli binde bir kuralına göre bunlar sırasıyla yaklaşık 600, 700, 800, 900 ve 1.000 mm kasnağa uygundur; bazı ahşap makinesi tabloları 0,6 mm'ye 280 mm, 0,7–0,8 mm'ye 457 mm, 0,9 mm'ye 610–762 mm (sınırda), 1,0 mm'ye 762 mm kasnaktan itibaren izin verir. Makine kılavuzunuzdaki en büyük kalınlığı aşmayın; küçük kasnaklı makineniz için emin değilseniz kasnak çapını bize yazın.",
+   "facts": [
+    {
+     "claim_tr": "Matris: 13×0,6; 16×0,6; 20×0,7; 25×0,8; 32×0,9; 40×1,0 mm.",
+     "source_ids": [
+      "TS-PRICE-TREE"
+     ],
+     "status": "internal"
+    },
+    {
+     "claim_tr": "D/1000 kuralı (kalınlık ≤ kasnak çapı/1000).",
+     "value": "D/1000",
+     "source_ids": [
+      "ORTATESTERE-BLOG",
+      "TESTERESEPETI-SSS"
+     ],
+     "status": "conflict"
+    },
+    {
+     "claim_tr": "Laguna tablosu: .025\"(0,64 mm) 11–18\" kasnakta; .032\"(0,81) 18–24\"; .035\"(0,89) 24–30\"; .042\"+(1,07+) 30\" üstü. 0,9 mm (.0354\") .035\" sınırını çok az aşar.",
+     "source_ids": [
+      "LAGUNA-EDU"
+     ],
+     "status": "conflict"
+    },
+    {
+     "claim_tr": "Ürün açıklaması 'esnek gövde küçük kasnaklı makinelerde bile rahat çalışır' der; en ince seçenek 0,6 mm.",
+     "source_ids": [
+      "TS-PRODUCT-META"
+     ],
+     "status": "internal"
+    }
+   ],
+   "related_products": [
+    "woodcut-classic"
+   ],
+   "links": [
+    "/products/woodcut-classic",
+    "/iletisim"
+   ],
+   "requires_data": [],
+   "safety": false,
+   "review": {
+    "status": "reviewed"
+   }
+  },
+  {
+   "id": "non_metal.wood-turkish-machine-names",
+   "title_tr": "\"40'lık\", \"60'lık\" ahşap şerit testere ne demek?",
+   "intents": [
+    "machine",
+    "glossary",
+    "non_metal"
+   ],
+   "questions_tr": [
+    "40 lık şerit testere ne demek",
+    "80 lik hızar bıçak boyu",
+    "60 lık şerit makinesine hangi bıçak",
+    "40'lık makinenin bıçak boyu kaç",
+    "kasnak çapı ile makine adı"
+   ],
+   "answer_tr": "Türkiye'de ahşap şerit testereleri çoğunlukla kasnak çapıyla anılır: \"40'lık\" 400 mm kasnak demektir. Bıçak boyu aynı sınıftaki makinelerde bile farklı olabilir; örneğin bir 40'lık modelde 3.300 mm'dir. Doğru boyu makine etiketinden, kılavuzdan veya eski bıçağı ölçerek alın; kalınlığı da kasnak çapına göre seçin.",
+   "facts": [
+    {
+     "claim_tr": "40'lık şerit testerede kasnak çapı 400 mm.",
+     "value": "400",
+     "unit": "mm",
+     "source_ids": [
+      "TUREMAK-40",
+      "MEDE-MD113"
+     ],
+     "status": "consensus"
+    },
+    {
+     "claim_tr": "Me-De MD-113 40'lık: kasnak 400 mm, şerit boyu 3300 mm, kesim yüksekliği 380 mm.",
+     "value": "3300",
+     "unit": "mm",
+     "source_ids": [
+      "MEDE-MD113"
+     ],
+     "status": "single_source"
+    },
+    {
+     "claim_tr": "Türk ahşap şerit testereleri kasnak çapıyla, et-kemik testereleri bıçak boyuyla adlandırılır (araştırma notu).",
+     "source_ids": [
+      "TUREMAK-40",
+      "YILMAZ-ET"
+     ],
+     "status": "verified"
+    }
+   ],
+   "related_products": [
+    "woodcut-classic"
+   ],
+   "links": [
+    "/rehber/serit-testere-boyu-nasil-olculur",
+    "/rehber/ahsap-serit-testere-secimi"
+   ],
+   "requires_data": [],
+   "safety": false,
+   "review": {
+    "status": "reviewed"
+   }
+  },
+  {
+   "id": "non_metal.wood-hobby-machine-lengths",
+   "title_tr": "Yaygın hobi/atölye makinelerinde bıçak boyu",
+   "intents": [
+    "machine",
+    "non_metal"
+   ],
+   "questions_tr": [
+    "14 inç şerit testere bıçak boyu",
+    "jet 14 bıçak uzunluğu",
+    "rikon şerit bıçak boyu kaç mm",
+    "küçük şerit testere bıçak boyu",
+    "laguna 14bx bıçak ölçüsü"
+   ],
+   "answer_tr": "Örnek referanslar: 14\" (≈355 mm kasnak) sınıfı makinelerin çoğunda 2.375 mm (93½\"), yükseltme bloklu olanlarda 2.667 mm (105\"); bir 14\" modelde 2.914–2.946 mm. Bu listeler yalnız referanstır; aynı sınıfta farklı boylar olabilir. Siparişten önce makine etiketini veya eski bıçağı ölçün. Ahşap bıçağımızı 1.000–8.000 mm arasında istediğiniz boyda kaynaklatabilirsiniz.",
+   "facts": [
+    {
+     "claim_tr": "Jet 14\" JWBS-14 ve Delta 14\": 93½\"(2375 mm); Delta 14\" yükseltmeli: 105\"(2667 mm); Rikon 10-305: 70½\"(1791 mm); Rikon 10-325: 111\"(2819 mm); Rikon 10-340/345/370: 142\"(3607 mm); Laguna LT18: 150\"(3810 mm); Minimax S45: 145\"(3683 mm).",
+     "source_ids": [
+      "PSWOOD-LENGTHS"
+     ],
+     "status": "single_source"
+    },
+    {
+     "claim_tr": "Referans tablodur; siparişten önce boyu yine de doğrulayın.",
+     "source_ids": [
+      "PSWOOD-LENGTHS"
+     ],
+     "status": "single_source"
+    },
+    {
+     "claim_tr": "Laguna 14BX: bıçak boyu 114¾–116\"(2914–2946 mm), genişlik 1/8–3/4\"(3–19 mm), dilimleme yüksekliği 13\"(330 mm).",
+     "source_ids": [
+      "LAGUNA-14BX"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Ahşap bıçağı boy aralığı 1000–8000 mm.",
+     "source_ids": [
+      "TS-PRODUCT-META"
+     ],
+     "status": "internal"
+    }
+   ],
+   "related_products": [
+    "woodcut-classic"
+   ],
+   "links": [
+    "/rehber/serit-testere-boyu-nasil-olculur",
+    "/products/woodcut-classic"
+   ],
+   "requires_data": [
+    "price_api"
+   ],
+   "safety": false,
+   "review": {
+    "status": "reviewed"
+   }
+  },
+  {
+   "id": "non_metal.wood-tension",
+   "title_tr": "Ahşap bıçağında gerginlik ne olmalı?",
+   "intents": [
+    "usage",
+    "machine",
+    "non_metal"
+   ],
+   "questions_tr": [
+    "ahşap şerit ne kadar gerilmeli",
+    "şerit gerginliği nasıl ayarlanır ahşap",
+    "fazla germek bıçağı kırar mı",
+    "ahşap bıçağı metal bıçak kadar mı gerilir",
+    "ahşap şerit gerginliği elle nasıl kontrol edilir"
+   ],
+   "answer_tr": "Ahşap bıçakları metal kesim bıçaklarından belirgin şekilde düşük gerginlikte çalışır; amaç bıçağın düz kestiği en düşük gerginliktir. En güvenilir yol makine kılavuzundaki değer veya gerginlik göstergesidir; ölçeriniz yoksa titreşim (flutter) testi pratik bir yöntemdir. Elle esneme yöntemi için kaynaklar çok farklı değerler verir (birkaç milimetre ile 5–6 mm arası), bu yüzden tek bir sayıya güvenmeyin. Fazla gerginlik bıçağı, kasnak lastiklerini ve rulmanları yorar; az gerginlik sapma ve dalgalı kesim yapar.",
+   "facts": [
+    {
+     "claim_tr": "Üst kasnağın 9 hizasından 6\"(152 mm) aşağıda orta baskıyla 3/16–1/4\"(4,8–6,4 mm) esneme.",
+     "source_ids": [
+      "LAGUNA-14BX"
+     ],
+     "status": "conflict"
+    },
+    {
+     "claim_tr": "Bıçağı düz ve doğru kestiren en düşük gerginlik; daha az gerginlik bıçak ve makine ömrünü uzatır.",
+     "source_ids": [
+      "LAGUNA-14BX"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Gerginlik ölçerle önerilen (silisyum çeliği ahşap bıçak): 1/4\" 8.000–11.000 psi (≈55–76 N/mm²); 1/2\" 10.000–13.000 (≈69–90); 3/4\" 13.000–16.000 (≈90–110); 1\" 14.000–17.000 psi (≈97–117 N/mm²).",
+     "unit": "psi",
+     "conditions": "marka özel (Timber Wolf silisyum çeliği); başka bıçakta kılavuz esas",
+     "source_ids": [
+      "TW-TENSION"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Düşük gerginlik bıçak ömrünü uzatır, yaklaşık %20 daha az güç harcar, mil ve rulman ömrünü artırır.",
+     "conditions": "üretici iddiası",
+     "source_ids": [
+      "TW-TENSION"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Metal kesim bi-metal bıçaklar için 250–300 N/mm² önerilir (karşılaştırma için).",
+     "value": "250-300",
+     "unit": "N/mm²",
+     "source_ids": [
+      "WIKUS-FAILURES"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Elle bastırıldığında bıçak 1–2 mm'den fazla esnememeli (TR bayi; ölçüm noktası belirtilmemiş).",
+     "value": "1-2",
+     "unit": "mm",
+     "source_ids": [
+      "ORTATESTERE-BLOG"
+     ],
+     "status": "conflict"
+    }
+   ],
+   "related_products": [
+    "woodcut-classic"
+   ],
+   "links": [
+    "/rehber/serit-testere-gerginlik-hiz-sogutma",
+    "/rehber/ahsap-serit-testere-secimi"
+   ],
+   "requires_data": [],
+   "safety": false,
+   "review": {
+    "status": "reviewed"
+   }
+  },
+  {
+   "id": "non_metal.wood-flutter-test",
+   "title_tr": "Titreşim (flutter) testiyle gerginlik ayarı",
+   "intents": [
+    "usage",
+    "non_metal"
+   ],
+   "questions_tr": [
+    "flutter testi nedir",
+    "gerginliği titreşimle ayarlama",
+    "gerginlik ölçerim yok nasıl gereyim",
+    "şerit testere gerdirme yöntemi"
+   ],
+   "answer_tr": "Kapaklar kapalıyken makineyi çalıştırın ve yarım dakika kadar dönmesini bekleyin. Gerginliği yavaşça azaltın; bıçak kasnaklar arasında sürekli titremeye başlayınca durun. Sonra titreşim neredeyse kaybolana kadar gerginliği artırın, makineyi durdurun ve gergi vidasını küçük bir miktar (yaklaşık 1/8–1/4 tur) daha sıkın. Kılavuzları test için geri çekip sonra yeniden ayarlayın.",
+   "facts": [
+    {
+     "claim_tr": "Flutter testi: tam hızda ~30 sn çalıştır, sürekli titreşime kadar gevşet, titreşim ~1/16\"(1,6 mm) olana kadar ger, durdur, ~%10 (1/8–1/4 tur) ekle.",
+     "source_ids": [
+      "TW-TENSION"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Gevşetince titreşim başlar, sonra titreşim durup bıçak düz dönene kadar gerilir ve bir tur daha eklenir.",
+     "source_ids": [
+      "LAGUNA-14BX"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Kesimin ilk dakikalarında bıçak ısıyla birkaç binde inç uzar; kesim kalitesi düşerse gerginliği %5 artırın.",
+     "value": "5",
+     "unit": "%",
+     "source_ids": [
+      "TW-TENSION"
+     ],
+     "status": "verified"
+    }
+   ],
+   "related_products": [
+    "woodcut-classic"
+   ],
+   "links": [
+    "/rehber/serit-testere-gerginlik-hiz-sogutma"
+   ],
+   "requires_data": [],
+   "safety": true,
+   "review": {
+    "status": "reviewed"
+   }
+  },
+  {
+   "id": "non_metal.wood-tracking-guides",
+   "title_tr": "İz ayarı ve kılavuz ayarı (ahşap makinesi)",
+   "intents": [
+    "usage",
+    "machine",
+    "non_metal"
+   ],
+   "questions_tr": [
+    "kılavuz rulmanı ne kadar boşluk",
+    "arka rulman bıçağa değmeli mi",
+    "ahşap makinesinde iz ayarı nasıl yapılır",
+    "ahşap şerit kasnak lastiğinin ortasında dönmüyor"
+   ],
+   "answer_tr": "Fişi çekip gerginliği verdikten sonra üst kasnağı elle çevirerek eğim ayarıyla bıçağı kasnak lastiğinin ortasına getirin; kapaklar açıkken motoru çalıştırmayın. Ardından önce üst ve alt arka (itme) rulmanlarını, sonra yan kılavuzları ayarlayın; yan kılavuz ile bıçak arasına ince bir kâğıt koymak yeterli boşluğu verir. Boşta dönerken arka rulman bıçağa sürekli değmemelidir.",
+   "facts": [
+    {
+     "claim_tr": "Bıçak kasnak lastiğinin ortasında dönmeli; kapak açıkken motor çalışırken iz ayarı yapılmaz; önce itme rulmanları, sonra yan kılavuzlar; kâğıt aralık.",
+     "source_ids": [
+      "OLSON-RIKON"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Tüm bıçakların kasnak ortasında dengelenmesi önerilir.",
+     "source_ids": [
+      "LAGUNA-14BX"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Boşta bıçak sırtı ile arka rulman arasında 1–1,5 mm mesafe.",
+     "value": "1-1,5",
+     "unit": "mm",
+     "source_ids": [
+      "ORTATESTERE-BLOG"
+     ],
+     "status": "single_source"
+    }
+   ],
+   "related_products": [
+    "woodcut-classic"
+   ],
+   "links": [
+    "/rehber/ahsap-serit-testere-secimi"
+   ],
+   "requires_data": [],
+   "safety": true,
+   "review": {
+    "status": "reviewed"
+   }
+  },
+  {
+   "id": "non_metal.wood-speed",
+   "title_tr": "Ahşap kesiminde bıçak hızı",
+   "intents": [
+    "usage",
+    "machine",
+    "non_metal"
+   ],
+   "questions_tr": [
+    "ahşap şerit hızı kaç olmalı",
+    "ahşap testere devri",
+    "karbon bıçak kaç m/dk çalışır",
+    "sfm nasıl hesaplanır"
+   ],
+   "answer_tr": "Atölye tipi ahşap makinelerinde karbon (yay çeliği) ahşap bıçakları için bıçak hızının yaklaşık 900 m/dk'yı (3.000 ft/dk) aşmaması önerilir; büyük tomruk makineleri ise çok daha hızlı çalışır ve ayrı bir sınıftır. Hızı makine kılavuzundan öğrenin ya da kasnak devri × kasnak çapı (inç) × 0,262 ile ft/dk olarak hesaplayın.",
+   "facts": [
+    {
+     "claim_tr": "Yay çeliği ahşap bıçakları 3000 SFM (≈914 m/dk) üzerinde çalıştırılmamalı; sertleştirilmiş uçlu esnek sırtlı karbon bıçaklar 8000 SFM'ye kadar çıkabilir.",
+     "value": "≤3000",
+     "unit": "ft/dk",
+     "source_ids": [
+      "OLSON-RIKON"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "SFM = devir × kasnak çapı (inç) × 0,262.",
+     "source_ids": [
+      "OLSON-RIKON"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Dar şerit testerelerde bıçak hızı 1200–1700 m/dk; tabloda 30–45 cm kasnak 900, 50–75 cm 1050, 90 cm 1200–1350, 105 cm 1500–1650 m/dk.",
+     "source_ids": [
+      "BOZKURT-IU"
+     ],
+     "status": "conflict"
+    },
+    {
+     "claim_tr": "Tomruk şerit testerelerinde yumuşak ağaç ~3000 m/dk, meşe-kayın 2400–2700, çok sert ağaç 1800–2100 m/dk.",
+     "source_ids": [
+      "BOZKURT-IU"
+     ],
+     "status": "single_source"
+    }
+   ],
+   "related_products": [
+    "woodcut-classic"
+   ],
+   "links": [
+    "/rehber/serit-testere-gerginlik-hiz-sogutma"
+   ],
+   "requires_data": [],
+   "safety": false,
+   "review": {
+    "status": "reviewed"
+   }
+  },
+  {
+   "id": "non_metal.wood-hard-vs-soft",
+   "title_tr": "Sert ağaç ve yumuşak ağaç farkı",
+   "intents": [
+    "selection",
+    "material",
+    "non_metal"
+   ],
+   "questions_tr": [
+    "meşe kesmek için hangi bıçak",
+    "çam için bıçak farkı",
+    "sert ağaç bıçağı çabuk köreltir mi",
+    "tik ağacı kesince bıçak köreliyor",
+    "kayın ceviz için şerit",
+    "sert ağaç için hangi bıçak",
+    "meşe ceviz kesmek için şerit"
+   ],
+   "answer_tr": "Sert ağaçlar daha yavaş kesilir ve bıçağı daha çabuk köreltir; tik gibi tropik ve silis içeren ağaçlar ile uçları boyanmış keresteler bıçağı çok hızlı köreltebilir, boyalı uçları önce kesip atın. Lifli yumuşak ağaçlarda daha fazla çapraz ve geniş diş boşluğu talaş boşaltmayı kolaylaştırır. Aşındırıcı ağaçları çok kesiyorsanız bi-metal bıçak bir seçenektir; makinenizin ölçüsüne uyup uymadığını kontrol edin.",
+   "facts": [
+    {
+     "claim_tr": "Tropik sert ağaçlar (tik vb.) ve silis içeren ağaçlar çelik bıçağı çok çabuk köreltir; boyalı kütük uçları aşındırıcıdır, kesip atılmalı.",
+     "source_ids": [
+      "LAGUNA-14BX"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Tomruk biçmede yumuşak ağaç ~3000, meşe/kayın 2400–2700, çok sert 1800–2100 m/dk.",
+     "source_ids": [
+      "BOZKURT-IU"
+     ],
+     "status": "single_source"
+    },
+    {
+     "claim_tr": "Lifli yumuşak ağaçta sert ağaca göre daha çok çapraz gerekir.",
+     "source_ids": [
+      "WM-SHARPEN"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "M42 bi-metal bıçaklar tik gibi aşındırıcı ağaçlara ve tutkallı levhalara dayanır.",
+     "source_ids": [
+      "AXMINSTER-GUIDE"
+     ],
+     "status": "single_source"
+    }
+   ],
+   "related_products": [
+    "woodcut-classic",
+    "bimetal-premium"
+   ],
+   "links": [
+    "/rehber/ahsap-serit-testere-secimi",
+    "/products/bimetal-premium"
+   ],
+   "requires_data": [],
+   "safety": false,
+   "review": {
+    "status": "reviewed"
+   }
+  },
+  {
+   "id": "non_metal.wood-frozen-wet",
+   "title_tr": "Donuk, yaş (taze) ağaç kesimi",
+   "intents": [
+    "selection",
+    "usage",
+    "non_metal"
+   ],
+   "questions_tr": [
+    "donmuş ağaç kesilir mi",
+    "yaş odun için hangi bıçak",
+    "taze kesilmiş ağaç şerit tıkanıyor",
+    "kışın donuk tomruk kesmek",
+    "yaş ağaç bıçağı paslandırır mı"
+   ],
+   "answer_tr": "Yaş ağaçta talaş ıslak ve hacimlidir; seyrek ve kancalı diş talaşı daha iyi boşaltır, gerekirse gerginlik bir miktar artırılır. Donuk ağaç daha sert davranır; tomruk biçmede düşük kanca açılı profiller ve daha dar kerf kullanılır. Islak çalışmadan sonra bıçağı temizleyip kurulayın; karbon çeliği nemde paslanır. Tomruk biçme makineleri için ölçü ve profil bilgisini bize sorun.",
+   "facts": [
+    {
+     "claim_tr": "Donuk ağaç için 4° (çok sert/donuk) ve 9° (düşük güçte donuk ağaç) kanca açılı profiller.",
+     "value": "4-9",
+     "unit": "°",
+     "source_ids": [
+      "WM-PROFILE"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Donuk ağaç daha dar kerf ister.",
+     "source_ids": [
+      "WM-SHARPEN"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Yaş tomrukta önerilen gerginlik %20'ye kadar artırılabilir.",
+     "value": "+20",
+     "unit": "%",
+     "source_ids": [
+      "TW-TENSION"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Bıçak her kullanım öncesi çatlak, kör diş ve pas açısından kontrol edilmeli; çıkarınca temizlenmeli.",
+     "source_ids": [
+      "LAGUNA-EDU"
+     ],
+     "status": "verified"
+    }
+   ],
+   "related_products": [
+    "woodcut-classic"
+   ],
+   "links": [
+    "/iletisim",
+    "/rehber/ahsap-serit-testere-secimi"
+   ],
+   "requires_data": [],
+   "safety": false,
+   "review": {
+    "status": "reviewed"
+   }
+  },
+  {
+   "id": "non_metal.wood-resin-pitch",
+   "title_tr": "Reçine ve talaş birikmesi",
+   "intents": [
+    "troubleshoot",
+    "usage",
+    "non_metal"
+   ],
+   "questions_tr": [
+    "bıçağa reçine yapışıyor",
+    "çam keserken bıçak ısınıyor",
+    "reçine nasıl temizlenir şerit",
+    "kasnakta talaş birikiyor"
+   ],
+   "answer_tr": "Reçine ve talaş bıçağa yapışınca bıçak fiilen kalınlaşmış gibi davranır; ısınma, sapma ve dalgalı kesim yapar. Reçineli ağaçta bıçağı düzenli temizleyin (fırça, sulu deterjan) ve kasnak yüzeylerinde talaş birikmesine izin vermeyin; kasnakta biriken talaş bıçak kırılmasına da katkıda bulunur.",
+   "facts": [
+    {
+     "claim_tr": "Talaş ve reçine bıçağa yapışır, bıçak kalınlaşmış gibi olur; çözüm fırçalama veya sulu bulaşık deterjanı.",
+     "source_ids": [
+      "WM-WAVY"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Reçineli malzemede kasnak yüzeyinde talaş birikmesi bıçak kırılma nedenleri arasındadır.",
+     "source_ids": [
+      "LAGUNA-14BX"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Ürün ve kategori metni: reçineli ağaçta bıçağı düzenli temizlemek ısınmayı ve sapmayı azaltır.",
+     "source_ids": [
+      "TS-PRODUCT-META"
+     ],
+     "status": "internal"
+    }
+   ],
+   "related_products": [
+    "woodcut-classic"
+   ],
+   "links": [
+    "/rehber/serit-testere-arizalari-ve-cozumleri"
+   ],
+   "requires_data": [],
+   "safety": false,
+   "review": {
+    "status": "reviewed"
+   }
+  },
+  {
+   "id": "non_metal.wood-mdf-plywood",
+   "title_tr": "MDF, sunta, kontrplak ve lamine levha",
+   "intents": [
+    "selection",
+    "material",
+    "non_metal"
+   ],
+   "questions_tr": [
+    "mdf kesmek için hangi bıçak",
+    "kontrplak şerit testere diş",
+    "sunta keserken bıçak çabuk köreliyor",
+    "lamine levha şeritle kesilir mi",
+    "melamin kaplı levha kesimi"
+   ],
+   "answer_tr": "Kontrplak ve MDF'de 10–14 TPI düz diş temiz yüzey verir; sık dişte ilerlemeyi yavaş tutun. Tutkallı levhalar (MDF, sunta) aşındırıcıdır ve karbon bıçağı daha çabuk köreltir; çok sık kesiyorsanız bi-metal bıçak bir seçenektir. Kaplamalı levhalarda yüzey kırılması olabilir; deneme kesimi yapın. Ahşap bıçağımızda diş seçimi sipariş ekranında görünmüyorsa ihtiyacınızı bize yazın.",
+   "facts": [
+    {
+     "claim_tr": "10 TPI düz: kontrplak ve MDF; 14 TPI+: çok temiz kesen kontrplak/plastik/MDF bıçağı, yavaş ilerleme.",
+     "source_ids": [
+      "AXMINSTER-GUIDE"
+     ],
+     "status": "single_source"
+    },
+    {
+     "claim_tr": "M42 bıçaklar MDF, sunta gibi tutkallı levhalara dayanır.",
+     "source_ids": [
+      "AXMINSTER-GUIDE"
+     ],
+     "status": "single_source"
+    },
+    {
+     "claim_tr": "Ürün uygulamaları: MDF ve sunta panel kesimi.",
+     "source_ids": [
+      "TS-PRODUCT-META"
+     ],
+     "status": "internal"
+    }
+   ],
+   "related_products": [
+    "woodcut-classic",
+    "bimetal-premium"
+   ],
+   "links": [
+    "/products/woodcut-classic",
+    "/products/bimetal-premium",
+    "/iletisim"
+   ],
+   "requires_data": [],
+   "safety": false,
+   "review": {
+    "status": "reviewed"
+   }
+  },
+  {
+   "id": "non_metal.wood-reclaimed-nails",
+   "title_tr": "Çivili ahşap, palet ve geri dönüşüm kereste",
+   "intents": [
+    "selection",
+    "non_metal"
+   ],
+   "questions_tr": [
+    "çivili tahta kesmek için bıçak",
+    "palet sökmek için şerit",
+    "eski kereste çivi var hangi bıçak",
+    "ahşap bıçağı çiviye gelince dişleri kırıldı"
+   ],
+   "answer_tr": "Çivi ve zımba içeren ahşapta karbon ahşap bıçağının dişleri hızla körelir veya kırılır. Bu işler için bi-metal bıçak daha uygundur; Bi-Metal M42 Premium'u makinenizin genişlik ve kalınlık sınırına uygun ölçüde seçin. Çivili parçalarda göz koruması kullanın.",
+   "facts": [
+    {
+     "claim_tr": "Palet sökme bi-metal bıçağı çivi ve zımbaları keser; karbon bıçakların temperini bozan ısıya ve kesintili kesim darbelerine dayanır.",
+     "source_ids": [
+      "BAHCO-CAT"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "M42 bi-metal bıçaklar içinde çivi olan geri dönüşüm kerestesine uygundur.",
+     "source_ids": [
+      "AXMINSTER-GUIDE"
+     ],
+     "status": "single_source"
+    },
+    {
+     "claim_tr": "Bi-metal 13 mm seçenekleri: 13×0,6 ve 13×0,5 mm (matris).",
+     "source_ids": [
+      "TS-PRICE-TREE"
+     ],
+     "status": "internal"
+    }
+   ],
+   "related_products": [
+    "bimetal-premium"
+   ],
+   "links": [
+    "/products/bimetal-premium",
+    "/kategori/bi-metal-serit-testere"
+   ],
+   "requires_data": [
+    "price_api"
+   ],
+   "safety": true,
+   "review": {
+    "status": "reviewed"
+   }
+  },
+  {
+   "id": "non_metal.wood-burning",
+   "title_tr": "Kesim yüzeyi yanıyor / kararıyor",
+   "intents": [
+    "troubleshoot",
+    "non_metal"
+   ],
+   "questions_tr": [
+    "ahşap keserken yanık izi",
+    "kesim yeri kararıyor",
+    "bıçak duman çıkarıyor ahşap",
+    "ağaç yanarak kesiliyor",
+    "ahşapta yanık izi"
+   ],
+   "answer_tr": "Yanık genellikle körelmiş dişten, kalınlığa göre fazla sık dişten (talaş boşalamaz), çok yavaş ilerlemeden veya bıçakta reçine birikmesinden olur. Bıçağı temizleyin, gerekiyorsa daha seyrek dişe geçin ve ilerlemeyi bıçağın talaş alabileceği hızda tutun; diş körelmişse bıçağı değiştirin.",
+   "facts": [
+    {
+     "claim_tr": "Diş boşlukları doluyorsa diş çok sıktır: daha seyrek diş kullanın.",
+     "source_ids": [
+      "OLSON-RIKON"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Körelme nedenleri: kötü ayarlı kılavuz, iz hatası, yanlış bıçak, çok sık diş, aşındırıcı ağaçlar.",
+     "source_ids": [
+      "LAGUNA-14BX"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Site rehberi: yanma nedenleri kör diş, fazla sık diş, yavaş ilerleme, reçine.",
+     "source_ids": [
+      "TS-GUIDES"
+     ],
+     "status": "internal"
+    }
+   ],
+   "related_products": [
+    "woodcut-classic"
+   ],
+   "links": [
+    "/rehber/serit-testere-arizalari-ve-cozumleri",
+    "/rehber/ahsap-serit-testere-secimi"
+   ],
+   "requires_data": [],
+   "safety": false,
+   "review": {
+    "status": "reviewed"
+   }
+  },
+  {
+   "id": "non_metal.wood-breakage",
+   "title_tr": "Ahşap bıçağı çabuk kopuyor / çatlıyor",
+   "intents": [
+    "troubleshoot",
+    "non_metal"
+   ],
+   "questions_tr": [
+    "ahşap şerit kaynak yerinden koptu",
+    "şerit sık sık kırılıyor ahşap",
+    "ahşap bıçağı diş dibinden çatlıyor",
+    "yeni ahşap şerit hemen koptu"
+   ],
+   "answer_tr": "Sık görülen nedenler: kasnak çapına göre fazla kalın bıçak, fazla gerginlik, makine kullanılmadığında gerginliğin bırakılmaması, kasnak hizasızlığı veya kasnakta talaş birikmesi ve kılavuzların iş parçasından uzak olması. Önce kalınlığı kasnak çapıyla karşılaştırın, gerginliği düşürün ve kılavuzları yaklaştırın. Kaynak yerinden düzgün kopma tekrar ediyorsa bıçağın fotoğrafıyla bize yazın.",
+   "facts": [
+    {
+     "claim_tr": "Kırılma nedenleri: kasnağa göre aşırı kalınlık, kusurlu kaynak, fazla gerginlik, gece gerginliğin alınmaması, kasnak hizasızlığı, kasnakta reçine/talaş.",
+     "source_ids": [
+      "LAGUNA-14BX"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Erken kırılma: kalınlık kasnak çapı ve hıza göre fazla; kılavuzları iş parçasına yaklaştırın; ilerleme kuvvetini azaltın; kör diş.",
+     "source_ids": [
+      "OLSON-RIKON"
+     ],
+     "status": "verified"
+    }
+   ],
+   "related_products": [
+    "woodcut-classic"
+   ],
+   "links": [
+    "/rehber/serit-testere-kirilma-nedenleri",
+    "/iletisim"
+   ],
+   "requires_data": [],
+   "safety": false,
+   "review": {
+    "status": "reviewed"
+   }
+  },
+  {
+   "id": "non_metal.wood-wavy-rough",
+   "title_tr": "Dalgalı, göbekli veya pürüzlü kesim",
+   "intents": [
+    "troubleshoot",
+    "non_metal"
+   ],
+   "questions_tr": [
+    "dilimlemede göbek yapıyor",
+    "yüzey çok pürüzlü ahşap",
+    "ahşap keserken kesim dalgalı çıkıyor",
+    "ahşap dilimlerken bıçak titriyor"
+   ],
+   "answer_tr": "Dalgalı kesimin en sık nedeni kör bıçaktır; ardından yetersiz çapraz, uygun olmayan ilerleme, düşük gerginlik, aşınmış kılavuz rulmanları ve reçine birikmesi gelir. Pürüzlü yüzeyde daha sık diş ve daha yavaş ilerleme; titreşimde gerginliği ve iş parçasının sabitlenmesini kontrol edin.",
+   "facts": [
+    {
+     "claim_tr": "Dalgalı kesim nedenleri: kör bıçak, yetersiz çapraz, ilerleme, gerginlik, kılavuz makaraları, reçine, donuk ağaç.",
+     "source_ids": [
+      "WM-WAVY"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Pürüzlü yüzey: daha sık diş, bant hızını artırma, ilerlemeyi azaltma. Titreşim: hız değiştirme, diş çok seyrek, iş parçası sabit değil, gerginlik artırma.",
+     "source_ids": [
+      "OLSON-RIKON"
+     ],
+     "status": "verified"
+    }
+   ],
+   "related_products": [
+    "woodcut-classic"
+   ],
+   "links": [
+    "/rehber/serit-testere-arizalari-ve-cozumleri"
+   ],
+   "requires_data": [],
+   "safety": false,
+   "review": {
+    "status": "reviewed"
+   }
+  },
+  {
+   "id": "non_metal.wood-break-in",
+   "title_tr": "Yeni ahşap bıçağında alıştırma gerekir mi?",
+   "intents": [
+    "usage",
+    "non_metal"
+   ],
+   "questions_tr": [
+    "ahşap bıçağı rodaj yapılır mı",
+    "alıştırma ahşapta gerekli mi",
+    "yeni ahşap şeritle ilk kesim nasıl yapılır"
+   ],
+   "answer_tr": "Ahşap bıçaklarında da ilk birkaç kesimde hızı ve ilerlemeyi biraz düşürmek önerilir; bu, keskin diş uçlarının erken hasar görmesini azaltır. Metal bıçaklardaki gibi ayrıntılı bir alıştırma programı ahşap için yayımlanmış değildir.",
+   "facts": [
+    {
+     "claim_tr": "Erken diş aşınmasında: yeni bantla yanlış alıştırma; ilk birkaç kesimde hız ve ilerleme azaltılmalı.",
+     "source_ids": [
+      "OLSON-RIKON"
+     ],
+     "status": "verified"
+    }
+   ],
+   "related_products": [
+    "woodcut-classic"
+   ],
+   "links": [
+    "/rehber/serit-testere-rodaj-ve-bakim"
+   ],
+   "requires_data": [],
+   "safety": false,
+   "review": {
+    "status": "reviewed"
+   }
+  },
+  {
+   "id": "non_metal.wood-storage-rust",
+   "title_tr": "Ahşap bıçağını saklama ve pas",
+   "intents": [
+    "usage",
+    "non_metal"
+   ],
+   "questions_tr": [
+    "ahşap bıçağı paslandı",
+    "bıçağı katlayıp saklama",
+    "ahşap şerit bıçağı nasıl saklanır",
+    "yedek ahşap şerit nerede durmalı"
+   ],
+   "answer_tr": "Bıçağı çıkardığınızda temizleyin, dişlerini koruyarak kuru yerde saklayın; karbon çeliği nemde paslanır. İnce bir mum/vaks tabakası pası azaltır. Takmadan önce çatlak, kör diş ve pas kontrolü yapın. Halka katlanmış bıçağı açarken dişlere ve gözünüze dikkat edin.",
+   "facts": [
+    {
+     "claim_tr": "Bıçak çıkarılınca temizlenmeli, dişleri korunarak saklanmalı; kullanım öncesi çatlak, kör diş, pas kontrolü; vakslı bezle silme.",
+     "source_ids": [
+      "LAGUNA-EDU"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Katlanmış bandın yanlış açılması diş hasarına yol açar.",
+     "source_ids": [
+      "LENOX-GUIDE"
+     ],
+     "status": "verified"
+    }
+   ],
+   "related_products": [
+    "woodcut-classic"
+   ],
+   "links": [
+    "/rehber/serit-testere-rodaj-ve-bakim"
+   ],
+   "requires_data": [],
+   "safety": true,
+   "review": {
+    "status": "reviewed"
+   }
+  },
+  {
+   "id": "non_metal.wood-life-sharpen",
+   "title_tr": "Ahşap bıçağı ne kadar dayanır, bilenir mi?",
+   "intents": [
+    "usage",
+    "product",
+    "non_metal"
+   ],
+   "questions_tr": [
+    "ahşap bıçağı kaç saat dayanır",
+    "körelen ahşap bıçağı bilenir mi",
+    "bileme mi yeni bıçak mı",
+    "ahşap şerit bıçağı bilenir mi"
+   ],
+   "answer_tr": "Bıçak ömrü ağaç türüne, kalınlığa, makine ayarına ve ilerlemeye göre çok değişir; sabit bir süre verilemez. Geniş tomruk bantları ve bazı özel bıçaklar defalarca bilenip çaprazlanabilir; dar ahşap bıçaklarında körelince yenisini takmak yaygındır. Bileme hizmeti sorularınız için bize yazın.",
+   "facts": [
+    {
+     "claim_tr": "Tomruk biçme bantları birden çok kez bilenebilir; bilemeden sonra çaprazın yeniden verilmesi gerekir.",
+     "source_ids": [
+      "WM-SHARPEN"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "32 mm 'ripper' bıçağının 20 kereye kadar bilenebildiği belirtiliyor (üretici iddiası).",
+     "source_ids": [
+      "AXMINSTER-GUIDE"
+     ],
+     "status": "single_source"
+    },
+    {
+     "claim_tr": "Karbür uçlu dilimleme bıçağının 4–5 kez bilenebildiği belirtiliyor (pazarlama iddiası).",
+     "source_ids": [
+      "LAGUNA-EDU"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Bıçak ömrü, yüzey ve kesim süresi aynı anda en üst düzeye çıkarılamaz; müşterinin önceliği sorulmalı.",
+     "source_ids": [
+      "ROENTGEN-TM"
+     ],
+     "status": "verified"
+    }
+   ],
+   "related_products": [
+    "woodcut-classic"
+   ],
+   "links": [
+    "/iletisim"
+   ],
+   "requires_data": [],
+   "safety": false,
+   "review": {
+    "status": "reviewed"
+   }
+  },
+  {
+   "id": "non_metal.wood-sawmill-bands",
+   "title_tr": "Tomruk biçme (bant hızar) bıçakları",
+   "intents": [
+    "machine",
+    "selection",
+    "non_metal"
+   ],
+   "questions_tr": [
+    "tomruk biçme makinesi bıçağı",
+    "seyyar hızar şeridi",
+    "bant hızar için şerit var mı",
+    "kütük biçmek için bıçak",
+    "wood mizer tipi makine bıçağı"
+   ],
+   "answer_tr": "Tomruk biçme makineleri ayrı bir bıçak sınıfı kullanır: kanca açısı ağaç türüne ve motor gücüne göre seçilir, diş aralığı ve kalınlık makinenin gücüne bağlıdır. Ahşap bıçağımız 40×1,0 mm'ye kadar çıkar; makinenizin istediği genişlik, kalınlık, diş aralığı ve kanca açısını bilmeden öneri yapmayalım. Makine modelinizi ve eski bıçağın ölçüsünü bize yazın.",
+   "facts": [
+    {
+     "claim_tr": "Dar bantlar 1–1,5\"(25–38 mm) düşük güçlü, 1,5–2\"(38–51 mm) 25 HP ve üzeri makineler için.",
+     "source_ids": [
+      "WM-PROFILE"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Kalınlık: .035–.042\"(0,89–1,07 mm) ≤24 HP; .045–.055\"(1,14–1,40 mm) ≥25 HP.",
+     "source_ids": [
+      "WM-PROFILE"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Kanca açıları: 10° genel, 12° yumuşak ağaç ve dilimleme, 9° düşük güçte donuk/sert, 7° yüksek güçte sert, 4° çok sert/donuk.",
+     "source_ids": [
+      "WM-PROFILE"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Diş aralığı: 7/8\"(22 mm) en yaygın; 1/2–3/4\" düşük güç/dilimleme; 1–1-1/4\" yüksek güç.",
+     "source_ids": [
+      "WM-PROFILE"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Matriste en geniş ahşap bıçağı 40×1,0 mm.",
+     "source_ids": [
+      "TS-PRICE-TREE"
+     ],
+     "status": "internal"
+    }
+   ],
+   "related_products": [
+    "woodcut-classic"
+   ],
+   "links": [
+    "/iletisim"
+   ],
+   "requires_data": [],
+   "safety": false,
+   "review": {
+    "status": "reviewed"
+   }
+  },
+  {
+   "id": "non_metal.wood-carbide-for-wood",
+   "title_tr": "Ahşap için karbür uçlu bıçak",
+   "intents": [
+    "selection",
+    "product",
+    "non_metal"
+   ],
+   "questions_tr": [
+    "ahşap için karbür şerit",
+    "karbür bıçakla ağaç kesilir mi",
+    "dilimleme için karbür bıçak var mı"
+   ],
+   "answer_tr": "Ahşap dilimleme için karbür uçlu özel bıçaklar vardır, ancak bizim Karbür Uçlu bıçağımız metal kesimi için tasarlanmıştır; 27 mm ve üzeri genişlik, 0,9 mm ve üzeri kalınlık ve seyrek dişlerle ahşap atölye makinelerine genellikle uygun değildir. Ahşap için Ahşap Kesim bıçağını, aşındırıcı veya çivili ahşapta Bi-Metal M42'yi düşünün.",
+   "facts": [
+    {
+     "claim_tr": "Karbür matrisi: 27×0,9; 34×1,1; 41×1,3; 54×1,6 mm; en sık diş 3/4 TPI.",
+     "source_ids": [
+      "TS-PRICE-TREE"
+     ],
+     "status": "internal"
+    },
+    {
+     "claim_tr": "Ahşap için C4 karbür uçlu dilimleme bıçakları mevcuttur.",
+     "source_ids": [
+      "LAGUNA-EDU"
+     ],
+     "status": "verified"
+    }
+   ],
+   "related_products": [
+    "woodcut-classic",
+    "bimetal-premium",
+    "carbide-ultimate"
+   ],
+   "links": [
+    "/products/woodcut-classic",
+    "/products/bimetal-premium"
+   ],
+   "requires_data": [],
+   "safety": false,
+   "review": {
+    "status": "reviewed"
+   }
+  },
+  {
+   "id": "non_metal.wood-safety",
+   "title_tr": "Ahşap şerit testerede güvenlik",
+   "intents": [
+    "safety",
+    "non_metal"
+   ],
+   "questions_tr": [
+    "ahşap keserken nelere dikkat",
+    "bıçak koruyucusu ne kadar açık olmalı",
+    "ahşap şerit testere güvenlik kuralları",
+    "ahşap şerit testerede el nasıl korunur"
+   ],
+   "answer_tr": "Kasnak kapakları kapalı ve bıçak koruyucusu takılı olmadan çalışmayın; üst koruyucuyu iş parçasının hemen üzerine indirin. Küçük parçaları elle itmeyin, itme çubuğu kullanın. Bıçak değiştirme ve ayar öncesi fişi çekin; kapak açıkken motoru çalıştırarak iz ayarı yapmayın. Göz ve kulak koruması kullanın, talaşı emişle alın.",
+   "facts": [
+    {
+     "claim_tr": "Kasnaklar tamamen muhafazalı; bıçak, kılavuz ile tabla arasındaki çalışma kısmı hariç korunmalı (ABD mevzuatı).",
+     "source_ids": [
+      "OSHA-1910-213"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "İz ayarı motor çalışırken kapak açık yapılmaz; montajdan önce fiş çekilir.",
+     "source_ids": [
+      "OLSON-RIKON"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Ahşap şerit testere makinesi güvenliği EN ISO 19085-16 kapsamındadır (makine standardı).",
+     "source_ids": [
+      "EN-ISO-19085-16"
+     ],
+     "status": "verified"
+    }
+   ],
+   "related_products": [
+    "woodcut-classic"
+   ],
+   "links": [
+    "/rehber/ahsap-serit-testere-secimi"
+   ],
+   "requires_data": [],
+   "safety": true,
+   "review": {
+    "status": "reviewed"
+   }
+  },
+  {
+   "id": "non_metal.meat-tpi-fresh-frozen",
+   "title_tr": "Taze, donuk ve kemikli ette diş adımı (3 mü 4 mü?)",
+   "intents": [
+    "selection",
+    "non_metal"
+   ],
+   "questions_tr": [
+    "kasap testeresi bıçağı kaç diş",
+    "donmuş et için 3 diş mi 4 diş mi",
+    "kemikli et kesmek için kaç tpi",
+    "taze et için hangi diş",
+    "donuk et bıçağı sık mı seyrek mi olmalı",
+    "donuk et kesmek için bıçak",
+    "kemik bicagi 3 tpi mi 4 tpi mi",
+    "et testeresi kaç tpi"
+   ],
+   "answer_tr": "Kaynakların çoğu şu ayrımı yapar: donuk et, büyük kemikli parçalar ve donuk bloklar için 3 TPI (geniş diş boşluğu kemik tozunu ve talaşı daha iyi boşaltır); taze veya soğutulmuş, görünümün önemli olduğu kesimler için 4 TPI. Bazı satıcılar donuk ete daha sık diş önerir; bu yüzden makine üreticinizin önerisini esas alın. Sipariş ekranında diş seçeneği görünmüyorsa ihtiyacınızı (3, 4 veya 6 TPI) siparişten önce bize yazın.",
+   "facts": [
+    {
+     "claim_tr": "Taze kemikli et 4 TPI (6,35 mm adım); donuk et ve balık 3 TPI (8,47 mm adım).",
+     "value": "4 taze / 3 donuk",
+     "unit": "TPI",
+     "source_ids": [
+      "CBG-MEAT"
+     ],
+     "status": "conflict"
+    },
+    {
+     "claim_tr": "Donuk ve kemikli 3 TPI, taze et ve kanatlı 4 TPI; balık ve hassas işler 6 TPI.",
+     "source_ids": [
+      "UNITED-NZ"
+     ],
+     "status": "conflict"
+    },
+    {
+     "claim_tr": "Sık dişler donmuş et ve kemikte, geniş dişler sıcak et ve balıkta verimli (ters görüş).",
+     "source_ids": [
+      "TESTERESEPETI-SSS"
+     ],
+     "status": "conflict"
+    },
+    {
+     "claim_tr": "Donuk üründe 4 TPI deneyen işletmeler daha yavaş kesim ve diş aşınması nedeniyle 3 TPI'ye dönüyor (bayi iddiası).",
+     "source_ids": [
+      "SIMCUT-BUTCHER"
+     ],
+     "status": "conflict"
+    },
+    {
+     "claim_tr": "Donuk et bıçağı 2–4 TPI kanca profilde üretiliyor.",
+     "value": "2-4",
+     "unit": "TPI",
+     "source_ids": [
+      "STAR-MKF"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Ürün metaverisi: 3, 4, 6 TPI; sipariş ekranında diş seçimi yok.",
+     "source_ids": [
+      "TS-PRODUCT-META",
+      "TS-CONFIGURATOR"
+     ],
+     "status": "internal"
+    }
+   ],
+   "related_products": [
+    "hijyenik-et-kemik-pro"
+   ],
+   "links": [
+    "/rehber/et-kemik-serit-testere-secimi",
+    "/products/hijyenik-et-kemik-pro",
+    "/iletisim"
+   ],
+   "requires_data": [],
+   "safety": false,
+   "review": {
+    "status": "needs_owner"
+   }
+  },
+  {
+   "id": "non_metal.meat-fish",
+   "title_tr": "Balık ve hassas dilimleme için bıçak",
+   "intents": [
+    "selection",
+    "non_metal"
+   ],
+   "questions_tr": [
+    "donuk balık kesmek için hangi bıçak",
+    "balık fileto için şerit kaç diş",
+    "somon dilimlemek için testere",
+    "balık kesince parçalanıyor"
+   ],
+   "answer_tr": "Bütün donuk balık ve donuk bloklarda 3 TPI yaygındır. Taze balık filetosu gibi ince ve hassas kesimlerde daha sık diş (ör. 6 TPI) daha temiz yüzey verir. Kaynaklar balıkta tek bir değerde birleşmez; ürününüzün donuk mu taze mi olduğunu ve makine modelinizi yazarsanız teyit edelim.",
+   "facts": [
+    {
+     "claim_tr": "Donuk et ve balık için 3 TPI.",
+     "value": "3",
+     "unit": "TPI",
+     "source_ids": [
+      "CBG-MEAT"
+     ],
+     "status": "conflict"
+    },
+    {
+     "claim_tr": "Balık ve hassas işlerde 6 TPI yaygın; daha ince diş, daha az fire.",
+     "value": "6",
+     "unit": "TPI",
+     "source_ids": [
+      "UNITED-NZ"
+     ],
+     "status": "conflict"
+    },
+    {
+     "claim_tr": "Paslanmaz et bıçağı 3 TPI düz, 4 TPI kanca, 6 TPI atlamalı profilde; balık ve donuk et için uygun.",
+     "source_ids": [
+      "STAR-MKS"
+     ],
+     "status": "verified"
+    }
+   ],
+   "related_products": [
+    "hijyenik-et-kemik-pro"
+   ],
+   "links": [
+    "/rehber/et-kemik-serit-testere-secimi",
+    "/iletisim"
+   ],
+   "requires_data": [],
+   "safety": false,
+   "review": {
+    "status": "needs_owner"
+   }
+  },
+  {
+   "id": "non_metal.meat-frozen-limit",
+   "title_tr": "Çok donuk (derin dondurulmuş) ürün",
+   "intents": [
+    "usage",
+    "non_metal"
+   ],
+   "questions_tr": [
+    "-30 derece donuk et kesilir mi",
+    "şoklanmış et bloğu kesmek",
+    "derin dondurulmuş balık bloğu",
+    "donuk blok bıçağı zorluyor"
+   ],
+   "answer_tr": "Bazı üreticiler et bıçaklarını yaklaşık −20 °C'ye kadar donuk et ve balık için tanımlar. Daha soğuk bloklar bıçağı ve makineyi çok zorlar; parçayı zorlamadan, sabit hızla ilerletin ve makine üreticinizin sınırlarına uyun. Donuk bloklarda seyrek diş daha uygundur.",
+   "facts": [
+    {
+     "claim_tr": "Paslanmaz ve donuk et bıçakları −4 °F (−20 °C)'ye kadar donuk et ve balık için uygun.",
+     "value": "-20",
+     "unit": "°C",
+     "source_ids": [
+      "STAR-MKS",
+      "STAR-MKF"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Site rehberi: donuk ve büyük kemikli bloklar bıçağı daha fazla zorlar; zorlamadan sabit hızla ilerletin.",
+     "source_ids": [
+      "TS-GUIDES"
+     ],
+     "status": "internal"
+    }
+   ],
+   "related_products": [
+    "hijyenik-et-kemik-pro"
+   ],
+   "links": [
+    "/rehber/et-kemik-serit-testere-secimi"
+   ],
+   "requires_data": [],
+   "safety": true,
+   "review": {
+    "status": "reviewed"
+   }
+  },
+  {
+   "id": "non_metal.meat-stainless-vs-carbon",
+   "title_tr": "Paslanmaz mı, karbon çeliği mi?",
+   "intents": [
+    "selection",
+    "material",
+    "non_metal"
+   ],
+   "questions_tr": [
+    "et testeresi bıçağı paslanmaz olmalı mı",
+    "karbon et bıçağı mı paslanmaz mı",
+    "aisi 420 nedir",
+    "et bıçağı paslanmaz mı karbon mu olmalı"
+   ],
+   "answer_tr": "Piyasada hem paslanmaz hem de yüksek karbonlu çelikten et bıçakları vardır. Paslanmaz gövde nemli ve sık yıkanan ortamda korozyona dayanıklıdır ve temizliği kolaylaştırır; karbon çeliği bıçak her yıkamadan sonra hemen kurulanmalıdır. Hijyenik Et-Kemik bıçağımızın gövdesi AISI 420 paslanmaz çeliktir.",
+   "facts": [
+    {
+     "claim_tr": "Paslanmaz et bıçağı 'pas tutmaz' ve USDA onaylı olarak sunuluyor.",
+     "source_ids": [
+      "STAR-MKS"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Donuk et bıçağı parlatılmış yüksek karbonlu çelikten, sertleştirilmiş ve taşlanmış dişli.",
+     "source_ids": [
+      "STAR-MKF"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "AISI 420 paslanmaz seri taze ve donuk et, kemik ve donuk balık için üretiliyor.",
+     "source_ids": [
+      "CBG-MEAT"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Bizim gövde: AISI 420 paslanmaz.",
+     "source_ids": [
+      "TS-PRODUCT-META"
+     ],
+     "status": "internal"
+    }
+   ],
+   "related_products": [
+    "hijyenik-et-kemik-pro"
+   ],
+   "links": [
+    "/products/hijyenik-et-kemik-pro",
+    "/rehber/et-kemik-serit-testere-secimi"
+   ],
+   "requires_data": [],
+   "safety": false,
+   "review": {
+    "status": "reviewed"
+   }
+  },
+  {
+   "id": "non_metal.meat-food-contact-law",
+   "title_tr": "Gıda ile temas mevzuatı (TR ve AB)",
+   "intents": [
+    "material",
+    "non_metal"
+   ],
+   "questions_tr": [
+    "et bıçağı gıdaya uygun mu",
+    "gıda ile temas belgesi var mı",
+    "1935/2004 nedir",
+    "gıda kodeksi şerit testere",
+    "et testeresi bıçağı hijyen yönetmeliği"
+   ],
+   "answer_tr": "Türkiye'de gıda ile temas eden madde ve malzemeler Türk Gıda Kodeksi Gıda ile Temas Eden Madde ve Malzemelere Dair Yönetmelik'e (AB 1935/2004 ile uyumlu) tabidir: malzeme normal kullanımda gıdaya sağlığı tehlikeye atacak, bileşimi veya tadı-kokuyu bozacak miktarda madde geçirmemelidir; etiketleme ve izlenebilirlik kuralları vardır. Metal ve alaşımlar için AB'de ayrı bir özel tüzük yoktur, genel kurallar geçerlidir. Belge talebiniz varsa bize yazın; makinenin kendisinin uygunluğu makine üreticisinin sorumluluğundadır.",
+   "facts": [
+    {
+     "claim_tr": "Yönetmelik RG 05.04.2018 / 30382; md.5: iyi üretim uygulaması ve sağlığı tehlikeye atan, bileşimi değiştiren veya duyusal bozulmaya yol açan miktarda geçiş yasağı; md.22: AB (AT) 1935/2004 dikkate alınarak hazırlandı.",
+     "source_ids": [
+      "TR-TGK-FCM-2018"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Md.13 etiketleme ('Gıda ile temasa uygundur' ifadesi veya sembol; gıda ile temas amacı açık olanlarda zorunlu değil), md.14 uygunluk beyanı, md.15 izlenebilirlik.",
+     "source_ids": [
+      "TR-TGK-FCM-2018"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "AB çerçeve tüzüğü 1935/2004 ve GMP tüzüğü 2023/2006; özel önlemler plastik, seramik, rejenere selüloz, aktif/akıllı ve geri dönüştürülmüş plastik için.",
+     "source_ids": [
+      "EU-FCM"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Metal ve alaşımlar için AB'ye özgü önlem yok; 1935/2004 genel kuralları ve Avrupa Konseyi teknik rehberi uygulanır.",
+     "source_ids": [
+      "EDQM-METALS"
+     ],
+     "status": "verified"
+    }
+   ],
+   "related_products": [
+    "hijyenik-et-kemik-pro"
+   ],
+   "links": [
+    "/products/hijyenik-et-kemik-pro",
+    "/iletisim"
+   ],
+   "requires_data": [],
+   "safety": false,
+   "review": {
+    "status": "needs_owner"
+   }
+  },
+  {
+   "id": "non_metal.meat-stainless-legal",
+   "title_tr": "Türk mevzuatında paslanmaz zorunlu mu?",
+   "intents": [
+    "material",
+    "non_metal"
+   ],
+   "questions_tr": [
+    "karbon çeliği et bıçağı yasal mı",
+    "gıdaya temas eden bıçak paslanmaz olmak zorunda mı",
+    "ek-4 metal gıda temas"
+   ],
+   "answer_tr": "Yönetmeliğin metal malzemeler ekine göre, gıda ile temas eden metal malzemeler paslanmaz çelik değilse gıdanın özelliğine uygun bir kaplama ile korunmalıdır. Bu kuralın kaplamasız karbon çeliği et bıçaklarına nasıl uygulandığı konusunda kesin bir değerlendirme yapamıyoruz; işletmeniz için gıda denetim birimine veya bir uzmana danışın. Hijyenik Et-Kemik bıçağımız paslanmaz (AISI 420) gövdelidir.",
+   "facts": [
+    {
+     "claim_tr": "Ek-4/1-a: paslanmaz çelik dışındaki metal esaslı malzemeler gıdanın özelliğine göre kalay, krom, krom oksit, emaye, seramik, lak, plastik veya gıdaya uygun bir kaplama ile kaplanır.",
+     "source_ids": [
+      "TR-TGK-FCM-EK4"
+     ],
+     "status": "single_source"
+    },
+    {
+     "claim_tr": "Site rehberi SSS: paslanmaz zorunlu değildir, karbon et bıçakları da vardır (mevzuatla çelişebilir).",
+     "source_ids": [
+      "TS-GUIDES"
+     ],
+     "status": "conflict"
+    },
+    {
+     "claim_tr": "Bizim gövde: AISI 420 paslanmaz.",
+     "source_ids": [
+      "TS-PRODUCT-META"
+     ],
+     "status": "internal"
+    }
+   ],
+   "related_products": [
+    "hijyenik-et-kemik-pro"
+   ],
+   "links": [
+    "/products/hijyenik-et-kemik-pro"
+   ],
+   "requires_data": [],
+   "safety": false,
+   "review": {
+    "status": "needs_owner"
+   }
+  },
+  {
+   "id": "non_metal.meat-machine-standards",
+   "title_tr": "Et testere makinesi standartları (EN 12268, EN 1672-2)",
+   "intents": [
+    "machine",
+    "safety",
+    "non_metal"
+   ],
+   "questions_tr": [
+    "en 12268 nedir",
+    "kasap testeresi ce standardı",
+    "et makinesi hijyen standardı",
+    "bıçağınız en 12268 belgeli mi"
+   ],
+   "answer_tr": "EN 12268 (Türkiye'de TS EN 12268) gıda işleme şerit testere makinelerinin güvenlik ve hijyen kurallarını, EN 1672-2 ise gıda makinelerinin genel hijyen ve temizlenebilirlik kurallarını tanımlar. Bunlar makine standartlarıdır; bıçak için bir sertifika değildir ve makinenin uygunluğu makine üreticisinin sorumluluğundadır.",
+   "facts": [
+    {
+     "claim_tr": "EN 12268:2014 kapsamı: kemik, kemikli/kemiksiz taze veya donuk et, taze/donuk balık, donuk blok gıda, taze/donuk sebze, domuz yağı vb. kesen makineler; ev tipi ve otomatik yüklemeli makineler hariç.",
+     "source_ids": [
+      "EN12268"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "EN 1672-2:2020 gıda makinelerinin hijyen ve temizlenebilirlik gereklilikleri.",
+     "source_ids": [
+      "EN1672-2"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "TS EN 12268: 'Gıda işleme makinaları - Şerit testere tezgâhları - Güvenlik ve hijyen kuralları'.",
+     "source_ids": [
+      "TSE-TSEN12268"
+     ],
+     "status": "single_source"
+    }
+   ],
+   "related_products": [
+    "hijyenik-et-kemik-pro"
+   ],
+   "links": [
+    "/rehber/et-kemik-serit-testere-secimi"
+   ],
+   "requires_data": [],
+   "safety": true,
+   "review": {
+    "status": "reviewed"
+   }
+  },
+  {
+   "id": "non_metal.meat-standard-widths",
+   "title_tr": "Kasap testerelerinde yaygın bıçak genişliği ve kalınlığı",
+   "intents": [
+    "selection",
+    "machine",
+    "non_metal"
+   ],
+   "questions_tr": [
+    "kasap testeresi bıçak genişliği kaç",
+    "et testeresi bıçağı 16 mm mi",
+    "et bıçağı kalınlığı kaç olmalı",
+    "5/8 inç et bıçağı kaç mm",
+    "büyük et makinesi bıçak genişliği"
+   ],
+   "answer_tr": "Kasap testerelerinde en yaygın genişlik 16 mm (5/8\") civarıdır; büyük makinelerde 19–25 mm ve daha geniş bıçaklar kullanılır. Kalınlık çoğunlukla 0,4–0,6 mm aralığındadır ve kasnak çapına uygun olmalıdır; kalın bıçak küçük kasnakta çatlar. Makine etiketindeki ölçü önceliklidir. Bizde 16×0,5, 19×0,55 ve 20×0,6 mm seçenekleri var.",
+   "facts": [
+    {
+     "claim_tr": "Paslanmaz et bıçağı 5/8\" × .018\" (≈15,9 × 0,46 mm).",
+     "source_ids": [
+      "STAR-MKS"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Donuk et bıçağı ölçüleri: 5/8\" × .014/.016/.020\" (0,36/0,41/0,51 mm); 3/4\" × .022\" (19 × 0,56); 1\" × .023/.032\"; 1-1/4\" × .032\"; 2\" × .035\".",
+     "source_ids": [
+      "STAR-MKF"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Ölçüler: 16×0,50; 19×0,50; 16×0,56; 19×0,56; 16×0,60; 19×0,60; 16×0,40; 13×0,50 mm.",
+     "source_ids": [
+      "CBG-MEAT"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Yaygın genişlikler 16, 20, 25 mm; küçük tezgâh üstü makinelerde .020\"(0,51 mm) gibi ince bıçak.",
+     "source_ids": [
+      "UNITED-NZ"
+     ],
+     "status": "single_source"
+    },
+    {
+     "claim_tr": "Et-kemik bıçağında kalınlık kasnak çapının binde biri olmalı; daha kalını çatlar.",
+     "source_ids": [
+      "TESTERESEPETI-SSS"
+     ],
+     "status": "single_source"
+    }
+   ],
+   "related_products": [
+    "hijyenik-et-kemik-pro"
+   ],
+   "links": [
+    "/products/hijyenik-et-kemik-pro",
+    "/rehber/et-kemik-serit-testere-secimi"
+   ],
+   "requires_data": [
+    "price_api"
+   ],
+   "safety": false,
+   "review": {
+    "status": "reviewed"
+   }
+  },
+  {
+   "id": "non_metal.meat-machine-lengths",
+   "title_tr": "Et-kemik makinelerinde bıçak boyu",
+   "intents": [
+    "machine",
+    "non_metal"
+   ],
+   "questions_tr": [
+    "1650 et testeresi bıçağı",
+    "kemik testeresi bıçak boyu kaç",
+    "biro bıçak ölçüsü",
+    "hobart kasap testere bıçağı boyu",
+    "et makinesi bıçak uzunluğu nasıl bulunur"
+   ],
+   "answer_tr": "Türkiye'de et-kemik testereleri çoğunlukla bıçak boyuyla anılır (ör. 1650, 1840, 2490 mm modeller). Yabancı makinelerde de modele göre boy değişir ve referans listeler bazen çelişir. En doğrusu makine etiketindeki veya kılavuzdaki ölçü ya da eski bıçağın ölçülmesidir. Bıçağımızı 1.500–6.000 mm arasında istediğiniz boyda kaynaklatabilirsiniz.",
+   "facts": [
+    {
+     "claim_tr": "Yerli üretici modelleri: KTP 165 (Ø1650 mm), KTP 184 (Ø1840 mm), KTP 249 (Ø2490 mm).",
+     "source_ids": [
+      "YILMAZ-ET"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Biro 11: 78\"(1981 mm); Biro 22: 91\"(2311); Biro 33: 116\"(2946); Biro 34: 118\"(2997); Biro 44: 135\"(3429); Biro 3334: 124\"(3150); Hobart 5700/5701/5800/6801: 142\"(3607); Hobart 6614 ve Hollymatic 16: 126\"(3200); hepsi 5/8\".",
+     "source_ids": [
+      "BUTCHERSUPPLY-CHART"
+     ],
+     "status": "single_source"
+    },
+    {
+     "claim_tr": "Boy aralığı 1500–6000 mm.",
+     "source_ids": [
+      "TS-PRODUCT-META"
+     ],
+     "status": "internal"
+    }
+   ],
+   "related_products": [
+    "hijyenik-et-kemik-pro"
+   ],
+   "links": [
+    "/rehber/serit-testere-boyu-nasil-olculur",
+    "/products/hijyenik-et-kemik-pro"
+   ],
+   "requires_data": [],
+   "safety": false,
+   "review": {
+    "status": "reviewed"
+   }
+  },
+  {
+   "id": "non_metal.meat-cleaning",
+   "title_tr": "Et testeresi ve bıçağının günlük temizliği",
+   "intents": [
+    "usage",
+    "safety",
+    "non_metal"
+   ],
+   "questions_tr": [
+    "et testeresi bıçağı nasıl temizlenir",
+    "kasap testeresi temizliği",
+    "bıçağı yıkayabilir miyim",
+    "kemik tozu nasıl temizlenir",
+    "temizlikte hangi deterjan",
+    "et bıçağını yıkayabilir miyim",
+    "hijyen için bıçak temizliği",
+    "et kemik bıçağı nasıl temizlenir",
+    "et testeresi bıçağını gece gevşetmeli miyim",
+    "et bıçağı rodaj gerekir mi"
+   ],
+   "answer_tr": "Temizlik, bıçak değişimi ve ayardan önce makineyi kapatıp fişini çekin; bıçağı gevşetip kesilmeye dayanıklı eldivenle çıkarın. Makine ilk kullanımdan önce, her iş günü sonunda ve uzun süre kullanılmayacaksa temizlenip dezenfekte edilmelidir: bıçak sıyırıcılarını, kasnakları ve kılavuzları da sökerek nötr pH'lı, gıdaya uygun bir temizlik maddesiyle yıkayın, dezenfekte edin, durulayın ve iyice kurulayın. Bıçağı nemli bırakmayın; kullanım bitince gergiyi gevşetin. Et bıçakları için üreticilerden doğrulanmış ayrı bir rodaj prosedürü bulamadık; makine kılavuzunuzu esas alın.",
+   "facts": [
+    {
+     "claim_tr": "Temizlik ve dezenfeksiyon: ilk kullanım öncesi, her günün sonunda, uzun duruş öncesi ve sonrası; nötr pH'lı temizlik maddesi; yıkama, dezenfeksiyon, durulama ve kurutma; bıçak, sıyırıcılar, kasnaklar ve kılavuzlar sökülür.",
+     "source_ids": [
+      "HOBART-6614"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Temizlik öncesi elektrik kesilir (kilitleme/etiketleme).",
+     "source_ids": [
+      "HOBART-6614"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Montajdan önce metal yüzeylere ince bir tat vermeyen mineral yağ tabakası sürülür (makine kılavuzu).",
+     "source_ids": [
+      "HOBART-6614"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Site rehberi: sıcak su ve gıdaya uygun deterjan, durulama, iyice kurulama, kuru yerde saklama; eldiven.",
+     "source_ids": [
+      "TS-GUIDES"
+     ],
+     "status": "internal"
+    },
+    {
+     "claim_tr": "Temizlik adımları: makineyi kapat/fişi çek, eldivenle çıkar, sıcak su + gıdaya uygun deterjan, durula, kurula, kuru sakla; kasnak ve kılavuzları temizle",
+     "value": null,
+     "unit": null,
+     "conditions": "",
+     "source_ids": [
+      "INT-GUIDE-MEAT",
+      "INT-CATEGORY-PAGES"
+     ],
+     "status": "internal",
+     "from_entry": "catalog_store.meatbone-cleaning"
+    },
+    {
+     "claim_tr": "Et ve gıda bıçakları temizlenip iyice kurulandıktan sonra kaldırılır.",
+     "value": null,
+     "unit": null,
+     "conditions": "",
+     "source_ids": [
+      "STORE-GUIDES"
+     ],
+     "status": "internal",
+     "from_entry": "usage_care.meat-blade-care"
+    },
+    {
+     "claim_tr": "Ambalajı açılmış et-kemik şeritlerinde cayma hakkı kullanılamaz.",
+     "value": null,
+     "unit": null,
+     "conditions": "",
+     "source_ids": [
+      "STORE-LEGAL"
+     ],
+     "status": "internal",
+     "from_entry": "usage_care.meat-blade-care"
+    },
+    {
+     "claim_tr": "Et/gıda bıçakları için birincil kaynaklı rodaj ve gerginlik değeri bulunamadı.",
+     "value": null,
+     "unit": null,
+     "conditions": "",
+     "source_ids": [
+      "RESEARCH-TBH"
+     ],
+     "status": "internal",
+     "from_entry": "usage_care.meat-blade-care"
+    }
+   ],
+   "related_products": [
+    "hijyenik-et-kemik-pro"
+   ],
+   "links": [
+    "/rehber/et-kemik-serit-testere-secimi",
+    "/products/hijyenik-et-kemik-pro",
+    "/kategori/et-kemik-serit-testere",
+    "/yasal/iade-ve-cayma"
+   ],
+   "requires_data": [],
+   "safety": true,
+   "review": {
+    "status": "reviewed"
+   }
+  },
+  {
+   "id": "non_metal.meat-disinfectant-compat",
+   "title_tr": "Dezenfektan ve çamaşır suyu kullanılabilir mi?",
+   "intents": [
+    "usage",
+    "non_metal"
+   ],
+   "questions_tr": [
+    "et bıçağını çamaşır suyuyla yıkayabilir miyim",
+    "klorlu dezenfektan bıçağa zarar verir mi",
+    "bulaşık makinesine girer mi şerit"
+   ],
+   "answer_tr": "Bıçak üreticileri bu konuda ayrıntılı bir uyumluluk tablosu yayımlamıyor. Makine üreticileri nötr pH'lı temizlik maddesini tedarikçinin talimatına göre kullanmayı ve ardından durulayıp kurulamayı öneriyor. Dezenfektanı üreticisinin önerdiği derişim ve temas süresinde kullanın, bıçakta kalıntı ve nem bırakmayın.",
+   "facts": [
+    {
+     "claim_tr": "Nötr pH'lı temizlik maddesi tedarikçi talimatına göre karıştırılır; yıkama sonrası dezenfeksiyon, durulama, kurutma.",
+     "source_ids": [
+      "HOBART-6614"
+     ],
+     "status": "verified"
+    }
+   ],
+   "related_products": [
+    "hijyenik-et-kemik-pro"
+   ],
+   "links": [
+    "/rehber/et-kemik-serit-testere-secimi"
+   ],
+   "requires_data": [],
+   "safety": false,
+   "review": {
+    "status": "reviewed"
+   }
+  },
+  {
+   "id": "non_metal.meat-rust-storage",
+   "title_tr": "Et bıçağında pas ve saklama",
+   "intents": [
+    "usage",
+    "troubleshoot",
+    "non_metal"
+   ],
+   "questions_tr": [
+    "et bıçağı paslandı",
+    "paslanmaz bıçakta lekelenme",
+    "et testeresi bıçağı nasıl saklanır",
+    "makine kullanılmazken bıçak",
+    "kasap testeresi bıçağı nasıl saklanır",
+    "kemik bıçağı paslanır mı"
+   ],
+   "answer_tr": "Paslanmaz gövde korozyona dayanıklıdır ama nemli bırakılırsa lekelenebilir; karbon çeliği bıçak ise hızla paslanır. Her temizlikten sonra bıçağı iyice kurulayın ve kuru yerde saklayın. Makine uzun süre kullanılmayacaksa bıçağın gerginliğini alın ya da bıçağı çıkarın; bu hem yorulmayı azaltır hem temizliği kolaylaştırır.",
+   "facts": [
+    {
+     "claim_tr": "Uzun duruşlarda gerginlik alınır veya bıçak çıkarılır; uzun dönem yorulmayı azaltır, temizlik erişimini iyileştirir.",
+     "source_ids": [
+      "UNITED-NZ"
+     ],
+     "status": "single_source"
+    },
+    {
+     "claim_tr": "Paslanmaz et bıçağı pas tutmaz olarak tanıtılıyor.",
+     "source_ids": [
+      "STAR-MKS"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Site rehberi: bıçağı nemli bırakmayın, kuru yerde saklayın.",
+     "source_ids": [
+      "TS-GUIDES"
+     ],
+     "status": "internal"
+    }
+   ],
+   "related_products": [
+    "hijyenik-et-kemik-pro"
+   ],
+   "links": [
+    "/rehber/et-kemik-serit-testere-secimi"
+   ],
+   "requires_data": [],
+   "safety": false,
+   "review": {
+    "status": "reviewed"
+   }
+  },
+  {
+   "id": "non_metal.meat-safety",
+   "title_tr": "Et-kemik testeresinde güvenli kullanım",
+   "intents": [
+    "safety",
+    "non_metal"
+   ],
+   "questions_tr": [
+    "kasap testeresi güvenliği",
+    "et keserken el nasıl korunur",
+    "itme aparatı ne işe yarar",
+    "küçük parça keserken dikkat"
+   ],
+   "answer_tr": "Kapaklar ve bıçak koruyucusu takılı olmadan makineyi çalıştırmayın; koruyucuyu ürün yüksekliğine indirin. Küçük parçaları ve son dilimleri itme plakasıyla ilerletin; elinizi asla bıçağın önünden uzatmayın, kesilen parçayı bıçağın arkasından alın. Ürünü sabit ve düzgün hızla ilerletin. Temizlik ve bıçak değişiminde elektriği kesin, kesilmeye dayanıklı eldiven kullanın.",
+   "facts": [
+    {
+     "claim_tr": "İtme plakası ürünü bıçağa yakın tutmayı gereksiz kılar; eller bıçaktan uzak tutulur; kesilen parçalar bıçağın arkasından alınır, kesme kenarının önünden uzanılmaz; ürün sabit, düzgün hızla geçirilir.",
+     "source_ids": [
+      "HOBART-6614"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Yerli makinede itme aparatı, el koruma aparatı, kapı açılınca devreyi kesen sensör ve acil stop.",
+     "source_ids": [
+      "YILMAZ-ET"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Site rehberi: koruyucusuz çalıştırmayın, itme aparatı kullanın.",
+     "source_ids": [
+      "TS-GUIDES"
+     ],
+     "status": "internal"
+    }
+   ],
+   "related_products": [
+    "hijyenik-et-kemik-pro"
+   ],
+   "links": [
+    "/rehber/et-kemik-serit-testere-secimi"
+   ],
+   "requires_data": [],
+   "safety": true,
+   "review": {
+    "status": "reviewed"
+   }
+  },
+  {
+   "id": "non_metal.meat-speed-tension",
+   "title_tr": "Et testeresinde bıçak hızı ve gerginlik",
+   "intents": [
+    "usage",
+    "machine",
+    "non_metal"
+   ],
+   "questions_tr": [
+    "et testeresi bıçak hızı",
+    "kasap testeresi devri ayarlanır mı",
+    "et bıçağı ne kadar gerilmeli"
+   ],
+   "answer_tr": "Et testereleri genellikle sabit hızlıdır; örneğin bir ticari modelde bıçak hızı yaklaşık 1.070 m/dk'dır (3.500 ft/dk). Gerginlik yönteminin makineye göre değiştiğini unutmayın: bazı modellerde gergi kolu sonuna kadar çevrilir, bazılarında ayar gerekir. Makine kılavuzundaki gerginlik talimatını uygulayın.",
+   "facts": [
+    {
+     "claim_tr": "6614 et testeresi bıçak hızı 3500 ft/dk (≈1067 m/dk).",
+     "value": "3500",
+     "unit": "ft/dk",
+     "source_ids": [
+      "HOBART-6614"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Bu modelde gergi ayarı duruncaya kadar saat yönünde çevrilir (makineye özgü).",
+     "source_ids": [
+      "HOBART-6614"
+     ],
+     "status": "verified"
+    }
+   ],
+   "related_products": [
+    "hijyenik-et-kemik-pro"
+   ],
+   "links": [
+    "/rehber/serit-testere-gerginlik-hiz-sogutma"
+   ],
+   "requires_data": [],
+   "safety": false,
+   "review": {
+    "status": "reviewed"
+   }
+  },
+  {
+   "id": "non_metal.meat-dull-replace",
+   "title_tr": "Et bıçağı ne zaman değişir, bilenir mi?",
+   "intents": [
+    "usage",
+    "troubleshoot",
+    "non_metal"
+   ],
+   "questions_tr": [
+    "et testeresi bıçağı bilenir mi",
+    "bıçak eti eziyor",
+    "et bıçağı köreldi",
+    "et testeresi bıçağı ne zaman değiştirilir"
+   ],
+   "answer_tr": "Körelmiş et bıçağı ürünü ezer, daha fazla itme kuvveti ister ve kesim yüzeyini bozar; bu belirtiler başladığında bıçağı değiştirin. Ticari et testerelerinin bıçakları genellikle bilenmek için tasarlanmamıştır. Kırılma ve çatlamada önce kalınlığın kasnak çapına uygunluğunu ve gerginliği kontrol edin.",
+   "facts": [
+    {
+     "claim_tr": "Makineyle verilen uzun ömürlü bıçak yeniden bilenemez; yedek bıçak kullanılır.",
+     "source_ids": [
+      "HOBART-6614"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Site rehberi: körelen bıçak ürünü ezer ve daha fazla kuvvet ister; kesim kalitesi düşünce değiştirin.",
+     "source_ids": [
+      "TS-GUIDES"
+     ],
+     "status": "internal"
+    }
+   ],
+   "related_products": [
+    "hijyenik-et-kemik-pro"
+   ],
+   "links": [
+    "/rehber/et-kemik-serit-testere-secimi",
+    "/products/hijyenik-et-kemik-pro"
+   ],
+   "requires_data": [],
+   "safety": false,
+   "review": {
+    "status": "reviewed"
+   }
+  },
+  {
+   "id": "non_metal.meat-other-foods",
+   "title_tr": "Donuk gıda blokları, sebze, yağ ve hazır gıda",
+   "intents": [
+    "selection",
+    "non_metal"
+   ],
+   "questions_tr": [
+    "donuk sebze bloğu kesmek",
+    "donmuş tereyağı bloğu şeritle kesilir mi",
+    "dondurulmuş hamur kesimi",
+    "gıda bloğu kesmek için bıçak"
+   ],
+   "answer_tr": "Gıda şerit testereleri et ve kemiğin yanında donuk gıda blokları, taze veya donuk sebze ve yağ gibi ürünlerde de kullanılır. Bu işler için gıdayla temasa uygun, paslanmaz gövdeli Hijyenik Et-Kemik bıçağı uygundur; donuk ve sert bloklarda seyrek diş tercih edilir. Ürününüzü ve makinenizi yazarsanız diş adımını teyit edelim.",
+   "facts": [
+    {
+     "claim_tr": "EN 12268 kapsamında donuk blok gıda, taze/donuk sebze, domuz yağı ve benzerleri de vardır.",
+     "source_ids": [
+      "EN12268"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Paslanmaz et bıçağı taze/donuk ve hazır gıda işlerinde kullanılır.",
+     "source_ids": [
+      "STAR-MKS"
+     ],
+     "status": "verified"
+    }
+   ],
+   "related_products": [
+    "hijyenik-et-kemik-pro"
+   ],
+   "links": [
+    "/products/hijyenik-et-kemik-pro",
+    "/iletisim"
+   ],
+   "requires_data": [],
+   "safety": false,
+   "review": {
+    "status": "reviewed"
+   }
+  },
+  {
+   "id": "non_metal.meat-hand-saw-gap",
+   "title_tr": "Kasap el testeresi bıçağı",
+   "intents": [
+    "product",
+    "non_metal"
+   ],
+   "questions_tr": [
+    "kasap el testeresi bıçağı var mı",
+    "elle kullanılan kemik testeresi yaprağı",
+    "el tipi et testeresi yedek bıçak"
+   ],
+   "answer_tr": "Kasap el testeresi yaprakları (daha sık dişli, kısa bıçaklar) şerit testere bıçağından farklı bir üründür ve katalogumuzda bulunmuyor. Şerit testere makineniz için Hijyenik Et-Kemik bıçağına bakabilirsiniz; el testeresi ihtiyacınız için bize yazabilirsiniz.",
+   "facts": [
+    {
+     "claim_tr": "Kasap el testeresi bıçakları 9 TPI (2,82 mm), 11–19 mm × 0,60 mm.",
+     "source_ids": [
+      "CBG-MEAT"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Katalogda yalnız şerit (makine) bıçakları var.",
+     "source_ids": [
+      "TS-PRICE-TREE"
+     ],
+     "status": "internal"
+    }
+   ],
+   "related_products": [
+    "hijyenik-et-kemik-pro"
+   ],
+   "links": [
+    "/iletisim",
+    "/products/hijyenik-et-kemik-pro"
+   ],
+   "requires_data": [],
+   "safety": false,
+   "review": {
+    "status": "reviewed"
+   }
+  },
+  {
+   "id": "non_metal.foam-edge-not-selectable",
+   "title_tr": "Ağız tipini (dalgalı/tırtıklı/düz) nasıl seçerim?",
+   "intents": [
+    "product",
+    "store",
+    "non_metal"
+   ],
+   "questions_tr": [
+    "sünger bıçağında ağız tipi seçemiyorum",
+    "dalgalı mı düz mü geliyor",
+    "scallop seçeneği nerede",
+    "sünger bıçağı ağız tipi nasıl belirtilir",
+    "dalgali agiz secebilir miyim"
+   ],
+   "answer_tr": "Sünger-Tekstil bıçağında ürün açıklamasında dalgalı (wave), tırtıklı (scallop) ve düz ağız anılıyor; ancak sipariş ekranı şu an ağız tipi seçeneği göstermiyor. Siparişten önce keseceğiniz malzemeyi, makinenizi ve istediğiniz ağız tipini (gerekirse tek veya çift taraflı bileme) bize yazın; uygun olanı teyit edelim.",
+   "facts": [
+    {
+     "claim_tr": "textile matrisinde ağız/diş listesi boş; seçicide alan gizleniyor.",
+     "source_ids": [
+      "TS-PRICE-TREE",
+      "TS-CONFIGURATOR"
+     ],
+     "status": "internal"
+    },
+    {
+     "claim_tr": "Ürün metaverisi: 'Diş Tarağı (Wave)', 'Diş Tarağı (Scallop)', 'Düz Bıçak'.",
+     "source_ids": [
+      "TS-PRODUCT-META"
+     ],
+     "status": "internal"
+    },
+    {
+     "claim_tr": "Site rehberi 'ağız tipini ürün sayfasında seçebilirsiniz' diyor (canlıda seçenek yok).",
+     "source_ids": [
+      "TS-GUIDES"
+     ],
+     "status": "conflict"
+    }
+   ],
+   "related_products": [
+    "sunger-tekstil-pro"
+   ],
+   "links": [
+    "/products/sunger-tekstil-pro",
+    "/iletisim"
+   ],
+   "requires_data": [],
+   "safety": false,
+   "review": {
+    "status": "needs_owner"
+   }
+  },
+  {
+   "id": "non_metal.foam-why-toothless",
+   "title_tr": "Sünger ve köpükte neden dişsiz bıçak?",
+   "intents": [
+    "selection",
+    "glossary",
+    "non_metal"
+   ],
+   "questions_tr": [
+    "sünger kesiminde neden dişsiz bıçak",
+    "sünger dişli testereyle kesilir mi",
+    "köpük keserken toz çıkıyor",
+    "sünger bıçağı ile testere farkı"
+   ],
+   "answer_tr": "Esnek sünger ve köpük talaş kaldırılarak değil dilimlenerek kesilir. Dişli testere yumuşak malzemeyi yırtabilir, toz ve lif bırakır; düz ağızlı bıçak malzemeyi tozsuz dilimler. Daha yoğun veya sert köpüklerde ise malzeme kaldırmak gerektiğinde dişli veya profilli bıçaklar kullanılır.",
+   "facts": [
+    {
+     "claim_tr": "Düz bıçak ağzı malzeme kaldırmaz, toz çıkarmaz; düşük yoğunluklu esnek PU içindir.",
+     "source_ids": [
+      "DAKIN-FOAM",
+      "SIMCUT-FOAM"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Bıçak (dilimleme, tozsuz) esnek düşük yoğunluklu PU; diş orta yoğunluk ve PE; testere (kerf) yüksek yoğunluklu sert köpük.",
+     "source_ids": [
+      "EDGESWEETS-BLADES"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Tek kesimin yetmediği ve malzeme kaldırılması gereken yerlerde şerit testere (dişli) kullanılır.",
+     "source_ids": [
+      "BAEUMER-KNIVES"
+     ],
+     "status": "verified"
+    }
+   ],
+   "related_products": [
+    "sunger-tekstil-pro"
+   ],
+   "links": [
+    "/rehber/sunger-kesim-bicagi-secimi",
+    "/products/sunger-tekstil-pro"
+   ],
+   "requires_data": [],
+   "safety": false,
+   "review": {
+    "status": "reviewed"
+   }
+  },
+  {
+   "id": "non_metal.foam-edge-types",
+   "title_tr": "Düz, dalgalı ve tırtıklı ağız farkı",
+   "intents": [
+    "selection",
+    "glossary",
+    "non_metal"
+   ],
+   "questions_tr": [
+    "sünger kesme bıçağı dalgalı mı düz mü",
+    "tırtıklı ağız ne işe yarar",
+    "wave scallop farkı",
+    "konkav konveks bıçak ne demek",
+    "dalgalı bıçak hangi süngere",
+    "dalgalı mı tırtıklı mı düz mü",
+    "sünger için hangi ağız"
+   ],
+   "answer_tr": "Düz ağız saf dilimleme yapar, toz çıkarmaz ve en pürüzsüz yüzeyi verir; makinede düzenli bilenmesi gerekir. Dalgalı (konveks) ağızda dalga tepeleri malzemeye önce girer ve malzemeyi çekmeden keser; düşük-orta yoğunluklu sünger, kumaş katları, keçe ve lifli/yalıtım malzemelerinde kullanılır. Tırtıklı (konkav, scallop) ağız dilimlemeyi sivri uçlarla birleştirir; daha yoğun süngerde ve yalıtım köpüklerinde tercih edilir. Kaynaklar bazı malzemelerde ayrışır: hafızalı (viskoelastik) köpükte düz veya tırtıklı, kumaşta düz veya dalgalı ağız önerilir. Kesin seçim için malzemenizle deneme kesimi yapın; ağız tipi sipariş ekranında seçilemediğinden tercihinizi siparişten önce bize yazın.",
+   "facts": [
+    {
+     "claim_tr": "Düz ağız: tek veya çift bileme; tırtıklı ve dalgalı: yalnız çift bileme; köpük, kauçuk, yumuşak plastik, karton, kâğıt, mantar.",
+     "source_ids": [
+      "STAR-BANDKNIFE"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Tırtıklı (scallop): düşükten yükseğe yoğunluklu köpük, hafızalı köpük, sert köpük, yalıtım; az/sıfır toz. Dalgalı: düz bıçaktan derin keser; sert köpük, yalıtım, ıslak mendil, tekstil.",
+     "source_ids": [
+      "DAKIN-FOAM"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Konkav = tırtıklı, konveks = dalgalı; dalgalı tırtıklıdan daha nazik keser.",
+     "source_ids": [
+      "DIAMONDTOOLS-BK"
+     ],
+     "status": "single_source"
+    },
+    {
+     "claim_tr": "Dişli, tırtıklı ve dalgalı bıçaklar bileme istemez; düz ağız makinede bilenir.",
+     "source_ids": [
+      "SIMCUT-FOAM",
+      "REXEL-BK"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Ağız tipine göre seçim: düz → yumuşak sünger/hafızalı köpük; dalgalı → karışık yoğunluk, kumaş, keçe; tırtıklı → yoğun sünger, yalıtım köpükleri",
+     "value": null,
+     "unit": null,
+     "conditions": "genel kullanım bilgisi",
+     "source_ids": [
+      "INT-GUIDE-SPONGE"
+     ],
+     "status": "internal",
+     "from_entry": "catalog_store.textile-edge-choice"
+    },
+    {
+     "claim_tr": "Canlı matris 'textile' dallarında diş/ağız listesi boş → konfigüratör seçim alanını gizler",
+     "value": null,
+     "unit": null,
+     "conditions": "",
+     "source_ids": [
+      "LIVE-PRICE-OPTIONS",
+      "INT-CONFIGURATOR"
+     ],
+     "status": "internal",
+     "from_entry": "catalog_store.textile-edge-choice"
+    },
+    {
+     "claim_tr": "Rehber 'ağız tipini ürün sayfasında seçebilirsiniz' diyor; ürün metadata ağız seçeneklerini listeliyor — sipariş ekranında seçim yok",
+     "value": null,
+     "unit": null,
+     "conditions": "",
+     "source_ids": [
+      "INT-GUIDE-SPONGE",
+      "LIVE-PRODUCTS"
+     ],
+     "status": "conflict",
+     "from_entry": "catalog_store.textile-edge-choice"
+    }
+   ],
+   "related_products": [
+    "sunger-tekstil-pro"
+   ],
+   "links": [
+    "/rehber/sunger-kesim-bicagi-secimi",
+    "/products/sunger-tekstil-pro"
+   ],
+   "requires_data": [],
+   "safety": false,
+   "review": {
+    "status": "needs_owner"
+   }
+  },
+  {
+   "id": "non_metal.foam-pu-flexible",
+   "title_tr": "Yatak ve döşeme süngeri (esnek PU köpük)",
+   "intents": [
+    "selection",
+    "material",
+    "non_metal"
+   ],
+   "questions_tr": [
+    "yatak süngeri kesmek için bıçak",
+    "döşeme süngeri hangi bıçakla kesilir",
+    "poliüretan sünger kesimi",
+    "sünger blok dilimleme bıçağı",
+    "hr sünger kesimi"
+   ],
+   "answer_tr": "Düşük ve orta yoğunluklu esnek PU süngerde düz (dişsiz) ağız en temiz ve tozsuz yüzeyi verir; makinenin bileme ünitesiyle keskin tutulmalıdır. Daha yoğun (HR, rebond) süngerde tırtıklı veya dişli profiller malzemeye daha iyi girer. Sünger-Tekstil bıçağımızı makinenizin ölçüsünde alabilirsiniz; ağız tipini siparişten önce bize yazın.",
+   "facts": [
+    {
+     "claim_tr": "Düşük yoğunluklu esnek köpükte düz ağız; orta/yüksek yoğunlukta taşlanmış dişli ve profilli bıçaklar.",
+     "source_ids": [
+      "DAKIN-FOAM"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Çift taraflı taşlanmış bıçaklar kolay ayrılan, çok esnek soğuk köpük ve viskoelastik köpük için.",
+     "source_ids": [
+      "BAEUMER-KNIVES"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Dikey sünger makinesi (8×0,45 mm bıçak) PU, HR, visco, rebond köpük keser.",
+     "source_ids": [
+      "FK-MACHINES"
+     ],
+     "status": "verified"
+    }
+   ],
+   "related_products": [
+    "sunger-tekstil-pro"
+   ],
+   "links": [
+    "/rehber/sunger-kesim-bicagi-secimi",
+    "/products/sunger-tekstil-pro",
+    "/iletisim"
+   ],
+   "requires_data": [],
+   "safety": false,
+   "review": {
+    "status": "reviewed"
+   }
+  },
+  {
+   "id": "non_metal.foam-memory",
+   "title_tr": "Hafızalı (viskoelastik) köpük ve lateks",
+   "intents": [
+    "selection",
+    "material",
+    "non_metal"
+   ],
+   "questions_tr": [
+    "memory foam kesmek için bıçak",
+    "visco sünger hangi ağız",
+    "lateks yatak kesimi",
+    "hafızalı sünger yapışıyor bıçağa",
+    "hafızalı köpük hangi bıçakla kesilir"
+   ],
+   "answer_tr": "Viskoelastik köpük için kaynaklar iki yol önerir: çift taraflı bilenmiş düz ağız veya tırtıklı (scallop) ağız. Lateks ve keçe benzeri malzemelerde dişsiz, bilenmiş bıçak öne çıkar. Hangisinin daha iyi sonuç vereceği köpüğün sıcaklığına, yoğunluğuna ve makinenize bağlıdır; deneme kesimi yapın ve ağız tipini siparişten önce bize yazın.",
+   "facts": [
+    {
+     "claim_tr": "Çift taraflı taşlanmış (düz) bıçak viskoelastik köpük için.",
+     "source_ids": [
+      "BAEUMER-KNIVES"
+     ],
+     "status": "conflict"
+    },
+    {
+     "claim_tr": "Hafızalı köpükte tırtıklı ağız ve taşlanmış dişli bıçak.",
+     "source_ids": [
+      "DAKIN-FOAM"
+     ],
+     "status": "conflict"
+    },
+    {
+     "claim_tr": "Site rehberi: hafızalı köpükte düz ağız; ürün sayfası viskoelastik blok dilimlemeyi uygulamalarda sayar.",
+     "source_ids": [
+      "TS-GUIDES",
+      "TS-PRODUCT-META"
+     ],
+     "status": "internal"
+    },
+    {
+     "claim_tr": "Lateks ve melamin köpük bıçakla (C 67 CNC makinesi) kesilir.",
+     "source_ids": [
+      "FK-MACHINES"
+     ],
+     "status": "verified"
+    }
+   ],
+   "related_products": [
+    "sunger-tekstil-pro"
+   ],
+   "links": [
+    "/rehber/sunger-kesim-bicagi-secimi",
+    "/iletisim"
+   ],
+   "requires_data": [],
+   "safety": false,
+   "review": {
+    "status": "needs_owner"
+   }
+  },
+  {
+   "id": "non_metal.foam-rigid-pir",
+   "title_tr": "Sert köpük levha (PIR/PUR yalıtım levhası)",
+   "intents": [
+    "selection",
+    "material",
+    "non_metal"
+   ],
+   "questions_tr": [
+    "pir levha kesmek için bıçak",
+    "sert poliüretan köpük kesimi",
+    "yalıtım levhası şeritle kesmek",
+    "sert köpük sünger bıçağıyla kesilir mi"
+   ],
+   "answer_tr": "Sert yalıtım köpük levhaları esnek sünger gibi dilimlenmez; çaprazlı dişi olan şerit testere bıçağı daha uygundur, çünkü kesik bıçağa yer açar ve bıçak sıkışmaz. Sünger-Tekstil bıçağımız dişsizdir ve bu iş için ilk tercih değildir. Ahşap şerit testere makinesinde sık dişli bir Ahşap Kesim bıçağı kullanılabilir; malzemenizi ve makinenizi yazarsanız birlikte netleştirelim.",
+   "facts": [
+    {
+     "claim_tr": "Sert köpükte (yalıtım levhaları) çaprazlı dişli standart şerit testere bıçağı; çapraz bıçağa serbest yol açar.",
+     "source_ids": [
+      "DAKIN-FOAM"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Şerit testereler sert PU, PVC, PET, kauçuk, EPS, EPP ve fenolik köpükte; daha çok TPI daha ince kesim.",
+     "source_ids": [
+      "BAEUMER-KNIVES"
+     ],
+     "status": "verified"
+    }
+   ],
+   "related_products": [
+    "woodcut-classic",
+    "sunger-tekstil-pro"
+   ],
+   "links": [
+    "/products/woodcut-classic",
+    "/iletisim"
+   ],
+   "requires_data": [],
+   "safety": false,
+   "review": {
+    "status": "needs_owner"
+   }
+  },
+  {
+   "id": "non_metal.foam-eps-xps",
+   "title_tr": "Strafor (EPS) ve XPS kesimi",
+   "intents": [
+    "selection",
+    "material",
+    "non_metal"
+   ],
+   "questions_tr": [
+    "strafor kesmek için bıçak",
+    "eps köpük şeritle kesilir mi",
+    "xps levha kesimi",
+    "strafor kesince ufalanıyor"
+   ],
+   "answer_tr": "Endüstride EPS (strafor) bloklar çoğunlukla sıcak telle kesilir; mekanik kesimde dişli şerit testere veya döner kesme teli kullanılır. Dişsiz sünger bıçağının EPS/XPS için önerildiğine dair kaynak bulamadık. Sıcak tel ekipmanı satmıyoruz; şerit testereyle kesecekseniz sık dişli bir bıçak deneyin ve makinenizi bize yazın. Sıcak teli poliüretan köpükte kullanmayın.",
+   "facts": [
+    {
+     "claim_tr": "Endüstriyel EPS blok hatları sıcak telle keser; XPS de kesilebilir.",
+     "source_ids": [
+      "ARPEL-EPS"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Şerit testereler EPS ve polistireni keser; döner (ısıtılmayan) kesme telleri sert köpük ve polistiren için.",
+     "source_ids": [
+      "BAEUMER-KNIVES"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Sıcak tel için ≥315 °C (600 °F) nikrom tel; poliüretan sıcak telle kesilmemeli (zehirli gaz).",
+     "source_ids": [
+      "TEMCO-HOTWIRE"
+     ],
+     "status": "conflict"
+    }
+   ],
+   "related_products": [
+    "woodcut-classic"
+   ],
+   "links": [
+    "/iletisim"
+   ],
+   "requires_data": [],
+   "safety": false,
+   "review": {
+    "status": "needs_owner"
+   }
+  },
+  {
+   "id": "non_metal.foam-mineral-wool",
+   "title_tr": "Taş yünü, cam yünü ve yalıtım şiltesi",
+   "intents": [
+    "selection",
+    "material",
+    "non_metal"
+   ],
+   "questions_tr": [
+    "taş yünü kesmek için bıçak",
+    "cam yünü şeritle kesilir mi",
+    "yalıtım şiltesi kesme bıçağı",
+    "rockwool kesimi"
+   ],
+   "answer_tr": "Mineral yün (taş/cam yünü) lifli ve aşındırıcıdır. Bıçak üreticileri bu tür yalıtım malzemeleri için dalgalı veya tırtıklı ağızlı bant bıçakları öne çıkarır; dikey bıçaklı sünger makinelerinde de kesilir. Elle kesimde tırtıklı yalıtım bıçağı önerilir. Toz ve liflere karşı maske, gözlük ve eldiven kullanın; ağız tipini siparişten önce bize yazın.",
+   "facts": [
+    {
+     "claim_tr": "Dikey bıçaklı makinelerin (IS-M/IS-L) malzemeleri arasında mineral yün var.",
+     "source_ids": [
+      "BAEUMER-ISL"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Dalga kesimli bant bıçaklar aşındırıcı köpük, filtre ve yalıtım içindir.",
+     "source_ids": [
+      "ALBER-KNIVES",
+      "DAKIN-FOAM"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Elle kesimde tırtıklı yalıtım bıçağı; maket bıçağı çabuk körelir ve levhayı yırtar.",
+     "source_ids": [
+      "ROCKWOOL-CUT"
+     ],
+     "status": "verified"
+    }
+   ],
+   "related_products": [
+    "sunger-tekstil-pro"
+   ],
+   "links": [
+    "/iletisim",
+    "/rehber/sunger-kesim-bicagi-secimi"
+   ],
+   "requires_data": [],
+   "safety": true,
+   "review": {
+    "status": "reviewed"
+   }
+  },
+  {
+   "id": "non_metal.textile-fabric",
+   "title_tr": "Kumaş katları ve döşemelik kumaş",
+   "intents": [
+    "selection",
+    "material",
+    "non_metal"
+   ],
+   "questions_tr": [
+    "kumaş kesmek için şerit bıçak",
+    "tekstil kesim makinesi bıçağı",
+    "pastal kesimi şerit bıçak",
+    "döşemelik kumaş hangi ağız",
+    "kumaş kesmek için düz bıçak mı dişli mi"
+   ],
+   "answer_tr": "Tekstil şerit bıçak makineleri genellikle 10 mm civarında, ince (yaklaşık 0,45 mm) düz bıçak kullanır ve makinede bileme ünitesiyle keskin tutar. Bazı bıçak üreticileri lifli malzemeler ve tekstil için dalgalı ağızı da önerir. Sentetik kumaşlarda sürtünme ısısı erimeye yol açabilir; hızı makine kılavuzuna göre ayarlayın. Bizim 10 mm seçeneğimiz 0,5 mm kalınlıktadır; makineniz 0,45 mm istiyorsa kılavuz uyumunu siparişten önce bize sorun.",
+   "facts": [
+    {
+     "claim_tr": "Tekstil makinesi: dahili bileyici; bıçak 0,45×10×3500/3860/4560 mm.",
+     "value": "10×0,45",
+     "unit": "mm",
+     "source_ids": [
+      "OSHIMA-OB"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "TexKnife: 10×0,45×4920 mm, ~16 m/s.",
+     "source_ids": [
+      "KURIS-TEX"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Tekstil ve köpükte düz bant; değişken hız sentetik kumaşın sürtünmeyle erimesini önler.",
+     "source_ids": [
+      "REXEL-BK"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Dalgalı ağız tekstil ve lifli malzemeler için de önerilir.",
+     "source_ids": [
+      "DAKIN-FOAM",
+      "SIMCUT-FOAM"
+     ],
+     "status": "conflict"
+    },
+    {
+     "claim_tr": "Ürün sayfası kumaşı tırtıklı ağıza, site rehberi dalgalı ağıza bağlıyor.",
+     "source_ids": [
+      "TS-PRODUCT-META",
+      "TS-GUIDES"
+     ],
+     "status": "conflict"
+    },
+    {
+     "claim_tr": "Bizim 10 mm seçenek 0,5 mm kalınlıkta.",
+     "source_ids": [
+      "TS-PRICE-TREE"
+     ],
+     "status": "internal"
+    }
+   ],
+   "related_products": [
+    "sunger-tekstil-pro"
+   ],
+   "links": [
+    "/products/sunger-tekstil-pro",
+    "/iletisim"
+   ],
+   "requires_data": [],
+   "safety": false,
+   "review": {
+    "status": "needs_owner"
+   }
+  },
+  {
+   "id": "non_metal.textile-felt-carpet-leather",
+   "title_tr": "Keçe, halı, deri ve kauçuk",
+   "intents": [
+    "selection",
+    "material",
+    "non_metal"
+   ],
+   "questions_tr": [
+    "keçe kesmek için bıçak",
+    "halı kesimi şerit bıçak",
+    "deri yarma bıçağı var mı",
+    "kauçuk levha kesme bıçağı",
+    "eva kesimi"
+   ],
+   "answer_tr": "Keçe, EVA ve dokusuz yüzeyler dikey makinelerde dişsiz bıçakla kesilir; kauçuk, mantar ve karton için bant bıçakları da kullanılır. Deri yarma (split) ve halı soyma makineleri ise 30–85 mm gibi geniş ve özel bilemeli bıçaklar kullanır; bu bıçaklar katalogumuzda yok (en geniş seçeneğimiz 13 mm). Bu makineler için ölçüyle birlikte bize yazın.",
+   "facts": [
+    {
+     "claim_tr": "Keçe, EVA, dokusuz yüzey/pamuk vatka ve hücreli kauçuk bıçakla kesilir (CNC F 62).",
+     "source_ids": [
+      "FK-MACHINES"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Bant bıçakları köpük, kauçuk, yumuşak plastik, karton, kâğıt ve mantar içindir.",
+     "source_ids": [
+      "STAR-BANDKNIFE"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Deri yarma örneği 85×1,2 mm; halı geri dönüşümünde geniş düz bıçaklar.",
+     "source_ids": [
+      "SIMCUT-FOAM"
+     ],
+     "status": "single_source"
+    },
+    {
+     "claim_tr": "Deri yarma için 50×0,80 veya 50×0,60 mm bıçaklar (TR bayi).",
+     "source_ids": [
+      "TESTERESEPETI-SSS"
+     ],
+     "status": "single_source"
+    },
+    {
+     "claim_tr": "Sünger-Tekstil matrisinde en geniş bıçak 13 mm.",
+     "source_ids": [
+      "TS-PRICE-TREE"
+     ],
+     "status": "internal"
+    }
+   ],
+   "related_products": [
+    "sunger-tekstil-pro"
+   ],
+   "links": [
+    "/iletisim"
+   ],
+   "requires_data": [],
+   "safety": false,
+   "review": {
+    "status": "reviewed"
+   }
+  },
+  {
+   "id": "non_metal.foam-bevel",
+   "title_tr": "Tek taraflı mı çift taraflı mı bileme?",
+   "intents": [
+    "selection",
+    "glossary",
+    "non_metal"
+   ],
+   "questions_tr": [
+    "tek tarafı bilenmiş bıçak ne demek",
+    "çift taraflı bileme sünger",
+    "yatay makine tek bileme mi",
+    "sbse dbse farkı"
+   ],
+   "answer_tr": "Çift taraflı bilenmiş bıçak yalnız yanlarından kılavuzlanır ve yumuşak, esnek köpükte dikey makinelerde en yaygın tiptir; iki kenarı bilenmiş türleri dikey makinede ileri-geri iki yönde de keser. Tek taraflı bilenmiş, daha geniş bıçaklar daha sert malzemelerde ve yatay dilimleme/soyma makinelerinde kullanılır. Makinenizin istediği bileme tipini eski bıçaktan veya kılavuzdan kontrol edip siparişten önce bize yazın.",
+   "facts": [
+    {
+     "claim_tr": "Çift taraflı taşlanmış bıçak yanlarından kılavuzlanır, yumuşak esnek köpük içindir; tek taraflı taşlanmış bıçak daha geniştir, sert malzeme ve yatay makinelerde kullanılır.",
+     "source_ids": [
+      "BAEUMER-KNIVES"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "SBSE yatay soyma/dilimleme; DBSE en yaygın, tüm makineler; DBDE dikey makinede iki yönde kesim.",
+     "source_ids": [
+      "DIAMONDTOOLS-BK"
+     ],
+     "status": "single_source"
+    },
+    {
+     "claim_tr": "Makinede doğru bilendiği için çift bileme önerilir.",
+     "source_ids": [
+      "REXEL-BK"
+     ],
+     "status": "verified"
+    }
+   ],
+   "related_products": [
+    "sunger-tekstil-pro"
+   ],
+   "links": [
+    "/iletisim"
+   ],
+   "requires_data": [],
+   "safety": false,
+   "review": {
+    "status": "reviewed"
+   }
+  },
+  {
+   "id": "non_metal.foam-machine-types",
+   "title_tr": "Sünger makinesi türleri ve bıçak ölçüleri",
+   "intents": [
+    "machine",
+    "non_metal"
+   ],
+   "questions_tr": [
+    "dikey sünger kesme makinesi bıçağı",
+    "yatay sünger dilimleme bıçağı ölçüsü",
+    "cnc sünger kontur bıçağı",
+    "karusel sünger makinesi bıçak",
+    "hangi makineye hangi bıçak sünger"
+   ],
+   "answer_tr": "Dikey sünger makineleri çoğunlukla 8–15 mm genişlik ve 0,45 mm civarı kalınlıkta bıçak kullanır; bizim 8×0,45 mm seçeneğimiz bu sınıfa uyar. Tekstil makineleri genellikle 10 mm civarı bıçak kullanır. Yatay dilimleme ve karusel makineleri 30–60 mm genişlikte, 8 m'den uzun bıçaklar, CNC kontur makineleri 3–4,5 mm bıçaklar kullanır; bunları katalogumuzda sunmuyoruz. Makine modelinizi ve eski bıçağın ölçüsünü yazın.",
+   "facts": [
+    {
+     "claim_tr": "Dikey: V 24, V 51, T 8 8×0,45 mm; V 116 15×0,45 mm.",
+     "value": "8×0,45",
+     "unit": "mm",
+     "source_ids": [
+      "FK-MACHINES"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Yatay H 51 ve karusel S 41: 60×0,6 mm; BST-D karusel 60×0,6; BSM yatay 50×0,6.",
+     "source_ids": [
+      "FK-MACHINES",
+      "BAEUMER-KNIVES"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Genel aralıklar: dikey 8–30×0,45–0,60; yatay/karusel 25–60×0,45–1,00; CNC 3–4,5×0,45–0,80 mm.",
+     "source_ids": [
+      "DIAMONDTOOLS-BK"
+     ],
+     "status": "single_source"
+    },
+    {
+     "claim_tr": "Yatay sünger makinesi bıçağı 9160–10160 × 30 × 0,45 mm.",
+     "source_ids": [
+      "ZIMLIN-HFC"
+     ],
+     "status": "single_source"
+    },
+    {
+     "claim_tr": "Matris: 8×0,45; 10×0,5; 13×0,6 mm; boy en çok 8000 mm.",
+     "source_ids": [
+      "TS-PRICE-TREE",
+      "TS-PRODUCT-META"
+     ],
+     "status": "internal"
+    }
+   ],
+   "related_products": [
+    "sunger-tekstil-pro"
+   ],
+   "links": [
+    "/iletisim",
+    "/products/sunger-tekstil-pro"
+   ],
+   "requires_data": [],
+   "safety": false,
+   "review": {
+    "status": "reviewed"
+   }
+  },
+  {
+   "id": "non_metal.foam-speed",
+   "title_tr": "Bant bıçağı hızı",
+   "intents": [
+    "usage",
+    "machine",
+    "non_metal"
+   ],
+   "questions_tr": [
+    "sünger bıçağı hızı",
+    "tekstil bıçak makinesi devri",
+    "bant bıçak kaç m/s döner"
+   ],
+   "answer_tr": "Bant bıçağı hızları makineye göre değişir: dikey bıçaklı köpük makinelerinde yaklaşık 10–28 m/s, tekstil makinelerinde yaklaşık 10–19 m/s, CNC kontur makinelerinde daha düşük hızlar görülür. Sentetik kumaşta fazla hız sürtünme ısısıyla erimeye yol açabilir. Makine kılavuzundaki hızı esas alın.",
+   "facts": [
+    {
+     "claim_tr": "Dikey bıçaklı makine bant hızı 10–28 m/s.",
+     "value": "10-28",
+     "unit": "m/s",
+     "source_ids": [
+      "BAEUMER-ISL"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Tekstil makinesi ~16 m/s.",
+     "value": "16",
+     "unit": "m/s",
+     "source_ids": [
+      "KURIS-TEX"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "R1150: 0–18 m/s; değişken hız sentetik kumaşın erimesini önler.",
+     "source_ids": [
+      "REXEL-BK"
+     ],
+     "status": "verified"
+    }
+   ],
+   "related_products": [
+    "sunger-tekstil-pro"
+   ],
+   "links": [
+    "/rehber/sunger-kesim-bicagi-secimi"
+   ],
+   "requires_data": [],
+   "safety": false,
+   "review": {
+    "status": "reviewed"
+   }
+  },
+  {
+   "id": "non_metal.foam-sharpen-maintain",
+   "title_tr": "Sünger bıçağının bilenmesi ve bakımı",
+   "intents": [
+    "usage",
+    "troubleshoot",
+    "non_metal"
+   ],
+   "questions_tr": [
+    "sünger bıçağı ne zaman bilenir",
+    "sünger bıçağı köreldi süngeri yırtıyor",
+    "bıçağa tutkal yapışıyor",
+    "dalgalı bıçak bilenir mi",
+    "sünger bıçağı kaç saatte bir bilenmeli"
+   ],
+   "answer_tr": "Düz ağızlı bıçaklar makinedeki bileme ünitesiyle düzenli bilenir; sabit bir aralık yayımlanmamıştır, kesim yüzeyi pürüzlenince veya malzeme itilip yırtılmaya başlayınca bileme zamanı gelmiştir. Dalgalı, tırtıklı ve dişli ağızlar genellikle makinede bilenmez; profili bozulunca değiştirilir. Kılavuz yarığındaki ve kasnaklardaki yapışkan birikintiyi temizleyin; birikinti bıçakta çatlamaya yol açabilir.",
+   "facts": [
+    {
+     "claim_tr": "Makinede yalnız düz bantlar bilenir.",
+     "source_ids": [
+      "REXEL-BK"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Otomatik bileme ünitesi ağır (bıçak değişiminden sonra, kauçuk/mantar), normal ve parlatma modlarında döngüsel çalışır; sert/geri dönüşüm malzemede sürekli bileme.",
+     "source_ids": [
+      "BAEUMER-ISL",
+      "BAEUMER-KNIVES"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Dişli, tırtıklı ve dalgalı bıçaklar bileme gerektirmez.",
+     "source_ids": [
+      "SIMCUT-FOAM"
+     ],
+     "status": "single_source"
+    },
+    {
+     "claim_tr": "Kılavuz yarığındaki yapışkan çözücüyle temizlenir; kasnak birikintisi diş dibi ve sırt çatlağına yol açar.",
+     "source_ids": [
+      "SIMCUT-FOAM"
+     ],
+     "status": "single_source"
+    },
+    {
+     "claim_tr": "Site rehberi: körelmiş ağız malzemeyi iter ve yırtar; düz ağızlıyı bileyin, profili bozulmuşu değiştirin.",
+     "source_ids": [
+      "TS-GUIDES"
+     ],
+     "status": "internal"
+    }
+   ],
+   "related_products": [
+    "sunger-tekstil-pro"
+   ],
+   "links": [
+    "/rehber/sunger-kesim-bicagi-secimi"
+   ],
+   "requires_data": [],
+   "safety": false,
+   "review": {
+    "status": "reviewed"
+   }
+  },
+  {
+   "id": "non_metal.foam-safety",
+   "title_tr": "Bant bıçağı makinelerinde güvenlik",
+   "intents": [
+    "safety",
+    "non_metal"
+   ],
+   "questions_tr": [
+    "sünger bıçağı takarken eldiven",
+    "tekstil bıçak makinesi güvenlik",
+    "bant bıçağı çok keskin dikkat"
+   ],
+   "answer_tr": "Bant bıçakları jilet kadar keskindir. Bıçağı takarken, temizlerken ve kumaş kesiminde kesilmeye dayanıklı (tercihen çelik örgü) eldiven kullanın; açıkta kalan bıçak kısmını otomatik ayarlanan koruyucu kapatmalıdır. Bıçak değişimi ve temizlik öncesi makineyi durdurup elektriği kesin; bileme tozunu emişle alın.",
+   "facts": [
+    {
+     "claim_tr": "Kumaş kesim makinelerinde açıktaki bıçağı otomatik ayarlanan koruyucu kapatmalı; kesim ve bıçak tutma sırasında beş parmaklı çelik örgü eldiven.",
+     "source_ids": [
+      "HSE-FABRIC"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Acil durdurma, bant kopması veya kapak açılmasında bant 1 sn'den kısa sürede durur.",
+     "source_ids": [
+      "REXEL-BK"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Motorlu bıçak koruyucusu malzeme yüksekliğini izler.",
+     "source_ids": [
+      "BAEUMER-ISL"
+     ],
+     "status": "verified"
+    }
+   ],
+   "related_products": [
+    "sunger-tekstil-pro"
+   ],
+   "links": [
+    "/rehber/sunger-kesim-bicagi-secimi"
+   ],
+   "requires_data": [],
+   "safety": true,
+   "review": {
+    "status": "reviewed"
+   }
+  },
+  {
+   "id": "non_metal.foam-cork-cardboard",
+   "title_tr": "Mantar, karton, kâğıt ve yumuşak plastik köpükler",
+   "intents": [
+    "selection",
+    "material",
+    "non_metal"
+   ],
+   "questions_tr": [
+    "mantar kesmek için şerit",
+    "karton kesme bıçağı",
+    "polietilen köpük kesimi",
+    "pe köpük hangi bıçak"
+   ],
+   "answer_tr": "Karton, kâğıt, mantar ve yumuşak plastik köpükler bant bıçaklarıyla kesilebilir; PE köpük gibi orta yoğunluklu malzemelerde dişli profiller, mantar ve kompozisyon malzemelerde geniş diş boşluklu (atlamalı) dişli bıçaklar da kullanılır. Malzemenizi ve makinenizi yazarsanız dişsiz Sünger-Tekstil bıçağı mı, dişli bir bıçak mı daha uygun birlikte bakalım.",
+   "facts": [
+    {
+     "claim_tr": "Bant bıçakları köpük, kauçuk, yumuşak plastik, karton, kâğıt ve mantar içindir.",
+     "source_ids": [
+      "STAR-BANDKNIFE"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Dişli bıçaklar (V-diş 10–24 TPI) orta yoğunluklu köpük ve PE için.",
+     "source_ids": [
+      "EDGESWEETS-BLADES"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Atlamalı (skip) diş mantar, plastik ve kompozisyon malzemeler için.",
+     "source_ids": [
+      "LENOX-GUIDE"
+     ],
+     "status": "verified"
+    }
+   ],
+   "related_products": [
+    "sunger-tekstil-pro",
+    "woodcut-classic"
+   ],
+   "links": [
+    "/iletisim"
+   ],
+   "requires_data": [],
+   "safety": false,
+   "review": {
+    "status": "reviewed"
+   }
+  },
+  {
+   "id": "non_metal.foam-turkish-terms",
+   "title_tr": "Sünger bıçağı terimleri: düz, dişsiz, çatı dişli, konkav, konveks",
+   "intents": [
+    "glossary",
+    "non_metal"
+   ],
+   "questions_tr": [
+    "çatı dişli bıçak nedir",
+    "konveks dalgalı ne demek",
+    "düz hızar bıçağı ile dişsiz bıçak aynı mı",
+    "çift tarafı bilenmiş bıçak ne demek",
+    "konkav sünger bıçağı"
+   ],
+   "answer_tr": "Piyasada 'dişsiz bıçak', 'düz bıçak' ve 'düz hızar bıçağı' düz (bilenmiş) ağzı anlatır. 'Konveks dalgalı' dalgalı ağız, 'konkav' ise tırtıklı (scallop) ağızdır. 'Çatı dişli' sünger ve teknik köpüklerde kullanılan dişli bant bıçağıdır. 'Tek/çift tarafı bilenmiş' bıçak ağzının bir veya iki yüzden bilendiğini anlatır. Siparişte eski bıçağınızın ağız tipini ve bileme şeklini belirtmeniz yeterlidir.",
+   "facts": [
+    {
+     "claim_tr": "TR satıcı terimleri: dişsiz/düz bıçak, düz hızar bıçağı, tek/çift tarafı bilenmiş, çatı dişli, konveks dalgalı, konkav.",
+     "source_ids": [
+      "TR-FOAM-SELLERS"
+     ],
+     "status": "single_source"
+    },
+    {
+     "claim_tr": "Konkav = tırtıklı (scallop), konveks = dalgalı (wavy).",
+     "source_ids": [
+      "DIAMONDTOOLS-BK"
+     ],
+     "status": "single_source"
+    },
+    {
+     "claim_tr": "Dişli bant bıçakları ('çatı dişi'nden 'köpük dişi'ne) esnek ve teknik köpük, geri dönüşüm köpüğü, kauçuk ve plastik için.",
+     "source_ids": [
+      "BAEUMER-KNIVES"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Sünger kesimi yapan müşteriler genellikle düz hızar bıçağı ve çatı dişli bıçak kullanır (TR bayi).",
+     "source_ids": [
+      "TESTERESEPETI-SSS"
+     ],
+     "status": "single_source"
+    }
+   ],
+   "related_products": [
+    "sunger-tekstil-pro"
+   ],
+   "links": [
+    "/rehber/sunger-kesim-bicagi-secimi",
+    "/iletisim"
+   ],
+   "requires_data": [],
+   "safety": false,
+   "review": {
+    "status": "reviewed"
+   }
+  },
+  {
+   "id": "non_metal.plastic-general",
+   "title_tr": "Plastik kesiminde genel kurallar",
+   "intents": [
+    "selection",
+    "non_metal",
+    "usage"
+   ],
+   "questions_tr": [
+    "plastik kesmek için hangi şerit",
+    "plastik levha şerit testereyle kesilir mi",
+    "plastikte kaç diş kullanılır",
+    "plastik keserken nelere dikkat",
+    "plastik malzeme için bıçak önerisi",
+    "pvc hangi bıçakla kesilir",
+    "kestamid kesmek",
+    "pleksi şerit testereyle kesilir mi",
+    "teflon kesimi"
+   ],
+   "answer_tr": "Plastiklerde temel kurallar metal ve ahşaptakine benzer: kesitte en az üç diş, ince levhada sık, kalın parçada seyrek diş. Asıl risk ısıdır: plastik ısıyı iletmez, sürtünmeyle ısınıp erir ve kesiği tıkar; çok sık diş veya fazla hız bunu artırır. Keskin, geniş diş boşluklu ve yeterli çaprazlı bıçak kullanın, parçayı titreşimsiz bağlayın, sabit ve orta ilerlemeyle kesin, gerekirse basınçlı havayla soğutun. Pleksi titreşime ve çentiklenmeye hassastır; kalın PA, PET ve PEEK çubuklarda çatlamayı önlemek için malzeme üreticisi ön ısıtma önerebilir. Malzemeyi, kalınlığı ve makinenizi (ahşap tipi mi, metal tipi mi) yazarsanız Ahşap Kesim veya Bi-Metal M42 arasından uygun bıçağı birlikte seçelim.",
+   "facts": [
+    {
+     "claim_tr": "Plastik, alüminyum, ahşap gibi yumuşak malzemelerde önerilenden iki kademe seyrek diş seçin.",
+     "source_ids": [
+      "BAHCO-CAT"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "1/4\"(6,35 mm) altı plastikte 18–32 TPI; iş parçasında en az 3 diş.",
+     "source_ids": [
+      "OLSON-RIKON"
+     ],
+     "status": "conflict"
+    },
+    {
+     "claim_tr": "Plastikte genellikle karbon çeliği bıçak; kesitte 6–24 diş.",
+     "source_ids": [
+      "DOALL-FAQ"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Keskin ve yeterli çaprazlı bıçak sürtünmeyi, ısınmayı ve bıçağın sıkışmasını önler.",
+     "source_ids": [
+      "ENSINGER-MACH",
+      "SIMONA-MACHINING"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Skip diş geniş boşluğuyla plastik dahil metal dışı malzemeler için.",
+     "source_ids": [
+      "LENOX-GUIDE"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Plastik işlemede en büyük tehlike ısıdır; şerit testere uzun bıçak sayesinde ısıyı iyi dağıtır, çubuk ve borular için en uygunudur",
+     "source_ids": [
+      "ENSINGER-MACHINING"
+     ],
+     "status": "verified",
+     "from_entry": "materials.plastik-kesimi"
+    },
+    {
+     "claim_tr": "Keskin ve yeterli çaprazlı bıçak; ahşap ve metal işleme makineleri HSS takımla kullanılabilir",
+     "source_ids": [
+      "ENSINGER-MACHINING"
+     ],
+     "status": "verified",
+     "from_entry": "materials.plastik-kesimi"
+    },
+    {
+     "claim_tr": "Çok sert ve elyaf takviyeli malzemede 80–120 °C ön ısıtma ile kesim",
+     "source_ids": [
+      "ENSINGER-MACHINING"
+     ],
+     "status": "verified",
+     "value": "80–120",
+     "unit": "°C",
+     "from_entry": "materials.plastik-kesimi"
+    },
+    {
+     "claim_tr": "Atlamalı (skip) diş formu ahşap, mantar, plastik gibi metal dışı malzemeler için",
+     "source_ids": [
+      "LENOX-GUIDE",
+      "SITE-GUIDE-WOOD"
+     ],
+     "status": "verified",
+     "from_entry": "materials.plastik-kesimi"
+    },
+    {
+     "claim_tr": "Akrilik levha titreşimi önlemek için sabitlenir, orta ilerlemeyle kesilir",
+     "source_ids": [
+      "ROHM-PLEXIGLAS"
+     ],
+     "status": "verified",
+     "from_entry": "materials.plastik-kesimi"
+    }
+   ],
+   "related_products": [
+    "woodcut-classic",
+    "bimetal-premium"
+   ],
+   "links": [
+    "/iletisim",
+    "/rehber/serit-testere-tpi-secimi",
+    "/rehber/ahsap-serit-testere-secimi"
+   ],
+   "requires_data": [],
+   "safety": false,
+   "review": {
+    "status": "reviewed"
+   }
+  },
+  {
+   "id": "non_metal.plastic-melting",
+   "title_tr": "Pleksi/plastik kesince eriyor, kesik yapışıyor",
+   "intents": [
+    "troubleshoot",
+    "non_metal"
+   ],
+   "questions_tr": [
+    "pleksi kesince eriyor",
+    "plastik keserken kesik kapanıyor",
+    "polikarbonat erimiş kenar",
+    "pvc keserken yapışıyor",
+    "plastik talaşı bıçağa yapışıyor"
+   ],
+   "answer_tr": "Erime genellikle çok sık diş, fazla bıçak hızı, kör bıçak veya yetersiz talaş boşaltmadan olur. Daha seyrek dişe geçin, hızı düşürün, bıçağın keskin olduğundan emin olun ve kesik yerine basınçlı hava verin; ilerlemeyi her dişin temiz bir talaş alacağı düzeyde tutun. Amorf plastiklerde (PC gibi) petrol bazlı kesme sıvısı kullanmayın.",
+   "facts": [
+    {
+     "claim_tr": "Erimiş/yapışkan kenar: daha iri diş, daha düşük hız, bıçağı hava ile soğutma, keskinlik kontrolü.",
+     "source_ids": [
+      "SHEFFIELD-PC"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Erimiş kenarda: keskinliği kontrol et, hızı ve ilerlemeyi azalt, soğut.",
+     "source_ids": [
+      "COVESTRO-PC"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Derin kesimde malzeme 'sıvanmasın' diye basınçlı hava veya su.",
+     "source_ids": [
+      "KOEMMERLING-PVC"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Petrol bazlı kesme sıvıları amorf plastiklerde (PC, PSU, PEI) gerilme çatlağına yol açar; sis veya basınçlı hava önerilir.",
+     "source_ids": [
+      "MCAM-TOOLKIT"
+     ],
+     "status": "verified"
+    }
+   ],
+   "related_products": [
+    "bimetal-premium",
+    "woodcut-classic"
+   ],
+   "links": [
+    "/iletisim"
+   ],
+   "requires_data": [],
+   "safety": false,
+   "review": {
+    "status": "reviewed"
+   }
+  },
+  {
+   "id": "non_metal.plastic-acrylic",
+   "title_tr": "Pleksiglas (PMMA, akrilik) kesimi",
+   "intents": [
+    "selection",
+    "material",
+    "non_metal"
+   ],
+   "questions_tr": [
+    "pleksi kesmek için hangi bıçak",
+    "akrilik levha şerit testere diş",
+    "pleksi çatlıyor kesimde",
+    "5 mm pleksi kaç tpi",
+    "kalın pleksi blok kesimi"
+   ],
+   "answer_tr": "Pleksi (akrilik) için levha üreticilerinin tabloları birbirinden farklıdır; örneğin bir üreticinin döküm pleksi tablosu 3 mm'ye kadar 18 TPI düz diş, 3–12 mm arası 10–14 TPI, 12–50 mm arası 6 TPI atlamalı diş verir, diğerleri bir-iki kademe farklı değerler önerir; levha üreticisinin kılavuzu esastır. Kör bıçak çatlatır; keskin bıçak kullanın ve levhayı titreşmeyecek şekilde destekleyin. Ahşap/dikey şerit testerenizde 13 mm Bi-Metal M42 bıçağımızın 18, 14 veya 10/14 TPI seçenekleri ince levhaya uygundur; kalınlığı ve makinenizi yazın.",
+   "facts": [
+    {
+     "claim_tr": "Döküm akrilik: ≤3 mm 3/8\" bıçak, regular, 18 TPI; 3–12 mm 1/2\" bıçak, 10–14 TPI; 12–51 mm 3/4\" bıçak, skip/buttress 6 TPI; metal kesim bıçakları kullanılmalı.",
+     "source_ids": [
+      "ARKEMA-PMMA"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Bıçak hızı 2300–7500 ft/dk (701–2286 m/dk); kalınlık arttıkça TPI azalır; bi-metal bıçak ahşap bıçağından uzun keskin kalır.",
+     "source_ids": [
+      "ARKEMA-PMMA"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "3–8 diş/cm (≈7,6–20 TPI), 1000–3000 m/dk, 3–13 mm bıçak; çaprazlı bıçak daha kaba kenar bırakır; levha titreşime karşı sabitlenir.",
+     "source_ids": [
+      "ROEHM-PMMA"
+     ],
+     "status": "conflict"
+    },
+    {
+     "claim_tr": "Bi-metal 13×0,6: 10/14, 8/12, 14, 6/10, 18, 14/18 TPI; 13×0,5: 10/14, 18, 14 TPI.",
+     "source_ids": [
+      "TS-PRICE-TREE"
+     ],
+     "status": "internal"
+    }
+   ],
+   "related_products": [
+    "bimetal-premium"
+   ],
+   "links": [
+    "/products/bimetal-premium",
+    "/iletisim"
+   ],
+   "requires_data": [
+    "price_api"
+   ],
+   "safety": false,
+   "review": {
+    "status": "reviewed"
+   }
+  },
+  {
+   "id": "non_metal.plastic-polycarbonate",
+   "title_tr": "Polikarbonat (PC) kesimi",
+   "intents": [
+    "selection",
+    "material",
+    "non_metal"
+   ],
+   "questions_tr": [
+    "polikarbonat levha kesimi",
+    "lexan kesmek için şerit",
+    "pc levha şerit testere diş",
+    "polikarbonat çatlıyor mu"
+   ],
+   "answer_tr": "Polikarbonatta kaynaklar ince levhada sık (yaklaşık 8–12 TPI), kalın levhada seyrek dişi (3–6 TPI, atlamalı) önerir; geniş çapraz ve hava ya da su sisiyle soğutma erimeyi önler. Petrol bazlı kesme sıvısı gerilme çatlağı yapabilir. Parçayı sağlam destekleyin; titreşim çatlatabilir. Uygun bıçak için kalınlığı ve makinenizi yazın.",
+   "facts": [
+    {
+     "claim_tr": "<1/8\"(3,2 mm) 8–12 TPI 610 m/dk; 1/8–1/4\" 5–6 TPI skip 457 m/dk; >1/4\"(6,4 mm) 3–4 TPI skip 305 m/dk; geniş çapraz, hava/su sisi.",
+     "source_ids": [
+      "TUFFAK-PC"
+     ],
+     "status": "conflict"
+    },
+    {
+     "claim_tr": "Şerit testere 10–17 m/s (600–1020 m/dk), diş aralığı 1,5–3,5 mm (≈7–17 TPI); kalın levhada geniş aralık.",
+     "source_ids": [
+      "COVESTRO-PC"
+     ],
+     "status": "conflict"
+    },
+    {
+     "claim_tr": "2500–3000 ft/dk, 8–12 TPI; parça desteklenmeli, titreşim çatlatabilir.",
+     "source_ids": [
+      "SHEFFIELD-PC"
+     ],
+     "status": "conflict"
+    },
+    {
+     "claim_tr": "Petrol bazlı sıvılar amorf plastiklerde gerilme çatlağı yapar.",
+     "source_ids": [
+      "MCAM-TOOLKIT"
+     ],
+     "status": "verified"
+    }
+   ],
+   "related_products": [
+    "bimetal-premium",
+    "woodcut-classic"
+   ],
+   "links": [
+    "/iletisim"
+   ],
+   "requires_data": [],
+   "safety": false,
+   "review": {
+    "status": "reviewed"
+   }
+  },
+  {
+   "id": "non_metal.plastic-pvc",
+   "title_tr": "PVC levha, boru ve PVC köpük (Forex) kesimi",
+   "intents": [
+    "selection",
+    "material",
+    "non_metal"
+   ],
+   "questions_tr": [
+    "pvc levha kesmek için bıçak",
+    "pvc boru şeritle kesilir mi",
+    "forex levha kesimi",
+    "pvc keserken koku çıkıyor"
+   ],
+   "answer_tr": "Sert PVC'de keskin ve doğru çaprazlı bıçakla, kırılgan levhada daha küçük diş adımıyla çalışın; parçayı titreşimsiz bağlayın, özellikle 1–3 mm ince levhada çatlama olur. Kesimde aşırı ısınmadan kaçının: PVC yaklaşık 150 °C üstünde bozunur ve tahriş edici hidrojen klorür gazı çıkarır; emiş/havalandırma kullanın. PVC köpük levhada yavaş ilerleme ve hafif çaprazlı bıçak önerilir.",
+   "facts": [
+    {
+     "claim_tr": "PVC: talaş açısı 0–5°, adım 2–5 mm (≈5–12,7 TPI), ≤2000 m/dk; kırılgan malzemede küçük adım.",
+     "source_ids": [
+      "SIMONA-MACHINING"
+     ],
+     "status": "conflict"
+    },
+    {
+     "claim_tr": "PVC-U levha: ≤3000 m/dk, adım 5–10 mm, 0,1–0,3 mm/diş; titreşimsiz bağlama, 1–3 mm levhada çatlama riski.",
+     "source_ids": [
+      "KOEMMERLING-PVC"
+     ],
+     "status": "conflict"
+    },
+    {
+     "claim_tr": "PVC köpük: 2,5 mm adım (~10 TPI) hafif çaprazlı bıçak, yavaş ilerleme, sıvı soğutma yok, emiş.",
+     "source_ids": [
+      "FOREX-PVC"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "150 °C üstünde PVC bozunur, HCl açığa çıkar.",
+     "value": "150",
+     "unit": "°C",
+     "source_ids": [
+      "PALRAM-PVC-SDS"
+     ],
+     "status": "verified"
+    }
+   ],
+   "related_products": [
+    "bimetal-premium",
+    "woodcut-classic"
+   ],
+   "links": [
+    "/iletisim"
+   ],
+   "requires_data": [],
+   "safety": true,
+   "review": {
+    "status": "reviewed"
+   }
+  },
+  {
+   "id": "non_metal.plastic-pe-pp",
+   "title_tr": "PE, PP, HDPE ve UHMW kesimi",
+   "intents": [
+    "selection",
+    "material",
+    "non_metal"
+   ],
+   "questions_tr": [
+    "polietilen blok kesimi",
+    "pp levha şerit testere",
+    "hdpe kesmek için diş",
+    "uhmw kesimi şerit"
+   ],
+   "answer_tr": "PE ve PP yumuşak ve tok malzemelerdir; ısınınca bıçağa sarabilir. Keskin, iyi çaprazlı bıçak ve talaşın sürekli boşaltılması gerekir; basınçlı hava veya su ile soğutun. Örnek tablo: 12,7 mm altı 10–14 TPI, 12,7–25 mm 6 TPI, daha kalın parçada 3 TPI. Metal şerit testerede dolu blok veya çubuk kesiyorsanız Bi-Metal M42'nin seyrek dişli seçenekleri (ör. 27 mm'de 3/4 veya 4/6 TPI) uygundur.",
+   "facts": [
+    {
+     "claim_tr": "PE-HD ve PP: adım 2–6 mm, 500–3000 m/dk; şerit testere ısıyı dairesel testereden iyi dağıtır.",
+     "source_ids": [
+      "SIMONA-MACHINING"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "UHMW-PE/PA6/POM/PET grubu: <0,5\"(12,7 mm) 3000 ft/dk 10–14 TPI; 0,5–1\" 2500 ft/dk 6 TPI; 1–3\" 2000 ft/dk 3 TPI; >3\" 1500 ft/dk 3 TPI.",
+     "source_ids": [
+      "MCAM-TOOLKIT"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Bi-metal 27×0,9: 4/6, 5/8, 3/4, 2/3, 8 TPI; 34×1,1: 3/4, 2/3, 4/6.",
+     "source_ids": [
+      "TS-PRICE-TREE"
+     ],
+     "status": "internal"
+    }
+   ],
+   "related_products": [
+    "bimetal-premium"
+   ],
+   "links": [
+    "/products/bimetal-premium",
+    "/iletisim"
+   ],
+   "requires_data": [
+    "price_api"
+   ],
+   "safety": false,
+   "review": {
+    "status": "reviewed"
+   }
+  },
+  {
+   "id": "non_metal.plastic-engineering",
+   "title_tr": "Teknik plastikler: PA (naylon), POM (delrin), PTFE (teflon), PET, PEEK",
+   "intents": [
+    "selection",
+    "material",
+    "non_metal"
+   ],
+   "questions_tr": [
+    "poliamid çubuk kesimi",
+    "delrin kesmek için şerit",
+    "teflon mil kesimi",
+    "peek çubuk kesmek",
+    "kestamid kesimi"
+   ],
+   "answer_tr": "Teknik plastik çubuk ve levhalarda keskin, yeterli çaprazlı bıçak kullanın; sürtünme ısısı hem bıçağı sıkıştırır hem parçada gerilme yaratır. Büyük çaplı cam elyaf takviyeli veya bazı PA/PET çubuklarda çatlamayı önlemek için kesimden önce ön ısıtma öneren üreticiler vardır. Kalınlığa göre diş: ince parçada 8–14 TPI, 25 mm üstünde yaklaşık 3 TPI. Metal şerit testerede Bi-Metal M42'nin seyrek dişli seçenekleri kullanılabilir; çapı ve malzemeyi yazın.",
+   "facts": [
+    {
+     "claim_tr": "PEEK: 8–14 / 6–8 / 3 / 3 TPI; PTFE ve PPS: 8–14 / 6–8 / 3 / 3 TPI (kalınlık basamaklarına göre); 0° talaş açısı, 3–10° çapraz.",
+     "source_ids": [
+      "MCAM-TOOLKIT"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Ø60 mm'den itibaren PEEK GF, Ø80 mm'den PA66 GF/PET, Ø100 mm'den PA6 GF/PA66 için kesim öncesi 120 °C ön ısıtma; neden: iç gerilmeler yırtılma/kırılma riski.",
+     "source_ids": [
+      "ENSINGER-MACH"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "PTFE kesiminde soğutucu önerilir; PTFE bulaşmış tütün polimer dumanı ateşine yol açar.",
+     "source_ids": [
+      "PLASTICSEUROPE-PTFE"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Kesme hızı 130–180 m/dk (takviyeli 110–150) — sac üreticilerinin 600–3000 m/dk değerleriyle çelişir (muhtemelen metal makinesi rejimi).",
+     "source_ids": [
+      "ENSINGER-MACH"
+     ],
+     "status": "conflict"
+    }
+   ],
+   "related_products": [
+    "bimetal-premium"
+   ],
+   "links": [
+    "/products/bimetal-premium",
+    "/iletisim"
+   ],
+   "requires_data": [
+    "price_api"
+   ],
+   "safety": false,
+   "review": {
+    "status": "reviewed"
+   }
+  },
+  {
+   "id": "non_metal.plastic-gfrp",
+   "title_tr": "CTP / GFRP ve karbon elyaf kompozit kesimi",
+   "intents": [
+    "selection",
+    "material",
+    "non_metal",
+    "safety"
+   ],
+   "questions_tr": [
+    "ctp profil kesimi",
+    "cam elyaf levha şerit testere",
+    "fiberglas kesmek için bıçak",
+    "ctp keserken bıçak çabuk köreliyor",
+    "ctp boru kesimi",
+    "cam elyaf hangi bıçakla",
+    "karbon fiber kesmek",
+    "fiberglas profil kesimi",
+    "kompozit toz zararlı mı"
+   ],
+   "answer_tr": "Cam elyaf takviyeli plastik (CTP/GFRP) ve karbon elyaf çok aşındırıcıdır; çelik/HSS dişleri hızla köreltir. Kompozit üreticileri karbür veya elmas taneli (grit) kenarlı, dişsiz bıçakları önerir; bu tür bıçaklar katalogumuzda yok ve Karbür Uçlu bıçağımızın kompozit kesimine uygunluğu doğrulanmış değil. Az adetli işlerde dişli bıçak kullanılabilir ama çok çabuk körelir; düzenli CTP kesiyorsanız malzemeyi ve kalınlığı bize yazın. Kesim tozu ve kırık lifler cildi, gözü ve solunum yolunu tahriş eder, cam elyaf tozu yanıcı olabilir: kaynağında emiş, uygun solunum koruyucu, gözlük ve uzun kollu iş kıyafeti kullanın.",
+   "facts": [
+    {
+     "claim_tr": "Elmas veya karbür grit kenarlı bıçak; büyük kesitlerde grit kenarlı şerit testere; dişli bant bıçağı yalnız az adet için; karbür uçlu dairesel bıçak titreşir ve diş fırlatır.",
+     "source_ids": [
+      "STRONGWELL-FRP"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Metal kesim bıçağı ara sıra iş görür ama bir kesimden sonra körelir; kenarlar püskürünce hızı düşür.",
+     "source_ids": [
+      "PULTEX-FRP"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Orta-yüksek adette grit kenarlı bıçak; aşırı hız kenarı püskürtür; toz maskesi.",
+     "source_ids": [
+      "EXEL-FRP"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Kesim tozu yanıcıdır; solunabilir lif/toz oluşuyorsa HEPA solunum koruması.",
+     "source_ids": [
+      "STRONGWELL-FRP"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Karbür grit kenarlı bıçak aşındırıcı malzeme ve kompozitler için.",
+     "source_ids": [
+      "LENOX-GUIDE"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Kategori ve ürün metni Karbür Uçlu bıçağı 'aşındırıcı kompozit' için anıyor; FRP üreticileri dişli karbür yerine grit kenarlı bıçak öneriyor.",
+     "source_ids": [
+      "TS-PRODUCT-META",
+      "STRONGWELL-FRP"
+     ],
+     "status": "conflict"
+    },
+    {
+     "claim_tr": "Takviyeli plastiklerde sertleştirilmiş çelik takım yerine tungsten karbür, seramik veya elmas uçlu takım önerilir",
+     "source_ids": [
+      "ENSINGER-MACHINING"
+     ],
+     "status": "verified",
+     "from_entry": "materials.kompozit-ctp-karbon"
+    },
+    {
+     "claim_tr": "Elyaf takviyeli kompozitler aşındırıcıdır ve hızlı diş aşınmasına yol açar",
+     "source_ids": [
+      "LENOX-GUIDE"
+     ],
+     "status": "verified",
+     "from_entry": "materials.kompozit-ctp-karbon"
+    },
+    {
+     "claim_tr": "Karbür ürünlerin uygulamaları arasında kompozit ve cam elyafı",
+     "source_ids": [
+      "SUPPLIER-CATALOG-2025",
+      "SITE-CAT-CARBIDE"
+     ],
+     "status": "verified",
+     "from_entry": "materials.kompozit-ctp-karbon"
+    },
+    {
+     "claim_tr": "Kırık lifler cildi ve üst solunum yolunu tahriş edebilir; kontrol yetmezse solunum koruyucu sağlanmalı",
+     "source_ids": [
+      "PLYMOUTH-COMPOSITES-HS"
+     ],
+     "status": "single_source",
+     "from_entry": "materials.kompozit-ctp-karbon"
+    }
+   ],
+   "related_products": [],
+   "links": [
+    "/iletisim",
+    "/products/carbide-ultimate"
+   ],
+   "requires_data": [],
+   "safety": true,
+   "review": {
+    "status": "needs_owner"
+   }
+  },
+  {
+   "id": "non_metal.plastic-cfrp",
+   "title_tr": "Karbon elyaf (CFRP) kesimi",
+   "intents": [
+    "selection",
+    "material",
+    "non_metal"
+   ],
+   "questions_tr": [
+    "karbon fiber boru kesimi",
+    "karbon elyaf levha şerit testere",
+    "cfrp kesmek için bıçak"
+   ],
+   "answer_tr": "Karbon elyaf da aşındırıcıdır ve dişli bıçak lifleri yakalayıp kenarda dağılma ve tabaka ayrılması yapabilir; elmas kaplı/grit kenarlı bıçak, yavaş kesim ve sulu soğutma önerilir. Bu tür bıçakları katalogumuzda sunmuyoruz. Karbon tozu elektriği iletir: elektrikli ekipmanı koruyun, kaynağında emiş ve maske-gözlük kullanın.",
+   "facts": [
+    {
+     "claim_tr": "Karbon elyaf işleme tozu elektriği iletir; elektrik ekipmanı korunmalı; gözlük, maske, eldiven ve kaynağında emiş.",
+     "source_ids": [
+      "TORAY-CFRP"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Karbür grit kenarlı bıçaklar kompozitler için.",
+     "source_ids": [
+      "LENOX-GUIDE"
+     ],
+     "status": "verified"
+    }
+   ],
+   "related_products": [],
+   "links": [
+    "/iletisim"
+   ],
+   "requires_data": [],
+   "safety": true,
+   "review": {
+    "status": "reviewed"
+   }
+  },
+  {
+   "id": "non_metal.plastic-sandwich-panel",
+   "title_tr": "Sandviç panel (sac yüzlü PIR/PUR panel) kesimi",
+   "intents": [
+    "selection",
+    "material",
+    "non_metal"
+   ],
+   "questions_tr": [
+    "sandviç panel şerit testereyle kesilir mi",
+    "çatı paneli kesmek için bıçak",
+    "poliüretan panel kesimi",
+    "panel kesiminde taşlama kullanılır mı"
+   ],
+   "answer_tr": "Panel üreticileri metal kesimli el dairesel testeresi, metal bıçaklı tilki kuyruğu, nibbler veya makas gibi aletleri önerir; kıvılcım çıkaran taşlama diskleri kaplamaya zarar verdiği için yasaktır veya önerilmez. Avrupa üreticilerinin kılavuzlarında şerit testere önerisi bulamadık; bu iş için katalogumuzdan doğrulanmış bir ürün öneremiyoruz. Panel üreticinizin kılavuzunu esas alın veya bize yazın.",
+   "facts": [
+    {
+     "claim_tr": "Onaylı aletler: metal kesim zincirli testere, karbür negatif açılı el dairesel testeresi, metal bıçaklı tilki kuyruğu; taşlama diski kesinlikle yasak; talaş ve çapak temizlenir.",
+     "source_ids": [
+      "KINGSPAN-PANEL"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Dişli dairesel testere, dekupaj, makas veya nibbler; kıvılcım çıkaran aletler önerilmez.",
+     "source_ids": [
+      "ISOPAN-PANEL"
+     ],
+     "status": "verified"
+    }
+   ],
+   "related_products": [],
+   "links": [
+    "/iletisim"
+   ],
+   "requires_data": [],
+   "safety": false,
+   "review": {
+    "status": "reviewed"
+   }
+  },
+  {
+   "id": "non_metal.plastic-which-our-blade",
+   "title_tr": "Plastik için hangi bıçağımız?",
+   "intents": [
+    "product",
+    "selection",
+    "non_metal"
+   ],
+   "questions_tr": [
+    "plastik için bi-metal mi ahşap bıçağı mı",
+    "plastik keserken karbür bıçak olur mu",
+    "naylon çubuğu metal şeritte kesebilir miyim",
+    "pleksi için sizin hangi ürününüz"
+   ],
+   "answer_tr": "Makinenize göre değişir. Yüksek hızlı ahşap/dikey şerit testerede ince ve orta kalınlıkta levha için sık dişli 13 mm Bi-Metal M42 (18, 14, 10/14 TPI) veya Ahşap Kesim bıçağı; metal şerit testerede çubuk ve blok için Bi-Metal M42'nin kalınlığa uygun seyrek dişli seçenekleri kullanılabilir. Karbür uçlu bıçağımız plastik için tasarlanmadı; cam ve karbon elyaf kompozitlerde grit kenarlı bıçak gerekir ve katalogumuzda yok. Malzeme, kalınlık ve makineyi yazın.",
+   "facts": [
+    {
+     "claim_tr": "Akrilikte metal kesim bıçakları kullanılmalı; bi-metal ahşap bıçağından uzun keskin kalır.",
+     "source_ids": [
+      "ARKEMA-PMMA"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Plastikte genellikle karbon çeliği bıçak.",
+     "source_ids": [
+      "DOALL-FAQ",
+      "STAR-SFB"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Bi-metal 13 mm seçenekleri 18, 14, 10/14, 14/18, 8/12, 6/10 TPI; 27 mm 2/3–8 TPI.",
+     "source_ids": [
+      "TS-PRICE-TREE"
+     ],
+     "status": "internal"
+    },
+    {
+     "claim_tr": "FRP'de elmas/karbür grit kenarlı bıçak önerilir.",
+     "source_ids": [
+      "STRONGWELL-FRP",
+      "PULTEX-FRP"
+     ],
+     "status": "verified"
+    }
+   ],
+   "related_products": [
+    "bimetal-premium",
+    "woodcut-classic"
+   ],
+   "links": [
+    "/products/bimetal-premium",
+    "/products/woodcut-classic",
+    "/iletisim"
+   ],
+   "requires_data": [
+    "price_api"
+   ],
+   "safety": false,
+   "review": {
+    "status": "needs_owner"
+   }
+  },
+  {
+   "id": "non_metal.plastic-safety",
+   "title_tr": "Plastik ve kompozit keserken sağlık güvenliği",
+   "intents": [
+    "safety",
+    "non_metal"
+   ],
+   "questions_tr": [
+    "pvc keserken çıkan duman zararlı mı",
+    "cam elyaf tozu tehlikeli mi",
+    "pleksi keserken koku",
+    "teflon keserken dikkat"
+   ],
+   "answer_tr": "Aşırı ısınan PVC hidrojen klorür, akrilik ise monomer buharı çıkarabilir; kesimde ısınmayı önleyin ve havalandırma/emiş kullanın. Cam elyaf tozu yanıcı ve solunum yolu için zararlıdır, karbon elyaf tozu elektriği iletir; kaynağında emiş ve uygun solunum koruması kullanın. PTFE işlerken çalışma alanında sigara içmeyin.",
+   "facts": [
+    {
+     "claim_tr": "150 °C üstünde PVC'den HCl.",
+     "source_ids": [
+      "PALRAM-PVC-SDS"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Kesim ısısı MMA buharı çıkarabilir; akrilik tozu kaynağında emişle kontrol edilmeli.",
+     "source_ids": [
+      "ARKEMA-PMMA"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "FRP tozu yanıcı; HEPA solunum koruması.",
+     "source_ids": [
+      "STRONGWELL-FRP"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Karbon elyaf tozu iletken.",
+     "source_ids": [
+      "TORAY-CFRP"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "PTFE bulaşmış tütün polimer dumanı ateşi.",
+     "source_ids": [
+      "PLASTICSEUROPE-PTFE"
+     ],
+     "status": "verified"
+    }
+   ],
+   "related_products": [],
+   "links": [
+    "/iletisim"
+   ],
+   "requires_data": [],
+   "safety": true,
+   "review": {
+    "status": "reviewed"
+   }
+  },
+  {
+   "id": "non_metal.plastic-band-speed",
+   "title_tr": "Plastikte bıçak hızı: ahşap makinesi mi metal makinesi mi?",
+   "intents": [
+    "usage",
+    "machine",
+    "non_metal"
+   ],
+   "questions_tr": [
+    "plastik kesmek için bıçak hızı",
+    "metal şerit testerede plastik kesilir mi",
+    "pleksi için devir kaç olmalı"
+   ],
+   "answer_tr": "Levha üreticileri plastik levha için yüksek bıçak hızları verir (akrilikte yaklaşık 700–3.000 m/dk; kalın polikarbonatta yaklaşık 300 m/dk'ya kadar düşer); bu hızlar ahşap/dikey şerit testerelere uyar. Bir teknik plastik üreticisi ise çubuk ve blok için çok daha düşük hız (yaklaşık 130–180 m/dk) önerir; metal şerit testereler bu tarafa yakındır. Yavaş makinede daha seyrek ve iyi çaprazlı diş seçin, ilerlemeyi sabit tutun. Ahşap bıçaklarının yaklaşık 900 m/dk sınırını aşmayın; malzeme üreticisinin kılavuzu esastır.",
+   "facts": [
+    {
+     "claim_tr": "PMMA 701–2286 m/dk; Röhm 1000–3000 m/dk.",
+     "source_ids": [
+      "ARKEMA-PMMA",
+      "ROEHM-PMMA"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "PC kalın levhada 305 m/dk'ya kadar düşer.",
+     "source_ids": [
+      "TUFFAK-PC"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Teknik plastik çubuk 130–180 m/dk (sert metal bıçak, yeterli çapraz).",
+     "source_ids": [
+      "ENSINGER-MACH"
+     ],
+     "status": "conflict"
+    },
+    {
+     "claim_tr": "Yay çeliği ahşap bıçakları 3000 SFM (≈914 m/dk) üzerinde çalıştırılmamalı.",
+     "source_ids": [
+      "OLSON-RIKON"
+     ],
+     "status": "verified"
+    }
+   ],
+   "related_products": [
+    "bimetal-premium",
+    "woodcut-classic"
+   ],
+   "links": [
+    "/rehber/serit-testere-gerginlik-hiz-sogutma"
+   ],
+   "requires_data": [],
+   "safety": false,
+   "review": {
+    "status": "reviewed"
+   }
+  }
+ ]
+}

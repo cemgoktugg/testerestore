@@ -34,6 +34,8 @@ def engine():
                 "next_question": {"id": "Q_MACHINE_MODEL"}, "is_complete": False, "extracted_fields": {}}
 
     eng.dialog_manager.handle = fake_handle
+    # Testler ağa çıkmasın: kütüphane seçicisi modelsiz (yalnız doğrudan eşik)
+    eng.kb_router.select_fn = None
     eng._calls = calls
     return eng
 
@@ -70,4 +72,6 @@ def test_front_desk_failure_falls_back(engine):
         raise RuntimeError("test")
     engine.front_desk.handle = boom
     r = engine.chat("Kargo ücreti ne kadar?", session_id="s5")
-    assert engine._calls and "Makine markanız" in r["message"]
+    # Ön masa çökse de sohbet sürer: kütüphane cevaplar ya da huni devralır
+    assert r.get("error") is None and r["message"]
+    assert r["route"] == "kb" or (engine._calls and "Makine markanız" in r["message"])

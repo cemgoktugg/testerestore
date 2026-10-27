@@ -46,7 +46,7 @@ def ask(fd, msg):
 ])
 def test_detect_grade(text, gid, family):
     g = K.detect_grade(norm(text))
-    assert g and g["id"] == gid and g["family"] == family
+    assert g and (g.get("legacy_id") or g["id"]) == gid and g["family"] == family
 
 
 @pytest.mark.parametrize("text", ["2024'te aldım", "304 mm boru", "6082 mm boy", "40 mm mil", "27x0.9 bıçak"])
@@ -67,7 +67,9 @@ def test_grade_without_question_goes_to_funnel(fd):
 
 def test_detect_grades_returns_all_in_text_order():
     assert [g["id"] for g in K.detect_grades(norm("st 52 ile st 37 farkı"))] == ["s355", "s235"]
-    assert [g["id"] for g in K.detect_grades(norm("AISI 316 ile 304 farkı"))] == ["ss_austenitic"]
+    found = K.detect_grades(norm("AISI 316 ile AISI 304 farkı"))  # yalnız "304" ölçü olabilir
+    assert [g["id"] for g in found] == ["ss316", "ss304"]
+    assert {g.get("legacy_id") for g in found} == {"ss_austenitic"}
     assert K.detect_grades(norm("27x0.9 bıçak")) == []
 
 
@@ -87,10 +89,10 @@ def test_funnel_sets_family_from_grade_and_says_it_once():
     r = dm.handle(session, "1.4301 mil kesiyorum")
     assert r["state"]["metal_family"] == "STAINLESS"
     assert r["state"]["material_category"] == "METAL"
-    assert r["message"].startswith("**Östenitik paslanmaz")
+    assert r["message"].startswith("**304 (1.4301")
     dm.mapper.map_answer = lambda **kw: MappingResult(values={})
     r2 = dm.handle(session, "1.4301")
-    assert not r2["message"].startswith("**Östenitik")
+    assert not r2["message"].startswith("**304")
 
 
 # --------------------------------------------------------------------------- #

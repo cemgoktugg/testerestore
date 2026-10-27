@@ -1,0 +1,738 @@
+{
+ "domain": "materials",
+ "title_tr": "Malzemeler: kalite eşdeğerleri, sertlik, işlenebilirlik",
+ "version": "2026-10-27-merged",
+ "sources": [
+  {
+   "id": "LENOX-SPEEDCHART",
+   "publisher": "LENOX",
+   "title": "Bi-Metal Speed Chart (AISI / Werkstoff-Nr / JIS çapraz referanslı)",
+   "url": "https://www.bandsawbladesdirect.com/media/wysiwyg/bbd/tech-docs/Speed-Chart.pdf",
+   "accessed": "2026-10-27",
+   "tier": "A"
+  },
+  {
+   "id": "LENOX-GUIDE",
+   "publisher": "LENOX",
+   "title": "Guide to Band Sawing (diş formu, ısıl işlemli malzemede hız düşürme tablosu)",
+   "url": "https://cdn.mscdirect.com/global/media/pdf/search/lenox/lenox-guide-to-band-sawing.pdf",
+   "accessed": "2026-10-27",
+   "tier": "A"
+  },
+  {
+   "id": "BUEHLER-E140",
+   "publisher": "Buehler (ITW Test & Measurement)",
+   "title": "Hardness Conversion Chart — ASTM E140 tabloları ile tutarlı",
+   "url": "https://www.buehler.com/assets/posters/Hardness-Conversion-ASTM_10-20-1.pdf",
+   "accessed": "2026-10-27",
+   "tier": "A"
+  },
+  {
+   "id": "ASTM-E10-E18-E140",
+   "publisher": "ASTM International",
+   "title": "E10 Brinell, E18 Rockwell ve E140 sertlik dönüşüm standartları (yalnız metadata)",
+   "url": "https://store.astm.org/products-services/standards-and-publications/standards/physical-testing-standards-and-mechanical-testing-standards.html",
+   "accessed": "2026-10-27",
+   "tier": "A"
+  },
+  {
+   "id": "STAR-CUT-42",
+   "publisher": "L.S. Starrett Company",
+   "title": "Cutting Table / Bi-Metal — page 42",
+   "url": "https://catalogues.starrett.co.uk/view/621853475/42/",
+   "accessed": "2026-10-27",
+   "tier": "A"
+  },
+  {
+   "id": "STAR-CUT-43",
+   "publisher": "L.S. Starrett Company",
+   "title": "Cutting Table / Bi-Metal — page 43",
+   "url": "https://catalogues.starrett.co.uk/view/621853475/43/",
+   "accessed": "2026-10-27",
+   "tier": "A"
+  },
+  {
+   "id": "SUPPLIER-CUT-2024",
+   "publisher": "Tedarikçi kataloğu (gizli)",
+   "title": "Bi-metal kesme tablosu (2024)",
+   "url": "",
+   "accessed": "2026-10-27",
+   "tier": "A"
+  },
+  {
+   "id": "SUPPLIER-CATALOG-2025",
+   "publisher": "Tedarikçi kataloğu (gizli)",
+   "title": "Şerit testere kataloğu 2025",
+   "url": "",
+   "accessed": "2026-10-27",
+   "tier": "A"
+  },
+  {
+   "id": "SIJ-SELECTOR",
+   "publisher": "SIJ Metal Ravne",
+   "title": "Steel Selector v5 — çelik veri sayfaları",
+   "url": "https://steelselector.sij.si/mobile/html/steel_index.html",
+   "accessed": "2026-10-27",
+   "tier": "A"
+  },
+  {
+   "id": "SAARSTAHL-C45",
+   "publisher": "Saarstahl",
+   "title": "Material specification sheet C45 (1.0503)",
+   "url": "https://en.saarstahl.com/app/uploads/2024/03/20160401102929-0503_C45.pdf",
+   "accessed": "2026-10-27",
+   "tier": "A"
+  },
+  {
+   "id": "DEW-4301",
+   "publisher": "Deutsche Edelstahlwerke (Swiss Steel Group)",
+   "title": "1.4301 X5CrNi18-10 veri sayfası",
+   "url": "https://swisssteel-group.com/content-media/documents/Data-Sheets/Stainless-Steel/Datenblatt_4301_UK.pdf",
+   "accessed": "2026-10-27",
+   "tier": "A"
+  },
+  {
+   "id": "OUTOKUMPU-GRADES",
+   "publisher": "Outokumpu",
+   "title": "Steel Grades, Properties and Global Standards",
+   "url": "https://www.outokumpu.com/-/media/from-sharepoint/documents/product/outokumpu-steel-grades-properties-global-standards.pdf",
+   "accessed": "2026-10-27",
+   "tier": "A"
+  },
+  {
+   "id": "LUXFER-MG",
+   "publisher": "Luxfer MEL Technologies",
+   "title": "Machining Magnesium (Datasheet 254)",
+   "url": "https://www.luxfermeltechnologies.com/wp-content/uploads/2026/03/Machining-Magnesium.pdf",
+   "accessed": "2026-10-27",
+   "tier": "A"
+  },
+  {
+   "id": "NAVEDTRA-14250",
+   "publisher": "U.S. Navy (NAVEDTRA 14250, kamu malı)",
+   "title": "Steelworker Volume 1 — metal tanıma (kıvılcım, talaş, mıknatıs testi)",
+   "url": "https://www.tpub.com/steelworker1/6.htm",
+   "accessed": "2026-10-27",
+   "tier": "B"
+  },
+  {
+   "id": "AALCO-DS",
+   "publisher": "Aalco Metals (Amari)",
+   "title": "Malzeme veri sayfaları (paslanmaz, alüminyum, bakır alaşımları)",
+   "url": "https://www.aalco.co.uk/datasheets/",
+   "accessed": "2026-10-27",
+   "tier": "B"
+  },
+  {
+   "id": "UYAR-S235-S355",
+   "publisher": "Uyar Çelik",
+   "title": "S235 (St37) vs S355 (St52) karşılaştırması",
+   "url": "https://uyarcelik.com/s235-st37-vs-s355-st52-celik-karsilastirmasi/",
+   "accessed": "2026-10-27",
+   "tier": "B"
+  },
+  {
+   "id": "UYAR-1040",
+   "publisher": "Uyar Çelik",
+   "title": "SAE 1040 Steel",
+   "url": "https://uyarcelik.com/en/sae-1040-steel/",
+   "accessed": "2026-10-27",
+   "tier": "B"
+  },
+  {
+   "id": "UYAR-4140",
+   "publisher": "Uyar Çelik",
+   "title": "AISI 4140 Çelik",
+   "url": "https://uyarcelik.com/aisi-4140-celik-ozellikler/",
+   "accessed": "2026-10-27",
+   "tier": "B"
+  },
+  {
+   "id": "SUBU-MKE",
+   "publisher": "Sakarya Uygulamalı Bilimler Üniversitesi",
+   "title": "Malzeme Bilgisi ders notu (MKE çelik gösterimi)",
+   "url": "https://dokumanapi.bys.subu.edu.tr/File/2025/3/2/b74d2422-f136-44c6-98e0-6ce3609b8b5a.pdf",
+   "accessed": "2026-10-27",
+   "tier": "B"
+  },
+  {
+   "id": "MAKINAEGITIMI-MKE",
+   "publisher": "makinaegitimi.com",
+   "title": "MKE No'larına Göre Çelikler",
+   "url": "https://www.makinaegitimi.com/mke-nolarina-gore-celikler-ve-kullanim-alanlari/",
+   "accessed": "2026-10-27",
+   "tier": "C"
+  },
+  {
+   "id": "SITE-GUIDE-STEEL",
+   "publisher": "TestereStore",
+   "title": "guides.ts → celik-kalite-esdegerleri-bicak-secimi",
+   "url": "/rehber/celik-kalite-esdegerleri-bicak-secimi",
+   "accessed": "2026-10-27",
+   "tier": "internal"
+  },
+  {
+   "id": "SITE-GUIDE-M42M51",
+   "publisher": "TestereStore",
+   "title": "guides.ts → m42-mi-m51-mi",
+   "url": "/rehber/m42-mi-m51-mi",
+   "accessed": "2026-10-27",
+   "tier": "internal"
+  },
+  {
+   "id": "INT-RULES",
+   "publisher": "TestereStore (iç kaynak)",
+   "title": "advisor/rules.json v1.8.0 — METAL hunisi kuralları",
+   "url": "",
+   "accessed": "2026-10-27",
+   "tier": "A"
+  },
+  {
+   "id": "INT-ENC-DECISION",
+   "publisher": "TestereStore (iç kaynak)",
+   "title": "rag_v2 ansiklopedisi decision_rules (REQ/FIT/SCOPE/HARD/TPI/SPEED kuralları)",
+   "url": "",
+   "accessed": "2026-10-27",
+   "tier": "A"
+  },
+  {
+   "id": "STAR-TROUBLE-48",
+   "publisher": "L.S. Starrett Company",
+   "title": "Bandsaw Blades catalogue 60E — Troubleshooting (page 48)",
+   "url": "https://catalogues.starrett.co.uk/view/621853475/48/",
+   "accessed": "2026-10-27",
+   "tier": "A"
+  }
+ ],
+ "entries": [
+  {
+   "id": "materials.c45-vs-42crmo4",
+   "title_tr": "C45 ile 42CrMo4 farkı ve bıçak seçimi",
+   "intents": [
+    "material",
+    "selection"
+   ],
+   "questions_tr": [
+    "c45 ile 42crmo4 farkı",
+    "ck45 mi 4140 mı",
+    "4140 c45'ten sert mi"
+   ],
+   "answer_tr": "C45 (1.0503; Ck45 = C45E 1.1191, AISI 1045) alaşımsız orta karbonlu ıslah çeliğidir. 42CrMo4 (1.7225, yaklaşık AISI 4140) krom-molibden alaşımlıdır ve ıslah edildiğinde çok daha yüksek dayanıma çıkar. Tavlı hâlde ikisi de bi-metal ile rahat kesilir (en fazla 207 HB / 241 HB). Islah edilmiş 42CrMo4, Ø100 mm'ye kadar kesite göre 900–1.300 MPa dayanımdadır (daha büyük çaplarda daha düşük); bu, dönüşüm tablosuna göre kabaca 270–380 HB (≈28–41 HRC) demektir: bi-metal sınırının (~45 HRC) altında, ama C45'ten yavaş kesilir. İkisinde de Bi-Metal M42; büyük kesit ve seri kesimde M51 önerilir. Yüzeyi indüksiyonla sertleştirilmiş milde Karbür Uçlu bıçak gerekir.",
+   "facts": [
+    {
+     "claim_tr": "C45 +A en fazla 207 HB, +S en fazla 255 HB; ıslahta Rm 700–850 (≤16 mm) / 650–800 (16–40) / 630–780 MPa (40–100)",
+     "source_ids": [
+      "SAARSTAHL-C45"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "42CrMo4 yumuşak tavlı en fazla 241 HB",
+     "source_ids": [
+      "SIJ-SELECTOR"
+     ],
+     "status": "verified",
+     "value": 241,
+     "unit": "HB"
+    },
+    {
+     "claim_tr": "42CrMo4 ıslahta Rm 1100–1300 (≤16 mm), 1000–1200 (17–40), 900–1100 MPa (41–100)",
+     "source_ids": [
+      "SIJ-SELECTOR"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "900–1300 MPa ≈ 270–380 HB ≈ 28–41 HRC (yaklaşık dönüşüm)",
+     "source_ids": [
+      "BUEHLER-E140"
+     ],
+     "status": "verified",
+     "value": "270–380",
+     "unit": "HB",
+     "conditions": "ASTM E140 tutarlı tablo; çekme–sertlik dönüşümü yaklaşıktır",
+     "audit_note": "2026-10-27 denetim: 900–1300 MPa yalnız Ø100 mm'ye kadar; Ø101–160 mm için SIJ 800–950 MPa veriyor. Cevap buna göre daraltıldı."
+    },
+    {
+     "claim_tr": "Tedarikçi: ıslah edilmiş 4140 çubuk tipik 28–36 HRC",
+     "source_ids": [
+      "UYAR-4140"
+     ],
+     "status": "single_source",
+     "value": "28–36",
+     "unit": "HRC"
+    },
+    {
+     "claim_tr": "Kesme tablosunda AISI 4130–4140 ve 1030–1055 grupları bi-metal için 55–67 m/dk",
+     "source_ids": [
+      "STAR-CUT-42",
+      "STAR-CUT-43",
+      "SUPPLIER-CUT-2024"
+     ],
+     "status": "verified",
+     "value": "55–67",
+     "unit": "m/dk"
+    },
+    {
+     "claim_tr": "Bi-metal yaklaşık 45 HRC'ye kadar; üzeri karbür uçlu",
+     "source_ids": [
+      "SITE-GUIDE-M42M51",
+      "SUPPLIER-CATALOG-2025"
+     ],
+     "status": "verified",
+     "value": 45,
+     "unit": "HRC"
+    }
+   ],
+   "related_products": [
+    "bimetal-premium",
+    "bimetal-m51",
+    "carbide-ultimate"
+   ],
+   "links": [
+    "/rehber/celik-kalite-esdegerleri-bicak-secimi",
+    "/rehber/m42-mi-m51-mi",
+    "/products/bimetal-premium",
+    "/products/bimetal-m51"
+   ],
+   "requires_data": [
+    "tpi_engine"
+   ],
+   "safety": false,
+   "review": {
+    "status": "reviewed"
+   }
+  },
+  {
+   "id": "materials.paslanmaz-turleri",
+   "title_tr": "304, 316, 430, 420 ve dubleks paslanmaz farkı (kesim açısından)",
+   "intents": [
+    "material",
+    "glossary"
+   ],
+   "questions_tr": [
+    "304 ile 316 farkı",
+    "430 paslanmaz mıknatıs tutar mı",
+    "1.4301 nedir",
+    "420 paslanmaz sertleşir mi",
+    "dubleks paslanmaz nedir",
+    "1.4301 hangi malzeme"
+   ],
+   "answer_tr": "- 304 (1.4301) ve 316/316L (1.4401/1.4404): östenitik, tavlı hâlde en fazla 215 HB; kesimde sertleşmeye yatkın, mıknatıs tutmaz (soğuk işlemle hafif tutabilir).\n- 430 (1.4016): ferritik, mıknatıs tutar, östenitiklere göre daha kolay kesilir.\n- 420 (1.4021/1.4034) ve 440C (1.4125): martenzitik, sertleştirilebilir; sertleştirilmiş hâlde çok zorlaşır, sertliği öğrenin.\n- Dubleks 2205 (1.4462): en fazla 270 HB, dayanımı yüksek, talaşlı işlenmesi belirgin zordur.\nHepsinde Bi-Metal M51 önerilir; sertleştirilmiş martenzitik parçada karbür uçlu bıçak gerekebilir.",
+   "facts": [
+    {
+     "claim_tr": "1.4301 / 1.4401 / 1.4404 / 1.4571 çözelti tavlı en fazla 215 HB; 1.4305 en fazla 230 HB; 1.4462 en fazla 270 HB; 1.4016 en fazla 200 HB",
+     "source_ids": [
+      "AALCO-DS"
+     ],
+     "status": "single_source"
+    },
+    {
+     "claim_tr": "1.4301 çözelti tavlı tipik 195 HB, şartname en fazla 215 HB; mıknatıslanabilirlik 'hafif'",
+     "source_ids": [
+      "DEW-4301"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Mıknatıslanabilir: ferritik/martenzitik/dubleks Evet, östenitik (1.4301, 1.4404 vb.) Hayır",
+     "source_ids": [
+      "OUTOKUMPU-GRADES"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "1.4028 su verme sonrası 52–58 HRC; 1.4125 menevişle 59–54 HRC aralığı",
+     "source_ids": [
+      "SIJ-SELECTOR"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "1.4462 için bir veri sayfası 185 HB (tavlı) veriyor; EN 10088-3 maks. 270 HB ile çelişiyor",
+     "source_ids": [
+      "SIJ-SELECTOR",
+      "AALCO-DS"
+     ],
+     "status": "conflict"
+    }
+   ],
+   "related_products": [
+    "bimetal-m51",
+    "carbide-ultimate"
+   ],
+   "links": [
+    "/rehber/celik-kalite-esdegerleri-bicak-secimi",
+    "/products/bimetal-m51"
+   ],
+   "requires_data": [],
+   "safety": false,
+   "review": {
+    "status": "reviewed"
+   }
+  },
+  {
+   "id": "materials.hrc-hb-donusum",
+   "title_tr": "HRC – HB (Brinell) – HV dönüşümü",
+   "intents": [
+    "glossary",
+    "material"
+   ],
+   "questions_tr": [
+    "hrc hb dönüşümü",
+    "45 hrc kaç brinell",
+    "300 hb kaç hrc",
+    "rockwell brinell çevirme",
+    "sertlik dönüşüm tablosu",
+    "hb hrc çevirme",
+    "brinell rockwell dönüşüm"
+   ],
+   "answer_tr": "Alaşımsız ve düşük alaşımlı çeliklerde ASTM E140 ile tutarlı tablodan seçilmiş yaklaşık karşılıklar: 20 HRC ≈ 226 HB ≈ 238 HV; 25 HRC ≈ 253 HB; 30 HRC ≈ 286 HB; 32 HRC ≈ 301 HB (yani 300 HB ≈ 32 HRC); 35 HRC ≈ 327 HB; 40 HRC ≈ 371 HB; 45 HRC ≈ 421 HB; 50 HRC ≈ 481 HB; 55 HRC ≈ 560 HB; 60 HRC ≈ 654 HB; 65 HRC ≈ 739 HB. Dönüşümler yaklaşıktır; paslanmaz, demir dışı metaller ve soğuk işlenmiş malzemede sapma büyür. Bıçak seçiminde ölçülmüş değeri esas alın: yaklaşık 45 HRC'ye kadar bi-metal, üzerinde karbür uçlu.",
+   "facts": [
+    {
+     "claim_tr": "HRC–HB–HV çiftleri (20–65 HRC)",
+     "source_ids": [
+      "BUEHLER-E140",
+      "ASTM-E10-E18-E140"
+     ],
+     "status": "verified",
+     "conditions": "ASTM E140 Tablo 1 ile tutarlı; 450 HB üstü karbür bilye"
+    },
+    {
+     "claim_tr": "20–40 HRC aralığındaki HB çiftleri (226, 237, 247, 258, 271, 286, 301, 336, 353, 371) bıçak üreticisi kılavuzunda da aynı",
+     "source_ids": [
+      "LENOX-GUIDE"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "HRB 70 ≈ 125 HB, 80 ≈ 150 HB, 90 ≈ 185 HB, 100 ≈ 240 HB (3000 kgf)",
+     "source_ids": [
+      "BUEHLER-E140"
+     ],
+     "status": "verified",
+     "conditions": "yumuşak metallerde daha belirsiz"
+    }
+   ],
+   "related_products": [],
+   "links": [
+    "/rehber/celik-kalite-esdegerleri-bicak-secimi",
+    "/rehber/m42-mi-m51-mi"
+   ],
+   "requires_data": [],
+   "safety": false,
+   "review": {
+    "status": "reviewed"
+   }
+  },
+  {
+   "id": "materials.malzeme-tanima",
+   "title_tr": "Malzemenin ne olduğunu bilmiyorum, nasıl anlarım?",
+   "intents": [
+    "material",
+    "usage",
+    "safety",
+    "selection"
+   ],
+   "questions_tr": [
+    "malzemenin ne olduğunu bilmiyorum",
+    "paslanmaz mı demir mi nasıl anlarım",
+    "mıknatıs testi",
+    "kıvılcım testi nasıl yapılır",
+    "malzeme sertliğini nasıl öğrenirim",
+    "hangi çelik olduğunu bilmiyorum hangi bıçak",
+    "hurda demir kesiyorum",
+    "karışık malzeme kesiyorum ne önerirsiniz",
+    "malzeme kalitesi belli değil"
+   ],
+   "answer_tr": "En güvenilir yol malzeme sertifikası, fatura, tedarikçi bilgisi veya teknik resimdir. Yoksa basit atölye testleri fikir verir: 1) Mıknatıs: karbon çeliği, dökme demir, ferritik/martenzitik paslanmaz tutar; 304/316 gibi östenitik paslanmaz, alüminyum, bakır ve pirinç tutmaz. 2) Kıvılcım (taşlama) testi: düşük karbonlu çelik uzun ve az dallanan, yüksek karbonlu çelik kısa ve çok dallanan kıvılcım verir; koruyucu gözlük takın. 3) Eğe testi: eğe ısırmıyorsa malzeme sertleştirilmiş olabilir. Hâlâ belirsizse genel karbon çeliği varsayımıyla Bi-Metal M42 ile tablonun alt hız aralığından başlayın ve talaşa bakın; talaş hemen maviye dönüyor veya bıçak çabuk köreliyorsa malzemenin fotoğrafı ve ölçüleriyle bize yazın.",
+   "facts": [
+    {
+     "claim_tr": "Saha tanıma yöntemleri: yüzey görünümü, kıvılcım testi, talaş/keski testi, mıknatıs",
+     "source_ids": [
+      "NAVEDTRA-14250"
+     ],
+     "status": "single_source"
+    },
+    {
+     "claim_tr": "Kıvılcım: düşük C çelik uzun hacimli beyaz akış; yüksek C daha kısa, sık dallanan; gri döküm kısa, kırmızı-saman rengi; Ni/Monel turuncu, dallanmayan",
+     "source_ids": [
+      "NAVEDTRA-14250"
+     ],
+     "status": "single_source",
+     "conditions": "Boylar taşa ve baskıya bağlı; nitel karşılaştırma"
+    },
+    {
+     "claim_tr": "Kıvılcım testinde güvenlik: koruyucu gözlük, siper sökülmez, çatlak/dengesiz taş kullanılmaz",
+     "source_ids": [
+      "NAVEDTRA-14250"
+     ],
+     "status": "single_source"
+    },
+    {
+     "claim_tr": "Mıknatıslanabilirlik: ferritik/martenzitik/dubleks paslanmaz Evet; östenitik Hayır",
+     "source_ids": [
+      "OUTOKUMPU-GRADES"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "1.4301'in mıknatıslanabilirliği 'hafif' (soğuk işlemle artabilir)",
+     "source_ids": [
+      "DEW-4301"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Eğe/keski düşük ve orta karbonlu çeliği kolay ısırır",
+     "source_ids": [
+      "NAVEDTRA-14250"
+     ],
+     "status": "single_source"
+    },
+    {
+     "claim_tr": "Metal türü bilinmiyorsa karışık metal, profilde karbon çeliği varsayılır ve uyarı yazılır; güven \"orta (varsayım)\" olarak işaretlenir.",
+     "value": "varsayım + uyarı",
+     "unit": "",
+     "conditions": "rules.json",
+     "source_ids": [
+      "INT-RULES"
+     ],
+     "status": "internal",
+     "from_entry": "metal_selection.unknown-material"
+    },
+    {
+     "claim_tr": "Yeni/doğrulanmamış işte hız aralığının alt üçte biri.",
+     "value": "SPEED-001",
+     "unit": "",
+     "conditions": "karar kuralı",
+     "source_ids": [
+      "INT-ENC-DECISION"
+     ],
+     "status": "internal",
+     "from_entry": "metal_selection.unknown-material"
+    },
+    {
+     "claim_tr": "Sert noktalar ve kalın yüzey tufalı erken diş aşınmasına yol açar.",
+     "value": "sert nokta / tufal",
+     "unit": "",
+     "conditions": "arıza tabloları",
+     "source_ids": [
+      "STAR-TROUBLE-48",
+      "LENOX-GUIDE"
+     ],
+     "status": "verified",
+     "from_entry": "metal_selection.unknown-material"
+    }
+   ],
+   "related_products": [
+    "bimetal-premium",
+    "bimetal-m51"
+   ],
+   "links": [
+    "/iletisim",
+    "/rehber/celik-kalite-esdegerleri-bicak-secimi"
+   ],
+   "requires_data": [],
+   "safety": true,
+   "review": {
+    "status": "reviewed"
+   }
+  },
+  {
+   "id": "materials.magnezyum-guvenlik",
+   "title_tr": "Magnezyum kesiminde güvenlik",
+   "intents": [
+    "material",
+    "safety",
+    "usage"
+   ],
+   "questions_tr": [
+    "magnezyum kesilir mi",
+    "magnezyum talaşı yanar mı",
+    "magnezyum için soğutma sıvısı",
+    "magnezyum yangını nasıl söndürülür"
+   ],
+   "answer_tr": "Magnezyum kolay kesilir ama talaşı ve özellikle ince tozu yanıcıdır. Keskin bıçak kullanın, dişi sürtmeyin, ince talaş yerine iri talaş oluşturacak ilerleme seçin. Tercihen kuru kesin; gerekirse mineral yağ kullanın. Su bazlı soğutma sıvısı yalnızca magnezyum için üretilmiş özel türse kullanılmalıdır, çünkü su ile hidrojen gazı oluşur. Yangında su, köpük, CO₂ veya azot kullanmayın; D sınıfı (metal yangını) toz söndürücü veya kuru kum bulundurun. Talaşı kuru, kapaklı metal kaplarda ayrı toplayın. Makinenizi ve koşullarınızı bize yazmadan magnezyum kesimine başlamamanızı öneririz.",
+   "facts": [
+    {
+     "claim_tr": "İnce talaş daha kolay tutuşur; keskin takım, iri talaş, takımın sürtmemesi önerilir",
+     "source_ids": [
+      "LUXFER-MG"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Su bazlı sıvılarla magnezyum hidrojen üretir (%4 hidrojen havada patlayıcı); yalnız magnezyuma uygun özel emülsiyonlar",
+     "source_ids": [
+      "LUXFER-MG"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Söndürmede su, CO₂, azot kullanılmaz; D sınıfı toz veya kuru kum",
+     "source_ids": [
+      "LUXFER-MG"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "Şerit testere için diş aralığı 5–6 mm, çapraz 0,5–0,8 mm, kesme hızı 1500–2500 m/dk önerilir (metal şerit makinelerinin hız aralığının çok üstünde)",
+     "source_ids": [
+      "LUXFER-MG"
+     ],
+     "status": "verified",
+     "conditions": "Müşteriye hız verilmez; makine uygunluğu bize sorulmalı"
+    }
+   ],
+   "related_products": [],
+   "links": [
+    "/iletisim"
+   ],
+   "requires_data": [],
+   "safety": true,
+   "review": {
+    "status": "reviewed"
+   }
+  },
+  {
+   "id": "materials.mke-c-kodlari",
+   "title_tr": "Ç1040, Ç1050, Ç4140, Ç8620 ne demek?",
+   "intents": [
+    "glossary",
+    "material"
+   ],
+   "questions_tr": [
+    "ç1040 nedir",
+    "ç1050 hangi çelik",
+    "ç4140 karşılığı",
+    "mke çelik kodları",
+    "ç8620 sementasyon"
+   ],
+   "answer_tr": "Türkiye'de Makina ve Kimya Endüstrisi (MKE) gösteriminde SAE numarasının önüne 'Ç' konur: Ç1040 ≈ SAE 1040, Ç4140 ≈ SAE 4140. Avrupa karşılıkları yaklaşıktır: Ç1040 ≈ C40 (1.0511), Ç1050 ≈ C50 (1.0540), Ç1045 ≈ C45 (1.0503), Ç4140 ≈ 42CrMo4 (1.7225), Ç8620 ≈ 21NiCrMo2 (1.6523). Bıçak seçimi açısından Ç10xx imalat çelikleri ve Ç4140 Bi-Metal M42 ile kesilir; sertleştirilmiş parçada sertliği öğrenin.",
+   "facts": [
+    {
+     "claim_tr": "MKE gösteriminde 'SAE' yerine 'Ç' kullanılır (SAE1040 ↔ Ç1040)",
+     "source_ids": [
+      "SUBU-MKE",
+      "MAKINAEGITIMI-MKE"
+     ],
+     "status": "consensus"
+    },
+    {
+     "claim_tr": "SAE 1040 ≈ C40 (1.0511) / C40E (1.1186)",
+     "source_ids": [
+      "UYAR-1040",
+      "SIJ-SELECTOR"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "1050 ≈ C50 (1.0540); 1045 ≈ C45 (1.0503); 4140 ≈ 42CrMo4 (1.7225); 8620 ≈ 21NiCrMo2 (1.6523)",
+     "source_ids": [
+      "SIJ-SELECTOR",
+      "LENOX-SPEEDCHART"
+     ],
+     "status": "verified"
+    }
+   ],
+   "related_products": [
+    "bimetal-premium"
+   ],
+   "links": [
+    "/rehber/celik-kalite-esdegerleri-bicak-secimi",
+    "/products/bimetal-premium"
+   ],
+   "requires_data": [],
+   "safety": false,
+   "review": {
+    "status": "reviewed"
+   }
+  },
+  {
+   "id": "materials.esdegerlik-yaklasik",
+   "title_tr": "Kalite eşdeğerleri neden 'yaklaşık'?",
+   "intents": [
+    "glossary",
+    "material"
+   ],
+   "questions_tr": [
+    "c45 ile 1045 birebir aynı mı",
+    "4340 hangi din kalitesi",
+    "eşdeğer kalite tablosu doğru mu",
+    "aisi din karşılığı"
+   ],
+   "answer_tr": "Farklı standartlardaki kaliteler kimyasal bileşim ve mekanik değerlerde birebir aynı değildir; tablolar en yakın karşılığı verir. Örneğin St52-3 bazı tablolarda S355JR, bazılarında S355J2'ye eşlenir; AISI 4340 için farklı üretici tabloları 1.6582 (34CrNiMo6), 1.6565 (40NiCrMo6) veya 1.6511 (36CrNiMo4) verir. Şerit testere seçiminde bu farklar genellikle önemsizdir: belirleyici olan malzeme grubu ve sertliktir. Kritik işlerde malzeme sertifikasını esas alın.",
+   "facts": [
+    {
+     "claim_tr": "4340 karşılığı: 1.6565 (bir bıçak üreticisi tablosu) ve 1.6582 / 1.6511 / 1.6580 / 1.7707 (çelik üreticisi veri sayfaları)",
+     "source_ids": [
+      "LENOX-SPEEDCHART",
+      "SIJ-SELECTOR"
+     ],
+     "status": "verified"
+    },
+    {
+     "claim_tr": "St52-3 S355JR veya S355J2 (1.0577) ile eşleştirilir",
+     "source_ids": [
+      "SITE-GUIDE-STEEL",
+      "UYAR-S235-S355"
+     ],
+     "status": "conflict"
+    },
+    {
+     "claim_tr": "Bıçak seçiminde adından çok sertlik belirleyicidir",
+     "source_ids": [
+      "SITE-GUIDE-M42M51"
+     ],
+     "status": "internal"
+    }
+   ],
+   "related_products": [],
+   "links": [
+    "/rehber/celik-kalite-esdegerleri-bicak-secimi"
+   ],
+   "requires_data": [],
+   "safety": false,
+   "review": {
+    "status": "reviewed"
+   }
+  },
+  {
+   "id": "materials.manganli-celik",
+   "title_tr": "Manganlı (Hadfield) çelik kesilir mi?",
+   "intents": [
+    "material",
+    "selection"
+   ],
+   "questions_tr": [
+    "manganlı çelik kesimi",
+    "hadfield çeliği hangi bıçak",
+    "x120mn12 kesilir mi",
+    "kırıcı çenesi kesmek"
+   ],
+   "answer_tr": "Manganlı (Hadfield, X120Mn12) çelik su verilmiş hâlde yaklaşık 200 HB'dir ama darbe ve deformasyonla yüzeyi çok sertleşir; talaşlı işlenebilirliği zayıftır. Kesimde dişin sürtmesi kesim yerini hızla sertleştirir. Bu malzeme için standart bir öneri vermek yerine parçayı, kesit ölçüsünü ve makinenizi bize yazmanızı öneririz.",
+   "facts": [
+    {
+     "claim_tr": "X120Mn12 (1.3401) su vermeden sonra yaklaşık 200 HB; soğuk işlenebilirliği (sertleşme) yüksek; talaşlı işlenebilirlik zayıf",
+     "source_ids": [
+      "SIJ-SELECTOR"
+     ],
+     "status": "verified"
+    }
+   ],
+   "related_products": [
+    "carbide-ultimate",
+    "bimetal-m51"
+   ],
+   "links": [
+    "/iletisim"
+   ],
+   "requires_data": [],
+   "safety": false,
+   "review": {
+    "status": "reviewed"
+   }
+  }
+ ]
+}
