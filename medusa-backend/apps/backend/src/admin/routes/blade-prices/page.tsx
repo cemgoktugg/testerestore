@@ -5,6 +5,7 @@ import {
   Badge, Drawer, Table, toast,
 } from "@medusajs/ui";
 import { useEffect, useMemo, useState } from "react";
+import { splitToothPitches } from "../../../lib/tooth-pitch";
 
 interface BladePrice {
   id: string;
@@ -149,6 +150,9 @@ export default function BladePricesPage() {
     setOpen(true);
   }
 
+  // "6/10 , 8/12" → iki ayrı diş; sunucu da aynı ayrıştırıcıyı kullanır
+  const pitchPreview = useMemo(() => splitToothPitches(form.tooth_pitch), [form.tooth_pitch]);
+
   async function save() {
     const widthNum = parseDecimal(form.width_mm);
     const thicknessNum = parseDecimal(form.thickness_mm);
@@ -193,21 +197,37 @@ export default function BladePricesPage() {
       });
       return;
     }
+    if (pitchPreview.invalid.length) {
+      toast.error("Diş ölçüsü anlaşılamadı", {
+        description: `"${pitchPreview.invalid.join(", ")}" — dişleri virgülle ayırın (6/10, 8/12); ondalıkta virgül kullanabilirsiniz (1,4/2).`,
+      });
+      return;
+    }
 
     setSaving(true);
     try {
       if (editingId) {
-        await api(`/admin/blade-prices/${editingId}`, {
-          method: "PATCH",
-          body: JSON.stringify(body),
+        const r = await api<{ created?: unknown[]; skipped?: string[] }>(
+          `/admin/blade-prices/${editingId}`,
+          { method: "PATCH", body: JSON.stringify(body) }
+        );
+        const n = r.created?.length ?? 0;
+        toast.success(n ? `Güncellendi, ${n} yeni satır eklendi` : "Güncellendi", {
+          description: r.skipped?.length
+            ? `Bu ölçüde zaten vardı: ${r.skipped.join(", ")}`
+            : undefined,
         });
-        toast.success("Güncellendi");
       } else {
-        await api("/admin/blade-prices", {
-          method: "POST",
-          body: JSON.stringify(body),
+        const r = await api<{ blade_prices?: unknown[]; skipped?: string[] }>(
+          "/admin/blade-prices",
+          { method: "POST", body: JSON.stringify(body) }
+        );
+        const n = r.blade_prices?.length ?? 1;
+        toast.success(n > 1 ? `${n} satır eklendi` : "Eklendi", {
+          description: r.skipped?.length
+            ? `Bu ölçüde zaten vardı, eklenmedi: ${r.skipped.join(", ")}`
+            : undefined,
         });
-        toast.success("Eklendi");
       }
       setOpen(false);
       await load();
@@ -292,7 +312,18 @@ export default function BladePricesPage() {
                   <Table.Cell>{r.width_mm}</Table.Cell>
                   <Table.Cell>{r.thickness_mm}</Table.Cell>
                   <Table.Cell>
-                    {r.tooth_pitch || (
+                    {r.tooth_pitch ? (
+                      splitToothPitches(r.tooth_pitch).pitches.length > 1 ? (
+                        <div className="flex items-center gap-2">
+                          <span>{r.tooth_pitch}</span>
+                          <Badge color="orange" size="2xsmall">
+                            Birden fazla diş — düzenleyip kaydedin
+                          </Badge>
+                        </div>
+                      ) : (
+                        r.tooth_pitch
+                      )
+                    ) : (
                       <Text size="xsmall" className="text-ui-fg-subtle">
                         —
                       </Text>
@@ -399,13 +430,28 @@ export default function BladePricesPage() {
                 onChange={(e) =>
                   setForm({ ...form, tooth_pitch: e.target.value })
                 }
-                placeholder="4/6, 3/4, vs. (boş bırakılabilir)"
+                placeholder="6/10 — birden fazla için: 6/10, 8/12 (boş bırakılabilir)"
               />
+              {pitchPreview.invalid.length > 0 ? (
+                <Text size="xsmall" className="text-ui-fg-error">
+                  Anlaşılamadı: "{pitchPreview.invalid.join(", ")}". Dişleri virgülle ayırın
+                  (6/10, 8/12); ondalıkta virgül kullanabilirsiniz (1,4/2).
+                </Text>
+              ) : pitchPreview.pitches.length > 1 ? (
+                <Text size="xsmall" className="text-ui-fg-interactive">
+                  {editingId
+                    ? `Bu satır ${pitchPreview.pitches[0]} olarak kaydedilir; ${pitchPreview.pitches
+                        .slice(1)
+                        .join(", ")} için aynı fiyatla yeni satır eklenir.`
+                    : `${pitchPreview.pitches.length} ayrı satır olarak eklenecek: ${pitchPreview.pitches.join(" · ")}`}
+                </Text>
+              ) : null}
               <Text size="xsmall" className="text-ui-fg-subtle">
-                Buraya yazdığınız diş ölçüsü, aynı tip + genişlik + kalınlık
-                kombinasyonu için ürün sayfasındaki TPI dropdown'una otomatik
-                eklenir. Boş bıraktığınızda TPI'siz satır oluşur (ahşap, et
-                ve kemik, tekstil için).
+                Her diş ölçüsü ayrı bir satırdır ve ürün sayfasındaki TPI listesinde ayrı
+                seçenek olarak görünür. Birden fazla diş yazarsanız her biri aynı genişlik,
+                kalınlık ve fiyatla ayrı satır olarak eklenir; bu ölçüde zaten var olan diş
+                tekrar eklenmez. Boş bıraktığınızda TPI'siz satır oluşur (ahşap, et ve kemik,
+                tekstil için).
               </Text>
             </div>
 
