@@ -4281,7 +4281,7 @@
     "ucretsiz kargo var mi",
     "kargo ucreti ne kadr"
    ],
-   "answer_tr": "Ürün toplamı KDV dahil 2.000 TL ve üzeri siparişlerde standart kargo ücretsizdir. Bu tutarın altındaki siparişlerde kargo ücreti 79,90 TL'dir (KDV dahil). Kargo ücreti siparişi onaylamadan önce sepet ve ödeme adımında gösterilir.",
+   "answer_tr": "Ürün toplamı KDV dahil 2.000 TL ve üzeri siparişlerde standart kargo ücretsizdir. Bu tutarın altındaki siparişlerde kargo ücreti 171,00 TL'dir (KDV dahil). Kargo ücreti siparişi onaylamadan önce sepet ve ödeme adımında gösterilir.",
    "facts": [
     {
      "claim_tr": "Ücretsiz kargo eşiği: KDV dahil ürün toplamı 2.000 TL",
@@ -4297,8 +4297,8 @@
      "status": "internal"
     },
     {
-     "claim_tr": "Standart kargo ücreti 79,90 TL (KDV dahil)",
-     "value": "79,90",
+     "claim_tr": "Standart kargo ücreti 171,00 TL (KDV dahil)",
+     "value": "171,00",
      "unit": "TL",
      "conditions": "KDV hariç",
      "source_ids": [
@@ -4318,14 +4318,14 @@
      "status": "internal"
     },
     {
-     "claim_tr": "KDV dahil 2.000 TL ve üzeri ürün toplamında standart kargo ücretsiz; altında 79,90 TL (KDV dahil).",
+     "claim_tr": "KDV dahil 2.000 TL ve üzeri ürün toplamında standart kargo ücretsiz; altında 171,00 TL (KDV dahil).",
      "source_ids": [
       "SITE-FRONTDESK",
       "SITE-SSS"
      ],
      "status": "internal",
      "conditions": "",
-     "value": "2000;79.90",
+     "value": "2000;171.00",
      "unit": "TL",
      "from_entry": "questions_glossary.term-kargo"
     }

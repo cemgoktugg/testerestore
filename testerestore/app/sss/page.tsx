@@ -93,7 +93,7 @@ const SECTIONS: { title: string; items: { q: string; a: string }[] }[] = [
       },
       {
         q: 'Kargo ücreti ne kadar?',
-        a: 'Ürün toplamı KDV dahil 2.000 TL ve üzeri siparişlerde standart kargo ücretsizdir. Bu tutarın altındaki siparişlerde kargo ücreti 79,90 TL’dir (KDV dahil). Kargo ücreti, siparişi onaylamadan önce sepet ve ödeme adımında gösterilir.',
+        a: 'Ürün toplamı KDV dahil 2.000 TL ve üzeri siparişlerde standart kargo ücretsizdir. Bu tutarın altındaki siparişlerde kargo ücreti 171,00 TL’dir (KDV dahil). Kargo ücreti, siparişi onaylamadan önce sepet ve ödeme adımında gösterilir.',
       },
       {
         q: 'Siparişimi nasıl takip ederim?',

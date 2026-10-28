@@ -2,7 +2,7 @@
  * Kargo kuralları — storefront için tek kaynak.
  *
  * KURAL: ürün toplamı KDV DAHİL 2.000 TL ve üzeri → standart kargo ücretsiz;
- * altında 79,90 TL (KDV DAHİL — kullanıcı kararı 2026-10-27).
+ * altında 171,00 TL (KDV DAHİL — kullanıcı kararı 2026-10-27).
  *
  * Asıl kural Medusa'da: "Standart Kargo" seçeneğinin koşullu fiyatı (price
  * rule `item_total >= 2000`; item_total KDV dahil ürün toplamıdır). Buradaki
@@ -23,7 +23,7 @@
 /** Ücretsiz kargo eşiği — KDV DAHİL ürün toplamı. */
 export const FREE_SHIPPING_THRESHOLD = 2000;
 /** Standart kargo ücreti — KDV DAHİL. */
-export const STANDARD_SHIPPING_FEE = 79.9;
+export const STANDARD_SHIPPING_FEE = 171;
 export const KDV_RATE = 0.2;
 
 const round2 = (n: number) => Math.round(n * 100) / 100;

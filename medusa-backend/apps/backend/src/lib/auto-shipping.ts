@@ -24,7 +24,7 @@ import { Modules, ContainerRegistrationKeys } from "@medusajs/framework/utils";
  */
 export const FREE_SHIPPING_THRESHOLD = 2000;
 /** KDV DAHİL (Türkiye bölgesi "KDV dahil fiyat" tercihi; kullanıcı kararı 2026-10-27). */
-export const STANDARD_SHIPPING_FEE = 79.9;
+export const STANDARD_SHIPPING_FEE = 171;
 const KDV_RATE = 0.2;
 
 /** Ücretsiz kargoya kalan tutar (KDV dahil), KDV hariç ara toplamdan. */
@@ -49,7 +49,7 @@ export type AutoShippingResult =
     };
 
 /**
- * Sepete "Standart Kargo"yu bağlar; ücreti (79,90 TL veya eşik üstünde 0 TL)
+ * Sepete "Standart Kargo"yu bağlar; ücreti (171,00 TL veya eşik üstünde 0 TL)
  * Medusa'nın fiyat kuralı belirler. Önceden bağlı yöntemler silinir; tekrar
  * çağrılması güvenlidir (idempotent).
  */
@@ -106,7 +106,7 @@ export async function applyAutoShipping(
     };
   }
 
-  // Uygulanan ücret Medusa'nın hesapladığı tutardır (kurala göre 0 veya 79,90).
+  // Uygulanan ücret Medusa'nın hesapladığı tutardır (kurala göre 0 veya 171,00).
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const updated = await (cartModule as any).retrieveCart(cartId, {
     relations: ["shipping_methods"],

@@ -85,7 +85,7 @@ def test_parsers():
 def test_shipping_answered_without_delivery_time(fd):
     r = ask(fd, "Kargo ücreti ne kadar, sipariş verirsem ne zaman gelir?")
     assert r and r.final and r.kinds == ["shipping"]
-    assert "2.000 TL" in r.text and "79,90 TL" in r.text
+    assert "2.000 TL" in r.text and "171,00 TL" in r.text
     assert "en kısa sürede" in r.text
     for forbidden in ("aynı gün", "24 saat", "iş günü"):
         assert forbidden not in r.text

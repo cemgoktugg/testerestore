@@ -47,7 +47,7 @@ SITE_URL = os.environ.get("ADVISOR_SITE_URL", "https://testerestore.com").rstrip
 
 # Mağaza kargo kuralı — storefront lib/shipping.ts ve Medusa fiyat kuralı ile aynı.
 FREE_SHIPPING_THRESHOLD_INCL_VAT = 2000
-STANDARD_SHIPPING_FEE = 79.9   # KDV DAHİL (kullanıcı kararı 2026-10-27)
+STANDARD_SHIPPING_FEE = 171.0  # KDV DAHİL (kullanıcı kararı 2026-10-28)
 KDV_RATE = 0.20
 
 # Ölçüye göre üretimde boy sınırları (mm) — ürün metadata min/max_length_mm,

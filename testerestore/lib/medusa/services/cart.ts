@@ -343,7 +343,7 @@ export async function removePromoCode(
 
 /**
  * Server-trusted shipping selection. The backend reads the cart's item
- * subtotal and attaches the correct method (free >= 2000 TL, else 79.90 TL),
+ * subtotal and attaches the correct method (free >= 2000 TL, else 171 TL),
  * so the client cannot pick free shipping for a small cart. Returns the
  * decision (or null on failure) and re-fetches the cart.
  */

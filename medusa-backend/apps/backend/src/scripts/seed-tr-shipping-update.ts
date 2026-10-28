@@ -7,7 +7,7 @@ import {
 
 /**
  * Free-shipping-over-2000 setup for the Türkiye region:
- *   - "Standart Kargo"  -> 79.90 TRY (the under-threshold flat fee)
+ *   - "Standart Kargo"  -> 171 TRY (the under-threshold flat fee)
  *   - "Ücretsiz Kargo"  -> 0 TRY     (selected server-side when item
  *                                     subtotal >= 2000, see
  *                                     /store/shipping/auto-select)
@@ -22,7 +22,7 @@ import {
  * Idempotent: updates the existing Standart Kargo price and only creates
  * Ücretsiz Kargo if it does not already exist.
  */
-const STANDARD_FEE = 79.9;
+const STANDARD_FEE = 171;
 
 export default async function seedTrShippingUpdate({ container }: ExecArgs) {
   const logger = container.resolve(ContainerRegistrationKeys.LOGGER);
@@ -51,7 +51,7 @@ export default async function seedTrShippingUpdate({ container }: ExecArgs) {
     ],
   });
 
-  // 1. Standart Kargo -> 79.90
+  // 1. Standart Kargo -> 171
   const standard = options.find((o) => o.name === "Standart Kargo");
   if (standard) {
     const tryPrice = (standard.prices || []).find(
