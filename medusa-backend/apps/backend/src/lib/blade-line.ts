@@ -9,9 +9,10 @@
  * Formül (cart-add'deki davranışla birebir aynı):
  *   blade_unit_price      = price_per_meter × length_mm / 1000
  *   subtotal              = blade_unit_price × quantity
- *   total_before_discount = subtotal + welding_fee     (kaynak ücreti satır başına BİR kez)
+ *   total_before_discount = (blade_unit_price + welding_fee) × quantity
+ *                           (her bıçak ayrı kaynatılır → kaynak ücreti ADET BAŞINA)
  *   total_price           = total_before_discount × (100 - indirim) / 100
- *   unit_price            = total_price / quantity     (kaynak + indirim amortize)
+ *   unit_price            = total_price / quantity     (indirim amortize)
  */
 import type { MedusaContainer } from "@medusajs/framework/types";
 import type BladePriceMatrixService from "../modules/blade-price-matrix/service";
@@ -27,7 +28,7 @@ export interface BladeLineInput {
 }
 
 export interface BladeLinePricing {
-  /** Kaynak ücreti + adet indirimi amortize edilmiş birim fiyat. */
+  /** Kaynak dahil, adet indirimi amortize edilmiş birim fiyat. */
   unit_price: number;
   total_price: number;
   total_before_discount: number;
@@ -85,7 +86,7 @@ export async function computeBladeLine(
 
   const bladeUnitPrice = pricePerMeter * lengthMeter;
   const subtotal = bladeUnitPrice * quantity;
-  const totalBeforeDiscount = subtotal + weldingFee;
+  const totalBeforeDiscount = (bladeUnitPrice + weldingFee) * quantity;
 
   const discountPercent = qtyDiscountPercent(quantity);
   const totalPrice =

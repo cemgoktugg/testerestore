@@ -8,7 +8,7 @@
  *   • MATRIX MODE — when a blade_price_matrix row exists for the product's
  *     blade_type. The cascading width → thickness → TPI options and the
  *     final price come entirely from the matrix; length is free-form mm and
- *     the total is computed as price_per_meter × (length/1000) + welding_fee.
+ *     the per-blade price is price_per_meter × (length/1000) + welding_fee.
  *
  *   • LEGACY MODE — fallback used when the matrix has no rows for this type
  *     (e.g. before the seed runs). Falls back to Medusa variant matrix +
@@ -553,9 +553,9 @@ export default function BladeConfigurator({
         : '—';
       const itemId = `${productSlug}-${matrixCalc.width_mm}-${matrixCalc.thickness_mm}-${matrixCalc.tooth_pitch ?? 'na'}-${matrixCalc.length_mm}`;
 
-      // Welding is a flat per-line fee, but the cart UI shows price × qty.
-      // Amortize welding across the quantity so the cart line total matches
-      // the configurator's "Toplam" exactly.
+      // total_price already includes welding per blade; dividing by qty gives
+      // the welded per-blade price shown in the cart (server re-applies the
+      // qty tier discount in cart-add).
       const amortizedUnitPrice = Math.round(
         (matrixCalc.total_price / Math.max(1, quantity)) * 100
       ) / 100;
@@ -572,7 +572,7 @@ export default function BladeConfigurator({
         price_per_meter: matrixCalc.price_per_meter,
         welding_fee: matrixCalc.welding_fee,
         blade_unit_price: matrixCalc.unit_price, // blade only, no welding
-        unit_price: amortizedUnitPrice,           // includes amortized welding
+        unit_price: amortizedUnitPrice,           // includes welding
         subtotal: matrixCalc.subtotal,
         total_price: matrixCalc.total_price,
         currency_code: matrixCalc.currency_code,

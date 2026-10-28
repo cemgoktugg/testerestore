@@ -222,7 +222,7 @@ export async function updateLineItem(
 
 /**
  * Matrix-fiyatlı line item için sepetten miktar güncelleme. Server fiyatı
- * yeni qty'ye göre yeniden hesaplar (welding tek seferlik + tier discount).
+ * yeni qty'ye göre yeniden hesaplar (kaynak adet başına + tier discount).
  */
 export async function updateBladeMatrixLine(
   lineId: string,
