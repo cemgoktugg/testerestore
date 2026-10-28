@@ -28,11 +28,11 @@ const CalcSchema = z.object({
  * Pricing formula:
  *   unit_price  = price_per_meter × length_mm / 1000       (per blade, no welding)
  *   subtotal    = unit_price × quantity                     (blades only)
- *   total_price = subtotal + welding_fee                    (welding charged ONCE)
+ *   total_price = (unit_price + welding_fee) × quantity     (welding PER BLADE)
  *
- * Welding is a flat per-order assembly cost; multiplying it by quantity
- * over-charges customers who want several identical blades. The storefront
- * still surfaces it as a line in the breakdown for transparency.
+ * Every blade is a separately welded loop, so the welding fee is charged per
+ * blade — 2 blades always cost exactly 2 × the single-blade price (before
+ * the qty tier discount). Must match `src/lib/blade-line.ts`.
  *
  * 404 if no matrix row matches the chosen combination (caller should show
  * "Bu ölçü için fiyat tanımlı değil").
@@ -88,10 +88,10 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
   const weldingFee = Number(row.welding_fee ?? 0);
   const lengthMeter = length_mm / 1000;
 
-  // Welding is added once (per cart line), NOT per blade.
+  // Welding is added per blade (each blade is welded separately).
   const unitPrice = pricePerMeter * lengthMeter;
   const subtotal = unitPrice * quantity;
-  const totalPrice = subtotal + weldingFee;
+  const totalPrice = (unitPrice + weldingFee) * quantity;
 
   // Round to 2 decimals for currency
   const round2 = (n: number) => Math.round(n * 100) / 100;

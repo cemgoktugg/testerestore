@@ -36,8 +36,9 @@ const Schema = z.object({
  *   2. Calls `addToCartWorkflow` with the matrix-derived `unit_price`,
  *      so the cart line, cart total, and checkout all show the same number.
  *
- * Welding is charged once per line: total = (per_meter × length × qty) + welding,
- * amortized into `unit_price` so cart × qty = configurator total exactly.
+ * Welding is charged per blade: total = (per_meter × length + welding) × qty;
+ * the qty tier discount is amortized into `unit_price` so cart × qty =
+ * configurator total exactly.
  *
  * Fiyat matematiği `src/lib/blade-line.ts` içinde — danışman sohbetinden
  * gelen sepete ekleme de aynı fonksiyonu kullanıyor.

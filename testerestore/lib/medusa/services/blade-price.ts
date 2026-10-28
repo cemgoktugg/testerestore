@@ -31,7 +31,7 @@ export interface BladePriceCalc {
   unit_price: number;
   /** unit_price × quantity (blades only, no welding). */
   subtotal: number;
-  /** subtotal + welding_fee — welding is charged once per cart line. */
+  /** (unit_price + welding_fee) × quantity — welding is charged per blade. */
   total_price: number;
   currency_code: string;
 }

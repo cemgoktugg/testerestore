@@ -2,8 +2,7 @@ import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http";
 import { z } from "zod";
 import { updateLineItemInCartWorkflow } from "@medusajs/medusa/core-flows";
 import { Modules } from "@medusajs/framework/utils";
-import type BladePriceMatrixService from "../../../../modules/blade-price-matrix/service";
-import { BLADE_PRICE_MATRIX_MODULE } from "../../../../modules/blade-price-matrix";
+import { computeBladeLine } from "../../../../lib/blade-line";
 import {
   assertMatrixAllowedForProduct,
   productForVariant,
@@ -19,8 +18,8 @@ const Schema = z.object({
  * POST /store/blade-price/cart-update
  *
  * Bir matrix-fiyatlı line item'ın miktarını günceller VE unit_price'ı
- * yeni miktara göre yeniden hesaplar (welding tek seferlik + tier
- * discount tekrar uygulanır).
+ * yeni miktara göre yeniden hesaplar (kaynak adet başına + tier
+ * discount tekrar uygulanır; matematik `src/lib/blade-line.ts`).
  *
  * Cart line item'ının metadata'sındaki blade_type/width_mm/thickness_mm/
  * tooth_pitch/length_mm okunur; matrix tablosundan price_per_meter ve
@@ -38,9 +37,6 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
   const { cart_id, line_id, quantity } = parsed.data;
 
   const cartModule = req.scope.resolve(Modules.CART);
-  const svc = req.scope.resolve<BladePriceMatrixService>(
-    BLADE_PRICE_MATRIX_MODULE
-  );
 
   // Mevcut line item + cart'ı al
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -98,45 +94,23 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     return;
   }
 
-  // Matrix-priced item — fiyatı yeniden hesapla
-  const filter: Record<string, unknown> = {
-    is_active: true,
+  // Matrix-priced item — fiyatı yeniden hesapla (cart-add ve checkout
+  // doğrulamasıyla aynı fonksiyon; ayrı kopya fiyat farkı üretir).
+  const pricing = await computeBladeLine(req.scope, {
     blade_type: bladeType,
     width_mm: widthMm,
     thickness_mm: thicknessMm,
     tooth_pitch: toothPitch,
-  };
-  const rows = await svc.listBladePrices(filter);
-  if (rows.length === 0) {
+    length_mm: lengthMm,
+    quantity,
+  });
+  if (!pricing) {
     res.status(404).json({
       message: "No price defined for the selected combination",
       code: "BLADE_PRICE_NOT_FOUND",
     });
     return;
   }
-  const row = rows[0] as {
-    price_per_meter: number | string;
-    welding_fee: number | string;
-    currency_code: string;
-  };
-
-  const pricePerMeter = Number(row.price_per_meter);
-  const weldingFee = Number(row.welding_fee ?? 0);
-  const lengthMeter = lengthMm / 1000;
-  const bladeUnitPrice = pricePerMeter * lengthMeter;
-  const subtotal = bladeUnitPrice * quantity;
-  const totalBeforeDiscount = subtotal + weldingFee;
-
-  // Qty tier discount — cart-add ile aynı tablo
-  const discountPercent =
-    quantity >= 10 ? 15 : quantity >= 5 ? 10 : quantity >= 3 ? 5 : 0;
-  const totalPrice =
-    discountPercent > 0
-      ? (totalBeforeDiscount * (100 - discountPercent)) / 100
-      : totalBeforeDiscount;
-
-  const round2 = (n: number) => Math.round(n * 100) / 100;
-  const amortizedUnitPrice = round2(totalPrice / Math.max(1, quantity));
 
   try {
     const { result } = await updateLineItemInCartWorkflow(req.scope).run({
@@ -146,26 +120,17 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
         update: {
           quantity,
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          unit_price: amortizedUnitPrice as any,
-          metadata: {
-            ...md,
-            blade_unit_price: round2(bladeUnitPrice),
-            unit_price: amortizedUnitPrice,
-            subtotal: round2(subtotal),
-            total_before_discount: round2(totalBeforeDiscount),
-            discount_percent: discountPercent,
-            total_price: round2(totalPrice),
-            unit_price_at_add: amortizedUnitPrice,
-          },
+          unit_price: pricing.unit_price as any,
+          metadata: { ...md, ...pricing.metadata },
         },
       },
     });
 
     res.json({
       ok: true,
-      unit_price: amortizedUnitPrice,
-      total_price: round2(totalPrice),
-      discount_percent: discountPercent,
+      unit_price: pricing.unit_price,
+      total_price: pricing.total_price,
+      discount_percent: pricing.discount_percent,
       result,
     });
   } catch (e) {
