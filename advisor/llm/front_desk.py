@@ -1401,18 +1401,18 @@ def _price_text(lo: float, hi: float, kdv: bool) -> str:
 
 
 def _qty_line(qty: int, rows: List[Tuple[Optional[str], Dict[str, Any]]], kdv: bool) -> Tuple[str, Optional[float]]:
-    """N adet toplamı — backend lib/blade-line.ts ile aynı: (birim × adet + kaynak ücreti bir kez)
+    """N adet toplamı — backend lib/blade-line.ts ile aynı: (birim + kaynak ücreti) × adet
     × (100 − adet indirimi) / 100. API birim/kaynak ücretini döndürmezse tutar sepete bırakılır."""
     d = qty_discount_percent(qty)
     totals = []
     for _, r in rows:
         unit, weld = r.get("unit_price"), r.get("welding_fee")
         if isinstance(unit, (int, float)) and isinstance(weld, (int, float)):
-            totals.append(round((float(unit) * qty + float(weld)) * (100 - d) / 100, 2))
+            totals.append(round((float(unit) + float(weld)) * qty * (100 - d) / 100, 2))
     disc = f", %{d} adet indirimi dahil" if d else ""
     if totals and len(totals) == len(rows):
         lo, hi = min(totals), max(totals)
-        return (f"  {qty} adet toplam: **{_price_text(lo, hi, kdv)}** (kaynak ücreti satır başına bir kez"
+        return (f"  {qty} adet toplam: **{_price_text(lo, hi, kdv)}** (kaynak dahil"
                 f"{disc})"), (lo * (1 + KDV_RATE) if kdv else lo)
     tail = f"; {qty} adette %{d} adet indirimi uygulanır" if d else ""
     return f"  {qty} adet için toplam tutar sepette hesaplanır{tail}.", None

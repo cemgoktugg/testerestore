@@ -47,7 +47,7 @@ READY = [(13, 0.6, "10/14", 1638, 787.1), (13, 0.6, "6/10", 1440, 698.0), (27, 0
 
 
 class Store:
-    """Fiyat API'si gibi: 1 adet toplamı + birim fiyat + kaynak ücreti (satır başına bir kez)."""
+    """Fiyat API'si gibi: 1 adet toplamı + birim fiyat + kaynak ücreti (adet başına)."""
     enabled = True
 
     def __init__(self):
@@ -409,13 +409,13 @@ def test_follow_up_thickness_not_x_but_y(fd):
 
 
 def test_follow_up_quantity_uses_backend_formula(fd):
-    # (birim × adet + kaynak bir kez) × (100 − indirim) / 100 — lib/blade-line.ts
+    # (birim + kaynak) × adet × (100 − indirim) / 100 — lib/blade-line.ts
     r, _ = run(fd, BASE, "3 tane alsam")
     unit = 380 * 2.75
-    assert "3 adet toplam: **" + F.tl(round((unit * 3 + 75) * 0.95, 2)) + " + KDV**" in r.text
+    assert "3 adet toplam: **" + F.tl(round((unit + 75) * 3 * 0.95, 2)) + " + KDV**" in r.text
     assert "%5 adet indirimi dahil" in r.text
     r2, _ = run(fd, BASE, "tamam 2 adet")
-    assert "2 adet toplam: **" + F.tl(unit * 2 + 75) + " + KDV**" in r2.text
+    assert "2 adet toplam: **" + F.tl((unit + 75) * 2) + " + KDV**" in r2.text
 
 
 def test_follow_up_quantity_without_unit_price_defers_to_cart():

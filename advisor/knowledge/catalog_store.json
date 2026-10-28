@@ -2872,7 +2872,7 @@
      "status": "internal"
     },
     {
-     "claim_tr": "Kaynak ücreti satır başına bir kez eklenir",
+     "claim_tr": "Kaynak ücreti her bıçak için ayrı (adet başına) eklenir",
      "value": null,
      "unit": null,
      "conditions": "",
@@ -3528,7 +3528,7 @@
      "status": "internal"
     },
     {
-     "claim_tr": "Kaynak ücreti satır başına bir kez; adet indirimi 3+ adette başlar",
+     "claim_tr": "Kaynak ücreti adet başına; adet indirimi 3+ adette başlar",
      "value": "3",
      "unit": "adet",
      "conditions": "",
@@ -3984,10 +3984,10 @@
     "her bıçak için kaynak ücreti mi",
     "5 tane alsam 5 kere kaynak ücreti mi"
    ],
-   "answer_tr": "Ölçüye göre bıçakta kaynak ücreti ürün sayfasındaki toplam tutara dahildir. Aynı ölçüden birden fazla adet aldığınızda kaynak ücreti o sepet satırı için bir kez eklenir, adet başına tekrarlanmaz; sepette birim fiyata paylaştırılarak gösterilir. Hazır boy ürünlerde kaynak yapılmıştır ve fiyata dahildir.",
+   "answer_tr": "Ölçüye göre bıçakta kaynak ücreti ürün sayfasındaki toplam tutara dahildir. Her bıçak ayrı ayrı kaynatıldığı için kaynak ücreti adet başına alınır; birden fazla adet aldığınızda toplam, tek bıçak fiyatının adet katıdır (3 ve üzeri adette adet indirimi uygulanır). Hazır boy ürünlerde kaynak yapılmıştır ve fiyata dahildir.",
    "facts": [
     {
-     "claim_tr": "Kaynak ücreti satır başına bir kez; birim fiyata amortize edilir (sepet × adet = konfigüratör toplamı)",
+     "claim_tr": "Kaynak ücreti adet başına; birim fiyata dahildir (sepet × adet = konfigüratör toplamı)",
      "value": null,
      "unit": null,
      "conditions": "",
