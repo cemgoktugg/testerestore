@@ -97,6 +97,51 @@ const fmtMoney = (n: number | string, ccy: string) =>
     maximumFractionDigits: 2,
   })} ${ccy.toUpperCase()}`;
 
+// ---- Tablo filtreleri ----
+const ALL = "all";
+/** TPI'siz satırlar (ahşap, et-kemik, tekstil) için filtre değeri. */
+const NO_PITCH = "none";
+
+type Filters = { type: string; width: string; thickness: string; pitch: string };
+
+const numKey = (n: number | string) => String(Number(n));
+
+/** Satırın diş ölçüleri; eski çok dişli satırlar her dişte eşleşsin. */
+function rowPitches(r: BladePrice): string[] {
+  if (!r.tooth_pitch) return [NO_PITCH];
+  const { pitches } = splitToothPitches(r.tooth_pitch);
+  return pitches.length ? pitches : [r.tooth_pitch];
+}
+
+/** `skip` verilen filtre yok sayılır — o filtrenin seçeneklerini, diğer
+ *  seçimlerle gerçekten sonuç veren değerlerle sınırlamak için. */
+function matchesFilters(r: BladePrice, f: Filters, skip?: keyof Filters): boolean {
+  if (skip !== "type" && f.type !== ALL && r.blade_type !== f.type) return false;
+  if (skip !== "width" && f.width !== ALL && numKey(r.width_mm) !== f.width) return false;
+  if (skip !== "thickness" && f.thickness !== ALL && numKey(r.thickness_mm) !== f.thickness)
+    return false;
+  if (skip !== "pitch" && f.pitch !== ALL && !rowPitches(r).includes(f.pitch)) return false;
+  return true;
+}
+
+const byNumber = (a: string, b: string) => Number(a) - Number(b);
+const byPitch = (a: string, b: string) =>
+  a === NO_PITCH ? 1 : b === NO_PITCH ? -1 : a.localeCompare(b, undefined, { numeric: true });
+
+const typeOrder = (t: string) => {
+  const i = BLADE_TYPES.findIndex((x) => x.value === t);
+  return i === -1 ? BLADE_TYPES.length : i;
+};
+
+function compareRows(a: BladePrice, b: BladePrice): number {
+  return (
+    typeOrder(a.blade_type) - typeOrder(b.blade_type) ||
+    Number(a.width_mm) - Number(b.width_mm) ||
+    Number(a.thickness_mm) - Number(b.thickness_mm) ||
+    byPitch(rowPitches(a)[0], rowPitches(b)[0])
+  );
+}
+
 export default function BladePricesPage() {
   const [rows, setRows] = useState<BladePrice[]>([]);
   const [loading, setLoading] = useState(true);
@@ -104,7 +149,10 @@ export default function BladePricesPage() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState<Form>(EMPTY_FORM);
   const [saving, setSaving] = useState(false);
-  const [typeFilter, setTypeFilter] = useState<string>("all");
+  const [typeFilter, setTypeFilter] = useState<string>(ALL);
+  const [widthFilter, setWidthFilter] = useState<string>(ALL);
+  const [thicknessFilter, setThicknessFilter] = useState<string>(ALL);
+  const [pitchFilter, setPitchFilter] = useState<string>(ALL);
 
   async function load() {
     setLoading(true);
@@ -124,10 +172,52 @@ export default function BladePricesPage() {
     load();
   }, []);
 
-  const filtered = useMemo(() => {
-    if (typeFilter === "all") return rows;
-    return rows.filter((r) => r.blade_type === typeFilter);
-  }, [rows, typeFilter]);
+  const filters = useMemo<Filters>(
+    () => ({ type: typeFilter, width: widthFilter, thickness: thicknessFilter, pitch: pitchFilter }),
+    [typeFilter, widthFilter, thicknessFilter, pitchFilter]
+  );
+
+  const filtered = useMemo(
+    () => rows.filter((r) => matchesFilters(r, filters)).sort(compareRows),
+    [rows, filters]
+  );
+
+  // Her açılır liste yalnızca diğer seçimlerle birlikte sonuç veren değerleri gösterir.
+  const widthOptions = useMemo(
+    () =>
+      [...new Set(rows.filter((r) => matchesFilters(r, filters, "width")).map((r) => numKey(r.width_mm)))]
+        .sort(byNumber),
+    [rows, filters]
+  );
+  const thicknessOptions = useMemo(
+    () =>
+      [...new Set(rows.filter((r) => matchesFilters(r, filters, "thickness")).map((r) => numKey(r.thickness_mm)))]
+        .sort(byNumber),
+    [rows, filters]
+  );
+  const pitchOptions = useMemo(
+    () =>
+      [...new Set(rows.filter((r) => matchesFilters(r, filters, "pitch")).flatMap(rowPitches))]
+        .sort(byPitch),
+    [rows, filters]
+  );
+
+  // Tip değişince (ya da satır silinince) artık sonuç vermeyen seçimi sıfırla.
+  useEffect(() => {
+    if (widthFilter !== ALL && !widthOptions.includes(widthFilter)) setWidthFilter(ALL);
+    if (thicknessFilter !== ALL && !thicknessOptions.includes(thicknessFilter)) setThicknessFilter(ALL);
+    if (pitchFilter !== ALL && !pitchOptions.includes(pitchFilter)) setPitchFilter(ALL);
+  }, [widthOptions, thicknessOptions, pitchOptions, widthFilter, thicknessFilter, pitchFilter]);
+
+  const anyFilter =
+    typeFilter !== ALL || widthFilter !== ALL || thicknessFilter !== ALL || pitchFilter !== ALL;
+
+  function clearFilters() {
+    setTypeFilter(ALL);
+    setWidthFilter(ALL);
+    setThicknessFilter(ALL);
+    setPitchFilter(ALL);
+  }
 
   function openNew() {
     setEditingId(null);
@@ -259,13 +349,20 @@ export default function BladePricesPage() {
             tanımlayın. Frontend sadece burada tanımlı seçenekleri gösterir.
           </Text>
         </div>
-        <div className="flex items-center gap-3">
+        <Button variant="primary" onClick={openNew}>
+          <Plus className="mr-1" /> Yeni Satır
+        </Button>
+      </div>
+
+      <div className="flex flex-wrap items-end gap-3 px-6 py-4 border-b border-ui-border-base">
+        <div className="space-y-1">
+          <Label size="xsmall">Tip</Label>
           <Select value={typeFilter} onValueChange={setTypeFilter}>
             <Select.Trigger className="w-44">
-              <Select.Value placeholder="Tipe göre filtrele" />
+              <Select.Value />
             </Select.Trigger>
             <Select.Content>
-              <Select.Item value="all">Tüm Tipler</Select.Item>
+              <Select.Item value={ALL}>Tüm Tipler</Select.Item>
               {BLADE_TYPES.map((t) => (
                 <Select.Item key={t.value} value={t.value}>
                   {t.label}
@@ -273,10 +370,65 @@ export default function BladePricesPage() {
               ))}
             </Select.Content>
           </Select>
-          <Button variant="primary" onClick={openNew}>
-            <Plus className="mr-1" /> Yeni Satır
-          </Button>
         </div>
+        <div className="space-y-1">
+          <Label size="xsmall">Genişlik (mm)</Label>
+          <Select value={widthFilter} onValueChange={setWidthFilter}>
+            <Select.Trigger className="w-36">
+              <Select.Value />
+            </Select.Trigger>
+            <Select.Content>
+              <Select.Item value={ALL}>Tümü</Select.Item>
+              {widthOptions.map((w) => (
+                <Select.Item key={w} value={w}>
+                  {w}
+                </Select.Item>
+              ))}
+            </Select.Content>
+          </Select>
+        </div>
+        <div className="space-y-1">
+          <Label size="xsmall">Kalınlık (mm)</Label>
+          <Select value={thicknessFilter} onValueChange={setThicknessFilter}>
+            <Select.Trigger className="w-36">
+              <Select.Value />
+            </Select.Trigger>
+            <Select.Content>
+              <Select.Item value={ALL}>Tümü</Select.Item>
+              {thicknessOptions.map((t) => (
+                <Select.Item key={t} value={t}>
+                  {t}
+                </Select.Item>
+              ))}
+            </Select.Content>
+          </Select>
+        </div>
+        <div className="space-y-1">
+          <Label size="xsmall">Diş (TPI)</Label>
+          <Select value={pitchFilter} onValueChange={setPitchFilter}>
+            <Select.Trigger className="w-36">
+              <Select.Value />
+            </Select.Trigger>
+            <Select.Content>
+              <Select.Item value={ALL}>Tümü</Select.Item>
+              {pitchOptions.map((p) => (
+                <Select.Item key={p} value={p}>
+                  {p === NO_PITCH ? "TPI'siz" : p}
+                </Select.Item>
+              ))}
+            </Select.Content>
+          </Select>
+        </div>
+        {anyFilter && (
+          <Button variant="secondary" onClick={clearFilters}>
+            Filtreleri temizle
+          </Button>
+        )}
+        {!loading && (
+          <Text size="small" className="text-ui-fg-subtle ml-auto self-center">
+            {anyFilter ? `${filtered.length} / ${rows.length} satır` : `${rows.length} satır`}
+          </Text>
+        )}
       </div>
 
       <div className="px-6 py-4">
@@ -284,7 +436,9 @@ export default function BladePricesPage() {
           <Text className="text-ui-fg-subtle">Yükleniyor...</Text>
         ) : filtered.length === 0 ? (
           <div className="text-center py-12">
-            <Text className="text-ui-fg-subtle">Henüz fiyat satırı yok.</Text>
+            <Text className="text-ui-fg-subtle">
+              {rows.length === 0 ? "Henüz fiyat satırı yok." : "Bu filtrelere uyan satır yok."}
+            </Text>
           </div>
         ) : (
           <Table>
