@@ -877,10 +877,10 @@
     "10 mm ahşap şerit lazım",
     "modelcilik için dar şerit"
    ],
-   "answer_tr": "Sitede seçilebilen en dar Ahşap Kesim bıçağı 13 mm'dir ve yaklaşık 65 mm'den küçük yarıçapları kesmeye uygun değildir. 3, 6 veya 10 mm gibi dar ahşap bıçaklarını şu an sipariş ekranında sunmuyoruz. Böyle bir ihtiyacınız varsa ölçü ve makine bilgisiyle bize yazın; tedarik edip edemeyeceğimizi bildirelim.",
+   "answer_tr": "Sitede seçilebilen en dar Ahşap Kesim bıçağı 8 mm'dir (8 × 0,5 mm; 4, 5 veya 6 TPI). Sonraki genişlik olan 13 mm, yaklaşık 65 mm'den küçük yarıçapları kesmeye uygun değildir. 3, 6 veya 10 mm gibi dar ahşap bıçaklarını şu an sipariş ekranında sunmuyoruz. Böyle bir ihtiyacınız varsa ölçü ve makine bilgisiyle bize yazın; tedarik edip edemeyeceğimizi bildirelim.",
    "facts": [
     {
-     "claim_tr": "woodcut matrisinde en dar genişlik 13 mm.",
+     "claim_tr": "woodcut matrisinde en dar genişlik 8 mm (8×0,5; 4, 5, 6 TPI), sonraki 13 mm.",
      "value": "13",
      "unit": "mm",
      "source_ids": [

@@ -39,8 +39,9 @@ const BLADE_TYPES = [
   { value: "textile", label: "Sünger / Tekstil" },
 ];
 
+// Tip bilerek boş: varsayılan tip, satırın sessizce yanlış ürüne yazılmasına yol açıyordu.
 const EMPTY_FORM: Form = {
-  blade_type: "bi-metal",
+  blade_type: "",
   width_mm: "",
   thickness_mm: "",
   tooth_pitch: "",
@@ -91,6 +92,9 @@ function parseDecimal(raw: string): number {
   if (cleaned === "") return NaN;
   return Number(cleaned);
 }
+
+const typeLabel = (value: string) =>
+  BLADE_TYPES.find((t) => t.value === value)?.label || value;
 
 const fmtMoney = (n: number | string, ccy: string) =>
   `${Number(n).toLocaleString("tr-TR", {
@@ -222,7 +226,8 @@ export default function BladePricesPage() {
 
   function openNew() {
     setEditingId(null);
-    setForm(EMPTY_FORM);
+    // Tabloda bir tip seçiliyse satır o tipe eklenir
+    setForm({ ...EMPTY_FORM, blade_type: typeFilter === ALL ? "" : typeFilter });
     setOpen(true);
   }
 
@@ -314,16 +319,25 @@ export default function BladePricesPage() {
           { method: "POST", body: JSON.stringify(body) }
         );
         const n = r.blade_prices?.length ?? 1;
-        toast.success(n > 1 ? `${n} satır eklendi` : "Eklendi", {
+        toast.success(`${typeLabel(body.blade_type)}: ${n > 1 ? `${n} satır eklendi` : "eklendi"}`, {
           description: r.skipped?.length
             ? `Bu ölçüde zaten vardı, eklenmedi: ${r.skipped.join(", ")}`
             : undefined,
         });
       }
       setOpen(false);
+      // Kaydedilen satır filtre yüzünden gizli kalmasın
+      if (typeFilter !== ALL) setTypeFilter(body.blade_type);
+      if (!editingId) {
+        setWidthFilter(ALL);
+        setThicknessFilter(ALL);
+        setPitchFilter(ALL);
+      }
       await load();
     } catch (e) {
-      toast.error("Kayıt başarısız", { description: String(e) });
+      toast.error("Kayıt başarısız", {
+        description: `${typeLabel(body.blade_type)}: ${String(e)}`,
+      });
     } finally {
       setSaving(false);
     }
@@ -537,7 +551,7 @@ export default function BladePricesPage() {
                 onValueChange={(v) => setForm({ ...form, blade_type: v })}
               >
                 <Select.Trigger>
-                  <Select.Value />
+                  <Select.Value placeholder="Tip seçin" />
                 </Select.Trigger>
                 <Select.Content>
                   {BLADE_TYPES.map((t) => (
