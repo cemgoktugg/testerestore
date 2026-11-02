@@ -7,6 +7,7 @@ const CART_ID_KEY = "ts_cart_id";
 
 const CART_FIELDS = [
   "id",
+  "metadata",
   "items",
   "*items",
   "*items.variant",

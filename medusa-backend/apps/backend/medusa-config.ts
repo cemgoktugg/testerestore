@@ -84,6 +84,9 @@ module.exports = defineConfig({
       resolve: "./src/modules/blade-price-matrix",
     },
     {
+      resolve: "./src/modules/dealer-pricing",
+    },
+    {
       resolve: "./src/modules/product-review",
     },
     {

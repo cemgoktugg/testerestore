@@ -6,6 +6,7 @@
  * hem `req.body` hem `req.validatedBody` temizlenir.
  */
 import {
+  authenticate,
   defineMiddlewares,
   type MedusaNextFunction,
   type MedusaRequest,
@@ -17,6 +18,7 @@ import {
   isMatrixLineMetadata,
   productForVariant,
 } from "../lib/blade-guard";
+import { DEALER_LOGIN_REQUIRED, isDealerEmail } from "../lib/dealer-pricing";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyBody = Record<string, any> | undefined;
@@ -108,8 +110,56 @@ async function guardStandardLineUpdate(
   }
 }
 
+/**
+ * Medusa, oturumsuz açılan sepeti e-postadaki hesaba bağlar; bayi e-postasını
+ * bilen biri böylece bayi fiyatı alabilirdi. Oturum varsa sepet zaten oturumun
+ * müşterisine açılır, e-posta eşleşmesi devreye girmez.
+ */
+async function guardDealerEmailOnCartCreate(
+  req: MedusaRequest,
+  res: MedusaResponse,
+  next: MedusaNextFunction
+) {
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const anonymous = !(req as any).auth_context?.actor_id;
+    if (anonymous && (await isDealerEmail(req.scope, (req.body as AnyBody)?.email))) {
+      res.status(403).json({ type: "not_allowed", message: DEALER_LOGIN_REQUIRED });
+      return;
+    }
+    next();
+  } catch (e) {
+    next(e);
+  }
+}
+
+/** Giriş yapılmışsa müşteriyi tanır, yapılmamışsa isteği anonim bırakır. */
+const optionalCustomer = authenticate("customer", ["session", "bearer"], {
+  allowUnauthenticated: true,
+});
+
 export default defineMiddlewares({
   routes: [
+    {
+      matcher: "/store/carts",
+      method: ["POST"],
+      middlewares: [optionalCustomer, guardDealerEmailOnCartCreate],
+    },
+    {
+      matcher: "/store/blade-price/calculate",
+      method: ["POST"],
+      middlewares: [optionalCustomer],
+    },
+    {
+      matcher: "/store/dealer/me",
+      method: ["GET"],
+      middlewares: [optionalCustomer],
+    },
+    {
+      matcher: "/store/dealer/sync-cart",
+      method: ["POST"],
+      middlewares: [authenticate("customer", ["session", "bearer"])],
+    },
     {
       matcher: "/store/payment-collections/:id/payment-sessions",
       method: ["POST"],

@@ -7,6 +7,7 @@ import {
   Zap, PackageCheck, Truck, ArrowRight, ChevronLeft, ChevronRight,
 } from 'lucide-react';
 import { useReadyMade } from '../../lib/medusa/hooks/useProducts';
+import { useDealer } from '../context/DealerContext';
 import { mapReadyMadeCard, formatTL, type ReadyMadeCard } from '../../lib/ready-made';
 import type { StoreProduct } from '../../lib/medusa/types';
 
@@ -17,11 +18,13 @@ export default function HazirBoySection({
 }: { initialReadyMade?: StoreProduct[] } = {}) {
   const { data: medusaReady } = useReadyMade(24, { enabled: !initialReadyMade?.length });
 
+  const { applyDealerPrices } = useDealer();
+
   const cards = useMemo<ReadyMadeCard[]>(() => {
     // SSR prop (initialReadyMade) ilk render'ı doldurur; client fetch tazeler.
     const source = medusaReady?.length ? medusaReady : initialReadyMade;
-    return (source ?? []).map(mapReadyMadeCard);
-  }, [medusaReady, initialReadyMade]);
+    return (source ?? []).map((p) => mapReadyMadeCard(applyDealerPrices(p)));
+  }, [medusaReady, initialReadyMade, applyDealerPrices]);
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);

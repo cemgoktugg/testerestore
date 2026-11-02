@@ -4,6 +4,7 @@ import "./globals.css";
 import { ThemeProvider } from "./context/ThemeContext";
 import { CartProvider } from "./context/CartContext";
 import { CustomerProvider } from "./context/CustomerContext";
+import { DealerProvider } from "./context/DealerContext";
 import { siteContent } from "../lib/content-config";
 import CookieBanner from "./components/CookieBanner";
 import WhatsAppButton from "./components/WhatsAppButton";
@@ -105,12 +106,14 @@ export default function RootLayout({
         <ThemeProvider>
           <CustomerProvider>
             <CartProvider>
-              {children}
-              <CookieBanner />
-              <WhatsAppButton />
-              <DeferredWidgets />
-              <OrganizationJsonLd />
-              <Analytics />
+              <DealerProvider>
+                {children}
+                <CookieBanner />
+                <WhatsAppButton />
+                <DeferredWidgets />
+                <OrganizationJsonLd />
+                <Analytics />
+              </DealerProvider>
             </CartProvider>
           </CustomerProvider>
         </ThemeProvider>

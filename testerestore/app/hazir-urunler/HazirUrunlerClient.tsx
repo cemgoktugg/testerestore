@@ -5,6 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { PackageCheck, Truck, ArrowRight, SlidersHorizontal } from 'lucide-react';
 import { useReadyMade } from '../../lib/medusa/hooks/useProducts';
+import { useDealer } from '../context/DealerContext';
 import { mapReadyMadeCard, formatTL, type ReadyMadeCard } from '../../lib/ready-made';
 import type { StoreProduct } from '../../lib/medusa/types';
 
@@ -63,10 +64,12 @@ export default function HazirUrunlerClient({
 }: { initialReadyMade?: StoreProduct[] } = {}) {
   const { data: medusaReady } = useReadyMade(200);
 
+  const { applyDealerPrices } = useDealer();
+
   const all = useMemo<ReadyMadeCard[]>(() => {
     const source = medusaReady?.length ? medusaReady : initialReadyMade;
-    return (source ?? []).map(mapReadyMadeCard);
-  }, [medusaReady, initialReadyMade]);
+    return (source ?? []).map((p) => mapReadyMadeCard(applyDealerPrices(p)));
+  }, [medusaReady, initialReadyMade, applyDealerPrices]);
 
   const families = useMemo(
     () => Array.from(new Set(all.map((c) => c.family))).sort((a, b) => a.localeCompare(b, 'tr')),

@@ -28,6 +28,7 @@ import RichText from '../../components/RichText';
 import { BreadcrumbJsonLd } from '../../components/StructuredData';
 import { recordRecentlyViewed } from '../../../lib/recently-viewed';
 import { useCart } from '../../context/CartContext';
+import { useDealer } from '../../context/DealerContext';
 import {
   ArrowLeft, CheckCircle2, ShieldAlert, FileText, Info, Eye, Image as ImageIcon,
   Sparkles, ShoppingCart, FileDown, BookOpen, TrendingUp, ArrowRight,
@@ -154,7 +155,11 @@ export default function ProductDetailClient({
   slug: string;
 }) {
   // Ürün sunucuda (SSR/ISR) çekilir ve prop olarak gelir — client fetch yok.
-  const medusaProduct = initialProduct;
+  const { applyDealerPrices } = useDealer();
+  const medusaProduct = useMemo(
+    () => applyDealerPrices(initialProduct),
+    [applyDealerPrices, initialProduct]
+  );
   const loading = false;
   const { addToMedusaCart, addToCart } = useCart();
 

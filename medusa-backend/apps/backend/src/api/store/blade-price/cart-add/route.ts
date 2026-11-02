@@ -1,6 +1,7 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http";
 import { z } from "zod";
 import { addToCartWorkflow } from "@medusajs/medusa/core-flows";
+import { Modules } from "@medusajs/framework/utils";
 import { computeBladeLine } from "../../../../lib/blade-line";
 import {
   assertMatrixAllowedForProduct,
@@ -71,7 +72,20 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     return;
   }
 
-  const pricing = await computeBladeLine(req.scope, { ...blade, quantity });
+  const cart = await req.scope
+    .resolve(Modules.CART)
+    .retrieveCart(cart_id, { select: ["id", "customer_id"] })
+    .catch(() => null);
+  if (!cart) {
+    res.status(404).json({ message: "Cart not found" });
+    return;
+  }
+
+  const pricing = await computeBladeLine(req.scope, {
+    ...blade,
+    quantity,
+    customer_id: cart.customer_id,
+  });
   if (!pricing) {
     res.status(404).json({
       message: "No price defined for the selected combination",

@@ -15,5 +15,5 @@ completeCartWorkflow.hooks.validate(async ({ cart }, { container }) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const c = cart as any;
   if (c?.completed_at) return;
-  await assertCartBladeLinesValid(container, c?.items || []);
+  await assertCartBladeLinesValid(container, c?.items || [], c?.customer_id ?? c?.customer?.id);
 });

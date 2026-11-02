@@ -123,7 +123,8 @@ type CartItemLike = {
  */
 export async function assertCartBladeLinesValid(
   container: MedusaContainer,
-  items: CartItemLike[]
+  items: CartItemLike[],
+  customerId?: string | null
 ): Promise<void> {
   for (const it of items || []) {
     if (!it?.variant_id) continue;
@@ -154,6 +155,7 @@ export async function assertCartBladeLinesValid(
       tooth_pitch: (md.tooth_pitch as string | null) ?? null,
       length_mm: lengthMm,
       quantity,
+      customer_id: customerId,
     });
     const unitPrice = Number(it.unit_price?.valueOf?.() ?? it.unit_price);
     if (!pricing || Math.abs(pricing.unit_price - unitPrice) > 0.01) {

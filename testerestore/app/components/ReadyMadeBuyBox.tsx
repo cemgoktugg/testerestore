@@ -14,6 +14,7 @@ import { useState } from 'react';
 import { PackageCheck, Truck, ShoppingCart, Sparkles, Ruler } from 'lucide-react';
 import FreeShippingNote from './FreeShippingNote';
 import { useCart } from '../context/CartContext';
+import { useDealer } from '../context/DealerContext';
 import { formatMoney } from '../../lib/medusa/format';
 import { mapReadyMadeCard } from '../../lib/ready-made';
 import { MEDUSA_READY } from '../../lib/medusa/config';
@@ -29,6 +30,7 @@ interface Props {
 
 export default function ReadyMadeBuyBox({ product, image, categoryLabel }: Props) {
   const { addToCart, addToMedusaCart } = useCart();
+  const { variantPrices } = useDealer();
   const [quantity, setQuantity] = useState(1);
   const [added, setAdded] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -37,6 +39,7 @@ export default function ReadyMadeBuyBox({ product, image, categoryLabel }: Props
   const card = mapReadyMadeCard(product);
   const variant = product.variants?.[0];
   const unitPrice = card.price;
+  const isDealerPrice = !!variant && variantPrices?.[variant.id] !== undefined;
   const currency = card.currency;
 
   const specRows: Array<{ label: string; value: string }> = [];
@@ -183,7 +186,7 @@ export default function ReadyMadeBuyBox({ product, image, categoryLabel }: Props
       {/* Fiyat özeti */}
       <div className="rounded-xl bg-muted/40 p-4 border border-border space-y-2">
         <div className="flex justify-between text-xs text-muted-foreground">
-          <span>Birim fiyat:</span>
+          <span>{isDealerPrice ? 'Bayi fiyatı:' : 'Birim fiyat:'}</span>
           <span className="font-semibold text-foreground">
             {formatMoney(unitPrice, currency)}
           </span>

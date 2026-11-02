@@ -1,3 +1,4 @@
+import { medusa } from "../client";
 import {
   MEDUSA_BACKEND_URL,
   MEDUSA_PUBLISHABLE_KEY,
@@ -34,6 +35,8 @@ export interface BladePriceCalc {
   /** (unit_price + welding_fee) × quantity — welding is charged per blade. */
   total_price: number;
   currency_code: string;
+  /** Bayi fiyatı uygulandı; adet indirimi eklenmez. */
+  dealer_price?: boolean;
 }
 
 const HEADERS: HeadersInit = {
@@ -80,22 +83,21 @@ export interface CalculateInput {
  * Asks the backend to price a specific (type, width, thickness, pitch?,
  * length, quantity) combination. Returns `null` when the combination has
  * no matrix row — caller should render "Bu ölçü için fiyat tanımlı değil".
+ *
+ * SDK üzerinden çağrılır ki giriş yapmış bayi kendi fiyatını görsün.
  */
 export async function calculateBladePrice(
   input: CalculateInput
 ): Promise<BladePriceCalc | null> {
   if (!MEDUSA_READY) return null;
   try {
-    const res = await fetch(`${MEDUSA_BACKEND_URL}/store/blade-price/calculate`, {
+    return await medusa.client.fetch<BladePriceCalc>("/store/blade-price/calculate", {
       method: "POST",
-      headers: HEADERS,
-      body: JSON.stringify(input),
+      body: input,
       cache: "no-store",
     });
-    if (res.status === 404) return null;
-    if (!res.ok) return null;
-    return (await res.json()) as BladePriceCalc;
   } catch (e) {
+    if ((e as { status?: number })?.status === 404) return null;
     console.error("[medusa] calculateBladePrice failed", e);
     return null;
   }

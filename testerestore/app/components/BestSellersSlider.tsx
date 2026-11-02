@@ -7,6 +7,7 @@ import {
   TrendingUp, ArrowRight, ChevronLeft, ChevronRight,
 } from 'lucide-react';
 import { useBestSellers } from '../../lib/medusa/hooks/useProducts';
+import { useDealer } from '../context/DealerContext';
 import { getProductImage } from '../../lib/medusa/format';
 import type { StoreProduct } from '../../lib/medusa/types';
 import { siteContent } from '../../lib/content-config';
@@ -46,12 +47,14 @@ export default function BestSellersSlider({
     enabled: !initialBestSellers?.length,
   });
 
+  const { applyDealerPrices } = useDealer();
+
   const bestSellers = useMemo<BestSeller[]>(() => {
     // SSR prop (initialBestSellers) ilk render'da doldurur; client fetch tazeler.
     const source = medusaBestSellers?.length ? medusaBestSellers : initialBestSellers;
     // Ürün gelmezse demo kart yok (olmayan ürünlere link veriyordu) → bölüm gizlenir.
-    return source?.length ? mapMedusaToBestSeller(source) : [];
-  }, [medusaBestSellers, initialBestSellers]);
+    return source?.length ? mapMedusaToBestSeller(source.map(applyDealerPrices)) : [];
+  }, [medusaBestSellers, initialBestSellers, applyDealerPrices]);
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);

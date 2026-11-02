@@ -7,6 +7,7 @@ import { useSearchParams } from 'next/navigation';
 import { ArrowRight, ChevronDown, X as XIcon } from 'lucide-react';
 import { useProducts } from '../../lib/medusa/hooks/useProducts';
 import { useCategories } from '../../lib/medusa/hooks/useCategories';
+import { useDealer } from '../context/DealerContext';
 import { getProductImage } from '../../lib/medusa/format';
 import type { StoreProduct, StoreProductCategory } from '../../lib/medusa/types';
 import { siteContent } from '../../lib/content-config';
@@ -134,6 +135,8 @@ function PremiumCatalogView({
     enabled: !initialCategories?.length,
   });
 
+  const { applyDealerPrices } = useDealer();
+
   const items = useMemo<CatalogCardData[]>(() => {
     // SSR prop'ları (initialProducts/Categories) ilk render'ı doldurur; client tazeler.
     const products = productsResp?.products?.length
@@ -145,7 +148,7 @@ function PremiumCatalogView({
       // bölümünde/sayfasında listelenirler. Grid sadece yapılandırılabilir
       // aileleri gösterir, yoksa hazır boylar grid'i boğar.
       const configurable = products.filter((p) => !isReadyMade(p));
-      return mapMedusaToCard(configurable, cats);
+      return mapMedusaToCard(configurable.map(applyDealerPrices), cats);
     }
     // Backend'den ürün gelmediyse uydurma demo kartı gösterme — olmayan ürün
     // sayfalarına (kraken-machine, meat-bone…) link veriyordu.

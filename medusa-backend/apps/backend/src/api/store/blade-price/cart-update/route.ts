@@ -103,6 +103,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     tooth_pitch: toothPitch,
     length_mm: lengthMm,
     quantity,
+    customer_id: cart.customer_id,
   });
   if (!pricing) {
     res.status(404).json({

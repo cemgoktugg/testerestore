@@ -31,6 +31,7 @@ import {
 } from "@medusajs/medusa/core-flows";
 import { Modules, ContainerRegistrationKeys } from "@medusajs/framework/utils";
 import { computeBladeLine } from "../../../lib/blade-line";
+import { DEALER_LOGIN_REQUIRED, isDealerEmail } from "../../../lib/dealer-pricing";
 import {
   assertMatrixAllowedForProduct,
   isConfigurableBlade,
@@ -408,6 +409,12 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     ((req as any).publishable_key_context?.sales_channel_ids ?? []) as string[];
   const salesChannelId =
     pubKeyChannels.length === 1 ? pubKeyChannels[0] : undefined;
+
+  // Sepet bu e-postanın hesabına bağlanır; bayi fiyatı oturum olmadan açılmasın.
+  if (await isDealerEmail(req.scope, data.email)) {
+    res.status(409).json({ message: DEALER_LOGIN_REQUIRED, code: "LOGIN_REQUIRED" });
+    return;
+  }
 
   let cartId: string;
   try {

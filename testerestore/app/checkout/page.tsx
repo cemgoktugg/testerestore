@@ -219,7 +219,7 @@ export default function CheckoutPage() {
         : toAddress(bill, billPhoneNorm, company);
 
       // 1. E-posta, adresler ve fatura bilgileri → sepet (metadata siparişe taşınır)
-      await updateCart({
+      const savedCart = await updateCart({
         email,
         shipping_address: shippingAddress,
         billing_address: billingAddress,
@@ -233,6 +233,9 @@ export default function CheckoutPage() {
             : {}),
         },
       });
+      if (!savedCart) {
+        throw new Error('Bilgileriniz kaydedilemedi. Bu e-posta ile bir hesabınız varsa giriş yapıp tekrar deneyin.');
+      }
 
       // 2. Kargo: müşterinin seçtiği seçenek. Fiyatı Medusa'daki kural hesaplar
       //    (ücretsiz kargo eşiği sunucuda — tarayıcı fiyata karar veremez).

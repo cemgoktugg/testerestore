@@ -45,6 +45,7 @@ import {
   calculateBladePrice,
   type BladePriceCalc,
 } from '../../lib/medusa/services/blade-price';
+import { useDealer } from '../context/DealerContext';
 import StockIndicator from './StockIndicator';
 import ReadyMadeSuggestionPopup from './ReadyMadeSuggestionPopup';
 import {
@@ -111,6 +112,7 @@ export default function BladeConfigurator({
   onOpen3D,
 }: BladeConfiguratorProps) {
   const { addToCart, addToMedusaCart } = useCart();
+  const { isDealer } = useDealer();
   const hasMedusa = !!product;
 
   // ---- Matrix mode ----
@@ -401,6 +403,7 @@ export default function BladeConfigurator({
     matrixToothPitchesHasNull,
     length,
     quantity,
+    isDealer,
   ]);
 
   // ---- Legacy price breakdown ----
@@ -707,7 +710,8 @@ export default function BladeConfigurator({
   const displayBreakdown = matrixHasData
     ? matrixCalc
       ? (() => {
-          const pct = getDiscountPercent(quantity);
+          // Bayi fiyatına adet indirimi eklenmez (sunucuyla aynı kural).
+          const pct = matrixCalc.dealer_price ? 0 : getDiscountPercent(quantity);
           const totalBeforeDiscount = matrixCalc.total_price;
           // 2-decimal rounding aynı backend'de cart-add içinde de kullanılır.
           // Tam sayıya yuvarlama yapma — yoksa sepetle birkaç kuruş farkı çıkar.
@@ -947,7 +951,14 @@ export default function BladeConfigurator({
           </div>
         </div>
 
+        {matrixCalc?.dealer_price && (
+          <p className="rounded-xl border border-accent/30 bg-accent/10 px-3 py-2 text-xs font-semibold text-accent">
+            Size özel bayi fiyatı uygulanıyor. Bayi fiyatına adet indirimi eklenmez.
+          </p>
+        )}
+
         {/* Discount tiers — 3/5/10+ adet için %5/%10/%15 indirim. */}
+        {!matrixCalc?.dealer_price && (
         <div>
           <label className="block text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">
             Adet İndirimleri
@@ -989,6 +1000,7 @@ export default function BladeConfigurator({
             })}
           </div>
         </div>
+        )}
 
         {/* Validation */}
         {validation && (

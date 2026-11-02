@@ -13,10 +13,14 @@
  *                           (her bıçak ayrı kaynatılır → kaynak ücreti ADET BAŞINA)
  *   total_price           = total_before_discount × (100 - indirim) / 100
  *   unit_price            = total_price / quantity     (indirim amortize)
+ *
+ * `customer_id` aktif bir bayiyse fiyatlar bayi listesinden gelir; bayi fiyatlı
+ * satıra adet indirimi uygulanmaz (src/lib/dealer-pricing.ts).
  */
 import type { MedusaContainer } from "@medusajs/framework/types";
 import type BladePriceMatrixService from "../modules/blade-price-matrix/service";
 import { BLADE_PRICE_MATRIX_MODULE } from "../modules/blade-price-matrix";
+import { resolveBladeRates } from "./dealer-pricing";
 
 export interface BladeLineInput {
   blade_type: string;
@@ -25,6 +29,8 @@ export interface BladeLineInput {
   tooth_pitch?: string | null;
   length_mm: number;
   quantity: number;
+  /** Fiyatın kime hesaplandığı; sepette `cart.customer_id`. */
+  customer_id?: string | null;
 }
 
 export interface BladeLinePricing {
@@ -74,13 +80,17 @@ export async function computeBladeLine(
   if (rows.length === 0) return null;
 
   const row = rows[0] as {
+    id: string;
     price_per_meter: number | string;
     welding_fee: number | string;
     currency_code: string;
   };
 
-  const pricePerMeter = Number(row.price_per_meter);
-  const weldingFee = Number(row.welding_fee ?? 0);
+  const { pricePerMeter, weldingFee, dealerPrice } = await resolveBladeRates(
+    container,
+    row,
+    input.customer_id
+  );
   const lengthMeter = input.length_mm / 1000;
   const quantity = Math.max(1, input.quantity);
 
@@ -88,7 +98,7 @@ export async function computeBladeLine(
   const subtotal = bladeUnitPrice * quantity;
   const totalBeforeDiscount = (bladeUnitPrice + weldingFee) * quantity;
 
-  const discountPercent = qtyDiscountPercent(quantity);
+  const discountPercent = dealerPrice ? 0 : qtyDiscountPercent(quantity);
   const totalPrice =
     discountPercent > 0
       ? (totalBeforeDiscount * (100 - discountPercent)) / 100
@@ -120,6 +130,7 @@ export async function computeBladeLine(
       discount_percent: discountPercent,
       total_price: round2(totalPrice),
       currency_code: row.currency_code,
+      dealer_price: dealerPrice,
       // Sepet/sipariş ekranlarının beklediği eski anahtarlar
       width: `${input.width_mm}mm`,
       thickness: `${input.thickness_mm}mm`,

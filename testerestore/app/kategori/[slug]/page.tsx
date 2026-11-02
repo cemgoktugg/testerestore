@@ -5,6 +5,7 @@ import { notFound } from 'next/navigation';
 import { ArrowRight, CheckCircle2, ChevronDown, Truck } from 'lucide-react';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
+import DealerPrice from '../../components/DealerPrice';
 import { JsonLd } from '../../components/StructuredData';
 import { listProducts } from '../../../lib/medusa/services/products';
 import { listCategories } from '../../../lib/medusa/services/categories';
@@ -284,7 +285,11 @@ function CategoryProductCard({ product }: { product: StoreProduct }) {
         )}
         <div className="mt-auto flex items-center justify-between pt-4">
           {card && card.price > 0 ? (
-            <span className="text-sm font-bold text-white">{formatTL(card.price)}</span>
+            <DealerPrice
+              variantId={product.variants?.[0]?.id}
+              price={card.price}
+              className="text-sm font-bold text-white"
+            />
           ) : (
             <span className="text-xs font-semibold text-[#c7c9cc]">Ölçünüzü seçin</span>
           )}

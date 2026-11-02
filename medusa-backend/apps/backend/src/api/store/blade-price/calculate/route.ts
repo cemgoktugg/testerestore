@@ -2,6 +2,7 @@ import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http";
 import { z } from "zod";
 import type BladePriceMatrixService from "../../../../modules/blade-price-matrix/service";
 import { BLADE_PRICE_MATRIX_MODULE } from "../../../../modules/blade-price-matrix";
+import { resolveBladeRates } from "../../../../lib/dealer-pricing";
 
 // Server-side length bounds (mm). The configurator UI already enforces these
 // per-product, but the API must not trust the client: a crafted request could
@@ -33,6 +34,9 @@ const CalcSchema = z.object({
  * Every blade is a separately welded loop, so the welding fee is charged per
  * blade — 2 blades always cost exactly 2 × the single-blade price (before
  * the qty tier discount). Must match `src/lib/blade-line.ts`.
+ *
+ * Giriş yapmış bayi kendi fiyatını görür; `dealer_price: true` ise bu satıra
+ * adet indirimi uygulanmaz.
  *
  * 404 if no matrix row matches the chosen combination (caller should show
  * "Bu ölçü için fiyat tanımlı değil").
@@ -79,13 +83,18 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
   }
 
   const row = rows[0] as {
+    id: string;
     price_per_meter: number | string;
     welding_fee: number | string;
     currency_code: string;
   };
 
-  const pricePerMeter = Number(row.price_per_meter);
-  const weldingFee = Number(row.welding_fee ?? 0);
+  const { pricePerMeter, weldingFee, dealerPrice } = await resolveBladeRates(
+    req.scope,
+    row,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (req as any).auth_context?.actor_id
+  );
   const lengthMeter = length_mm / 1000;
 
   // Welding is added per blade (each blade is welded separately).
@@ -110,5 +119,6 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     subtotal: round2(subtotal),
     total_price: round2(totalPrice),
     currency_code: row.currency_code,
+    dealer_price: dealerPrice,
   });
 }
