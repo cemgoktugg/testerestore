@@ -94,7 +94,7 @@ const Schema = z.object({
 // e-postadan elle kopyalanıyor, okunabilir olması gerekiyor.
 const PW_ALPHABET = "ABCDEFGHJKMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789";
 
-function generateTempPassword(length = 12): string {
+export function generateTempPassword(length = 12): string {
   let out = "";
   for (let i = 0; i < length; i++) {
     out += PW_ALPHABET[randomInt(0, PW_ALPHABET.length)];

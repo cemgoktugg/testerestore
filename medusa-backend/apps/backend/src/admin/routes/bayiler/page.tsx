@@ -11,6 +11,7 @@ interface Customer {
   email: string;
   first_name?: string | null;
   last_name?: string | null;
+  company_name?: string | null;
   has_account?: boolean;
 }
 
@@ -164,6 +165,7 @@ export default function DealersPage() {
   const [picked, setPicked] = useState<Customer | null>(null);
   const [company, setCompany] = useState("");
   const [note, setNote] = useState("");
+  const [issued, setIssued] = useState<{ email: string; password: string } | null>(null);
 
   const dealer = dealers.find((d) => d.id === dealerId) ?? null;
 
@@ -209,16 +211,31 @@ export default function DealersPage() {
     const t = setTimeout(async () => {
       try {
         const data = await api<{ customers: Customer[] }>(
-          `/admin/customers?q=${encodeURIComponent(q)}&limit=10&fields=id,email,first_name,last_name,has_account`
+          `/admin/customers?q=${encodeURIComponent(q)}&limit=10&fields=id,email,first_name,last_name,company_name,has_account`
         );
-        const taken = new Set(dealers.map((d) => d.customer_id));
-        setResults(data.customers.filter((c) => c.has_account && !taken.has(c.id)));
+        const taken = new Set(dealers.map((d) => d.customer?.email?.toLowerCase()));
+        // Aynı e-postanın şifreli ve şifresiz iki kaydı olabilir; bayilik şifreli olana bağlanır.
+        const withAccount = new Set(data.customers.filter((c) => c.has_account).map((c) => c.email));
+        const found = data.customers.filter(
+          (c) =>
+            !taken.has(c.email.toLowerCase()) && (c.has_account || !withAccount.has(c.email))
+        );
+        setResults(found);
+        // E-posta tam yazıldıysa ayrıca listeden seçmek gerekmesin.
+        const exact = found.find((c) => c.email.toLowerCase() === q.toLowerCase());
+        if (exact) pickCustomer(exact);
       } catch (e) {
         toast.error("Müşteri aranamadı", { description: String(e) });
       }
     }, 250);
     return () => clearTimeout(t);
   }, [query, newOpen, dealers]);
+
+  function pickCustomer(c: Customer) {
+    setPicked(c);
+    setQuery(c.email);
+    setCompany((cur) => cur || c.company_name || "");
+  }
 
   const value = (r: Row): Edit => edits[r.key] ?? { main: r.saved, weld: r.savedWeld };
 
@@ -337,7 +354,9 @@ export default function DealersPage() {
 
   async function createDealer() {
     if (!picked) {
-      toast.error("Müşteri seçin");
+      toast.error("Müşteri seçilmedi", {
+        description: "E-postayı veya adı yazıp çıkan listeden müşteriye tıklayın.",
+      });
       return;
     }
     if (!company.trim()) {
@@ -346,7 +365,10 @@ export default function DealersPage() {
     }
     setSaving(true);
     try {
-      const { dealer: created } = await api<{ dealer: Dealer }>("/admin/dealers", {
+      const { dealer: created, temp_password } = await api<{
+        dealer: Dealer;
+        temp_password?: string;
+      }>("/admin/dealers", {
         method: "POST",
         body: JSON.stringify({
           customer_id: picked.id,
@@ -355,7 +377,8 @@ export default function DealersPage() {
         }),
       });
       toast.success(`${created.company_name} bayi olarak eklendi`);
-      setNewOpen(false);
+      if (temp_password) setIssued({ email: picked.email, password: temp_password });
+      else setNewOpen(false);
       setPicked(null);
       setCompany("");
       setNote("");
@@ -420,6 +443,7 @@ export default function DealersPage() {
           onClick={() => {
             setPicked(null);
             setQuery("");
+            setIssued(null);
             setNewOpen(true);
           }}
         >
@@ -430,7 +454,7 @@ export default function DealersPage() {
       {dealers.length === 0 && !loading ? (
         <div className="px-6 py-10 text-center">
           <Text className="text-ui-fg-subtle">
-            Henüz bayi yok. Müşteri siteye üye olduktan sonra “Yeni Bayi” ile ekleyin.
+            Henüz bayi yok. “Yeni Bayi” ile bir müşteriyi bayi yapın.
           </Text>
         </div>
       ) : (
@@ -621,8 +645,22 @@ export default function DealersPage() {
             <Drawer.Title>Yeni Bayi</Drawer.Title>
           </Drawer.Header>
           <Drawer.Body className="flex flex-col gap-4 p-4">
+            {issued ? (
+              <div className="flex flex-col gap-3">
+                <Text weight="plus">Bayi eklendi, giriş hesabı açıldı</Text>
+                <Text size="small" className="text-ui-fg-subtle">
+                  Bu bilgileri müşteriye iletin. Şifre bir daha gösterilmez; müşteri ilk girişte
+                  kendi şifresini belirler.
+                </Text>
+                <div className="rounded-md border p-3">
+                  <Text size="small">E-posta: {issued.email}</Text>
+                  <Text size="small" weight="plus">Geçici şifre: {issued.password}</Text>
+                </div>
+              </div>
+            ) : (
+            <>
             <div>
-              <Label size="small">Müşteri (kayıtlı hesap)</Label>
+              <Label size="small">Müşteri</Label>
               <Input
                 placeholder="E-posta veya ad yazın"
                 value={query}
@@ -638,14 +676,12 @@ export default function DealersPage() {
                       key={c.id}
                       type="button"
                       className="px-3 py-2 text-left hover:bg-ui-bg-base-hover"
-                      onClick={() => {
-                        setPicked(c);
-                        setQuery(c.email);
-                      }}
+                      onClick={() => pickCustomer(c)}
                     >
                       <Text size="small" weight="plus">{c.email}</Text>
                       <Text size="xsmall" className="text-ui-fg-subtle">
                         {[c.first_name, c.last_name].filter(Boolean).join(" ") || "—"}
+                        {c.has_account ? "" : " · Giriş hesabı yok, açılacak"}
                       </Text>
                     </button>
                   ))}
@@ -653,7 +689,15 @@ export default function DealersPage() {
               )}
               {!picked && query.trim().length >= 2 && results.length === 0 && (
                 <Text size="xsmall" className="mt-2 text-ui-fg-subtle">
-                  Uygun hesap bulunamadı. Müşterinin siteye üye olması gerekir.
+                  Müşteri bulunamadı ya da zaten bayi. Önce Müşteriler sayfasından ekleyin.
+                </Text>
+              )}
+              {picked && (
+                <Text size="xsmall" className="mt-2 text-ui-fg-subtle">
+                  Seçildi: {picked.email}
+                  {picked.has_account
+                    ? ""
+                    : ". Giriş hesabı açılacak, geçici şifre size gösterilecek."}
                 </Text>
               )}
             </div>
@@ -665,14 +709,18 @@ export default function DealersPage() {
               <Label size="small">Not (isteğe bağlı)</Label>
               <Input value={note} onChange={(e) => setNote(e.target.value)} />
             </div>
+            </>
+            )}
           </Drawer.Body>
           <Drawer.Footer>
             <Button size="small" variant="secondary" onClick={() => setNewOpen(false)}>
-              Vazgeç
+              {issued ? "Kapat" : "Vazgeç"}
             </Button>
-            <Button size="small" onClick={createDealer} disabled={saving} isLoading={saving}>
-              Bayi Ekle
-            </Button>
+            {!issued && (
+              <Button size="small" onClick={createDealer} disabled={saving} isLoading={saving}>
+                Bayi Ekle
+              </Button>
+            )}
           </Drawer.Footer>
         </Drawer.Content>
       </Drawer>
