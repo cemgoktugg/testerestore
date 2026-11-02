@@ -1,6 +1,6 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http";
 import { findActiveDealer } from "../../../../lib/dealer-pricing";
-import { loadQuotes } from "../../../../lib/dealer-quote";
+import { loadQuotes, VISIBLE_QUOTE_STATUSES } from "../../../../lib/dealer-quote";
 
 /** GET /store/dealer/quotes — oturumdaki bayiye gönderilmiş teklifler. */
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
@@ -11,5 +11,5 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
     return;
   }
   res.setHeader("Cache-Control", "private, no-store");
-  res.json({ quotes: await loadQuotes(req.scope, { dealer_id: dealer.id, status: "sent" }) });
+  res.json({ quotes: await loadQuotes(req.scope, { dealer_id: dealer.id, status: VISIBLE_QUOTE_STATUSES }) });
 }

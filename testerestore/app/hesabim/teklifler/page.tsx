@@ -2,16 +2,30 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import { useCustomer } from "../../context/CustomerContext";
+import { useCart } from "../../context/CartContext";
 import { formatMoney } from "../../../lib/medusa/format";
 import {
+  acceptDealerQuote,
   downloadDealerQuotePdf,
   getDealerQuotes,
+  requestDealerQuoteRevision,
   type DealerQuote,
 } from "../../../lib/medusa/services/dealer";
-import { ArrowLeft, Download, FileText, Loader2 } from "lucide-react";
+import { ArrowLeft, Check, Download, FileText, Loader2, Pencil } from "lucide-react";
+
+const STATUS_LABELS: Record<DealerQuote["status"], string> = {
+  sent: "Yanıtınız bekleniyor",
+  revision_requested: "Revize talebiniz inceleniyor",
+  accepted: "Kabul edildi",
+  ordered: "Sipariş verildi",
+};
+
+/** "." veya "," ondalıklı girişi okur; sayısal değilse NaN. */
+const parseDecimal = (raw: string) => Number(raw.replace(",", ".").trim());
 
 export default function DealerQuotesPage() {
   const { customer, loading: customerLoading } = useCustomer();
@@ -19,6 +33,12 @@ export default function DealerQuotesPage() {
   const [loading, setLoading] = useState(true);
   const [downloading, setDownloading] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [busy, setBusy] = useState<string | null>(null);
+  const [revising, setRevising] = useState<string | null>(null);
+  const [prices, setPrices] = useState<Record<string, string>>({});
+  const [revisionNote, setRevisionNote] = useState("");
+  const { refreshCart } = useCart();
+  const router = useRouter();
 
   useEffect(() => {
     if (customerLoading) return;
@@ -39,6 +59,55 @@ export default function DealerQuotesPage() {
     const ok = await downloadDealerQuotePdf(q.id, q.number);
     if (!ok) setError("PDF indirilemedi. Lütfen tekrar deneyin.");
     setDownloading(null);
+  }
+
+  async function accept(q: DealerQuote) {
+    setBusy(q.id);
+    setError(null);
+    const failure = await acceptDealerQuote(q.id);
+    if (failure) {
+      setError(failure);
+      setBusy(null);
+      return;
+    }
+    await refreshCart();
+    router.push("/cart");
+  }
+
+  function startRevision(q: DealerQuote) {
+    setRevising(q.id);
+    setPrices({});
+    setRevisionNote("");
+    setError(null);
+  }
+
+  async function sendRevision(q: DealerQuote) {
+    const items = [];
+    for (const i of q.items) {
+      const raw = (prices[i.id] ?? "").trim();
+      if (!raw) continue;
+      const value = parseDecimal(raw);
+      if (!Number.isFinite(value) || value <= 0) {
+        setError(`${i.title}: geçerli bir fiyat yazın.`);
+        return;
+      }
+      items.push({ id: i.id, requested_unit_price: value });
+    }
+    const note = revisionNote.trim() || null;
+    if (!items.length && !note) {
+      setError("En az bir fiyat ya da not yazın.");
+      return;
+    }
+    setBusy(q.id);
+    setError(null);
+    const failure = await requestDealerQuoteRevision(q.id, { note, items });
+    if (failure) {
+      setError(failure);
+    } else {
+      setRevising(null);
+      setQuotes(await getDealerQuotes());
+    }
+    setBusy(null);
   }
 
   return (
@@ -84,14 +153,41 @@ export default function DealerQuotesPage() {
                     <div>
                       <h2 className="font-bold">{q.number}</h2>
                       <p className="text-xs text-muted-foreground">
-                        {new Date(q.sent_at ?? q.created_at).toLocaleDateString("tr-TR")}
+                        {new Date(q.sent_at ?? q.created_at).toLocaleDateString("tr-TR")} ·{" "}
+                        <span className="font-semibold text-accent">{STATUS_LABELS[q.status]}</span>
                       </p>
                     </div>
+                    <div className="flex flex-wrap items-center gap-2">
+                    {(q.status === "sent" || q.status === "accepted") && (
+                      <button
+                        type="button"
+                        onClick={() => accept(q)}
+                        disabled={busy === q.id}
+                        className="inline-flex h-10 items-center gap-2 rounded-xl bg-molten-grad px-4 text-sm font-bold text-white disabled:opacity-60"
+                      >
+                        {busy === q.id ? (
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : (
+                          <Check className="h-4 w-4" />
+                        )}
+                        {q.status === "sent" ? "Teklifi Kabul Et" : "Sepete Git"}
+                      </button>
+                    )}
+                    {q.status === "sent" && (
+                      <button
+                        type="button"
+                        onClick={() => startRevision(q)}
+                        className="inline-flex h-10 items-center gap-2 rounded-xl border border-border px-4 text-sm font-bold hover:border-accent"
+                      >
+                        <Pencil className="h-4 w-4" />
+                        Revize İste
+                      </button>
+                    )}
                     <button
                       type="button"
                       onClick={() => download(q)}
                       disabled={downloading === q.id}
-                      className="inline-flex h-10 items-center gap-2 rounded-xl bg-molten-grad px-4 text-sm font-bold text-white disabled:opacity-60"
+                      className="inline-flex h-10 items-center gap-2 rounded-xl border border-border px-4 text-sm font-bold hover:border-accent disabled:opacity-60"
                     >
                       {downloading === q.id ? (
                         <Loader2 className="h-4 w-4 animate-spin" />
@@ -100,6 +196,7 @@ export default function DealerQuotesPage() {
                       )}
                       PDF İndir
                     </button>
+                    </div>
                   </div>
                   <div className="overflow-x-auto">
                     <table className="w-full text-sm">
@@ -108,6 +205,12 @@ export default function DealerQuotesPage() {
                           <th className="py-2 pr-4 text-left font-semibold">Ürün</th>
                           <th className="py-2 px-4 text-right font-semibold">Adet</th>
                           <th className="py-2 px-4 text-right font-semibold">Birim Fiyat</th>
+                          {revising === q.id && (
+                            <th className="py-2 px-4 text-right font-semibold">İstediğiniz Fiyat</th>
+                          )}
+                          {q.status === "revision_requested" && (
+                            <th className="py-2 px-4 text-right font-semibold">İstediğiniz Fiyat</th>
+                          )}
                           <th className="py-2 pl-4 text-right font-semibold">Tutar</th>
                         </tr>
                       </thead>
@@ -120,6 +223,27 @@ export default function DealerQuotesPage() {
                             </td>
                             <td className="py-2 px-4 text-right">{i.quantity}</td>
                             <td className="py-2 px-4 text-right">{formatMoney(i.unit_price, "try")}</td>
+                            {revising === q.id && (
+                              <td className="py-2 px-4 text-right">
+                                <input
+                                  inputMode="decimal"
+                                  aria-label={`${i.title} ${i.detail ?? ""} istediğiniz fiyat`}
+                                  placeholder="Değişmesin"
+                                  value={prices[i.id] ?? ""}
+                                  onChange={(e) =>
+                                    setPrices((prev) => ({ ...prev, [i.id]: e.target.value }))
+                                  }
+                                  className="w-28 rounded-lg border border-border bg-background px-2 py-1 text-right text-sm"
+                                />
+                              </td>
+                            )}
+                            {q.status === "revision_requested" && (
+                              <td className="py-2 px-4 text-right font-semibold">
+                                {i.requested_unit_price === null
+                                  ? "—"
+                                  : formatMoney(i.requested_unit_price, "try")}
+                              </td>
+                            )}
                             <td className="py-2 pl-4 text-right">{formatMoney(i.unit_price * i.quantity, "try")}</td>
                           </tr>
                         ))}
@@ -141,6 +265,44 @@ export default function DealerQuotesPage() {
                     </div>
                   </dl>
                   {q.note && <p className="mt-3 text-sm text-muted-foreground">Not: {q.note}</p>}
+                  {q.status === "revision_requested" && q.revision_note && (
+                    <p className="mt-3 text-sm text-muted-foreground">Notunuz: {q.revision_note}</p>
+                  )}
+                  {revising === q.id && (
+                    <div className="mt-4 space-y-3 rounded-xl border border-border p-4">
+                      <p className="text-xs text-muted-foreground">
+                        Değişmesini istediğiniz satırlara KDV hariç birim fiyat yazın. Boş bıraktığınız satırlar
+                        olduğu gibi kalır.
+                      </p>
+                      <textarea
+                        aria-label="Revize notunuz"
+                        placeholder="Notunuz (isteğe bağlı)"
+                        value={revisionNote}
+                        onChange={(e) => setRevisionNote(e.target.value)}
+                        rows={3}
+                        maxLength={1000}
+                        className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm"
+                      />
+                      <div className="flex justify-end gap-2">
+                        <button
+                          type="button"
+                          onClick={() => setRevising(null)}
+                          className="inline-flex h-10 items-center rounded-xl border border-border px-4 text-sm font-bold"
+                        >
+                          Vazgeç
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => sendRevision(q)}
+                          disabled={busy === q.id}
+                          className="inline-flex h-10 items-center gap-2 rounded-xl bg-molten-grad px-4 text-sm font-bold text-white disabled:opacity-60"
+                        >
+                          {busy === q.id && <Loader2 className="h-4 w-4 animate-spin" />}
+                          Revize Talebini Gönder
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </section>
               ))}
             </div>

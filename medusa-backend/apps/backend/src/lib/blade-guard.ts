@@ -20,6 +20,7 @@
 import type { MedusaContainer } from "@medusajs/framework/types";
 import { ContainerRegistrationKeys, MedusaError } from "@medusajs/framework/utils";
 import { computeBladeLine } from "./blade-line";
+import { assertQuoteLineValid } from "./dealer-quote-line";
 
 type ProductLike = {
   id?: string;
@@ -120,6 +121,7 @@ type CartItemLike = {
  *  - Ölçüye göre ürün satırları matris fiyatıyla eklenmiş olmalı ve fiyatı,
  *    satırdaki ölçü + GÜNCEL adetten yeniden hesaplanan fiyatla aynı olmalı.
  *  - Matris metadata'sı taşıyan ama ölçüye göre olmayan ürün satırı reddedilir.
+ *  - Teklif satırı listeyle değil, bayinin kabul ettiği teklifle karşılaştırılır.
  */
 export async function assertCartBladeLinesValid(
   container: MedusaContainer,
@@ -129,6 +131,19 @@ export async function assertCartBladeLinesValid(
   for (const it of items || []) {
     if (!it?.variant_id) continue;
     const md = (it.metadata || {}) as Record<string, unknown>;
+    if (typeof md.quote_item_id === "string") {
+      await assertQuoteLineValid(
+        container,
+        {
+          variant_id: it.variant_id,
+          quantity: Number(it.quantity?.valueOf?.() ?? it.quantity),
+          unit_price: Number(it.unit_price?.valueOf?.() ?? it.unit_price),
+          quote_item_id: md.quote_item_id,
+        },
+        customerId
+      );
+      continue;
+    }
     const product = await productForVariant(container, it.variant_id);
     const configurable = product ? isConfigurableBlade(product) : false;
     const matrixMeta = isMatrixLineMetadata(md);

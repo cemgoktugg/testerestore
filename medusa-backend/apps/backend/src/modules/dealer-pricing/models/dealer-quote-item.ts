@@ -8,12 +8,16 @@ const DealerQuoteItem = model
     position: model.number(),
     kind: model.text(),
     ref_id: model.text(),
+    /** Sepete eklenecek varyant; bıçakta çelik türünü de belirler (M42/M51). */
+    variant_id: model.text().nullable(),
     title: model.text(),
     detail: model.text().nullable(),
     length_mm: model.number().nullable(),
     quantity: model.number(),
     /** KDV hariç; bıçakta boy ve kaynak dahil adet başı fiyat. */
     unit_price: model.bigNumber(),
+    /** Bayinin revizede istediği birim fiyat; yanıtlanınca temizlenir. */
+    requested_unit_price: model.bigNumber().nullable(),
   })
   .indexes([{ on: ["quote_id"] }]);
 

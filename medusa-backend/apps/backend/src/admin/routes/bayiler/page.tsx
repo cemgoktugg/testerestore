@@ -5,7 +5,7 @@ import {
   Badge, Drawer, Table, toast, usePrompt,
 } from "@medusajs/ui";
 import { useEffect, useMemo, useState } from "react";
-import QuotesPanel from "./quotes-panel";
+import QuotesPanel, { type BladeProduct } from "./quotes-panel";
 
 interface Customer {
   id: string;
@@ -24,6 +24,7 @@ interface Dealer {
   note?: string | null;
   logo_data?: string | null;
   customer?: Customer | null;
+  pending_revisions?: number;
 }
 
 interface BladeRow {
@@ -172,6 +173,7 @@ export default function DealersPage() {
   const [dealers, setDealers] = useState<Dealer[]>([]);
   const [dealerId, setDealerId] = useState<string>("");
   const [rows, setRows] = useState<Row[]>([]);
+  const [bladeProducts, setBladeProducts] = useState<BladeProduct[]>([]);
   const [edits, setEdits] = useState<Record<string, Edit>>({});
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -201,10 +203,13 @@ export default function DealersPage() {
   async function loadPrices(id: string) {
     setLoading(true);
     try {
-      const data = await api<{ blade: BladeRow[]; variants: VariantRow[] }>(
-        `/admin/dealers/${id}/prices`
-      );
+      const data = await api<{
+        blade: BladeRow[];
+        variants: VariantRow[];
+        blade_products: BladeProduct[];
+      }>(`/admin/dealers/${id}/prices`);
       setRows(toRows(data.blade, data.variants));
+      setBladeProducts(data.blade_products);
       setEdits({});
     } catch (e) {
       toast.error("Fiyatlar yüklenemedi", { description: String(e) });
@@ -546,6 +551,19 @@ export default function DealersPage() {
         </div>
       ) : (
         <>
+          {dealers.some((d) => d.pending_revisions) && (
+            <div className="flex flex-wrap items-center gap-2 bg-ui-tag-orange-bg px-6 py-3">
+              <Text size="small" weight="plus">Revize bekleyen bayiler:</Text>
+              {dealers
+                .filter((d) => d.pending_revisions)
+                .map((d) => (
+                  <Button key={d.id} size="small" variant="secondary" onClick={() => switchDealer(d.id)}>
+                    {d.company_name} ({d.pending_revisions})
+                  </Button>
+                ))}
+            </div>
+          )}
+
           <div className="flex flex-wrap items-end gap-4 px-6 py-4">
             <div className="w-[28rem]">
               <Label size="small">Bayi</Label>
@@ -558,6 +576,7 @@ export default function DealersPage() {
                     <Select.Item key={d.id} value={d.id}>
                       {d.company_name}
                       {d.customer?.email ? ` · ${d.customer.email}` : ""}
+                      {d.pending_revisions ? ` · ${d.pending_revisions} revize bekliyor` : ""}
                     </Select.Item>
                   ))}
                 </Select.Content>
@@ -609,7 +628,15 @@ export default function DealersPage() {
             )}
           </div>
 
-          {dealer && <QuotesPanel dealerId={dealer.id} products={quoteProducts} groups={GROUPS} />}
+          {dealer && (
+            <QuotesPanel
+              dealerId={dealer.id}
+              products={quoteProducts}
+              groups={GROUPS}
+              bladeProducts={bladeProducts}
+              onQuotesChanged={() => loadDealers(dealer.id)}
+            />
+          )}
 
           <div className="flex flex-wrap items-end gap-3 px-6 py-4">
             <div className="w-64">

@@ -11,24 +11,19 @@ import { z } from "zod";
 import { BLADE_PRICE_MATRIX_MODULE } from "../modules/blade-price-matrix";
 import type BladePriceMatrixService from "../modules/blade-price-matrix/service";
 import { MAX_LENGTH_MM, MIN_LENGTH_MM } from "../api/store/blade-price/calculate/route";
+import { assertMatrixAllowedForProduct, productForVariant } from "./blade-guard";
 import { computeBladeLine } from "./blade-line";
 import {
   dealerService,
+  listConfigurableProducts,
   listDealerVariantPrices,
   listSellableVariants,
   type DealerRecord,
 } from "./dealer-pricing";
 
 export const KDV_RATE = 0.2;
-
-const BLADE_TYPE_LABELS: Record<string, string> = {
-  "bi-metal": "Bi-Metal",
-  carbide: "Karbür Uçlu",
-  woodcut: "Ahşap — Uddeholm",
-  spezialstahl: "Ahşap — Spezialstahl Alman Çeliği",
-  "meat-bone": "Et ve Kemik",
-  textile: "Sünger / Tekstil",
-};
+/** Bayinin hesabında görünen durumlar; taslak yalnız panelde. */
+export const VISIBLE_QUOTE_STATUSES = ["sent", "revision_requested", "accepted", "ordered"];
 
 export const QuoteBodySchema = z.object({
   note: z.string().trim().max(1000).nullable().optional(),
@@ -37,6 +32,8 @@ export const QuoteBodySchema = z.object({
       z.object({
         kind: z.enum(["blade", "variant"]),
         ref_id: z.string().min(1),
+        /** Bıçakta hangi ürün (M42/M51); o türde tek ürün varsa boş bırakılabilir. */
+        variant_id: z.string().min(1).nullable().optional(),
         length_mm: z.coerce.number().int().min(MIN_LENGTH_MM).max(MAX_LENGTH_MM).nullable().optional(),
         quantity: z.coerce.number().int().positive(),
       })
@@ -55,6 +52,9 @@ export async function priceQuoteItems(
   items: QuoteItemInput[]
 ) {
   const matrix = container.resolve<BladePriceMatrixService>(BLADE_PRICE_MATRIX_MODULE);
+  const configurable = items.some((i) => i.kind === "blade")
+    ? await listConfigurableProducts(container)
+    : [];
   const hasVariants = items.some((i) => i.kind === "variant");
   const variants = hasVariants ? await listSellableVariants(container) : [];
   const variantById = new Map(variants.map((v) => [v.id, v]));
@@ -66,6 +66,7 @@ export async function priceQuoteItems(
     position: number;
     kind: string;
     ref_id: string;
+    variant_id: string;
     title: string;
     detail: string | null;
     length_mm: number | null;
@@ -80,6 +81,22 @@ export async function priceQuoteItems(
       }
       const [row] = await matrix.listBladePrices({ id: item.ref_id, is_active: true }, { take: 1 });
       if (!row) throw invalid("Fiyat matrisinde olmayan bir ölçü seçildi.");
+      const candidates = configurable.filter((p) => p.blade_type === row.blade_type);
+      const product =
+        candidates.find((p) => p.variant_id === item.variant_id) ??
+        (!item.variant_id && candidates.length === 1 ? candidates[0] : null);
+      if (!product) {
+        throw invalid(
+          candidates.length
+            ? `Hangi ürün olduğunu seçin: ${candidates.map((p) => p.title).join(" / ")}.`
+            : "Bu ölçü için satışta ürün bulunamadı."
+        );
+      }
+      assertMatrixAllowedForProduct(
+        await productForVariant(container, product.variant_id),
+        row.blade_type,
+        item.length_mm
+      );
       const width = Number(row.width_mm);
       const thickness = Number(row.thickness_mm);
       const pricing = await computeBladeLine(container, {
@@ -96,7 +113,8 @@ export async function priceQuoteItems(
         position,
         kind: "blade",
         ref_id: row.id,
-        title: BLADE_TYPE_LABELS[row.blade_type] ?? row.blade_type,
+        variant_id: product.variant_id,
+        title: product.title,
         detail: [
           `${width} × ${thickness} mm`,
           row.tooth_pitch ? `${row.tooth_pitch} TPI` : null,
@@ -119,6 +137,7 @@ export async function priceQuoteItems(
         position,
         kind: "variant",
         ref_id: variant.id,
+        variant_id: variant.id,
         title: variant.product.title,
         detail:
           [variant.title, variant.sku].filter((x) => x && x !== "Default").join(" · ") || null,
@@ -139,8 +158,14 @@ export function quoteTotals(items: { quantity: number | string; unit_price: numb
   return { subtotal, tax, total: round2(subtotal + tax) };
 }
 
-export const quoteNumberLabel = (quote: { number: number; created_at?: Date | string }) =>
-  `T-${new Date(quote.created_at ?? Date.now()).getFullYear()}-${String(quote.number).padStart(4, "0")}`;
+export const quoteNumberLabel = (quote: {
+  number: number;
+  revision?: number | null;
+  created_at?: Date | string;
+}) =>
+  `T-${new Date(quote.created_at ?? Date.now()).getFullYear()}-${String(quote.number).padStart(4, "0")}${
+    quote.revision ? `-R${quote.revision}` : ""
+  }`;
 
 /** Kalemleri değiştirir: eskiler silinir, yeniler sırayla yazılır. */
 export async function replaceQuoteItems(
@@ -180,7 +205,7 @@ export async function createQuote(
 /** Teklifi kalemleri ve toplamlarıyla yanıt biçimine getirir. */
 export async function loadQuotes(
   container: MedusaContainer,
-  filters: { id?: string; dealer_id?: string; status?: string }
+  filters: { id?: string; dealer_id?: string | string[]; status?: string | string[] }
 ) {
   const service = dealerService(container);
   const quotes = await service.listDealerQuotes(filters, {
@@ -199,17 +224,28 @@ export async function loadQuotes(
         id: i.id,
         kind: i.kind,
         ref_id: i.ref_id,
+        variant_id: i.variant_id,
         title: i.title,
         detail: i.detail,
         length_mm: i.length_mm,
         quantity: Number(i.quantity),
         unit_price: Number(i.unit_price),
+        requested_unit_price:
+          i.requested_unit_price === null || i.requested_unit_price === undefined
+            ? null
+            : Number(i.requested_unit_price),
       }));
     return {
       id: q.id,
+      dealer_id: q.dealer_id,
       number: quoteNumberLabel(q),
       status: q.status,
       note: q.note,
+      revision: q.revision,
+      revision_note: q.revision_note,
+      revision_requested_at: q.revision_requested_at,
+      accepted_at: q.accepted_at,
+      ordered_at: q.ordered_at,
       created_at: q.created_at,
       sent_at: q.sent_at,
       items: own,

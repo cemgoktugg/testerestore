@@ -17,7 +17,7 @@
  */
 import type { MedusaContainer } from "@medusajs/framework/types";
 import { ContainerRegistrationKeys, Modules, QueryContext } from "@medusajs/framework/utils";
-import { isConfigurableBlade } from "./blade-guard";
+import { isConfigurableBlade, matrixBladeTypeFor } from "./blade-guard";
 import { DEALER_PRICING_MODULE } from "../modules/dealer-pricing";
 import type DealerPricingService from "../modules/dealer-pricing/service";
 
@@ -121,6 +121,27 @@ export async function listDealerVariantPrices(
     if (variantId) map.set(variantId, { price_id: p.id, amount: Number(p.amount) });
   }
   return map;
+}
+
+/**
+ * Ölçüye göre satılan ürünler. Aynı matrisi birden çok ürün kullanabilir
+ * (Bi-Metal: M42 ve M51), bu yüzden teklifte hangisi olduğu ayrıca seçilir.
+ */
+export async function listConfigurableProducts(container: MedusaContainer) {
+  const { data } = await container.resolve(ContainerRegistrationKeys.QUERY).graph({
+    entity: "product",
+    fields: ["id", "title", "handle", "status", "metadata", "created_at", "variants.id"],
+    filters: { status: "published" } as never,
+  });
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return ((data ?? []) as any[])
+    .filter((p) => isConfigurableBlade(p) && p.variants?.[0]?.id)
+    .map((p) => ({
+      blade_type: matrixBladeTypeFor(p),
+      variant_id: p.variants[0].id as string,
+      title: p.title as string,
+    }))
+    .sort((a, b) => a.title.localeCompare(b.title, "tr"));
 }
 
 /**

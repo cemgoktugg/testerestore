@@ -1,6 +1,7 @@
 import { medusa } from "../client";
 import { MEDUSA_READY } from "../config";
 import type { StoreProduct } from "../types";
+import { getOrCreateCart } from "./cart";
 
 export interface DealerProfile {
   company_name: string;
@@ -77,7 +78,9 @@ export async function getDealerPriceList(): Promise<DealerPriceList | null> {
 export interface DealerQuote {
   id: string;
   number: string;
+  status: "sent" | "revision_requested" | "accepted" | "ordered";
   note: string | null;
+  revision_note: string | null;
   created_at: string;
   sent_at: string | null;
   items: {
@@ -86,6 +89,7 @@ export interface DealerQuote {
     detail: string | null;
     quantity: number;
     unit_price: number;
+    requested_unit_price: number | null;
   }[];
   subtotal: number;
   tax: number;
@@ -103,6 +107,42 @@ export async function getDealerQuotes(): Promise<DealerQuote[] | null> {
     return quotes;
   } catch {
     return null;
+  }
+}
+
+const errorMessage = (e: unknown, fallback: string) =>
+  (e instanceof Error && e.message) || fallback;
+
+/** Teklifi kabul eder, kalemleri sepete ekler. Hata metnini döner, başarıda null. */
+export async function acceptDealerQuote(id: string): Promise<string | null> {
+  const cart = await getOrCreateCart();
+  if (!cart) return "Sepet oluşturulamadı. Lütfen tekrar deneyin.";
+  try {
+    await medusa.client.fetch(`/store/dealer/quotes/${id}/accept`, {
+      method: "POST",
+      body: { cart_id: cart.id },
+    });
+    return null;
+  } catch (e) {
+    console.error("[medusa] acceptDealerQuote failed", e);
+    return errorMessage(e, "Teklif kabul edilemedi. Lütfen tekrar deneyin.");
+  }
+}
+
+/** Revize talebini gönderir. Hata metnini döner, başarıda null. */
+export async function requestDealerQuoteRevision(
+  id: string,
+  input: { note: string | null; items: { id: string; requested_unit_price: number }[] }
+): Promise<string | null> {
+  try {
+    await medusa.client.fetch(`/store/dealer/quotes/${id}/revision`, {
+      method: "POST",
+      body: input,
+    });
+    return null;
+  } catch (e) {
+    console.error("[medusa] requestDealerQuoteRevision failed", e);
+    return errorMessage(e, "Revize talebi gönderilemedi. Lütfen tekrar deneyin.");
   }
 }
 

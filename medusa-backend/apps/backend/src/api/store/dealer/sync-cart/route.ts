@@ -100,7 +100,8 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
   let changed = false;
   for (const it of items) {
     const md = (it.metadata ?? {}) as Record<string, unknown>;
-    if (!isMatrixLineMetadata(md)) continue;
+    // Teklif satırının fiyatı tekliften gelir, listeyle yeniden fiyatlanmaz.
+    if (!isMatrixLineMetadata(md) || md.quote_item_id) continue;
     const quantity = Number(it.quantity);
     const pricing = await computeBladeLine(req.scope, {
       blade_type: String(md.blade_type),

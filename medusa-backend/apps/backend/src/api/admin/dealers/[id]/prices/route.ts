@@ -5,6 +5,7 @@ import { BLADE_PRICE_MATRIX_MODULE } from "../../../../../modules/blade-price-ma
 import type BladePriceMatrixService from "../../../../../modules/blade-price-matrix/service";
 import {
   dealerService,
+  listConfigurableProducts,
   listDealerVariantPrices,
   listSellableVariants,
 } from "../../../../../lib/dealer-pricing";
@@ -54,13 +55,15 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
     { take: 100000 }
   );
   const overrideByRow = new Map(overrides.map((o) => [o.blade_price_id, o]));
-  const [variants, variantPrices] = await Promise.all([
+  const [variants, variantPrices, bladeProducts] = await Promise.all([
     listSellableVariants(req.scope),
     listDealerVariantPrices(req.scope, dealer.price_list_id),
+    listConfigurableProducts(req.scope),
   ]);
 
   const num = (v: unknown) => (v === null || v === undefined ? null : Number(v));
   res.json({
+    blade_products: bladeProducts,
     blade: rows.map((r) => {
       const o = overrideByRow.get(r.id);
       return {

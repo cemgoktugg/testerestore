@@ -220,6 +220,14 @@ export default function CartPage() {
                     </div>
 
                     <div className="flex items-center justify-between sm:justify-end gap-6 w-full sm:w-auto pt-3 sm:pt-0 border-t sm:border-t-0 border-border/60">
+                      {item.quoteNumber ? (
+                        <div className="text-right text-xs">
+                          <span className="block font-bold">{item.quantity} adet</span>
+                          <span className="block text-[10px] font-semibold text-accent">
+                            Teklif {item.quoteNumber}
+                          </span>
+                        </div>
+                      ) : (
                       <div className="flex items-center gap-1.5">
                         <button
                           onClick={() => updateQuantity(item.id, item.quantity - 1)}
@@ -239,6 +247,7 @@ export default function CartPage() {
                           +
                         </button>
                       </div>
+                      )}
 
                       <div className="text-right min-w-[100px]">
                         <span className="block text-[10px] text-muted-foreground font-bold uppercase">

@@ -167,7 +167,7 @@ export default defineMiddlewares({
     },
     {
       matcher: "/store/dealer/quotes*",
-      method: ["GET"],
+      method: ["GET", "POST"],
       middlewares: [authenticate("customer", ["session", "bearer"])],
     },
     {

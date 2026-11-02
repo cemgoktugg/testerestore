@@ -32,8 +32,18 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
         )
     : [];
   const byId = new Map(customers.map((c) => [c.id, c]));
+  const pending = dealers.length
+    ? await dealerService(req.scope).listDealerQuotes(
+        { status: "revision_requested", dealer_id: dealers.map((d) => d.id) },
+        { select: ["dealer_id"], take: 10000 }
+      )
+    : [];
   res.json({
-    dealers: dealers.map((d) => ({ ...d, customer: byId.get(d.customer_id) ?? null })),
+    dealers: dealers.map((d) => ({
+      ...d,
+      customer: byId.get(d.customer_id) ?? null,
+      pending_revisions: pending.filter((q) => q.dealer_id === d.id).length,
+    })),
   });
 }
 

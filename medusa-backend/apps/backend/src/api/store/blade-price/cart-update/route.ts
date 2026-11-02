@@ -54,6 +54,13 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     return;
   }
   const md = (line.metadata || {}) as Record<string, unknown>;
+  if (md.quote_item_id) {
+    res.status(400).json({
+      message: "Teklif satırının adedi değiştirilemez. Farklı adet için revize isteyin.",
+      code: "QUOTE_LINE_LOCKED",
+    });
+    return;
+  }
   const bladeType = md.blade_type as string | undefined;
   const widthMm = Number(md.width_mm);
   const thicknessMm = Number(md.thickness_mm);

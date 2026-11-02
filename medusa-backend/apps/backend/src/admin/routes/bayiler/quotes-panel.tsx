@@ -12,9 +12,19 @@ export interface QuoteProduct {
   dealerPriced: boolean;
 }
 
+/** Ölçüye göre satılan ürün; aynı matrisi birden çok ürün kullanabilir (M42/M51). */
+export interface BladeProduct {
+  blade_type: string;
+  variant_id: string;
+  title: string;
+}
+
 interface QuoteItem {
+  id: string;
   kind: "blade" | "variant";
   ref_id: string;
+  variant_id: string | null;
+  requested_unit_price: number | null;
   title: string;
   detail: string | null;
   length_mm: number | null;
@@ -25,8 +35,9 @@ interface QuoteItem {
 interface Quote {
   id: string;
   number: string;
-  status: "draft" | "sent";
+  status: "draft" | "sent" | "revision_requested" | "accepted" | "ordered";
   note: string | null;
+  revision_note: string | null;
   created_at: string;
   sent_at: string | null;
   items: QuoteItem[];
@@ -35,8 +46,23 @@ interface Quote {
   total: number;
 }
 
+const STATUS: Record<Quote["status"], { label: string; color: "grey" | "blue" | "orange" | "green" | "purple" }> = {
+  draft: { label: "Taslak", color: "grey" },
+  sent: { label: "Gönderildi", color: "blue" },
+  revision_requested: { label: "Revize istendi", color: "orange" },
+  accepted: { label: "Kabul edildi", color: "green" },
+  ordered: { label: "Sipariş verildi", color: "purple" },
+};
+
+/** "." veya "," ondalıklı girişi okur; boş ya da sayısal değilse NaN. */
+const parseDecimal = (raw: string) => {
+  const cleaned = raw.replace(",", ".").trim();
+  return cleaned === "" ? NaN : Number(cleaned);
+};
+
 type DraftItem = {
   key: string;
+  variantId: string | null;
   kind: "blade" | "variant";
   title: string;
   detail: string;
@@ -72,10 +98,14 @@ export default function QuotesPanel({
   dealerId,
   products,
   groups,
+  bladeProducts,
+  onQuotesChanged,
 }: {
   dealerId: string;
   products: QuoteProduct[];
   groups: { value: string; label: string }[];
+  bladeProducts: BladeProduct[];
+  onQuotesChanged: () => void;
 }) {
   const prompt = usePrompt();
   const [quotes, setQuotes] = useState<Quote[]>([]);
@@ -83,6 +113,10 @@ export default function QuotesPanel({
   const [items, setItems] = useState<DraftItem[]>([]);
   const [note, setNote] = useState("");
   const [group, setGroup] = useState("");
+  const [productVariant, setProductVariant] = useState("");
+  const [responding, setResponding] = useState<Quote | null>(null);
+  const [responsePrices, setResponsePrices] = useState<Record<string, string>>({});
+  const [responseNote, setResponseNote] = useState("");
   const [search, setSearch] = useState("");
   const [saving, setSaving] = useState(false);
 
@@ -97,6 +131,7 @@ export default function QuotesPanel({
 
   useEffect(() => {
     setEditing(null);
+    setResponding(null);
     load();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dealerId]);
@@ -106,35 +141,57 @@ export default function QuotesPanel({
     [groups, products]
   );
 
+  const groupProducts = useMemo(
+    () => bladeProducts.filter((p) => p.blade_type === group),
+    [bladeProducts, group]
+  );
+  const isBladeGroup = useMemo(
+    () => products.some((p) => p.group === group && p.kind === "blade"),
+    [products, group]
+  );
+  // Aynı matrisi kullanan birden çok ürün varsa (M42/M51) önce hangisi seçilir.
+  const bladeProduct =
+    groupProducts.length === 1
+      ? groupProducts[0]
+      : groupProducts.find((p) => p.variant_id === productVariant) ?? null;
+  const productMissing = isBladeGroup && !bladeProduct;
+
   // Grup seçilince o grubun tamamı listelenir; arama yalnız daraltır.
   const results = useMemo(() => {
     const words = search.trim().toLocaleLowerCase("tr").split(/\s+/).filter(Boolean);
-    if (!group && !words.length) return [];
+    if (!group || productMissing) return [];
     return products.filter((p) => {
-      if (group && p.group !== group) return false;
+      if (p.group !== group) return false;
       const text = `${p.title} ${p.detail}`.toLocaleLowerCase("tr");
       return words.every((w) => text.includes(w));
     });
-  }, [products, group, search]);
+  }, [products, group, search, productMissing]);
 
   const addedCount = useMemo(() => {
     const counts = new Map<string, number>();
-    for (const it of items) counts.set(it.key, (counts.get(it.key) ?? 0) + 1);
+    for (const it of items) {
+      if (it.kind === "blade" && it.variantId !== bladeProduct?.variant_id) continue;
+      counts.set(it.key, (counts.get(it.key) ?? 0) + 1);
+    }
     return counts;
-  }, [items]);
+  }, [items, bladeProduct]);
 
   function startNew() {
     setEditing("new");
     setItems([]);
     setNote("");
+    setResponding(null);
     setGroup("");
+    setProductVariant("");
     setSearch("");
   }
 
   function startEdit(q: Quote) {
     setEditing(q.id);
     setNote(q.note ?? "");
+    setResponding(null);
     setGroup("");
+    setProductVariant("");
     setSearch("");
     setItems(
       q.items.map((i) => {
@@ -142,6 +199,7 @@ export default function QuotesPanel({
         const known = products.find((p) => p.key === key);
         return {
           key,
+          variantId: i.variant_id,
           kind: i.kind,
           title: i.title,
           detail: known?.detail ?? i.detail ?? "",
@@ -157,8 +215,9 @@ export default function QuotesPanel({
       ...list,
       {
         key: p.key,
+        variantId: p.kind === "blade" ? bladeProduct?.variant_id ?? null : null,
         kind: p.kind,
-        title: p.title,
+        title: p.kind === "blade" ? bladeProduct?.title ?? p.title : p.title,
         detail: p.detail,
         length: "",
         quantity: "1",
@@ -192,6 +251,7 @@ export default function QuotesPanel({
         items: items.map((it) => ({
           kind: it.kind,
           ref_id: refId(it.key),
+          variant_id: it.kind === "blade" ? it.variantId : null,
           length_mm: it.kind === "blade" ? Number(it.length) : null,
           quantity: Number(it.quantity),
         })),
@@ -214,6 +274,45 @@ export default function QuotesPanel({
     }
   }
 
+  function startResponse(q: Quote) {
+    setEditing(null);
+    setResponding(q);
+    setResponseNote(q.note ?? "");
+    setResponsePrices(
+      Object.fromEntries(
+        q.items.map((i) => [i.id, String(i.requested_unit_price ?? i.unit_price)])
+      )
+    );
+  }
+
+  async function sendResponse() {
+    if (!responding) return;
+    const items: { id: string; unit_price: number }[] = [];
+    for (const i of responding.items) {
+      const price = parseDecimal(responsePrices[i.id] ?? "");
+      if (!Number.isFinite(price) || price <= 0) {
+        toast.error("Geçersiz fiyat", { description: `${i.title} ${i.detail ?? ""}`.trim() });
+        return;
+      }
+      items.push({ id: i.id, unit_price: price });
+    }
+    setSaving(true);
+    try {
+      await api(`/admin/dealers/${dealerId}/quotes/${responding.id}`, {
+        method: "POST",
+        body: JSON.stringify({ action: "respond", items, note: responseNote.trim() || null }),
+      });
+      toast.success("Revize yanıtı bayiye gönderildi");
+      setResponding(null);
+      await load();
+      onQuotesChanged();
+    } catch (e) {
+      toast.error("Gönderilemedi", { description: String(e) });
+    } finally {
+      setSaving(false);
+    }
+  }
+
   async function send(q: Quote) {
     const ok = await prompt({
       title: `${q.number} bayiye gönderilsin mi?`,
@@ -230,6 +329,7 @@ export default function QuotesPanel({
       });
       toast.success(`${q.number} bayiye gönderildi`);
       await load();
+      onQuotesChanged();
     } catch (e) {
       toast.error("Gönderilemedi", { description: String(e) });
     }
@@ -248,7 +348,9 @@ export default function QuotesPanel({
     if (!ok) return;
     try {
       await api(`/admin/dealers/${dealerId}/quotes/${q.id}`, { method: "DELETE" });
+      if (responding?.id === q.id) setResponding(null);
       await load();
+      onQuotesChanged();
     } catch (e) {
       toast.error("Silinemedi", { description: String(e) });
     }
@@ -293,7 +395,13 @@ export default function QuotesPanel({
             <div className="flex flex-wrap items-end gap-3">
               <div className="w-72">
                 <Label size="small">Ürün grubu</Label>
-                <Select value={group} onValueChange={setGroup}>
+                <Select
+                  value={group}
+                  onValueChange={(v) => {
+                    setGroup(v);
+                    setProductVariant("");
+                  }}
+                >
                   <Select.Trigger aria-label="Teklif ürün grubu">
                     <Select.Value placeholder="Ürün grubu seçin" />
                   </Select.Trigger>
@@ -306,6 +414,23 @@ export default function QuotesPanel({
                   </Select.Content>
                 </Select>
               </div>
+              {groupProducts.length > 1 && (
+                <div className="w-80">
+                  <Label size="small">Ürün</Label>
+                  <Select value={productVariant} onValueChange={setProductVariant}>
+                    <Select.Trigger aria-label="Teklif ürünü">
+                      <Select.Value placeholder="Hangi ürün?" />
+                    </Select.Trigger>
+                    <Select.Content>
+                      {groupProducts.map((p) => (
+                        <Select.Item key={p.variant_id} value={p.variant_id}>
+                          {p.title}
+                        </Select.Item>
+                      ))}
+                    </Select.Content>
+                  </Select>
+                </div>
+              )}
               <div className="w-64">
                 <Label size="small">Ölçü ara (isteğe bağlı)</Label>
                 <Input
@@ -350,7 +475,12 @@ export default function QuotesPanel({
                 ))}
               </div>
             )}
-            {(group || search.trim()) && results.length === 0 && (
+            {productMissing && groupProducts.length > 1 && (
+              <Text size="xsmall" className="mt-2 text-ui-fg-subtle">
+                Ölçülerin gelmesi için ürünü seçin.
+              </Text>
+            )}
+            {group && !productMissing && results.length === 0 && (
               <Text size="xsmall" className="mt-2 text-ui-fg-subtle">Ürün bulunamadı.</Text>
             )}
           </div>
@@ -409,6 +539,74 @@ export default function QuotesPanel({
         </div>
       )}
 
+      {responding && (
+        <div className="flex flex-col gap-3 rounded-lg border p-4">
+          <div>
+            <Text weight="plus">{responding.number} için revize yanıtı</Text>
+            <Text size="small" className="text-ui-fg-subtle">
+              Uygun gördüğünüz fiyatları yazın. Gönderince bayi bu fiyatlarla kabul edebilir; sepette de
+              bu fiyatlar geçerli olur.
+            </Text>
+          </div>
+          {responding.revision_note && (
+            <div className="rounded-md border p-3">
+              <Text size="xsmall" className="text-ui-fg-subtle">Bayinin notu</Text>
+              <Text size="small">{responding.revision_note}</Text>
+            </div>
+          )}
+          <Table>
+            <Table.Header>
+              <Table.Row>
+                <Table.HeaderCell>Ürün</Table.HeaderCell>
+                <Table.HeaderCell className="text-right">Adet</Table.HeaderCell>
+                <Table.HeaderCell className="text-right">Teklif Fiyatı</Table.HeaderCell>
+                <Table.HeaderCell className="text-right">Bayinin İstediği</Table.HeaderCell>
+                <Table.HeaderCell>Yeni Fiyat</Table.HeaderCell>
+              </Table.Row>
+            </Table.Header>
+            <Table.Body>
+              {responding.items.map((i) => (
+                <Table.Row key={i.id}>
+                  <Table.Cell>
+                    <div className="py-1">
+                      <Text size="small" weight="plus">{i.title}</Text>
+                      <Text size="xsmall" className="text-ui-fg-subtle">{i.detail ?? "—"}</Text>
+                    </div>
+                  </Table.Cell>
+                  <Table.Cell className="text-right">{i.quantity}</Table.Cell>
+                  <Table.Cell className="text-right">{money(i.unit_price)}</Table.Cell>
+                  <Table.Cell className="text-right">
+                    {i.requested_unit_price === null ? "—" : money(i.requested_unit_price)}
+                  </Table.Cell>
+                  <Table.Cell>
+                    <div className="w-28 py-1">
+                      <Input
+                        size="small"
+                        aria-label={`${i.title} ${i.detail ?? ""} yeni fiyat`}
+                        value={responsePrices[i.id] ?? ""}
+                        onChange={(e) =>
+                          setResponsePrices((prev) => ({ ...prev, [i.id]: e.target.value }))
+                        }
+                      />
+                    </div>
+                  </Table.Cell>
+                </Table.Row>
+              ))}
+            </Table.Body>
+          </Table>
+          <div>
+            <Label size="small">Not (PDF'te görünür, isteğe bağlı)</Label>
+            <Textarea value={responseNote} onChange={(e) => setResponseNote(e.target.value)} />
+          </div>
+          <div className="flex justify-end gap-2">
+            <Button size="small" variant="secondary" onClick={() => setResponding(null)}>Vazgeç</Button>
+            <Button size="small" onClick={sendResponse} disabled={saving} isLoading={saving}>
+              Yanıtı Bayiye Gönder
+            </Button>
+          </div>
+        </div>
+      )}
+
       {quotes.length > 0 ? (
         <Table>
           <Table.Header>
@@ -432,8 +630,8 @@ export default function QuotesPanel({
                   </span>
                 </Table.Cell>
                 <Table.Cell>
-                  <Badge size="2xsmall" color={q.status === "sent" ? "green" : "grey"}>
-                    {q.status === "sent" ? "Gönderildi" : "Taslak"}
+                  <Badge size="2xsmall" color={STATUS[q.status].color}>
+                    {STATUS[q.status].label}
                   </Badge>
                 </Table.Cell>
                 <Table.Cell className="text-right">{q.items.length}</Table.Cell>
@@ -442,6 +640,9 @@ export default function QuotesPanel({
                 <Table.Cell>
                   <div className="flex justify-end gap-1 py-1">
                     <Button size="small" variant="secondary" onClick={() => downloadPdf(q)}>PDF</Button>
+                    {q.status === "revision_requested" && (
+                      <Button size="small" onClick={() => startResponse(q)}>Revizeyi Yanıtla</Button>
+                    )}
                     {q.status === "draft" && (
                       <>
                         <Button size="small" variant="secondary" onClick={() => startEdit(q)}>Düzenle</Button>

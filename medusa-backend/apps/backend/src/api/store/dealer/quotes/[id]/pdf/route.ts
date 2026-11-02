@@ -1,6 +1,6 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http";
 import { findActiveDealer } from "../../../../../../lib/dealer-pricing";
-import { loadQuotes } from "../../../../../../lib/dealer-quote";
+import { loadQuotes, VISIBLE_QUOTE_STATUSES } from "../../../../../../lib/dealer-quote";
 import { renderQuotePdf } from "../../../../../../lib/dealer-quote-pdf";
 
 /** GET /store/dealer/quotes/:id/pdf — yalnız bayinin kendi gönderilmiş teklifi. */
@@ -8,7 +8,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const dealer = await findActiveDealer(req.scope, (req as any).auth_context?.actor_id);
   const [quote] = dealer
-    ? await loadQuotes(req.scope, { id: req.params.id, dealer_id: dealer.id, status: "sent" })
+    ? await loadQuotes(req.scope, { id: req.params.id, dealer_id: dealer.id, status: VISIBLE_QUOTE_STATUSES })
     : [];
   if (!dealer || !quote) {
     res.status(404).json({ message: "Teklif bulunamadı." });

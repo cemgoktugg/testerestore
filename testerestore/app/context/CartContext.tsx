@@ -31,6 +31,8 @@ import type { StoreCart, StoreCartLineItem } from '../../lib/medusa/types';
 
 /** Legacy local-cart item shape. Kept for backwards-compat consumers. */
 export interface CartItem {
+  /** Teklif satırı: fiyat tekliften gelir, adet değişmez. */
+  quoteNumber?: string;
   id: string;
   productId: string;
   name: string;
@@ -147,6 +149,7 @@ function legacyFromMedusa(cart: StoreCart): CartItem[] {
           ? li.unit_price
           : (li.unit_price as unknown as number) || 0,
       quantity: li.quantity,
+      quoteNumber: typeof meta.quote_number === 'string' ? meta.quote_number : undefined,
     };
   });
 }
