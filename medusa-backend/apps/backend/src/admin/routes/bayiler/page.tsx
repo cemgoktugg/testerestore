@@ -377,8 +377,14 @@ export default function DealersPage() {
         }),
       });
       toast.success(`${created.company_name} bayi olarak eklendi`);
-      if (temp_password) setIssued({ email: picked.email, password: temp_password });
-      else setNewOpen(false);
+      if (temp_password) {
+        setIssued({ email: picked.email, password: temp_password });
+      } else {
+        toast.info("Bu müşterinin hesabı zaten var", {
+          description: "Kendi şifresiyle giriş yapabilir. Gerekirse “Yeni şifre oluştur”u kullanın.",
+        });
+        setNewOpen(false);
+      }
       setPicked(null);
       setCompany("");
       setNote("");
@@ -402,6 +408,27 @@ export default function DealersPage() {
       await loadDealers(dealer.id);
     } catch (e) {
       toast.error("Değiştirilemedi", { description: String(e) });
+    }
+  }
+
+  async function issuePassword() {
+    if (!dealer) return;
+    const ok = await prompt({
+      title: "Yeni geçici şifre oluşturulsun mu?",
+      description: `${dealer.customer?.email ?? dealer.company_name} hesabının mevcut şifresi çalışmaz olur. Müşteri yeni şifreyle girip kendi şifresini belirler.`,
+      confirmText: "Şifre oluştur",
+      cancelText: "Vazgeç",
+    });
+    if (!ok) return;
+    try {
+      const { email, temp_password } = await api<{ email: string; temp_password: string }>(
+        `/admin/dealers/${dealer.id}/password`,
+        { method: "POST" }
+      );
+      setIssued({ email, password: temp_password });
+      setNewOpen(true);
+    } catch (e) {
+      toast.error("Şifre oluşturulamadı", { description: String(e) });
     }
   }
 
@@ -490,6 +517,9 @@ export default function DealersPage() {
                     {dealer.is_active ? "Aktif" : "Pasif"}
                   </Badge>
                 </div>
+                <Button size="small" variant="secondary" onClick={issuePassword}>
+                  Yeni şifre oluştur
+                </Button>
                 <Button size="small" variant="transparent" onClick={removeDealer}>
                   <Trash /> Bayiyi sil
                 </Button>
@@ -642,12 +672,12 @@ export default function DealersPage() {
       <Drawer open={newOpen} onOpenChange={setNewOpen}>
         <Drawer.Content>
           <Drawer.Header>
-            <Drawer.Title>Yeni Bayi</Drawer.Title>
+            <Drawer.Title>{issued ? "Giriş Bilgileri" : "Yeni Bayi"}</Drawer.Title>
           </Drawer.Header>
           <Drawer.Body className="flex flex-col gap-4 p-4">
             {issued ? (
               <div className="flex flex-col gap-3">
-                <Text weight="plus">Bayi eklendi, giriş hesabı açıldı</Text>
+                <Text weight="plus">Geçici şifre hazır</Text>
                 <Text size="small" className="text-ui-fg-subtle">
                   Bu bilgileri müşteriye iletin. Şifre bir daha gösterilmez; müşteri ilk girişte
                   kendi şifresini belirler.
@@ -655,6 +685,20 @@ export default function DealersPage() {
                 <div className="rounded-md border p-3">
                   <Text size="small">E-posta: {issued.email}</Text>
                   <Text size="small" weight="plus">Geçici şifre: {issued.password}</Text>
+                </div>
+                <div>
+                  <Button
+                    size="small"
+                    variant="secondary"
+                    onClick={() =>
+                      navigator.clipboard
+                        .writeText(`E-posta: ${issued.email}\nŞifre: ${issued.password}`)
+                        .then(() => toast.success("Kopyalandı"))
+                        .catch(() => toast.error("Kopyalanamadı, elle seçip kopyalayın"))
+                    }
+                  >
+                    Bilgileri kopyala
+                  </Button>
                 </div>
               </div>
             ) : (

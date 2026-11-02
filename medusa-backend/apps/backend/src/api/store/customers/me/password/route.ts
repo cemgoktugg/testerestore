@@ -103,7 +103,8 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
   //    bu yüzden hatası akışı bozmuyor.
   try {
     const metadata = { ...(customer.metadata || {}) } as Record<string, unknown>;
-    delete metadata.must_change_password;
+    // Medusa metadata anahtarını silmez, birleştirir: bu yüzden false yazılır.
+    metadata.must_change_password = false;
     await updateCustomersWorkflow(req.scope).run({
       input: { selector: { id: customerId }, update: { metadata } },
     });
