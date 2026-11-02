@@ -9,7 +9,8 @@ import { useEffect, useMemo, useState } from "react";
 const BLADE_TYPES = [
   { value: "bi-metal", label: "Bi-Metal" },
   { value: "carbide", label: "Karbür Uçlu" },
-  { value: "woodcut", label: "Ahşap Kesim" },
+  { value: "woodcut", label: "Ahşap — Uddeholm" },
+  { value: "spezialstahl", label: "Ahşap — Spezialstahl Alman Çeliği" },
   { value: "meat-bone", label: "Et ve Kemik" },
   { value: "textile", label: "Sünger / Tekstil" },
 ];

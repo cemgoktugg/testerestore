@@ -1748,7 +1748,7 @@
     "spezial alman çeliği ahşap bıçağı nedir",
     "c75s ahşap şerit testere ne işe yarar"
    ],
-   "answer_tr": "Spezial Alman Çeliği adlı ahşap şerit testere bıçağı da sitemizde listelenir. Ürün sayfasına göre C75S karbon çeliğinden üretilir ve sert/tropikal ağaçlar ile ince dilimleme için tanıtılır; sipariş ekranında Ahşap Kesim (Woodcut Classic) ile aynı genişlik × kalınlık listesini kullanır, boy 1.000–10.000 mm arasında girilir. Menşe bilgisi ürün sayfasında belgeli olarak yer almıyor. Genel marangozluk, kereste ve panel kesimi için Ahşap Kesim bıçağımızı öneriyoruz; iki ürün arasında kararsızsanız malzemenizi ve makinenizi bize yazın.",
+   "answer_tr": "Spezial Alman Çeliği adlı ahşap şerit testere bıçağı da sitemizde listelenir. Ürün sayfasına göre C75S karbon çeliğinden üretilir ve sert/tropikal ağaçlar ile ince dilimleme için tanıtılır; sipariş ekranında kendi ölçü ve fiyat listesi vardır, boy 1.000–10.000 mm arasında girilir. Menşe bilgisi ürün sayfasında belgeli olarak yer almıyor. Genel marangozluk, kereste ve panel kesimi için Ahşap Kesim bıçağımızı öneriyoruz; iki ürün arasında kararsızsanız malzemenizi ve makinenizi bize yazın.",
    "facts": [
     {
      "claim_tr": "Malzeme: C75S karbon yay çeliği; özel tavlanmış dişler",
@@ -1771,7 +1771,7 @@
      "status": "internal"
     },
     {
-     "claim_tr": "Spezial handle'ı 'woodcut' matris türüne düşer (Woodcut Classic ile aynı ölçü/fiyat listesi)",
+     "claim_tr": "Spezial'in fiyat matrisinde kendi türü var: 'spezialstahl' (Woodcut Classic 'woodcut' türünde kalır)",
      "value": null,
      "unit": null,
      "conditions": "",

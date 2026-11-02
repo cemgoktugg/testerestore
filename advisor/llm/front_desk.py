@@ -58,6 +58,7 @@ LENGTH_LIMITS: Dict[str, Tuple[int, int]] = {
     "bi-metal": (1000, 15000),     # Bi-Metal M42 Premium
     "carbide": (1500, 12000),
     "woodcut": (1000, 8000),
+    "spezialstahl": (1000, 10000),
     "meat-bone": (1500, 6000),
     "textile": (1000, 8000),
 }
@@ -125,6 +126,8 @@ FAMILIES: Dict[str, Dict[str, Any]] = {
                 "links": [("Karbür Uçlu Şerit Testere", "/products/carbide-ultimate")]},
     "woodcut": {"label": "Ahşap Kesim",
                 "links": [("Ahşap Kesim Şerit Testere", "/products/woodcut-classic")]},
+    "spezialstahl": {"label": "Spezial Alman Çeliği (Ahşap)",
+                     "links": [("Spezial Alman Çeliği Ahşap Şerit Testere", "/products/spezial-alman-celigi")]},
     "meat-bone": {"label": "Et ve Kemik (paslanmaz)",
                   "links": [("Hijyenik Et-Kemik Şerit Testere", "/products/hijyenik-et-kemik-pro")]},
     "textile": {"label": "Sünger ve Tekstil",
@@ -132,7 +135,7 @@ FAMILIES: Dict[str, Dict[str, Any]] = {
 }
 # Boy sınırı mesajlarında ürün adı
 _PRODUCT_NAME = {"bi-metal": "Bi-Metal M42 Premium", "carbide": "Karbür Uçlu", "woodcut": "Ahşap Kesim",
-                 "meat-bone": "Hijyenik Et-Kemik", "textile": "Sünger-Tekstil"}
+                 "spezialstahl": "Spezial Alman Çeliği", "meat-bone": "Hijyenik Et-Kemik", "textile": "Sünger-Tekstil"}
 
 # "et" = fiil ("tavsiye et", "yardım eder misiniz") veya profil cidarı ("2 mm et",
 # "et kalınlığı", "kalın et") — aile tespitinden ÖNCE metinden çıkarılır.
@@ -147,6 +150,8 @@ _ET_NOISE = re.compile(
 _FAMILY_PATTERNS: List[Tuple[str, str]] = [
     ("carbide", r"karbur(?!\s*tutucu)\w*|karbit\w*|\btct\b|carbide|\b[vw][iy]d[iy]a\w*|hartmetall\w*"),
     ("bi-metal", r"\bbi\s?-?\s?metal\w*|\bbimetal\w*|\bm\s?-?\s?42\b|\bm\s?x?\s?-?\s?51\b|\bhss\b|kobaltl\w*"),
+    # woodcut'tan önce: "spezial ahşap" Spezial'in kendi fiyatıyla yanıtlansın
+    ("spezialstahl", r"\bspezial\w*|\balman\s*celi\w*"),
     ("woodcut", r"ahsap\w*|kereste\w*|tomruk\w*|marangoz\w*|\bmdf\b|\bsunta\w*|kontrplak\w*|\bagac\w*|"
                 r"\bodun\w*|\bkutuk(?!\s*celi)\w*|mobilya\w*|\bparke\w*|\bpalet\w*|\bkalas\w*|\bhizar\w*|"
                 r"\bbicki\w*|\bresaw\b|\bwood\w*|\bholz\w*|\btakoz\w*"),
@@ -531,6 +536,7 @@ _LINK_LABELS = {
     "/products/bimetal-m51": "Bi-Metal M51 Endüstriyel",
     "/products/carbide-ultimate": "Karbür Uçlu Şerit Testere",
     "/products/woodcut-classic": "Ahşap Kesim Şerit Testere",
+    "/products/spezial-alman-celigi": "Spezial Alman Çeliği Ahşap Şerit Testere",
     "/products/hijyenik-et-kemik-pro": "Hijyenik Et-Kemik Şerit Testere",
     "/products/sunger-tekstil-pro": "Sünger-Tekstil Şerit Testere",
     "/hazir-urunler": "hazır boy ürünler",
@@ -712,7 +718,7 @@ class FrontDesk:
             parts.append(self._price_answer(session, n, family))
             kinds.append("price")
 
-        if (family in ("woodcut", "meat-bone", "textile")
+        if (family in ("woodcut", "spezialstahl", "meat-bone", "textile")
                 and not ({"price", "stock"} | _STORE_KINDS) & set(kinds)):
             parts.append(self._non_metal(session, family, n))
             kinds.append(f"non_metal:{family}")
@@ -1177,6 +1183,8 @@ class FrontDesk:
         intro = {
             "woodcut": ("Ahşap için **Ahşap Kesim** şerit testerelerimiz uygundur. Kereste biçme ve düz "
                         "kesimlerde geniş bıçak (20 mm ve üzeri), kavisli kesimlerde dar bıçak tercih edilir."),
+            "spezialstahl": ("**Spezial Alman Çeliği** ahşap şerit testeremiz sert ve tropikal ağaçlar ile ince "
+                             "dilimleme için sunulur."),
             "meat-bone": ("Et, kemik ve donmuş gıda için hijyenik paslanmaz **Et-Kemik** şerit testerelerimiz "
                           "uygundur."),
             "textile": "Sünger, köpük ve tekstil için **Sünger-Tekstil** şerit testerelerimiz uygundur.",

@@ -37,7 +37,8 @@ export function matrixBladeTypeFor(product: ProductLike): string {
   const slug = String(product.handle || "").toLowerCase();
   if (/m51|m42|bimetal|bi-metal/.test(slug)) return "bi-metal";
   if (/carb(i|ü)de|karbur|karb[uü]r/.test(slug)) return "carbide";
-  if (/wood|ah[sş]ap|spezial/.test(slug)) return "woodcut";
+  if (/spezial/.test(slug)) return "spezialstahl";
+  if (/wood|ah[sş]ap/.test(slug)) return "woodcut";
   if (/meat|kemik|hijyenik|et-/.test(slug)) return "meat-bone";
   if (/textile|s[uü]nger|tekstil/.test(slug)) return "textile";
   return "bi-metal";

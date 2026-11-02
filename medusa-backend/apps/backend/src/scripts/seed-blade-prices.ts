@@ -78,7 +78,7 @@ export default async function seedBladePrices({ container }: ExecArgs) {
     }
   }
 
-  // ---------- Ahşap (Woodcut — Spezial Alman Çeliği, no TPI) ----------
+  // ---------- Ahşap: Uddeholm (woodcut) ve Spezialstahl ayrı ürün, no TPI ----------
   const woodSpecs: Array<[number, number]> = [
     [13, 0.6],
     [16, 0.6],
@@ -87,15 +87,17 @@ export default async function seedBladePrices({ container }: ExecArgs) {
     [32, 0.9],
     [40, 1.0],
   ];
-  for (const [w, t] of woodSpecs) {
-    rows.push({
-      blade_type: "woodcut",
-      width_mm: w,
-      thickness_mm: t,
-      tooth_pitch: null,
-      price_per_meter: 145 + (w - 13) * 6,
-      welding_fee: 50,
-    });
+  for (const blade_type of ["woodcut", "spezialstahl"]) {
+    for (const [w, t] of woodSpecs) {
+      rows.push({
+        blade_type,
+        width_mm: w,
+        thickness_mm: t,
+        tooth_pitch: null,
+        price_per_meter: 145 + (w - 13) * 6,
+        welding_fee: 50,
+      });
+    }
   }
 
   // ---------- Et ve Kemik (Hijyenik paslanmaz) ----------

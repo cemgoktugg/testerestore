@@ -24,6 +24,7 @@ TREE = {
                  "34": {"1.1": ["3/4", "2/3", "4/6"]}},
     "carbide": {"27": {"0.9": ["3/4", "2/3"]}},
     "woodcut": {"13": {"0.6": []}, "20": {"0.7": []}, "25": {"0.8": []}},
+    "spezialstahl": {"13": {"0.6": []}, "20": {"0.7": []}, "25": {"0.8": []}},
     "meat-bone": {"16": {"0.5": []}},
     "textile": {"10": {"0.5": []}},
 }
@@ -168,6 +169,18 @@ def test_wood_guidance_and_price_follow_up(fd):
     assert s.front_desk_pending["dims"] == (20.0, 0.7)
     r2 = fd.handle(s, "2900 mm")
     assert r2 and "20 × 0,7 mm, 2900 mm" in r2.text
+
+
+def test_spezial_is_quoted_as_its_own_product(fd):
+    r = fd.handle(Session(), "Spezial ahşap bıçak 20x0,7 2900 mm fiyatı nedir")
+    assert "/products/spezial-alman-celigi" in r.text
+    assert "woodcut-classic" not in r.text
+    # Genel ahşap sorusu Woodcut'ta kalır
+    r2 = fd.handle(Session(), "ahşap bıçak 20x0,7 2900 mm fiyatı nedir")
+    assert "/products/woodcut-classic" in r2.text and "spezial-alman-celigi" not in r2.text
+    # Spezial'in boy sınırı (10.000 mm) Woodcut'tan (8.000 mm) farklı
+    r3 = fd.handle(Session(), "spezial 20x0,7 9000 mm fiyatı nedir")
+    assert "/products/spezial-alman-celigi" in r3.text and "aralığın dışında" not in r3.text
 
 
 def test_off_topic(fd):

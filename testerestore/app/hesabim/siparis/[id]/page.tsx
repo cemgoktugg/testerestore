@@ -64,7 +64,8 @@ export default function OrderDetailPage() {
             variantId,
             quantity: item.quantity,
             bladeMatrix: {
-              bladeType: String(meta.blade_type),
+              // Ayrımdan önceki Spezial siparişlerinde tip "woodcut" yazılı.
+              bladeType: /spezial/.test(item.product_handle || '') ? 'spezialstahl' : String(meta.blade_type),
               widthMm: Number(meta.width_mm),
               thicknessMm: Number(meta.thickness_mm),
               toothPitch: meta.tooth_pitch ? String(meta.tooth_pitch) : null,

@@ -10,7 +10,9 @@ function guessBladeType(title: string, metaType?: string): string {
   // içine takılıp yanlış eşleşmesin (substring bug'ı).
   if (/bi-?metal|\bm42\b|\bm51\b/.test(s)) return "bi-metal";
   if (/karb(ü|u)r|carbide|flexback/.test(s)) return "carbide";
-  if (/ah(ş|s)ap|a(ğ|g)a(ç|c)|wood|spezial/.test(s)) return "woodcut";
+  // Spezial'in başlığında "Ahşap" da geçiyor → ahşaptan ÖNCE kontrol et.
+  if (/spezial/.test(s)) return "spezialstahl";
+  if (/ah(ş|s)ap|a(ğ|g)a(ç|c)|wood/.test(s)) return "woodcut";
   // Kelime sınırı şart: \bet\b "metal" içindeki "et"i yakalamaz.
   if (/\bet\b|kemik|\bmeat\b|\bbone\b/.test(s)) return "meat-bone";
   if (/s(ü|u)nger|tekstil|textile|foam/.test(s)) return "textile";

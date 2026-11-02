@@ -13,7 +13,7 @@ const BladePrice = model.define("blade_price", {
   id: model.id().primaryKey(),
 
   /** Logical blade family — matches the storefront filter pills.
-   *  e.g. "bi-metal" | "carbide" | "woodcut" | "meat-bone" */
+   *  e.g. "bi-metal" | "carbide" | "woodcut" (Uddeholm) | "spezialstahl" | "meat-bone" */
   blade_type: model.text(),
 
   // Stored as bigNumber so decimal widths (e.g. 0.9, 1.3) survive a round
