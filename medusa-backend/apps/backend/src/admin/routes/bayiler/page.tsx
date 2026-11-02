@@ -295,6 +295,7 @@ export default function DealersPage() {
         .map((r) => ({
           key: r.key,
           kind: r.kind,
+          group: r.group,
           title: r.title,
           detail: r.detail,
           dealerPriced: !!(r.saved || r.savedWeld),
@@ -608,7 +609,7 @@ export default function DealersPage() {
             )}
           </div>
 
-          {dealer && <QuotesPanel dealerId={dealer.id} products={quoteProducts} />}
+          {dealer && <QuotesPanel dealerId={dealer.id} products={quoteProducts} groups={GROUPS} />}
 
           <div className="flex flex-wrap items-end gap-3 px-6 py-4">
             <div className="w-64">

@@ -1,10 +1,11 @@
 import { Trash } from "@medusajs/icons";
-import { Badge, Button, Heading, Input, Label, Table, Text, Textarea, toast, usePrompt } from "@medusajs/ui";
+import { Badge, Button, Heading, Input, Label, Select, Table, Text, Textarea, toast, usePrompt } from "@medusajs/ui";
 import { useEffect, useMemo, useState } from "react";
 
 export interface QuoteProduct {
   key: string;
   kind: "blade" | "variant";
+  group: string;
   title: string;
   detail: string;
   /** Teklifte bu ürün bayi fiyatıyla mı çıkacak (bilgi amaçlı). */
@@ -70,15 +71,18 @@ const refId = (key: string) => key.slice(key.indexOf(":") + 1);
 export default function QuotesPanel({
   dealerId,
   products,
+  groups,
 }: {
   dealerId: string;
   products: QuoteProduct[];
+  groups: { value: string; label: string }[];
 }) {
   const prompt = usePrompt();
   const [quotes, setQuotes] = useState<Quote[]>([]);
   const [editing, setEditing] = useState<string | "new" | null>(null);
   const [items, setItems] = useState<DraftItem[]>([]);
   const [note, setNote] = useState("");
+  const [group, setGroup] = useState("");
   const [search, setSearch] = useState("");
   const [saving, setSaving] = useState(false);
 
@@ -97,27 +101,40 @@ export default function QuotesPanel({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dealerId]);
 
+  const availableGroups = useMemo(
+    () => groups.filter((g) => products.some((p) => p.group === g.value)),
+    [groups, products]
+  );
+
+  // Grup seçilince o grubun tamamı listelenir; arama yalnız daraltır.
   const results = useMemo(() => {
     const words = search.trim().toLocaleLowerCase("tr").split(/\s+/).filter(Boolean);
-    if (!words.length) return [];
-    return products
-      .filter((p) => {
-        const text = `${p.title} ${p.detail}`.toLocaleLowerCase("tr");
-        return words.every((w) => text.includes(w));
-      })
-      .slice(0, 15);
-  }, [products, search]);
+    if (!group && !words.length) return [];
+    return products.filter((p) => {
+      if (group && p.group !== group) return false;
+      const text = `${p.title} ${p.detail}`.toLocaleLowerCase("tr");
+      return words.every((w) => text.includes(w));
+    });
+  }, [products, group, search]);
+
+  const addedCount = useMemo(() => {
+    const counts = new Map<string, number>();
+    for (const it of items) counts.set(it.key, (counts.get(it.key) ?? 0) + 1);
+    return counts;
+  }, [items]);
 
   function startNew() {
     setEditing("new");
     setItems([]);
     setNote("");
+    setGroup("");
     setSearch("");
   }
 
   function startEdit(q: Quote) {
     setEditing(q.id);
     setNote(q.note ?? "");
+    setGroup("");
     setSearch("");
     setItems(
       q.items.map((i) => {
@@ -147,7 +164,6 @@ export default function QuotesPanel({
         quantity: "1",
       },
     ]);
-    setSearch("");
   }
 
   const patchItem = (index: number, patch: Partial<DraftItem>) =>
@@ -274,32 +290,67 @@ export default function QuotesPanel({
       {editing && (
         <div className="flex flex-col gap-3 rounded-lg border p-4">
           <div>
-            <Label size="small">Ürün ekle</Label>
-            <Input
-              placeholder="Örn: bi-metal 27 4/6"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
+            <div className="flex flex-wrap items-end gap-3">
+              <div className="w-72">
+                <Label size="small">Ürün grubu</Label>
+                <Select value={group} onValueChange={setGroup}>
+                  <Select.Trigger aria-label="Teklif ürün grubu">
+                    <Select.Value placeholder="Ürün grubu seçin" />
+                  </Select.Trigger>
+                  <Select.Content>
+                    {availableGroups.map((g) => (
+                      <Select.Item key={g.value} value={g.value}>
+                        {g.label}
+                      </Select.Item>
+                    ))}
+                  </Select.Content>
+                </Select>
+              </div>
+              <div className="w-64">
+                <Label size="small">Ölçü ara (isteğe bağlı)</Label>
+                <Input
+                  placeholder="Örn: 27 4/6"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                />
+              </div>
+              {results.length > 0 && (
+                <Text size="xsmall" className="pb-2 text-ui-fg-subtle">
+                  {results.length} ölçü · eklemek için tıklayın
+                </Text>
+              )}
+            </div>
             {results.length > 0 && (
-              <div className="mt-2 flex max-h-64 flex-col divide-y overflow-y-auto rounded-md border">
+              <div
+                role="list"
+                aria-label="Eklenebilir ölçüler"
+                className="mt-2 flex max-h-80 flex-col divide-y overflow-y-auto rounded-md border"
+              >
                 {results.map((p) => (
                   <button
                     key={p.key}
                     type="button"
+                    role="listitem"
                     className="flex items-center justify-between gap-3 px-3 py-2 text-left hover:bg-ui-bg-base-hover"
                     onClick={() => addItem(p)}
                   >
                     <Text size="small">
-                      {p.title} {p.detail && `· ${p.detail}`}
+                      {p.kind === "blade" ? p.detail : p.title}
+                      {p.kind === "variant" && p.detail ? ` · ${p.detail}` : ""}
                     </Text>
-                    {p.dealerPriced && (
-                      <Badge size="2xsmall" color="green">Bayi fiyatlı</Badge>
-                    )}
+                    <span className="flex shrink-0 items-center gap-1">
+                      {addedCount.get(p.key) ? (
+                        <Badge size="2xsmall" color="blue">Eklendi × {addedCount.get(p.key)}</Badge>
+                      ) : null}
+                      {p.dealerPriced && (
+                        <Badge size="2xsmall" color="green">Bayi fiyatlı</Badge>
+                      )}
+                    </span>
                   </button>
                 ))}
               </div>
             )}
-            {search.trim() && results.length === 0 && (
+            {(group || search.trim()) && results.length === 0 && (
               <Text size="xsmall" className="mt-2 text-ui-fg-subtle">Ürün bulunamadı.</Text>
             )}
           </div>
