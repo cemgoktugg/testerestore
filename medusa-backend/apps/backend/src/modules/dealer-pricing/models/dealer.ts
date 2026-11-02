@@ -16,6 +16,8 @@ const Dealer = model
     customer_group_id: model.text(),
     price_list_id: model.text(),
     note: model.text().nullable(),
+    /** PDF tekliflerde görünen logo: PNG/JPEG data URL. */
+    logo_data: model.text().nullable(),
   })
   .indexes([
     { on: ["customer_id"], unique: true, where: "deleted_at IS NULL" },

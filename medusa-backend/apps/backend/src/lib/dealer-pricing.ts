@@ -16,7 +16,8 @@
  *    indirimiyle satılır.
  */
 import type { MedusaContainer } from "@medusajs/framework/types";
-import { ContainerRegistrationKeys, Modules } from "@medusajs/framework/utils";
+import { ContainerRegistrationKeys, Modules, QueryContext } from "@medusajs/framework/utils";
+import { isConfigurableBlade } from "./blade-guard";
 import { DEALER_PRICING_MODULE } from "../modules/dealer-pricing";
 import type DealerPricingService from "../modules/dealer-pricing/service";
 
@@ -120,4 +121,39 @@ export async function listDealerVariantPrices(
     if (variantId) map.set(variantId, { price_id: p.id, amount: Number(p.amount) });
   }
   return map;
+}
+
+/**
+ * Satılabilir tüm varyantlar ve genel fiyatları. Ölçüye göre ürünler hariç:
+ * onların fiyatı varyanttan değil matristen gelir.
+ */
+export async function listSellableVariants(container: MedusaContainer) {
+  const [region] = await container
+    .resolve(Modules.REGION)
+    .listRegions({ currency_code: "try" }, { select: ["id"], take: 1 });
+  const query = container.resolve(ContainerRegistrationKeys.QUERY);
+  const { data } = await query.graph({
+    entity: "product_variant",
+    fields: [
+      "id",
+      "title",
+      "sku",
+      "product.id",
+      "product.title",
+      "product.status",
+      "product.handle",
+      "product.metadata",
+      "calculated_price.calculated_amount",
+    ],
+    context: {
+      calculated_price: QueryContext({
+        currency_code: "try",
+        ...(region ? { region_id: region.id } : {}),
+      }),
+    },
+  });
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return ((data ?? []) as any[]).filter(
+    (v) => v.product?.status === "published" && !isConfigurableBlade(v.product)
+  );
 }

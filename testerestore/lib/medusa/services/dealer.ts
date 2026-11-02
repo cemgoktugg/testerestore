@@ -40,6 +40,91 @@ export async function syncDealerCart(cartId: string): Promise<DealerCartSync> {
   }
 }
 
+export interface DealerPriceList {
+  company_name: string;
+  blades: {
+    id: string;
+    blade_type: string;
+    width_mm: number;
+    thickness_mm: number;
+    tooth_pitch: string | null;
+    list_price_per_meter: number;
+    list_welding_fee: number;
+    price_per_meter: number;
+    welding_fee: number;
+  }[];
+  products: {
+    id: string;
+    title: string;
+    handle: string;
+    list_amount: number | null;
+    amount: number | null;
+  }[];
+}
+
+/** Bayinin özel fiyatları; bayi değilse null. */
+export async function getDealerPriceList(): Promise<DealerPriceList | null> {
+  if (!MEDUSA_READY) return null;
+  try {
+    return await medusa.client.fetch<DealerPriceList>("/store/dealer/price-list", {
+      cache: "no-store",
+    });
+  } catch {
+    return null;
+  }
+}
+
+export interface DealerQuote {
+  id: string;
+  number: string;
+  note: string | null;
+  created_at: string;
+  sent_at: string | null;
+  items: {
+    id: string;
+    title: string;
+    detail: string | null;
+    quantity: number;
+    unit_price: number;
+  }[];
+  subtotal: number;
+  tax: number;
+  total: number;
+}
+
+/** Bayiye gönderilmiş teklifler; bayi değilse null. */
+export async function getDealerQuotes(): Promise<DealerQuote[] | null> {
+  if (!MEDUSA_READY) return null;
+  try {
+    const { quotes } = await medusa.client.fetch<{ quotes: DealerQuote[] }>(
+      "/store/dealer/quotes",
+      { cache: "no-store" }
+    );
+    return quotes;
+  } catch {
+    return null;
+  }
+}
+
+export async function downloadDealerQuotePdf(id: string, number: string): Promise<boolean> {
+  try {
+    const res = await medusa.client.fetch<Response>(`/store/dealer/quotes/${id}/pdf`, {
+      headers: { accept: "application/pdf" },
+      cache: "no-store",
+    });
+    const url = URL.createObjectURL(await res.blob());
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${number}.pdf`;
+    a.click();
+    URL.revokeObjectURL(url);
+    return true;
+  } catch (e) {
+    console.error("[medusa] downloadDealerQuotePdf failed", e);
+    return false;
+  }
+}
+
 /**
  * Sunucuda anonim üretilen ürün verisine bayi fiyatlarını uygular. Yalnız
  * gösterim içindir: sepet fiyatını her zaman sunucu belirler.

@@ -1,15 +1,13 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http";
-import {
-  ContainerRegistrationKeys,
-  Modules,
-  QueryContext,
-} from "@medusajs/framework/utils";
 import { batchPriceListPricesWorkflow } from "@medusajs/medusa/core-flows";
 import { z } from "zod";
-import { isConfigurableBlade } from "../../../../../lib/blade-guard";
 import { BLADE_PRICE_MATRIX_MODULE } from "../../../../../modules/blade-price-matrix";
 import type BladePriceMatrixService from "../../../../../modules/blade-price-matrix/service";
-import { dealerService, listDealerVariantPrices } from "../../../../../lib/dealer-pricing";
+import {
+  dealerService,
+  listDealerVariantPrices,
+  listSellableVariants,
+} from "../../../../../lib/dealer-pricing";
 
 const CURRENCY = "try";
 
@@ -41,41 +39,6 @@ async function findDealer(req: MedusaRequest) {
   return dealer ?? null;
 }
 
-/**
- * Satılabilir tüm varyantlar ve genel fiyatları. Ölçüye göre ürünler hariç:
- * onların fiyatı varyanttan değil matristen gelir.
- */
-async function listSellableVariants(req: MedusaRequest) {
-  const [region] = await req.scope
-    .resolve(Modules.REGION)
-    .listRegions({ currency_code: CURRENCY }, { select: ["id"], take: 1 });
-  const query = req.scope.resolve(ContainerRegistrationKeys.QUERY);
-  const { data } = await query.graph({
-    entity: "product_variant",
-    fields: [
-      "id",
-      "title",
-      "sku",
-      "product.id",
-      "product.title",
-      "product.status",
-      "product.handle",
-      "product.metadata",
-      "calculated_price.calculated_amount",
-    ],
-    context: {
-      calculated_price: QueryContext({
-        currency_code: CURRENCY,
-        ...(region ? { region_id: region.id } : {}),
-      }),
-    },
-  });
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return ((data ?? []) as any[]).filter(
-    (v) => v.product?.status === "published" && !isConfigurableBlade(v.product)
-  );
-}
-
 /** GET /admin/dealers/:id/prices — tüm ürünler, genel ve bayi fiyatlarıyla. */
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
   const dealer = await findDealer(req);
@@ -92,7 +55,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
   );
   const overrideByRow = new Map(overrides.map((o) => [o.blade_price_id, o]));
   const [variants, variantPrices] = await Promise.all([
-    listSellableVariants(req),
+    listSellableVariants(req.scope),
     listDealerVariantPrices(req.scope, dealer.price_list_id),
   ]);
 
@@ -145,7 +108,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
   const service = dealerService(req.scope);
 
   if (variants.length) {
-    const sellable = new Set((await listSellableVariants(req)).map((v) => v.id));
+    const sellable = new Set((await listSellableVariants(req.scope)).map((v) => v.id));
     const unknown = variants.find((v) => !sellable.has(v.variant_id));
     if (unknown) {
       res.status(400).json({

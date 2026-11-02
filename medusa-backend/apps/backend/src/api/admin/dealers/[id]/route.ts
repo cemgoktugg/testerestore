@@ -11,6 +11,12 @@ const UpdateSchema = z.object({
   company_name: z.string().trim().min(1).optional(),
   note: z.string().trim().nullable().optional(),
   is_active: z.boolean().optional(),
+  logo_data: z
+    .string()
+    .regex(/^data:image\/(png|jpeg);base64,[A-Za-z0-9+/=]+$/, "Logo PNG veya JPEG olmalı.")
+    .max(1_500_000, "Logo çok büyük.")
+    .nullable()
+    .optional(),
 });
 
 /** POST /admin/dealers/:id — ad, not ve aktiflik. Pasif bayi genel fiyat görür. */

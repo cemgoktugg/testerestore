@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { useCustomer } from '../context/CustomerContext';
+import { useDealer } from '../context/DealerContext';
 import {
   listMyOrders,
   updateCustomer,
@@ -19,8 +20,22 @@ import type { HttpTypes } from '@medusajs/types';
 import { formatMoney } from '../../lib/medusa/format';
 import { getOrderStatus } from '../../lib/order-status';
 import {
-  Loader2, User, MapPin, Package, LogOut, Plus, Trash2, Save,
-  CheckCircle2, AlertCircle, Calendar, ArrowRight, Heart, Award,
+  Loader2,
+  User,
+  MapPin,
+  Package,
+  LogOut,
+  Plus,
+  Trash2,
+  Save,
+  CheckCircle2,
+  AlertCircle,
+  Calendar,
+  ArrowRight,
+  Heart,
+  Award,
+  FileText,
+  Tags,
 } from 'lucide-react';
 
 type Tab = 'profile' | 'addresses' | 'orders';
@@ -28,6 +43,7 @@ type Tab = 'profile' | 'addresses' | 'orders';
 export default function HesabimPage() {
   const router = useRouter();
   const { customer, loading, isAuthenticated, logout, refresh } = useCustomer();
+  const { isDealer } = useDealer();
   const [tab, setTab] = useState<Tab>('profile');
 
   useEffect(() => {
@@ -75,6 +91,24 @@ export default function HesabimPage() {
               <TabButton current={tab} value="orders" onClick={setTab} icon={Package}>
                 Siparişlerim
               </TabButton>
+              {isDealer && (
+                <>
+                  <Link
+                    href="/hesabim/fiyat-listem"
+                    className="w-full flex items-center gap-2 px-4 py-3 rounded-xl text-sm font-semibold text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+                  >
+                    <Tags className="h-4 w-4" />
+                    Fiyat Listem
+                  </Link>
+                  <Link
+                    href="/hesabim/teklifler"
+                    className="w-full flex items-center gap-2 px-4 py-3 rounded-xl text-sm font-semibold text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+                  >
+                    <FileText className="h-4 w-4" />
+                    Tekliflerim
+                  </Link>
+                </>
+              )}
               <Link
                 href="/hesabim/favoriler"
                 className="w-full flex items-center gap-2 px-4 py-3 rounded-xl text-sm font-semibold text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"

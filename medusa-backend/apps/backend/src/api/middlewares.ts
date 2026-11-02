@@ -161,6 +161,22 @@ export default defineMiddlewares({
       middlewares: [authenticate("customer", ["session", "bearer"])],
     },
     {
+      matcher: "/store/dealer/price-list",
+      method: ["GET"],
+      middlewares: [authenticate("customer", ["session", "bearer"])],
+    },
+    {
+      matcher: "/store/dealer/quotes*",
+      method: ["GET"],
+      middlewares: [authenticate("customer", ["session", "bearer"])],
+    },
+    {
+      // Bayi logosu JSON içinde gelir; varsayılan gövde sınırı küçük.
+      matcher: "/admin/dealers/:id",
+      method: ["POST"],
+      bodyParser: { sizeLimit: "2mb" },
+    },
+    {
       matcher: "/store/payment-collections/:id/payment-sessions",
       method: ["POST"],
       middlewares: [stripPaymentSessionData],

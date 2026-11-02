@@ -5,6 +5,7 @@ import {
   Badge, Drawer, Table, toast, usePrompt,
 } from "@medusajs/ui";
 import { useEffect, useMemo, useState } from "react";
+import QuotesPanel from "./quotes-panel";
 
 interface Customer {
   id: string;
@@ -21,6 +22,7 @@ interface Dealer {
   company_name: string;
   is_active: boolean;
   note?: string | null;
+  logo_data?: string | null;
   customer?: Customer | null;
 }
 
@@ -44,6 +46,27 @@ interface VariantRow {
   is_ready_made: boolean;
   list_amount: number | null;
   amount: number | null;
+}
+
+/** Yüklenen görseli PDF'e uygun, küçük bir PNG'ye çevirir (WEBP, SVG vb. de olur). */
+async function imageToPngDataUrl(file: File): Promise<string> {
+  const url = URL.createObjectURL(file);
+  try {
+    const img = await new Promise<HTMLImageElement>((resolve, reject) => {
+      const el = new Image();
+      el.onload = () => resolve(el);
+      el.onerror = () => reject(new Error("Görsel okunamadı."));
+      el.src = url;
+    });
+    const scale = Math.min(1, 600 / Math.max(img.naturalWidth || 600, img.naturalHeight || 600));
+    const canvas = document.createElement("canvas");
+    canvas.width = Math.max(1, Math.round((img.naturalWidth || 600) * scale));
+    canvas.height = Math.max(1, Math.round((img.naturalHeight || 600) * scale));
+    canvas.getContext("2d")?.drawImage(img, 0, 0, canvas.width, canvas.height);
+    return canvas.toDataURL("image/png");
+  } finally {
+    URL.revokeObjectURL(url);
+  }
 }
 
 /** Matris satırı ve ürün varyantı tek tabloda aynı biçimde gösterilir. */
@@ -265,6 +288,19 @@ export default function DealersPage() {
       }),
     [rows, edits]
   );
+  const quoteProducts = useMemo(
+    () =>
+      rows
+        .filter((r) => r.list !== null || r.saved)
+        .map((r) => ({
+          key: r.key,
+          kind: r.kind,
+          title: r.title,
+          detail: r.detail,
+          dealerPriced: !!(r.saved || r.savedWeld),
+        })),
+    [rows]
+  );
   const pricedCount = useMemo(() => rows.filter((r) => r.saved || r.savedWeld).length, [rows]);
 
   function setCell(r: Row, patch: Partial<Edit>) {
@@ -411,6 +447,29 @@ export default function DealersPage() {
     }
   }
 
+  async function saveLogo(logo_data: string | null) {
+    if (!dealer) return;
+    try {
+      await api(`/admin/dealers/${dealer.id}`, {
+        method: "POST",
+        body: JSON.stringify({ logo_data }),
+      });
+      toast.success(logo_data ? "Logo kaydedildi" : "Logo kaldırıldı");
+      await loadDealers(dealer.id);
+    } catch (e) {
+      toast.error("Logo kaydedilemedi", { description: String(e) });
+    }
+  }
+
+  async function onLogoPicked(file?: File) {
+    if (!file) return;
+    try {
+      await saveLogo(await imageToPngDataUrl(file));
+    } catch (e) {
+      toast.error("Logo okunamadı", { description: String(e) });
+    }
+  }
+
   async function issuePassword() {
     if (!dealer) return;
     const ok = await prompt({
@@ -517,6 +576,28 @@ export default function DealersPage() {
                     {dealer.is_active ? "Aktif" : "Pasif"}
                   </Badge>
                 </div>
+                <div className="flex items-center gap-2">
+                  {dealer.logo_data && (
+                    <img src={dealer.logo_data} alt="Bayi logosu" className="h-8 max-w-[96px] object-contain" />
+                  )}
+                  <Label size="small" className="cursor-pointer rounded-md border px-2 py-1">
+                    {dealer.logo_data ? "Logoyu değiştir" : "Logo yükle"}
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="sr-only"
+                      onChange={(e) => {
+                        onLogoPicked(e.target.files?.[0]);
+                        e.target.value = "";
+                      }}
+                    />
+                  </Label>
+                  {dealer.logo_data && (
+                    <Button size="small" variant="transparent" onClick={() => saveLogo(null)}>
+                      Kaldır
+                    </Button>
+                  )}
+                </div>
                 <Button size="small" variant="secondary" onClick={issuePassword}>
                   Yeni şifre oluştur
                 </Button>
@@ -526,6 +607,8 @@ export default function DealersPage() {
               </>
             )}
           </div>
+
+          {dealer && <QuotesPanel dealerId={dealer.id} products={quoteProducts} />}
 
           <div className="flex flex-wrap items-end gap-3 px-6 py-4">
             <div className="w-64">
