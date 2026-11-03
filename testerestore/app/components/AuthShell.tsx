@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Hammer } from 'lucide-react';
+import BrandLogo from './BrandLogo';
 
 interface AuthShellProps {
   title: string;
@@ -17,13 +17,8 @@ export default function AuthShell({ title, subtitle, children, footer }: AuthShe
     <main className="min-h-screen flex flex-col bg-background">
       <div className="flex-1 flex items-center justify-center px-4 py-12">
         <div className="w-full max-w-md">
-          <Link href="/" className="flex items-center justify-center gap-2 mb-8 group">
-            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-molten-grad text-white transform group-hover:rotate-12 transition-transform duration-300 shadow-md">
-              <Hammer className="h-5 w-5" />
-            </div>
-            <span className="text-xl font-black tracking-tight text-foreground">
-              TESTERE<span className="text-accent font-bold">STORE</span>
-            </span>
+          <Link href="/" className="flex justify-center mb-8" aria-label="TestereStore ana sayfa">
+            <BrandLogo priority className="h-14 sm:h-16" />
           </Link>
 
           <div className="rounded-3xl bg-metallic-card border border-border p-8 shadow-xl">

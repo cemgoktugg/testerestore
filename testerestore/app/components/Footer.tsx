@@ -2,9 +2,10 @@
 
 import Link from 'next/link';
 import {
-  Hammer, ShieldCheck, Truck, RefreshCw, Mail, Phone, MapPin,
+  ShieldCheck, Truck, RefreshCw, Mail, Phone, MapPin,
   Award, Sparkles, Zap, Settings, Package, type LucideIcon,
 } from 'lucide-react';
+import BrandLogo from './BrandLogo';
 import { useFooter } from '../../lib/medusa/hooks/useFooter';
 import type {
   FooterFeature, FooterLinkGroup, FooterSettings,
@@ -122,13 +123,8 @@ export default function Footer() {
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-8">
         {/* About */}
         <div className="space-y-4">
-          <Link href="/" className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-molten-grad text-white">
-              <Hammer className="h-4 w-4" />
-            </div>
-            <span className="text-lg font-black tracking-tight text-foreground">
-              TESTERE<span className="text-accent font-bold">STORE</span>
-            </span>
+          <Link href="/" className="inline-block" aria-label="TestereStore ana sayfa">
+            <BrandLogo className="h-14" />
           </Link>
           <p className="text-xs text-muted-foreground leading-relaxed">
             {settings.company_description}

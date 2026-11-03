@@ -1,18 +1,25 @@
 /**
- * Teklif PDF'i: solda TestereStore, sağda bayi logosu, kalemler ve toplamlar.
+ * Teklif PDF'i: solda TestereStore, sağda bayi logosu; teklif bilgileri, kalemler,
+ * toplamlar, koşullar ve en altta teklifin kime hazırlandığı ile geçerlilik süresi.
  * Yazı tipi gömülüdür; PDFKit'in hazır fontlarında ş, ğ, ı, İ yoktur.
  */
 import PDFDocument from "pdfkit";
 import { KDV_RATE } from "./dealer-quote";
-import { TESTERESTORE_LOGO_PNG } from "./assets/testerestore-logo";
+import { TESTERESTORE_LOGO_JPG, TESTERESTORE_LOGO_RATIO } from "./assets/testerestore-logo";
 
 const FONT = require.resolve("dejavu-fonts-ttf/ttf/DejaVuSans.ttf");
 const FONT_BOLD = require.resolve("dejavu-fonts-ttf/ttf/DejaVuSans-Bold.ttf");
 const ORANGE = "#ea6a12";
+const ORANGE_SOFT = "#fdf1e7";
 const INK = "#1f2329";
 const MUTED = "#6b7280";
-const LINE = "#d9dce1";
-const MARGIN = 45;
+const LINE = "#e5e7eb";
+const ZEBRA = "#f8f9fb";
+const PANEL = "#f4f5f7";
+const MARGIN = 40;
+const FOOTER_SPACE = 34;
+/** Teklif, gönderildiği günden itibaren bu kadar gün geçerlidir. */
+export const QUOTE_VALID_DAYS = 7;
 
 type QuotePdfInput = {
   number: string;
@@ -33,6 +40,8 @@ type QuotePdfInput = {
 const money = (n: number) =>
   `${n.toLocaleString("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} TL`;
 
+const day = (d: Date) => d.toLocaleDateString("tr-TR", { timeZone: "Europe/Istanbul" });
+
 function logoBuffer(dataUrl?: string | null): Buffer | null {
   const match = dataUrl?.match(/^data:image\/(?:png|jpeg);base64,(.+)$/);
   return match ? Buffer.from(match[1], "base64") : null;
@@ -46,6 +55,7 @@ export function renderQuotePdf(
     const doc = new PDFDocument({
       size: "A4",
       margin: MARGIN,
+      bufferPages: true,
       info: { Title: `Teklif ${quote.number}`, Author: "TestereStore" },
     });
     const chunks: Buffer[] = [];
@@ -55,120 +65,214 @@ export function renderQuotePdf(
     doc.registerFont("r", FONT);
     doc.registerFont("b", FONT_BOLD);
 
+    const pageW = doc.page.width;
+    const pageH = doc.page.height;
     const left = MARGIN;
-    const right = doc.page.width - MARGIN;
+    const right = pageW - MARGIN;
     const width = right - left;
-    const cols = {
-      no: left,
-      product: left + 26,
-      qty: right - 190,
-      unit: right - 145,
-      total: right - 70,
-    };
+    const bottom = pageH - MARGIN - FOOTER_SPACE;
 
-    doc.image(Buffer.from(TESTERESTORE_LOGO_PNG, "base64"), left, MARGIN, { fit: [48, 48] });
-    doc.font("b").fontSize(16).fillColor(INK).text("TESTERE", left + 58, MARGIN + 6, { continued: true });
-    doc.fillColor(ORANGE).text("STORE");
-    doc.font("r").fontSize(8).fillColor(MUTED).text("testerestore.com", left + 58, MARGIN + 28);
+    const issued = new Date(quote.date);
+    const validUntil = new Date(issued.getTime() + QUOTE_VALID_DAYS * 24 * 60 * 60 * 1000);
+
+    // Sütunlar sağdan sola: tutar, birim fiyat, adet; kalan genişlik ürüne.
+    const pad = 8;
+    const totalW = 86;
+    const unitW = 82;
+    const qtyW = 40;
+    const cols = {
+      no: left + pad,
+      product: left + 32,
+      total: right - pad - totalW,
+      unit: right - pad - totalW - pad - unitW,
+      qty: right - pad - totalW - pad - unitW - pad - qtyW,
+    };
+    const productW = cols.qty - pad - cols.product;
+
+    const topBar = () => doc.rect(0, 0, pageW, 5).fill(ORANGE);
+
+    // ---- Başlık: logolar
+    topBar();
+    // Logonun kendi koyu zemini var; köşeleri yuvarlatılmış plaka olarak basılır.
+    const logoH = 48;
+    const logoW = logoH * TESTERESTORE_LOGO_RATIO;
+    doc.save();
+    doc.roundedRect(left, 26, logoW, logoH, 6).clip();
+    doc.image(Buffer.from(TESTERESTORE_LOGO_JPG, "base64"), left, 26, { width: logoW, height: logoH });
+    doc.restore();
+    doc.font("r").fontSize(8).fillColor(MUTED).text("Şerit testere bıçakları · testerestore.com", left, 26 + logoH + 6);
 
     const dealerLogo = logoBuffer(dealer.logo_data);
     if (dealerLogo) {
       try {
-        doc.image(dealerLogo, right - 130, MARGIN, { fit: [130, 54], align: "right" });
+        doc.image(dealerLogo, right - 150, 26, { fit: [150, logoH], align: "right", valign: "center" });
       } catch {
-        // Bozuk logo teklifi engellemesin; firma adı aşağıda yine yazılı.
+        // Bozuk logo teklifi engellemesin.
       }
     }
 
-    let y = MARGIN + 74;
-    doc.moveTo(left, y).lineTo(right, y).strokeColor(ORANGE).lineWidth(1.5).stroke();
-    y += 14;
+    // ---- Başlık ve teklif bilgileri
+    let y = 106;
+    doc.font("b").fontSize(22).fillColor(INK).text("FİYAT TEKLİFİ", left, y, { characterSpacing: 0.5 });
+    if (quote.status === "draft") {
+      const tagX = left + doc.widthOfString("FİYAT TEKLİFİ", { characterSpacing: 0.5 }) + 12;
+      doc.roundedRect(tagX, y + 5, 54, 17, 4).lineWidth(1).strokeColor(ORANGE).stroke();
+      doc.font("b").fontSize(8).fillColor(ORANGE).text("TASLAK", tagX, y + 10, { width: 54, align: "center" });
+    }
+    y += 40;
 
-    doc.font("b").fontSize(18).fillColor(INK).text(
-      quote.status === "draft" ? "TEKLİF (TASLAK)" : "TEKLİF",
-      left,
-      y
-    );
-    doc.font("r").fontSize(9).fillColor(MUTED);
-    doc.text(`No: ${quote.number}`, left, y + 2, { width, align: "right" });
-    doc.text(`Tarih: ${new Date(quote.date).toLocaleDateString("tr-TR")}`, left, y + 15, {
-      width,
-      align: "right",
+    const meta: [string, string][] = [
+      ["TEKLİF NO", quote.number],
+      ["TEKLİF TARİHİ", day(issued)],
+      ["GEÇERLİLİK TARİHİ", day(validUntil)],
+    ];
+    const gap = 10;
+    const cellW = (width - gap * (meta.length - 1)) / meta.length;
+    meta.forEach(([label, value], i) => {
+      const x = left + i * (cellW + gap);
+      doc.roundedRect(x, y, cellW, 44, 5).fill(i === 2 ? ORANGE_SOFT : PANEL);
+      doc.font("b").fontSize(7).fillColor(i === 2 ? ORANGE : MUTED).text(label, x + 12, y + 9, {
+        width: cellW - 24,
+        characterSpacing: 0.6,
+      });
+      doc.font("b").fontSize(11.5).fillColor(INK).text(value, x + 12, y + 22, { width: cellW - 24 });
     });
-    y += 34;
-    doc.font("r").fontSize(10).fillColor(MUTED).text("Sayın", left, y);
-    doc.font("b").fontSize(12).fillColor(INK).text(dealer.company_name, left, y + 13, {
-      width: width - 150,
-    });
-    y = doc.y + 16;
+    y += 44 + 22;
 
+    // ---- Kalemler
     const header = (top: number) => {
-      doc.rect(left, top, width, 20).fill("#f3f4f6");
-      doc.font("b").fontSize(8).fillColor(INK);
-      doc.text("#", cols.no + 6, top + 6);
-      doc.text("Ürün", cols.product, top + 6);
-      doc.text("Adet", cols.qty, top + 6, { width: 38, align: "right" });
-      doc.text("Birim Fiyat", cols.unit, top + 6, { width: 70, align: "right" });
-      doc.text("Tutar", cols.total, top + 6, { width: 70 - 4, align: "right" });
+      doc.roundedRect(left, top, width, 24, 4).fill(INK);
+      doc.font("b").fontSize(7.5).fillColor("#ffffff");
+      const ty = top + 8.5;
+      doc.text("#", cols.no, ty);
+      doc.text("ÜRÜN / AÇIKLAMA", cols.product, ty, { characterSpacing: 0.4 });
+      doc.text("ADET", cols.qty, ty, { width: qtyW, align: "right", characterSpacing: 0.4 });
+      doc.text("BİRİM FİYAT", cols.unit, ty, { width: unitW, align: "right", characterSpacing: 0.4 });
+      doc.text("TUTAR", cols.total, ty, { width: totalW, align: "right", characterSpacing: 0.4 });
       return top + 24;
     };
     y = header(y);
 
-    const bottom = doc.page.height - MARGIN - 40;
     quote.items.forEach((item, i) => {
-      const productWidth = cols.qty - cols.product - 8;
       doc.font("b").fontSize(9);
-      const titleH = doc.heightOfString(item.title, { width: productWidth });
+      const titleH = doc.heightOfString(item.title, { width: productW });
       doc.font("r").fontSize(8);
-      const detailH = item.detail ? doc.heightOfString(item.detail, { width: productWidth }) : 0;
-      const rowH = titleH + detailH + 10;
+      const detailH = item.detail ? doc.heightOfString(item.detail, { width: productW }) + 2 : 0;
+      const rowH = Math.max(titleH + detailH, 12) + 16;
       if (y + rowH > bottom) {
         doc.addPage();
+        topBar();
         y = header(MARGIN);
       }
-      doc.font("r").fontSize(9).fillColor(MUTED).text(String(i + 1), cols.no + 6, y);
-      doc.font("b").fontSize(9).fillColor(INK).text(item.title, cols.product, y, { width: productWidth });
+      if (i % 2 === 1) doc.rect(left, y, width, rowH).fill(ZEBRA);
+      const ty = y + 8;
+      doc.font("r").fontSize(8.5).fillColor(MUTED).text(String(i + 1), cols.no, ty);
+      doc.font("b").fontSize(9).fillColor(INK).text(item.title, cols.product, ty, { width: productW });
       if (item.detail) {
-        doc.font("r").fontSize(8).fillColor(MUTED).text(item.detail, cols.product, y + titleH + 1, {
-          width: productWidth,
+        doc.font("r").fontSize(8).fillColor(MUTED).text(item.detail, cols.product, ty + titleH + 2, {
+          width: productW,
         });
       }
       doc.font("r").fontSize(9).fillColor(INK);
-      doc.text(String(item.quantity), cols.qty, y, { width: 38, align: "right" });
-      doc.text(money(item.unit_price), cols.unit, y, { width: 70, align: "right" });
-      doc.text(money(item.unit_price * item.quantity), cols.total, y, { width: 66, align: "right" });
+      doc.text(String(item.quantity), cols.qty, ty, { width: qtyW, align: "right" });
+      doc.text(money(item.unit_price), cols.unit, ty, { width: unitW, align: "right" });
+      doc.font("b").text(money(item.unit_price * item.quantity), cols.total, ty, { width: totalW, align: "right" });
       y += rowH;
-      doc.moveTo(left, y - 3).lineTo(right, y - 3).strokeColor(LINE).lineWidth(0.5).stroke();
+      doc.moveTo(left, y).lineTo(right, y).strokeColor(LINE).lineWidth(0.6).stroke();
     });
 
-    if (y + 90 > bottom) {
+    // ---- Toplamlar, not, koşullar ve kapanış: sığmazsa yeni sayfa
+    const conditions = [
+      "Birim fiyatlar KDV hariçtir; KDV toplamda ayrıca gösterilmiştir.",
+      "Bıçak fiyatlarına boy ve kaynak ücreti dahildir.",
+      "Kargo ücreti teklife dahil değildir.",
+      "Teklif, TestereStore hesabınızdaki Tekliflerim sayfasından kabul edilerek siparişe dönüştürülebilir.",
+    ];
+    doc.font("r").fontSize(8.5);
+    const noteH = quote.note ? doc.heightOfString(quote.note, { width: width - 28 }) + 34 : 0;
+    const conditionsH = 20 + conditions.reduce((h, c) => h + doc.heightOfString(c, { width: width - 14 }) + 4, 0);
+    doc.font("b").fontSize(10);
+    const closingH = doc.heightOfString(`Bu teklif ${dealer.company_name} için hazırlanmıştır.`, { width: width - 28 }) + 46;
+    const totalsH = 92;
+    if (y + 16 + totalsH + noteH + conditionsH + closingH + 16 > bottom) {
       doc.addPage();
+      topBar();
       y = MARGIN;
+    } else {
+      y += 16;
     }
-    y += 8;
-    const totalRow = (label: string, value: number, strong = false) => {
-      doc.font(strong ? "b" : "r").fontSize(strong ? 11 : 9).fillColor(strong ? ORANGE : INK);
-      doc.text(label, right - 260, y, { width: 150, align: "right" });
-      doc.text(money(value), right - 105, y, { width: 101, align: "right" });
-      y += strong ? 18 : 15;
+
+    const boxW = 250;
+    const boxX = right - boxW;
+    const totalRow = (label: string, value: number) => {
+      doc.font("r").fontSize(9).fillColor(MUTED).text(label, boxX + 12, y, { width: 130 });
+      doc.font("r").fontSize(9).fillColor(INK).text(money(value), boxX + 12, y, { width: boxW - 24, align: "right" });
+      y += 18;
     };
+    y += 4;
     totalRow("Ara Toplam (KDV hariç)", quote.subtotal);
     totalRow(`KDV (%${Math.round(KDV_RATE * 100)})`, quote.tax);
-    totalRow("Genel Toplam", quote.total, true);
+    y += 4;
+    doc.roundedRect(boxX, y, boxW, 32, 5).fill(ORANGE);
+    doc.font("b").fontSize(10).fillColor("#ffffff").text("GENEL TOPLAM", boxX + 12, y + 11, { characterSpacing: 0.5 });
+    doc.font("b").fontSize(12.5).fillColor("#ffffff").text(money(quote.total), boxX + 12, y + 9.5, {
+      width: boxW - 24,
+      align: "right",
+    });
+    y += 32 + 22;
 
     if (quote.note) {
-      y += 8;
-      doc.font("b").fontSize(9).fillColor(INK).text("Not", left, y);
-      doc.font("r").fontSize(9).fillColor(INK).text(quote.note, left, y + 13, { width });
-      y = doc.y;
+      doc.font("r").fontSize(8.5);
+      const h = doc.heightOfString(quote.note, { width: width - 28 });
+      doc.rect(left, y, width, h + 26).fill(PANEL);
+      doc.rect(left, y, 3, h + 26).fill(ORANGE);
+      doc.font("b").fontSize(7.5).fillColor(MUTED).text("AÇIKLAMA", left + 14, y + 8, { characterSpacing: 0.6 });
+      doc.font("r").fontSize(8.5).fillColor(INK).text(quote.note, left + 14, y + 19, { width: width - 28 });
+      y += h + 26 + 16;
     }
 
-    doc.font("r").fontSize(8).fillColor(MUTED).text(
-      "Birim fiyatlar KDV hariçtir. Bıçak fiyatlarına boy ve kaynak ücreti dahildir. Kargo ücreti teklife dahil değildir.",
-      left,
-      y + 18,
-      { width }
+    doc.font("b").fontSize(7.5).fillColor(MUTED).text("TEKLİF KOŞULLARI", left, y, { characterSpacing: 0.6 });
+    y += 14;
+    for (const c of conditions) {
+      doc.circle(left + 3, y + 4.5, 1.6).fill(ORANGE);
+      doc.font("r").fontSize(8.5).fillColor(INK).text(c, left + 12, y, { width: width - 14 });
+      y = doc.y + 4;
+    }
+
+    // Kapanış sayfanın en altına yaslanır.
+    const closingY = Math.max(y + 16, bottom - closingH + 10);
+    doc.roundedRect(left, closingY, width, closingH - 10, 5).fill(ORANGE_SOFT);
+    doc.rect(left, closingY, 3, closingH - 10).fill(ORANGE);
+    doc.font("r").fontSize(10).fillColor(INK).text("Bu teklif ", left + 16, closingY + 12, {
+      width: width - 28,
+      continued: true,
+    });
+    doc.font("b").text(dealer.company_name, { continued: true });
+    doc.font("r").text(" için hazırlanmıştır.");
+    doc.font("r").fontSize(9).fillColor(MUTED).text(
+      `${day(issued)} tarihinden itibaren 1 hafta geçerlidir (son geçerlilik tarihi: ${day(validUntil)}).`,
+      left + 16,
+      doc.y + 4,
+      { width: width - 28 }
     );
+
+    // ---- Her sayfaya alt bilgi
+    const range = doc.bufferedPageRange();
+    for (let i = 0; i < range.count; i++) {
+      doc.switchToPage(range.start + i);
+      const saved = doc.page.margins.bottom;
+      doc.page.margins.bottom = 0; // alt boşluğa yazarken otomatik yeni sayfa açılmasın
+      const fy = pageH - MARGIN - 8;
+      doc.moveTo(left, fy - 8).lineTo(right, fy - 8).strokeColor(LINE).lineWidth(0.6).stroke();
+      doc.font("r").fontSize(7.5).fillColor(MUTED);
+      doc.text("TestereStore · testerestore.com", left, fy, { width: width / 2, lineBreak: false });
+      doc.text(`Teklif ${quote.number} · Sayfa ${i + 1} / ${range.count}`, left + width / 2, fy, {
+        width: width / 2,
+        align: "right",
+        lineBreak: false,
+      });
+      doc.page.margins.bottom = saved;
+    }
     doc.end();
   });
 }

@@ -6,8 +6,9 @@ import { usePathname } from 'next/navigation';
 import { useTheme } from '../context/ThemeContext';
 import { useCart } from '../context/CartContext';
 import { useCustomer } from '../context/CustomerContext';
-import { ShoppingCart, Sun, Moon, Menu, X, Hammer, User, LogOut, Heart } from 'lucide-react';
+import { ShoppingCart, Sun, Moon, Menu, X, User, LogOut, Heart } from 'lucide-react';
 import SearchBox from './SearchBox';
+import BrandLogo from './BrandLogo';
 
 export default function Header() {
   const { theme, toggleTheme } = useTheme();
@@ -35,13 +36,8 @@ export default function Header() {
       {/* ÜST SATIR — Logo + Arama + Aksiyonlar */}
       <div className="mx-auto flex h-16 max-w-7xl items-center gap-4 lg:gap-8 px-4 sm:px-6 lg:px-8">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2 group shrink-0">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-molten-grad text-white transform group-hover:rotate-12 transition-transform duration-300 shadow-md">
-            <Hammer className="h-5 w-5" />
-          </div>
-          <span className="text-lg sm:text-xl font-black tracking-tight text-foreground hidden sm:inline">
-            TESTERE<span className="text-accent font-bold">STORE</span>
-          </span>
+        <Link href="/" className="shrink-0" aria-label="TestereStore ana sayfa">
+          <BrandLogo priority className="h-9 sm:h-11" />
         </Link>
 
         {/* Arama — orta alanı kapsar, geniş kullanılabilir */}
