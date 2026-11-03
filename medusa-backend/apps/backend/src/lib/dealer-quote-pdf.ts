@@ -93,13 +93,9 @@ export function renderQuotePdf(
 
     // ---- Başlık: logolar
     topBar();
-    // Logonun kendi koyu zemini var; köşeleri yuvarlatılmış plaka olarak basılır.
     const logoH = 48;
     const logoW = logoH * TESTERESTORE_LOGO_RATIO;
-    doc.save();
-    doc.roundedRect(left, 26, logoW, logoH, 6).clip();
     doc.image(Buffer.from(TESTERESTORE_LOGO_JPG, "base64"), left, 26, { width: logoW, height: logoH });
-    doc.restore();
     doc.font("r").fontSize(8).fillColor(MUTED).text("Şerit testere bıçakları · testerestore.com", left, 26 + logoH + 6);
 
     const dealerLogo = logoBuffer(dealer.logo_data);

@@ -21,6 +21,12 @@
   --radius: 0.75rem;
 }
 
+/* Logo: tema düğmesinin koyduğu .dark sınıfına göre açık/koyu sürüm (BrandLogo) */
+.brand-logo-light { display: block; }
+.brand-logo-dark { display: none; }
+.dark .brand-logo-light { display: none; }
+.dark .brand-logo-dark { display: block; }
+
 .dark {
   --background: #0d0e12; /* Deep titanium dark */
   --foreground: #e9ecef;
