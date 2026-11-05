@@ -8,9 +8,10 @@ import HazirBoySection from './components/HazirBoySection';
 import BestSellersSlider from './components/BestSellersSlider';
 import HomeDiscovery from './components/HomeDiscovery';
 import { listHeroSlides } from '../lib/medusa/services/hero-slides';
-import { listBestSellers, listProducts, listReadyMade } from '../lib/medusa/services/products';
+import { listAllProducts, selectBestSellers, selectReadyMade } from '../lib/medusa/services/products';
 import { listCategories } from '../lib/medusa/services/categories';
 import { slimProductForCard } from '../lib/medusa/slim';
+import { isReadyMade } from '../lib/ready-made';
 
 // SSR + ISR: ana sayfa içeriği (hero, katalog, en çok satanlar) SUNUCUDA çekilip
 // componentlere prop geçilir → ilk HTML dolu gelir, resimler anında yüklenmeye
@@ -22,14 +23,14 @@ export const revalidate = 300;
 export const metadata: Metadata = { alternates: { canonical: '/' } };
 
 export default async function Home() {
-  const [heroSlides, bestSellers, productsResp, categories, readyMade] =
+  const [heroSlides, products, categories] =
     await Promise.all([
       listHeroSlides(),
-      listBestSellers(8),
-      listProducts({ limit: 24 }),
+      listAllProducts(),
       listCategories(),
-      listReadyMade(24),
     ]);
+  const bestSellers = selectBestSellers(products, 8);
+  const readyMade = selectReadyMade(products, 24);
   return (
     <>
       <Header />
@@ -40,7 +41,7 @@ export default async function Home() {
 
         {/* Premium Catalog (with category filter) — yapılandırılabilir aileler */}
         <PremiumCatalog
-          initialProducts={productsResp.products.map(slimProductForCard)}
+          initialProducts={products.filter((p) => !isReadyMade(p)).map(slimProductForCard)}
           initialCategories={categories}
         />
 

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useId, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -36,7 +36,12 @@ export default function SearchBox({
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [failed, setFailed] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(-1);
+  const listId = useId();
   const wrapperRef = useRef<HTMLDivElement>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -65,7 +70,11 @@ export default function SearchBox({
 
   // Debounced fetch
   useEffect(() => {
+    let cancelled = false;
     if (debounceRef.current) clearTimeout(debounceRef.current);
+    setActiveIndex(-1);
+    setFailed(false);
+    setResults([]);
     const q = query.trim();
     if (q.length < 2) {
       setResults([]);
@@ -79,23 +88,30 @@ export default function SearchBox({
           q,
           limit: MAX_SUGGESTIONS,
         });
-        setResults(products);
+        if (!cancelled) setResults(products);
       } catch {
-        setResults([]);
+        if (!cancelled) setFailed(true);
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     }, DEBOUNCE_MS);
     return () => {
+      cancelled = true;
       if (debounceRef.current) clearTimeout(debounceRef.current);
     };
   }, [query]);
 
   // Mobile açılınca input'a focus
   useEffect(() => {
-    if (mobileOpen && inputRef.current) {
-      setTimeout(() => inputRef.current?.focus(), 50);
-    }
+    if (!mobileOpen) return;
+    const trigger = triggerRef.current;
+    inputRef.current?.focus();
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      trigger?.focus();
+    };
   }, [mobileOpen]);
 
   const submit = () => {
@@ -106,10 +122,40 @@ export default function SearchBox({
     router.push(`/arama?q=${encodeURIComponent(q)}`);
   };
 
+  const onInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+      e.preventDefault();
+      setOpen(true);
+      if (results.length) setActiveIndex((index) => e.key === "ArrowDown"
+        ? (index + 1) % results.length : (index <= 0 ? results.length - 1 : index - 1));
+    } else if (e.key === "Enter") {
+      e.preventDefault();
+      const picked = (open || mobileOpen) ? results[activeIndex] : undefined;
+      if (picked) {
+        setOpen(false); setMobileOpen(false);
+        router.push(`/products/${picked.handle || picked.id}`);
+      } else submit();
+    } else if (e.key === "Escape") {
+      setOpen(false); setMobileOpen(false); setActiveIndex(-1);
+    }
+  };
+  const comboboxProps = {
+    role: "combobox" as const,
+    "aria-label": "Ürün ara",
+    "aria-autocomplete": "list" as const,
+    "aria-expanded": (open || mobileOpen) && query.trim().length >= 2,
+    "aria-controls": listId,
+    "aria-activedescendant": activeIndex >= 0 && (open || mobileOpen) ? `${listId}-${activeIndex}` : undefined,
+    autoComplete: "off",
+    onKeyDown: onInputKeyDown,
+  };
+  const suggestionsProps = { listId, activeIndex, failed, onActive: setActiveIndex };
+
   if (variant === "mobile") {
     return (
       <>
         <button
+          ref={triggerRef}
           type="button"
           aria-label="Ara"
           onClick={() => setMobileOpen(true)}
@@ -118,15 +164,22 @@ export default function SearchBox({
           <Search className="h-4 w-4" />
         </button>
         {mobileOpen && (
-          <div className="fixed inset-0 z-[120] bg-background/95 backdrop-blur-md md:hidden">
+          <div ref={dialogRef} role="dialog" aria-modal="true" aria-label="Ürün arama" onKeyDown={(e) => {
+            if (e.key !== "Tab") return;
+            const focusable = dialogRef.current?.querySelectorAll<HTMLElement>('input, button, a:not([tabindex="-1"])');
+            if (!focusable?.length) return;
+            const first = focusable[0]; const last = focusable[focusable.length - 1];
+            if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+            if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+          }} className="fixed inset-0 z-[120] bg-background/95 backdrop-blur-md md:hidden">
             <div className="p-4 border-b border-border flex items-center gap-3">
               <Search className="h-5 w-5 text-muted-foreground shrink-0" />
               <input
+                {...comboboxProps}
                 ref={inputRef}
                 type="text"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && submit()}
                 placeholder="Ürün ara..."
                 className="flex-1 bg-transparent text-base font-medium focus:outline-none"
               />
@@ -144,6 +197,7 @@ export default function SearchBox({
             </div>
             <div className="overflow-y-auto h-[calc(100%-65px)]">
               <Suggestions
+                {...suggestionsProps}
                 query={query}
                 results={results}
                 loading={loading}
@@ -161,6 +215,7 @@ export default function SearchBox({
   return (
     <div
       ref={wrapperRef}
+      onBlur={(e) => { if (!e.currentTarget.contains(e.relatedTarget as Node)) { setOpen(false); setActiveIndex(-1); } }}
       className={`relative ${wide ? "block w-full" : "hidden md:block w-full max-w-sm"}`}
     >
       <div className="relative">
@@ -170,6 +225,8 @@ export default function SearchBox({
           } text-muted-foreground`}
         />
         <input
+          {...comboboxProps}
+          ref={inputRef}
           type="text"
           value={query}
           onChange={(e) => {
@@ -177,7 +234,6 @@ export default function SearchBox({
             setOpen(true);
           }}
           onFocus={() => setOpen(true)}
-          onKeyDown={(e) => e.key === "Enter" && submit()}
           placeholder={
             wide
               ? "Ürün, kategori veya marka ara..."
@@ -207,6 +263,7 @@ export default function SearchBox({
       {open && query.trim().length >= 2 && (
         <div className="absolute top-full mt-2 left-0 right-0 rounded-xl border border-border bg-background shadow-[0_12px_36px_rgba(0,0,0,0.25)] overflow-hidden z-50">
           <Suggestions
+            {...suggestionsProps}
             query={query}
             results={results}
             loading={loading}
@@ -225,21 +282,32 @@ function Suggestions({
   loading,
   onPick,
   onSeeAll,
+  listId, activeIndex, failed, onActive,
 }: {
   query: string;
   results: StoreProduct[];
   loading: boolean;
   onPick: () => void;
   onSeeAll: () => void;
+  listId: string;
+  activeIndex: number;
+  failed: boolean;
+  onActive: (index: number) => void;
 }) {
   if (loading) {
     return (
-      <div className="p-6 flex items-center justify-center text-muted-foreground">
+      <div role="status" className="p-6 flex items-center justify-center text-muted-foreground">
         <Loader2 className="h-4 w-4 animate-spin mr-2" />
         <span className="text-xs">Aranıyor...</span>
       </div>
     );
   }
+  if (failed) return (
+    <div role="alert" className="p-6 text-center text-sm space-y-3">
+      <p>Arama önerileri yüklenemedi.</p>
+      <button type="button" onClick={onSeeAll} className="text-accent font-bold underline">Arama sayfasında tekrar dene</button>
+    </div>
+  );
   if (query.trim().length < 2) {
     return (
       <div className="p-6 text-center text-xs text-muted-foreground">
@@ -259,16 +327,22 @@ function Suggestions({
   }
   return (
     <>
-      <ul className="divide-y divide-border/50 max-h-[60vh] overflow-y-auto">
-        {results.map((p) => {
+      <ul id={listId} role="listbox" aria-label="Ürün önerileri" className="divide-y divide-border/50 max-h-[60vh] overflow-y-auto">
+        {results.map((p, index) => {
           const variant = p.variants?.[0];
           const price = variant?.calculated_price?.calculated_amount;
           return (
-            <li key={p.id}>
+            <li key={p.id} role="presentation">
               <Link
+                id={`${listId}-${index}`}
+                role="option"
+                aria-selected={activeIndex === index}
+                tabIndex={-1}
+                onMouseEnter={() => onActive(index)}
+                onMouseDown={(e) => e.preventDefault()}
                 href={`/products/${p.handle || p.id}`}
                 onClick={onPick}
-                className="flex items-start gap-3 px-4 py-3 hover:bg-muted/50 transition-colors"
+                className={`flex items-start gap-3 px-4 py-3 hover:bg-muted/50 transition-colors ${activeIndex === index ? "bg-muted/70 outline-2 outline-accent -outline-offset-2" : ""}`}
               >
                 <div className="relative w-14 h-14 shrink-0 rounded-lg overflow-hidden bg-muted border border-border">
                   <Image

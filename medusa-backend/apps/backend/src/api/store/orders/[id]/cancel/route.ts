@@ -31,7 +31,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
 
   const { data: orders } = await query.graph({
     entity: "order",
-    fields: ["id", "customer_id", "status", "fulfillment_status", "display_id"],
+    fields: ["id", "customer_id", "status", "fulfillment_status", "display_id", "metadata", "fulfillments.id", "fulfillments.canceled_at"],
     filters: { id: orderId },
   });
   const order = orders?.[0];
@@ -47,6 +47,8 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
 
   const status = String(order.status || "").toLowerCase();
   const fulfillment = String((order as { fulfillment_status?: string }).fulfillment_status || "").toLowerCase();
+  const metadata = (order.metadata || {}) as Record<string, unknown>;
+  const hasFulfillment = (order.fulfillments || []).some((item) => item && !item.canceled_at);
 
   if (status === "canceled") {
     res.status(400).json({ message: "Bu sipariş zaten iptal edilmiş." });
@@ -59,7 +61,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     });
     return;
   }
-  if (fulfillment && fulfillment !== "not_fulfilled") {
+  if (hasFulfillment || metadata.tracking_number || metadata.shipped_at || (fulfillment && fulfillment !== "not_fulfilled")) {
     res.status(400).json({
       message:
         "Siparişiniz hazırlık/kargo aşamasında olduğu için buradan iptal edilemiyor. Lütfen bizimle iletişime geçin.",

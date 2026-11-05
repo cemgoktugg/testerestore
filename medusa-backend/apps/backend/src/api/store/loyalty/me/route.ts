@@ -24,16 +24,21 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
     { customer_id: customerId },
     { order: { created_at: "DESC" }, take: 20 }
   );
+  const redemptions = await loyalty.listLoyaltyRedemptions(
+    { customer_id: customerId },
+    { order: { created_at: "DESC" }, take: 50 }
+  );
 
   res.json({
     balance: Number(account.balance),
     lifetime_earned: Number(account.lifetime_earned),
     transactions: txns,
+    redemptions,
     rates: {
       points_per_try: POINTS_PER_TRY,
       try_per_point: TRY_PER_POINT,
     },
     /** Bakiyenin TL karşılığı (informational). */
-    balance_try: Math.floor(Number(account.balance) * TRY_PER_POINT * 100) / 100,
+    balance_try: Math.floor(Math.max(0, Number(account.balance)) * TRY_PER_POINT * 100) / 100,
   });
 }

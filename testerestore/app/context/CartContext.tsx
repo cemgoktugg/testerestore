@@ -15,19 +15,21 @@ import React, {
   useEffect,
   useMemo,
   useState,
+  useRef,
 } from 'react';
 import { MEDUSA_READY } from '../../lib/medusa/config';
 import {
   addBladeMatrixLine as svcAddBladeMatrix,
   addLineItem as svcAddLine,
   clearStoredCartId,
-  getOrCreateCart,
   removeLineItem as svcRemoveLine,
   retrieveCart,
   updateBladeMatrixLine as svcUpdateBladeMatrix,
   updateLineItem as svcUpdateLine,
 } from '../../lib/medusa/services/cart';
 import type { StoreCart, StoreCartLineItem } from '../../lib/medusa/types';
+import { createMutationQueue } from '../../lib/commerce-state';
+import { trackEvent } from '../components/Analytics';
 
 /** Legacy local-cart item shape. Kept for backwards-compat consumers. */
 export interface CartItem {
@@ -77,6 +79,7 @@ interface CartContextType {
   loading: boolean;
   /** Last error from Medusa, or null. */
   error: Error | null;
+  mutating: boolean;
 
   /** Legacy local addToCart (kept for non-Medusa flows). */
   addToCart: (item: Omit<CartItem, 'quantity'>, quantity: number) => void;
@@ -157,23 +160,65 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [pendingMutations, setPendingMutations] = useState(0);
+  const enqueue = useRef(createMutationQueue());
+  const cartRef = useRef(cart);
+  const medusaCartRef = useRef(medusaCart);
+
+  const commitCart = useCallback((next: StoreCart | null) => {
+    medusaCartRef.current = next;
+    cartRef.current = next ? legacyFromMedusa(next) : [];
+    setMedusaCart(next);
+    setCart(cartRef.current);
+  }, []);
+
+  const runMutation = useCallback(async (operation: () => Promise<void>) => {
+    setPendingMutations((count) => count + 1);
+    try {
+      await enqueue.current(async () => {
+        const previousItems = cartRef.current;
+        const previousCart = medusaCartRef.current;
+        setError(null);
+        try {
+          await operation();
+        } catch (cause) {
+          // Reconcile if the server accepted a write but its response was lost.
+          const fresh = MEDUSA_READY ? await retrieveCart().catch(() => null) : null;
+          if (fresh) commitCart(fresh);
+          else {
+            cartRef.current = previousItems;
+            medusaCartRef.current = previousCart;
+            setCart(previousItems);
+            setMedusaCart(previousCart);
+          }
+          const failure = cause instanceof Error ? cause : new Error('Sepet güncellenemedi. Lütfen tekrar deneyin.');
+          setError(failure);
+          throw failure;
+        }
+      });
+    } finally {
+      setPendingMutations((count) => count - 1);
+    }
+  }, [commitCart]);
 
   // Initial load — Medusa first, then legacy localStorage as fallback.
   useEffect(() => {
     let cancelled = false;
-    (async () => {
+    void enqueue.current(async () => {
       try {
         if (MEDUSA_READY) {
           const c = await retrieveCart();
           if (!cancelled) {
-            setMedusaCart(c);
             // Medusa is the source of truth when ready: if there is no live
             // cart (e.g. the previous one was completed/discarded), start
             // clean instead of resurrecting stale localStorage line items.
-            setCart(c ? legacyFromMedusa(c) : []);
+            commitCart(c);
           }
         } else {
-          if (!cancelled) setCart(loadLegacy());
+          if (!cancelled) {
+            cartRef.current = loadLegacy();
+            setCart(cartRef.current);
+          }
         }
       } catch (e) {
         if (!cancelled)
@@ -184,11 +229,11 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
           setIsLoaded(true);
         }
       }
-    })();
+    });
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [commitCart]);
 
   // Mirror legacy cart to localStorage (so we don't break the demo without backend).
   useEffect(() => {
@@ -202,195 +247,89 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   const refreshCart = useCallback(async () => {
     if (!MEDUSA_READY) return;
-    const c = await retrieveCart();
-    setMedusaCart(c);
-    if (c) setCart(legacyFromMedusa(c));
-  }, []);
+    await runMutation(async () => commitCart(await retrieveCart()));
+  }, [runMutation, commitCart]);
 
   // ---------- Legacy local-only addToCart ----------
   const addToCart = useCallback(
     (newItem: Omit<CartItem, 'quantity'>, quantity: number) => {
-      setCart((prev) => {
-        const idx = prev.findIndex((it) => it.id === newItem.id);
-        if (idx > -1) {
-          const next = [...prev];
-          next[idx] = { ...next[idx], quantity: next[idx].quantity + quantity };
-          return next;
-        }
-        return [...prev, { ...newItem, quantity }];
-      });
+      const previous = cartRef.current;
+      const found = previous.some((item) => item.id === newItem.id);
+      const next = found ? previous.map((item) => item.id === newItem.id ? { ...item, quantity: item.quantity + quantity } : item)
+        : [...previous, { ...newItem, quantity }];
+      cartRef.current = next;
+      setCart(next);
     },
     []
   );
 
-  /**
-   * Resolves a local cart item id to the Medusa line id. Most items have an
-   * `li_*` id straight from `legacyFromMedusa`, but during the brief window
-   * between an optimistic add and the server response (or after a failed
-   * sync) the local id can be the legacy shadow id. In that case we scan
-   * the current Medusa cart for a matching line by name+spec fingerprint.
-   */
-  const resolveMedusaLineId = useCallback(
-    (localId: string): string | null => {
-      const items = medusaCart?.items;
-      // Yerel sepet satırları Medusa'dan senkronlandığında kimlik = Medusa satır
-      // kimliğidir. Medusa v2 satır kimlikleri "cali_" ile başlar (v1'de "li_").
-      // Eskiden yalnızca "li_" tanınıyordu → eşleşme ölçü metadata'sına düşüyor,
-      // hazır boy ürünlerde hiç eşleşmiyordu: adet değişikliği ve SİLME
-      // sunucuya gitmiyor, ödemede eski sepet tahsil ediliyordu.
-      if (items?.some((li) => li.id === localId) || /^(cali_|li_)/.test(localId)) {
-        return localId;
+  const addToMedusaCart = useCallback(async (payload: AddToMedusaCartPayload) => {
+    const { variantId, quantity, metadata, legacy, bladeMatrix } = payload;
+    await runMutation(async () => {
+      if (!Number.isSafeInteger(quantity) || quantity <= 0) throw new Error('Geçerli bir adet seçin.');
+      if (!MEDUSA_READY) {
+        if (legacy) addToCart(legacy, quantity);
+        return;
       }
-      if (!items?.length) return null;
-      const local = cart.find((it) => it.id === localId);
-      if (!local) return null;
-      const match = items.find((li) => {
-        const meta = (li.metadata || {}) as Record<string, unknown>;
-        const liLen =
-          typeof meta.custom_length_mm === 'number'
-            ? meta.custom_length_mm
-            : typeof meta.length_mm === 'number'
-            ? meta.length_mm
-            : undefined;
-        return (
-          (meta.width as string | undefined) === local.specs.width &&
-          (meta.thickness as string | undefined) === local.specs.thickness &&
-          (meta.tpi as string | undefined) === local.specs.tpi &&
-          liLen === local.specs.length
-        );
+      if (!variantId) throw new Error('Ürün seçimi doğrulanamadı.');
+      const updated = bladeMatrix
+        ? await svcAddBladeMatrix({ variantId, quantity, ...bladeMatrix })
+        : await svcAddLine({ variantId, quantity, metadata });
+      if (!updated) throw new Error('Ürün sepete eklenemedi. Lütfen sepetinizi kontrol edin.');
+      commitCart(updated);
+      trackEvent('add_to_cart', {
+        currency: updated.currency_code?.toUpperCase(),
+        items: [{ item_id: legacy?.productId || variantId, quantity }],
       });
-      return match?.id ?? null;
-    },
-    [cart, medusaCart]
-  );
+    });
+  }, [addToCart, runMutation, commitCart]);
 
-  // ---------- Medusa-aware addToCart ----------
-  const addToMedusaCart = useCallback(
-    async ({
-      variantId,
-      quantity,
-      metadata,
-      legacy,
-      bladeMatrix,
-    }: AddToMedusaCartPayload) => {
-      if (legacy) addToCart(legacy, quantity);
-
-      if (!MEDUSA_READY || !variantId) return;
-      try {
-        await getOrCreateCart();
-        const updated = bladeMatrix
-          ? await svcAddBladeMatrix({
-              variantId,
-              quantity,
-              bladeType: bladeMatrix.bladeType,
-              widthMm: bladeMatrix.widthMm,
-              thicknessMm: bladeMatrix.thicknessMm,
-              toothPitch: bladeMatrix.toothPitch,
-              lengthMm: bladeMatrix.lengthMm,
-            })
-          : await svcAddLine({ variantId, quantity, metadata });
-        // Always re-pull from Medusa: even if the add itself succeeded
-        // optimistically, the canonical state lives server-side.
-        const fresh = updated ?? (await retrieveCart());
-        if (fresh) {
-          setMedusaCart(fresh);
-          setCart(legacyFromMedusa(fresh));
-        }
-      } catch (e) {
-        // Optimistik eklenen yerel satırı geri al — sepeti Medusa'daki gerçek
-        // durumla eşitle. Eskiden hata yutuluyordu: müşteri sepette ürünü
-        // görüyor ama gerçek (sunucu) sepette ürün yoktu, ödemede patlıyordu.
-        const fresh = await retrieveCart().catch(() => null);
-        if (fresh) {
-          setMedusaCart(fresh);
-          setCart(legacyFromMedusa(fresh));
-        } else if (legacy) {
-          setCart((prev) =>
-            prev.flatMap((it) =>
-              it.id !== legacy.id
-                ? [it]
-                : it.quantity - quantity > 0
-                ? [{ ...it, quantity: it.quantity - quantity }]
-                : []
-            )
-          );
-        }
-        const err = e instanceof Error ? e : new Error(String(e));
-        setError(err);
-        // Çağıran bileşen kullanıcıya hata göstersin diye yeniden fırlatılır.
-        throw err;
-      }
-    },
-    [addToCart]
-  );
-
-  // ---------- Quantity updates ----------
-  const updateQuantity = useCallback(
-    async (itemId: string, quantity: number) => {
-      // Optimistic local update for instant UI feedback
-      if (quantity <= 0) {
-        setCart((prev) => prev.filter((it) => it.id !== itemId));
-      } else {
-        setCart((prev) =>
-          prev.map((it) => (it.id === itemId ? { ...it, quantity } : it))
-        );
-      }
+  const updateQuantity = useCallback(async (itemId: string, quantity: number) => {
+    await runMutation(async () => {
+      if (!Number.isSafeInteger(quantity) || quantity < 0) throw new Error('Geçerli bir adet seçin.');
+      const previous = cartRef.current.find((item) => item.id === itemId);
+      if (!previous) throw new Error('Sepet değişti. Lütfen tekrar deneyin.');
+      cartRef.current = cartRef.current.map((item) => item.id === itemId ? { ...item, quantity } : item).filter((item) => item.quantity > 0);
+      setCart(cartRef.current);
       if (!MEDUSA_READY) return;
-      const lineId = resolveMedusaLineId(itemId);
-      if (!lineId) return;
+      const line = medusaCartRef.current?.items?.find((item) => item.id === itemId);
+      if (!line) throw new Error('Sepet değişti. Lütfen sayfayı yenileyin.');
+      const meta = (line.metadata || {}) as Record<string, unknown>;
+      const isMatrix = !!meta.blade_type && !!meta.width_mm && !!meta.length_mm;
+      const updated = isMatrix ? await svcUpdateBladeMatrix(line.id, quantity) : await svcUpdateLine(line.id, quantity);
+      if (!updated) throw new Error('Adet güncellenemedi. Lütfen tekrar deneyin.');
+      commitCart(updated);
+      const change = quantity - previous.quantity;
+      if (change) trackEvent(change > 0 ? 'add_to_cart' : 'remove_from_cart', {
+        currency: updated.currency_code?.toUpperCase(),
+        items: [{ item_id: previous.productId, quantity: Math.abs(change) }],
+      });
+    });
+  }, [runMutation, commitCart]);
 
-      // Matrix-fiyatlı item ise yeni qty için server'da fiyat yeniden
-      // hesaplanmalı (welding tek seferlik + tier discount). Aksi halde
-      // standart Medusa update yeter.
-      const medusaLine = medusaCart?.items?.find((li) => li.id === lineId);
-      const meta = (medusaLine?.metadata || {}) as Record<string, unknown>;
-      const isMatrix =
-        !!meta.blade_type && !!meta.width_mm && !!meta.length_mm;
-
-      const updated = isMatrix
-        ? await svcUpdateBladeMatrix(lineId, quantity)
-        : await svcUpdateLine(lineId, quantity);
-      const fresh = updated ?? (await retrieveCart());
-      if (fresh) {
-        setMedusaCart(fresh);
-        setCart(legacyFromMedusa(fresh));
-      }
-    },
-    [resolveMedusaLineId, medusaCart]
-  );
-
-  // ---------- Removal ----------
-  const removeFromCart = useCallback(
-    async (itemId: string) => {
-      // Optimistic local removal for instant UI feedback
-      setCart((prev) => prev.filter((it) => it.id !== itemId));
+  const removeFromCart = useCallback(async (itemId: string) => {
+    await runMutation(async () => {
+      const previous = cartRef.current.find((item) => item.id === itemId);
+      if (!previous) return;
+      cartRef.current = cartRef.current.filter((item) => item.id !== itemId);
+      setCart(cartRef.current);
       if (!MEDUSA_READY) return;
-      const lineId = resolveMedusaLineId(itemId);
-      if (!lineId) return;
-      const updated = await svcRemoveLine(lineId);
-      // Whether or not the delete returned a cart, always re-fetch so a stale
-      // Medusa line can never leak into the displayed totals.
-      const fresh = updated ?? (await retrieveCart());
-      if (fresh) {
-        setMedusaCart(fresh);
-        setCart(legacyFromMedusa(fresh));
-      } else {
-        // Cart was deleted entirely
-        setMedusaCart(null);
-      }
-    },
-    [resolveMedusaLineId]
-  );
+      const updated = await svcRemoveLine(itemId);
+      if (!updated) throw new Error('Ürün sepetten çıkarılamadı. Lütfen tekrar deneyin.');
+      commitCart(updated);
+      trackEvent('remove_from_cart', {
+        currency: updated.currency_code?.toUpperCase(),
+        items: [{ item_id: previous.productId, quantity: previous.quantity }],
+      });
+    });
+  }, [runMutation, commitCart]);
 
   const clearCart = useCallback(async () => {
-    setCart([]);
-    if (MEDUSA_READY) {
-      // Drop the saved cart id so the next add creates a brand-new Medusa
-      // cart instead of resurrecting old line items.
-      clearStoredCartId();
-      setMedusaCart(null);
-    }
-  }, []);
+    await runMutation(async () => {
+      if (MEDUSA_READY) clearStoredCartId();
+      commitCart(null);
+    });
+  }, [runMutation, commitCart]);
 
   const cartCount = useMemo(
     () => cart.reduce((sum, it) => sum + it.quantity, 0),
@@ -410,6 +349,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         medusaCart,
         loading,
         error,
+        mutating: pendingMutations > 0,
         addToCart,
         addToMedusaCart,
         updateQuantity,

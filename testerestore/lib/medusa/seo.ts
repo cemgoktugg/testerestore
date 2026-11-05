@@ -1,3 +1,4 @@
+import { getInventory } from "../inventory";
 /**
  * SEO helpers for Medusa-driven pages.
  *
@@ -161,7 +162,7 @@ export function buildProductJsonLd(
           priceCurrency: currency,
           valueAddedTaxIncluded: false,
         },
-        availability: "https://schema.org/InStock",
+        availability: getInventory(v).schemaAvailability,
         itemCondition: "https://schema.org/NewCondition",
         seller: { "@type": "Organization", name: siteName },
       };

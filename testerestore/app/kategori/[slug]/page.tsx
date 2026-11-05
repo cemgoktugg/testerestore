@@ -6,7 +6,7 @@ import { ArrowRight, CheckCircle2, ChevronDown, Truck } from 'lucide-react';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import { JsonLd } from '../../components/StructuredData';
-import { listProducts } from '../../../lib/medusa/services/products';
+import { listAllProducts } from '../../../lib/medusa/services/products';
 import { listCategories } from '../../../lib/medusa/services/categories';
 import { getProductImage } from '../../../lib/medusa/format';
 import { isReadyMade, mapReadyMadeCard, formatTL } from '../../../lib/ready-made';
@@ -18,6 +18,8 @@ import {
 } from '../../../lib/category-pages';
 import type { StoreProduct } from '../../../lib/medusa/types';
 import { GUIDES, GUIDES_BY_CATEGORY } from '../../../lib/guides';
+import { parsePage } from '../../../lib/pagination';
+import { categoryIdsForHandles } from '../../../lib/catalog-category';
 
 /**
  * Kategori landing sayfası — tamamen sunucuda render edilir (SSR/ISR): H1,
@@ -30,35 +32,43 @@ export const dynamicParams = false;
 
 interface PageProps {
   params: Promise<{ slug: string }>;
+  searchParams: Promise<{ sayfa?: string }>;
 }
 
 export function generateStaticParams() {
   return CATEGORY_PAGES.map((c) => ({ slug: c.slug }));
 }
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+export async function generateMetadata({ params, searchParams }: PageProps): Promise<Metadata> {
   const { slug } = await params;
   const page = getCategoryPage(slug);
   if (!page) return { title: 'Kategori bulunamadı', robots: { index: false } };
-  return pageMetadata({ title: page.title, description: page.description, path: categoryHref(page) });
+  const pageNumber = parsePage((await searchParams)?.sayfa);
+  return pageMetadata({ title: pageNumber > 1 ? `${page.title} — Sayfa ${pageNumber}` : page.title, description: page.description, path: categoryHref(page) + (pageNumber > 1 ? `?sayfa=${pageNumber}` : '') });
 }
 
 async function productsFor(handles: string[]): Promise<StoreProduct[]> {
   const categories = await listCategories();
-  const ids = categories.filter((c) => c.handle && handles.includes(c.handle)).map((c) => c.id);
+  const ids = categoryIdsForHandles(categories, handles);
   if (!ids.length) return [];
-  const { products } = await listProducts({ category_id: ids, limit: 100 });
+  const products = await listAllProducts({ category_id: ids });
   // Önce ölçüye göre yapılandırılan aileler, sonra hazır boylar (boya göre).
   return [...products].sort((a, b) => Number(isReadyMade(a)) - Number(isReadyMade(b)));
 }
 
-export default async function CategoryPage({ params }: PageProps) {
+export default async function CategoryPage({ params, searchParams }: PageProps) {
   const { slug } = await params;
   const page = getCategoryPage(slug);
   if (!page) notFound();
 
   const products = await productsFor(page.handles);
-  const url = canonicalUrl(categoryHref(page));
+  const pageNumber = parsePage((await searchParams)?.sayfa);
+  const pageSize = 24;
+  const pageCount = Math.max(1, Math.ceil(products.length / pageSize));
+  if (pageNumber > pageCount) notFound();
+  const visibleProducts = products.slice((pageNumber - 1) * pageSize, pageNumber * pageSize);
+  const pageHref = (value: number) => categoryHref(page) + (value > 1 ? `?sayfa=${value}` : '');
+  const url = canonicalUrl(pageHref(pageNumber));
   const related = CATEGORY_PAGES.filter((c) => c.slug !== page.slug);
   const relatedGuides = (GUIDES_BY_CATEGORY[page.slug] || [])
     .map((s) => GUIDES.find((g) => g.slug === s))
@@ -104,7 +114,7 @@ export default async function CategoryPage({ params }: PageProps) {
             </div>
             {products.length ? (
               <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-                {products.map((p) => (
+                {visibleProducts.map((p) => (
                   <li key={p.id}>
                     <CategoryProductCard product={p} />
                   </li>
@@ -119,6 +129,11 @@ export default async function CategoryPage({ params }: PageProps) {
                 .
               </p>
             )}
+            {pageCount > 1 && <nav aria-label="Kategori ürün sayfaları" className="flex items-center justify-center gap-4 mt-8 text-sm">
+              {pageNumber > 1 && <Link className="rounded-lg border border-border px-4 py-2" href={pageHref(pageNumber - 1)}>Önceki</Link>}
+              <span>Sayfa {pageNumber} / {pageCount}</span>
+              {pageNumber < pageCount && <Link className="rounded-lg border border-border px-4 py-2" href={pageHref(pageNumber + 1)}>Sonraki</Link>}
+            </nav>}
           </section>
 
           <div className="mt-14 grid grid-cols-1 gap-10 lg:grid-cols-2">
@@ -218,9 +233,9 @@ export default async function CategoryPage({ params }: PageProps) {
               mainEntity: {
                 '@type': 'ItemList',
                 numberOfItems: products.length,
-                itemListElement: products.map((p, i) => ({
+                itemListElement: visibleProducts.map((p, i) => ({
                   '@type': 'ListItem',
-                  position: i + 1,
+                  position: (pageNumber - 1) * pageSize + i + 1,
                   url: canonicalUrl(`/products/${p.handle || p.id}`),
                   name: p.title,
                 })),

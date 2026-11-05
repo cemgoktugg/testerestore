@@ -3,6 +3,7 @@
 import { useAsync } from "./useAsync";
 import {
   listProducts,
+  listAllProducts,
   getProductBySlug,
   listBestSellers,
   listReadyMade,
@@ -27,6 +28,12 @@ export function useProducts(opts: ListOpts = {}, fetchOpts: FetchOpts = {}) {
   return useAsync(() => listProducts(opts), [key], {
     cacheKey: `products:${key}`,
     enabled: fetchOpts.enabled,
+  });
+}
+
+export function useAllProducts(fetchOpts: FetchOpts = {}) {
+  return useAsync(() => listAllProducts(), [], {
+    cacheKey: "products:all", enabled: fetchOpts.enabled,
   });
 }
 

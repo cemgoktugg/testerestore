@@ -30,7 +30,13 @@ export default function CartPage() {
     cartTotal,
     cartCount,
     loading,
+    mutating,
+    error: cartError,
   } = useCart();
+  // CartContext restores the confirmed cart and renders failures below.
+  const mutate = (operation: () => Promise<void> | void) => {
+    void Promise.resolve().then(operation).catch(() => undefined);
+  };
   const [promoInput, setPromoInput] = useState('');
   const [promoApplying, setPromoApplying] = useState(false);
   const [promoMessage, setPromoMessage] = useState<{
@@ -46,37 +52,51 @@ export default function CartPage() {
 
   async function handleApplyPromo() {
     const code = promoInput.trim();
-    if (!code) return;
+    if (!code || promoApplying || mutating) return;
     setPromoApplying(true);
     setPromoMessage(null);
-    const res = await applyPromoCode(code);
-    setPromoApplying(false);
-    if (res.ok) {
-      await refreshCart();
-      const wasApplied = (res.cart?.promotions ?? []).some(
-        (p) => p.code === code
-      );
-      if (wasApplied) {
-        setPromoMessage({ type: 'success', text: 'Kupon uygulandı' });
-        setPromoInput('');
+    try {
+      const res = await applyPromoCode(code);
+      if (res.ok) {
+        await refreshCart();
+        const wasApplied = (res.cart?.promotions ?? []).some(
+          (p) => p.code === code
+        );
+        if (wasApplied) {
+          setPromoMessage({ type: 'success', text: 'Kupon uygulandı' });
+          setPromoInput('');
+        } else {
+          setPromoMessage({
+            type: 'error',
+            text: 'Bu kupon kodu geçersiz veya bu sepete uygulanamaz.',
+          });
+        }
       } else {
         setPromoMessage({
           type: 'error',
-          text: 'Bu kupon kodu geçersiz veya bu sepete uygulanamaz.',
+          text: 'Kupon uygulanamadı. Kodu kontrol edin.',
         });
       }
-    } else {
-      setPromoMessage({
-        type: 'error',
-        text: 'Kupon uygulanamadı. Kodu kontrol edin.',
-      });
+    } catch {
+      setPromoMessage({ type: 'error', text: 'Kupon işlemi tamamlanamadı. Lütfen tekrar deneyin.' });
+    } finally {
+      setPromoApplying(false);
     }
   }
 
   async function handleRemovePromo(code: string) {
-    await removePromoCode(code);
-    await refreshCart();
-    setPromoMessage(null);
+    if (promoApplying || mutating) return;
+    setPromoApplying(true);
+    try {
+      const updated = await removePromoCode(code);
+      if (!updated) throw new Error('Kupon kaldırılamadı.');
+      await refreshCart();
+      setPromoMessage(null);
+    } catch {
+      setPromoMessage({ type: 'error', text: 'Kupon kaldırılamadı. Lütfen tekrar deneyin.' });
+    } finally {
+      setPromoApplying(false);
+    }
   }
 
   // Order summary. Shipping follows the free-over-2000 rule and KDV is charged
@@ -134,11 +154,12 @@ export default function CartPage() {
                         "Sepetinizdeki tüm ürünler silinecek. Devam edilsin mi?"
                       )
                     ) {
-                      clearCart();
+                      mutate(clearCart);
                     }
                   }}
                   className="inline-flex items-center gap-1.5 text-xs font-bold text-rose-600 hover:text-rose-500 transition-colors cursor-pointer"
                   title="Sepetteki tüm ürünleri sil ve yeni sepet başlat"
+                  disabled={mutating || promoApplying}
                 >
                   <Trash2 className="h-4 w-4" />
                   <span>Sepeti Temizle</span>
@@ -153,6 +174,16 @@ export default function CartPage() {
               </Link>
             </div>
           </div>
+
+          {cartError && (
+            <div role="alert" className="mb-4 rounded-xl border border-rose-500/30 bg-rose-500/10 p-4 text-sm text-rose-700 dark:text-rose-300">
+              Sepet işlemi tamamlanamadı. Mevcut sepetinizi kontrol edip tekrar deneyin.
+              <button type="button" disabled={mutating} onClick={() => mutate(refreshCart)} className="ml-3 underline font-bold">
+                Sepeti yenile
+              </button>
+            </div>
+          )}
+          {mutating && <p role="status" className="mb-4 text-sm text-muted-foreground">Sepetiniz güncelleniyor…</p>}
 
           {cart.length === 0 ? (
             <div className="text-center py-20 rounded-2xl border border-dashed border-border bg-metallic-card p-8 max-w-2xl mx-auto space-y-6">
@@ -223,7 +254,8 @@ export default function CartPage() {
                     <div className="flex items-center justify-between sm:justify-end gap-6 w-full sm:w-auto pt-3 sm:pt-0 border-t sm:border-t-0 border-border/60">
                       <div className="flex items-center gap-1.5">
                         <button
-                          onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                          onClick={() => mutate(() => updateQuantity(item.id, item.quantity - 1))}
+                          disabled={mutating || promoApplying}
                           aria-label={`${item.name} adedini azalt`}
                           className="flex h-8 w-8 items-center justify-center rounded-lg bg-silver-grad text-sm font-bold cursor-pointer"
                         >
@@ -233,7 +265,8 @@ export default function CartPage() {
                           {item.quantity}
                         </span>
                         <button
-                          onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                          onClick={() => mutate(() => updateQuantity(item.id, item.quantity + 1))}
+                          disabled={mutating || promoApplying}
                           aria-label={`${item.name} adedini artır`}
                           className="flex h-8 w-8 items-center justify-center rounded-lg bg-silver-grad text-sm font-bold cursor-pointer"
                         >
@@ -254,7 +287,8 @@ export default function CartPage() {
                       </div>
 
                       <button
-                        onClick={() => removeFromCart(item.id)}
+                        onClick={() => mutate(() => removeFromCart(item.id))}
+                        disabled={mutating || promoApplying}
                         className="rounded-lg p-2 text-muted-foreground hover:text-rose-600 hover:bg-rose-500/10 transition-all cursor-pointer"
                         title="Ürünü Sepetten Çıkar"
                         aria-label={`${item.name} ürününü sepetten çıkar`}
@@ -369,6 +403,7 @@ export default function CartPage() {
                             <button
                               type="button"
                               onClick={() => handleRemovePromo(p.code)}
+                              disabled={promoApplying || mutating}
                               className="text-[10px] text-muted-foreground hover:text-rose-600 cursor-pointer"
                             >
                               Kaldır
@@ -392,7 +427,7 @@ export default function CartPage() {
                       <button
                         type="button"
                         onClick={handleApplyPromo}
-                        disabled={promoApplying || !promoInput.trim()}
+                        disabled={promoApplying || mutating || !promoInput.trim()}
                         className={`h-9 px-4 rounded-lg text-xs font-bold transition-colors ${
                           promoApplying || !promoInput.trim()
                             ? 'bg-muted text-muted-foreground cursor-not-allowed'
@@ -431,6 +466,8 @@ export default function CartPage() {
                 <div className="mt-6">
                   <Link
                     href="/checkout"
+                    aria-disabled={mutating || promoApplying}
+                    onClick={(event) => { if (mutating || promoApplying) event.preventDefault(); }}
                     className="w-full flex h-11 items-center justify-center gap-2 rounded-xl bg-molten-grad text-sm font-bold text-white shadow-md glow-orange transition-all duration-300 cursor-pointer group"
                   >
                     <span>Siparişi Tamamla</span>

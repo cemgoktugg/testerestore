@@ -11,6 +11,6 @@ const LoyaltyAccount = model.define("loyalty_account", {
   balance: model.number().default(0),
   /** Yaşam boyu kazanılan toplam puan (raporlama için). */
   lifetime_earned: model.number().default(0),
-});
+}).indexes([{ name: "IDX_loyalty_account_customer", on: ["customer_id"], unique: true }]);
 
 export default LoyaltyAccount;

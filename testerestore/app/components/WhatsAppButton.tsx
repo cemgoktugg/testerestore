@@ -8,17 +8,14 @@ import React from "react";
  * sorusunu öncelikle WhatsApp üzerinden sorduğu için kritik bir
  * conversion kanalı.
  *
- * Telefon numarası env'den (`NEXT_PUBLIC_WHATSAPP_NUMBER`) okunur; yoksa
- * fallback olarak hard-coded numara kullanılır. Sadece rakam (uluslararası
+ * Telefon numarası env'den (`NEXT_PUBLIC_WHATSAPP_NUMBER`) okunur. Sadece rakam (uluslararası
  * format, başındaki + olmadan): "905551234567".
  */
-const FALLBACK_NUMBER = "902125551020";
-
 export default function WhatsAppButton() {
   const raw =
-    process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || FALLBACK_NUMBER;
+    process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "";
   const digits = raw.replace(/\D/g, "");
-  if (!digits) return null;
+  if (!/^[1-9]\d{9,14}$/.test(digits)) return null;
 
   const href = `https://wa.me/${digits}?text=${encodeURIComponent(
     "Merhaba, ürünleriniz hakkında bilgi almak istiyorum."

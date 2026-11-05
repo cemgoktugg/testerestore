@@ -10,17 +10,24 @@ if (DSN) {
   Sentry.init({
     dsn: DSN,
     environment: process.env.NODE_ENV,
-    tracesSampleRate: process.env.NODE_ENV === "production" ? 0.1 : 1.0,
-    replaysSessionSampleRate: 0.05,
-    replaysOnErrorSampleRate: 1.0,
-    /** Çerez izni yoksa kişisel veri toplamaktan kaçın. */
+    // Error diagnostics only. Do not start session replay or usage profiling.
+    tracesSampleRate: 0,
+    replaysSessionSampleRate: 0,
+    replaysOnErrorSampleRate: 0,
     sendDefaultPii: false,
-    integrations: [
-      Sentry.replayIntegration({
-        maskAllText: true,
-        blockAllMedia: true,
-      }),
-    ],
+    beforeSend(event) {
+      delete event.user;
+      if (event.request) {
+        delete event.request.cookies;
+        delete event.request.data;
+        delete event.request.headers;
+        delete event.request.query_string;
+        if (event.request.url) event.request.url = event.request.url.split(/[?#]/)[0];
+      }
+      // Navigation/fetch breadcrumbs can contain reset or recovery tokens.
+      event.breadcrumbs = [];
+      return event;
+    },
     /** Bilinen, davranışa etki etmeyen hataları filtrele. */
     ignoreErrors: [
       "ResizeObserver loop limit exceeded",

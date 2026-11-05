@@ -10,7 +10,7 @@
  * olmadan eklenir ki Medusa varyantın statik fiyatını yazsın.
  */
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { PackageCheck, Truck, ShoppingCart, Sparkles, Ruler } from 'lucide-react';
 import FreeShippingNote from './FreeShippingNote';
 import { useCart } from '../context/CartContext';
@@ -18,6 +18,7 @@ import { formatMoney } from '../../lib/medusa/format';
 import { mapReadyMadeCard } from '../../lib/ready-made';
 import { MEDUSA_READY } from '../../lib/medusa/config';
 import type { StoreProduct } from '../../lib/medusa/types';
+import { canOrderQuantity, getInventory } from '../../lib/inventory';
 
 interface Props {
   product: StoreProduct;
@@ -32,10 +33,13 @@ export default function ReadyMadeBuyBox({ product, image, categoryLabel }: Props
   const [quantity, setQuantity] = useState(1);
   const [added, setAdded] = useState(false);
   const [busy, setBusy] = useState(false);
+  const busyRef = useRef(false);
   const [addError, setAddError] = useState<string | null>(null);
 
   const card = mapReadyMadeCard(product);
   const variant = product.variants?.[0];
+  const inventory = getInventory(variant);
+  const quantityAllowed = canOrderQuantity(variant, quantity);
   const unitPrice = card.price;
   const currency = card.currency;
 
@@ -46,7 +50,8 @@ export default function ReadyMadeBuyBox({ product, image, categoryLabel }: Props
   if (card.length != null) specRows.push({ label: 'Boy', value: `${card.length.toLocaleString('tr-TR')} mm` });
 
   const handleAdd = async () => {
-    if (busy) return;
+    if (busyRef.current || !quantityAllowed || unitPrice <= 0) return;
+    busyRef.current = true;
     setBusy(true);
     setAddError(null);
     try {
@@ -90,6 +95,7 @@ export default function ReadyMadeBuyBox({ product, image, categoryLabel }: Props
     } catch {
       setAddError('Ürün sepete eklenemedi. Lütfen tekrar deneyin; sorun sürerse bizimle iletişime geçin.');
     } finally {
+      busyRef.current = false;
       setBusy(false);
     }
   };
@@ -110,13 +116,13 @@ export default function ReadyMadeBuyBox({ product, image, categoryLabel }: Props
         </div>
         <h2 className="text-xl font-bold tracking-tight leading-snug">{product.title}</h2>
         <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs">
-          <span className="inline-flex items-center gap-1.5 font-semibold text-emerald-500">
+          <span className={`inline-flex items-center gap-1.5 font-semibold ${inventory.canPurchase ? 'text-emerald-600' : 'text-rose-600'}`}>
             <PackageCheck className="h-3.5 w-3.5" />
-            Stokta
+            {inventory.label}
           </span>
           <span className="inline-flex items-center gap-1.5 text-emerald-500">
             <Truck className="h-3.5 w-3.5" />
-            {card.stock != null ? `${card.stock} adet · aynı gün kargo` : 'Aynı gün kargo'}
+            Teslimat bilgisi için bizimle iletişime geçin
           </span>
         </div>
       </div>
@@ -157,6 +163,7 @@ export default function ReadyMadeBuyBox({ product, image, categoryLabel }: Props
           <button
             type="button"
             onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+            disabled={busy || quantity <= 1}
             aria-label="Adet azalt"
             className="flex h-10 w-10 items-center justify-center rounded-lg bg-silver-grad text-lg font-bold cursor-pointer"
           >
@@ -165,6 +172,9 @@ export default function ReadyMadeBuyBox({ product, image, categoryLabel }: Props
           <input
             type="number"
             min={1}
+            max={inventory.maxQuantity ?? undefined}
+            disabled={busy || !inventory.canPurchase}
+            aria-label="Adet"
             value={quantity}
             onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
             className="h-10 w-16 rounded-lg border border-border bg-background text-center text-sm font-bold focus:outline-none"
@@ -172,6 +182,7 @@ export default function ReadyMadeBuyBox({ product, image, categoryLabel }: Props
           <button
             type="button"
             onClick={() => setQuantity((q) => q + 1)}
+            disabled={busy || !inventory.canPurchase || (inventory.maxQuantity !== null && quantity >= inventory.maxQuantity)}
             aria-label="Adet artır"
             className="flex h-10 w-10 items-center justify-center rounded-lg bg-silver-grad text-lg font-bold cursor-pointer"
           >
@@ -205,12 +216,12 @@ export default function ReadyMadeBuyBox({ product, image, categoryLabel }: Props
       <button
         type="button"
         onClick={handleAdd}
-        disabled={busy || unitPrice <= 0}
+        disabled={busy || unitPrice <= 0 || !quantityAllowed}
         className={`w-full flex h-11 items-center justify-center gap-2 rounded-xl text-sm font-bold text-white transition-all duration-300 shadow-md cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed ${
           added ? 'bg-emerald-600 hover:bg-emerald-500' : 'bg-molten-grad glow-orange shadow-md'
         }`}
       >
-        {added ? (
+        {busy ? 'Sepete ekleniyor…' : added ? (
           <>
             <Sparkles className="h-4 w-4" /> Sepete Eklendi!
           </>
@@ -220,6 +231,11 @@ export default function ReadyMadeBuyBox({ product, image, categoryLabel }: Props
           </>
         )}
       </button>
+      {inventory.canPurchase && !quantityAllowed && (
+        <p role="alert" className="text-xs font-semibold text-rose-600">
+          Seçtiğiniz adet mevcut stoğu aşıyor. En fazla {inventory.maxQuantity} adet seçebilirsiniz.
+        </p>
+      )}
       {addError && (
         <p role="alert" className="text-xs font-semibold text-rose-600">
           {addError}

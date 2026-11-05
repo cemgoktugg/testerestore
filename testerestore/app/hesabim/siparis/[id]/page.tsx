@@ -12,6 +12,7 @@ import { getOrderStatus } from '../../../../lib/order-status';
 import type { HttpTypes } from '@medusajs/types';
 import { Loader2, ArrowLeft, Package, Calendar, MapPin, CreditCard, Truck, ExternalLink, RotateCw, XCircle, AlertTriangle, CheckCircle2 } from 'lucide-react';
 import { useCart } from '../../../context/CartContext';
+import OrderRequests from '../../../components/OrderRequests';
 
 export default function OrderDetailPage() {
   const router = useRouter();
@@ -161,6 +162,9 @@ export default function OrderDetailPage() {
     oStatus !== 'canceled' &&
     oStatus !== 'completed' &&
     oStatus !== 'archived' &&
+    !oAny.metadata?.tracking_number &&
+    !oAny.metadata?.shipped_at &&
+    !(oAny.fulfillments || []).some((fulfillment: { canceled_at?: string | null }) => !fulfillment.canceled_at) &&
     (!oFulfill || oFulfill === 'not_fulfilled');
 
   return (
@@ -243,6 +247,8 @@ export default function OrderDetailPage() {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const ord = order as any;
             const fulfillments = (ord.fulfillments || []) as Array<{
+              canceled_at?: string | null;
+              metadata?: Record<string, unknown> | null;
               shipped_at?: string | null;
               delivered_at?: string | null;
               labels?: Array<{
@@ -254,6 +260,7 @@ export default function OrderDetailPage() {
 
             // Native label'lar öncelikli; yoksa metadata'daki tek kayıt.
             const labelTracks = fulfillments
+              .filter((f) => !f.canceled_at && (f.shipped_at || f.delivered_at))
               .flatMap((f) => f.labels || [])
               .filter((l) => l && l.tracking_number)
               .map((l) => ({
@@ -280,6 +287,7 @@ export default function OrderDetailPage() {
               fulfillments.find((f) => f.shipped_at)?.shipped_at || null;
             const delivered = fulfillments.some((f) => f.delivered_at);
             const carrier =
+              (fulfillments.find((f) => !f.canceled_at && f.shipped_at)?.metadata?.carrier_name as string | undefined) ||
               (meta.carrier_name as string | undefined) ||
               (ord.shipping_methods?.[0]?.name as string | undefined) ||
               'Kargo';
@@ -289,7 +297,7 @@ export default function OrderDetailPage() {
                 <div className="flex items-center gap-2 mb-3">
                   <Truck className="h-4 w-4 text-emerald-600" />
                   <span className="text-xs font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-400">
-                    {delivered ? 'Teslim Edildi' : 'Kargoya Verildi'}
+                    {delivered ? 'Teslim Edildi' : shippedAt ? 'Kargoya Verildi' : 'Kargo Takip Bilgisi'}
                   </span>
                   {shippedAt && (
                     <span className="text-[10px] text-muted-foreground ml-auto">
@@ -402,6 +410,7 @@ export default function OrderDetailPage() {
               )}
             </aside>
           </div>
+          <OrderRequests orderId={order.id} items={order.items || []} canceled={oStatus === 'canceled'} />
         </div>
       </main>
 

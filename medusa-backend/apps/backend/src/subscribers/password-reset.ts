@@ -66,6 +66,7 @@ export default async function passwordResetHandler({
         e instanceof Error ? e.message : String(e)
       }`
     );
+    throw e;
   }
 }
 

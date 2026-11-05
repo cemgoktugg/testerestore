@@ -5,10 +5,17 @@ import nextTs from "eslint-config-next/typescript";
 const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
+  {
+    files: ["tests/unit/**/*.cjs", "tests/fixtures/**/*.cjs"],
+    rules: { "@typescript-eslint/no-require-imports": "off" },
+  },
   // Override default ignores of eslint-config-next.
   globalIgnores([
     // Default ignores of eslint-config-next:
     ".next/**",
+    ".next-*/**",
+    "test-results/**",
+    "playwright-report/**",
     "out/**",
     "build/**",
     "next-env.d.ts",
@@ -16,6 +23,7 @@ const eslintConfig = defineConfig([
     "medusa-backend/**",
   ]),
   {
+    files: ["**/*.{js,jsx,mjs,ts,tsx}"],
     // React 19 / eslint-plugin-react-hooks v6 çok katı iki kural. Bizim
     // kullanımlarımızın büyük çoğunluğu GEÇERLİ ve ZORUNLU desenler:
     //   - set-state-in-effect: localStorage/cookie/browser API okuma

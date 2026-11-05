@@ -1,6 +1,7 @@
 import { medusa } from "../client";
 import { MEDUSA_READY } from "../config";
 import type { StoreCollection, StoreProductCategory } from "../types";
+import { collectAllPages } from "../../pagination";
 
 /**
  * Flat list of all visible categories (parents + children).
@@ -8,16 +9,13 @@ import type { StoreCollection, StoreProductCategory } from "../types";
  */
 export async function listCategories(): Promise<StoreProductCategory[]> {
   if (!MEDUSA_READY) return [];
-  try {
-    const { product_categories } = await medusa.store.category.list({
+  return collectAllPages(async (offset, limit) => {
+    const { product_categories, count } = await medusa.store.category.list({
       fields: "id,name,handle,parent_category_id,metadata,*category_children",
-      limit: 100,
+      offset, limit,
     });
-    return product_categories as StoreProductCategory[];
-  } catch (e) {
-    console.error("[medusa] listCategories failed", e);
-    return [];
-  }
+    return { items: product_categories as StoreProductCategory[], count };
+  });
 }
 
 /** Resolve category by handle (used by /categories/[handle] routes). */

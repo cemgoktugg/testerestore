@@ -33,6 +33,7 @@ export default async function shipmentCreatedHandler({
       entity: "fulfillment",
       fields: [
         "id",
+        "metadata",
         "labels.tracking_number",
         "labels.tracking_url",
         "order.id",
@@ -68,6 +69,7 @@ export default async function shipmentCreatedHandler({
 
     const meta = (order.metadata || {}) as Record<string, unknown>;
     const carrier =
+      ((fulfillment as { metadata?: Record<string, unknown> }).metadata?.carrier_name as string | undefined) ||
       (meta.carrier_name as string | undefined) ||
       order.shipping_methods?.[0]?.name ||
       "Kargo";
@@ -80,6 +82,7 @@ export default async function shipmentCreatedHandler({
         to: order.email,
         channel: "email",
         template: "order.shipped",
+        idempotency_key: "shipment-created:" + data.id,
         data: {
           order_no: orderNo,
           carrier,
@@ -96,6 +99,7 @@ export default async function shipmentCreatedHandler({
     logger.error(
       `[shipment-created] failed: ${e instanceof Error ? e.message : String(e)}`
     );
+    throw e;
   }
 }
 

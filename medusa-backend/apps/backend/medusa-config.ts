@@ -51,6 +51,7 @@ module.exports = defineConfig({
     ...(process.env.REDIS_URL ? { redisUrl: process.env.REDIS_URL } : {}),
   },
   modules: [
+    { resolve: "./src/modules/customer-request" },
     // Redis: event bus + cache + workflow engine. REDIS_URL varsa (production)
     // Redis kullanılır; yoksa (local dev, Redis yok) Medusa'nın in-memory
     // default'ları devreye girer. Production'da tek instance için bile

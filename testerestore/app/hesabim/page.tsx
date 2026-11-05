@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useId, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import Header from '../components/Header';
@@ -11,6 +11,7 @@ import {
   updateCustomer,
   listAddresses,
   createAddress,
+  updateAddress,
   deleteAddress,
   type StoreCustomerAddress,
   type AddressInput,
@@ -102,7 +103,7 @@ export default function HesabimPage() {
             </aside>
 
             {/* Content */}
-            <section className="lg:col-span-9">
+            <section key={customer.id} className="lg:col-span-9">
               {tab === 'profile' && <ProfileTab onSaved={refresh} />}
               {tab === 'addresses' && <AddressesTab />}
               {tab === 'orders' && <OrdersTab />}
@@ -165,7 +166,6 @@ function ProfileTab({ onSaved }: { onSaved: () => Promise<void> }) {
       setMsg({ kind: 'err', text: 'Güncelleme başarısız: ' + (e instanceof Error ? e.message : '') });
     } finally {
       setSaving(false);
-      setTimeout(() => setMsg(null), 3500);
     }
   }
 
@@ -178,6 +178,7 @@ function ProfileTab({ onSaved }: { onSaved: () => Promise<void> }) {
 
       {msg && (
         <div
+          role={msg.kind === 'err' ? 'alert' : 'status'}
           className={`mb-4 flex items-start gap-2 p-3 rounded-lg text-xs ${
             msg.kind === 'ok'
               ? 'border border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300'
@@ -191,10 +192,11 @@ function ProfileTab({ onSaved }: { onSaved: () => Promise<void> }) {
 
       <form onSubmit={handleSave} className="space-y-4">
         <div>
-          <label className="block text-xs font-bold uppercase tracking-wider text-muted-foreground mb-1.5">
+          <label htmlFor="profile-email" className="block text-xs font-bold uppercase tracking-wider text-muted-foreground mb-1.5">
             E-Posta
           </label>
           <input
+            id="profile-email"
             type="email"
             value={customer?.email || ''}
             disabled
@@ -230,12 +232,14 @@ function FieldInput({
   label: string; value: string; onChange: (v: string) => void;
   required?: boolean; type?: string;
 }) {
+  const id = useId();
   return (
     <div>
-      <label className="block text-xs font-bold uppercase tracking-wider text-muted-foreground mb-1.5">
+      <label htmlFor={id} className="block text-xs font-bold uppercase tracking-wider text-muted-foreground mb-1.5">
         {label}
       </label>
       <input
+        id={id}
         type={type}
         required={required}
         value={value}
@@ -257,12 +261,18 @@ function AddressesTab() {
     country_code: 'tr',
   });
   const [saving, setSaving] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [error, setError] = useState('');
+  const [message, setMessage] = useState('');
 
   async function load() {
     setLoading(true);
+    setError('');
     try {
       const a = await listAddresses();
       setList(a);
+    } catch {
+      setError('Adresler yüklenemedi. Lütfen tekrar deneyin.');
     } finally {
       setLoading(false);
     }
@@ -272,11 +282,17 @@ function AddressesTab() {
   async function handleAdd(e: React.FormEvent) {
     e.preventDefault();
     setSaving(true);
+    setError(''); setMessage('');
     try {
-      await createAddress(form);
+      if (editingId) await updateAddress(editingId, form);
+      else await createAddress(form);
       setAdding(false);
+      setEditingId(null);
       setForm({ first_name: '', last_name: '', address_1: '', city: '', country_code: 'tr' });
       await load();
+      setMessage(editingId ? 'Adresiniz güncellendi.' : 'Adresiniz eklendi.');
+    } catch {
+      setError('Adres kaydedilemedi. Bilgilerinizi kontrol edip tekrar deneyin.');
     } finally {
       setSaving(false);
     }
@@ -284,8 +300,31 @@ function AddressesTab() {
 
   async function handleDelete(id: string) {
     if (!confirm('Adresi silmek istediğinize emin misiniz?')) return;
-    await deleteAddress(id);
-    await load();
+    setSaving(true); setError(''); setMessage('');
+    try { await deleteAddress(id); await load(); setMessage('Adres silindi.'); }
+    catch { setError('Adres silinemedi. Lütfen tekrar deneyin.'); }
+    finally { setSaving(false); }
+  }
+
+  function edit(address: StoreCustomerAddress) {
+    setEditingId(address.id); setAdding(true); setError(''); setMessage('');
+    setForm({
+      first_name: address.first_name || '', last_name: address.last_name || '',
+      address_1: address.address_1 || '', address_2: address.address_2 || '',
+      city: address.city || '', province: address.province || '',
+      phone: address.phone || '', company: address.company || '',
+      postal_code: address.postal_code || '', country_code: address.country_code || 'tr',
+      is_default_shipping: address.is_default_shipping, is_default_billing: address.is_default_billing,
+    });
+  }
+
+  async function setDefault(id: string, kind: 'shipping' | 'billing') {
+    setSaving(true); setError(''); setMessage('');
+    try {
+      await updateAddress(id, kind === 'shipping' ? { is_default_shipping: true } : { is_default_billing: true });
+      await load(); setMessage('Varsayılan adres güncellendi.');
+    } catch { setError('Varsayılan adres güncellenemedi. Lütfen tekrar deneyin.'); }
+    finally { setSaving(false); }
   }
 
   return (
@@ -297,13 +336,16 @@ function AddressesTab() {
         </div>
         {!adding && (
           <button
-            onClick={() => setAdding(true)}
+            onClick={() => { setEditingId(null); setForm({ first_name: '', last_name: '', address_1: '', city: '', country_code: 'tr' }); setAdding(true); }}
             className="inline-flex items-center gap-1.5 h-10 px-4 rounded-xl bg-molten-grad text-white text-xs font-bold glow-orange cursor-pointer"
           >
             <Plus className="h-4 w-4" /> Yeni Adres
           </button>
         )}
       </div>
+
+      {error && <div role="alert" className="mb-4 rounded-xl border border-rose-500/30 bg-rose-500/10 p-3 text-sm">{error} <button type="button" onClick={() => void load()} className="underline font-bold">Tekrar yükle</button></div>}
+      {message && <p role="status" className="mb-4 text-sm text-emerald-600">{message}</p>}
 
       {loading ? (
         <div className="flex items-center justify-center py-10">
@@ -313,7 +355,7 @@ function AddressesTab() {
         <>
           {adding && (
             <form onSubmit={handleAdd} className="mb-6 p-4 rounded-2xl border border-border bg-background space-y-3">
-              <h3 className="font-bold text-sm">Yeni Adres Ekle</h3>
+              <h3 className="font-bold text-sm">{editingId ? 'Adresi Düzenle' : 'Yeni Adres Ekle'}</h3>
               <div className="grid grid-cols-2 gap-3">
                 <FieldInput label="Ad" value={form.first_name} onChange={(v) => setForm({ ...form, first_name: v })} required />
                 <FieldInput label="Soyad" value={form.last_name} onChange={(v) => setForm({ ...form, last_name: v })} required />
@@ -326,16 +368,18 @@ function AddressesTab() {
                 <FieldInput label="Şehir" value={form.city} onChange={(v) => setForm({ ...form, city: v })} required />
               </div>
               <FieldInput label="Posta Kodu" value={form.postal_code || ''} onChange={(v) => setForm({ ...form, postal_code: v })} />
+              <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={!!form.is_default_shipping} onChange={(e) => setForm({ ...form, is_default_shipping: e.target.checked })} /> Varsayılan teslimat adresim</label>
+              <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={!!form.is_default_billing} onChange={(e) => setForm({ ...form, is_default_billing: e.target.checked })} /> Varsayılan fatura adresim</label>
               <div className="flex gap-3 pt-2">
                 <button type="button" onClick={() => setAdding(false)} className="flex-1 h-10 rounded-xl bg-silver-grad text-xs font-bold">İptal</button>
                 <button type="submit" disabled={saving} className={`flex-1 h-10 rounded-xl text-white text-xs font-bold ${saving ? 'bg-muted' : 'bg-molten-grad glow-orange'}`}>
-                  {saving ? 'Kaydediliyor...' : 'Adres Ekle'}
+                  {saving ? 'Kaydediliyor...' : editingId ? 'Değişiklikleri Kaydet' : 'Adres Ekle'}
                 </button>
               </div>
             </form>
           )}
 
-          {list.length === 0 && !adding ? (
+          {list.length === 0 && !adding && !error ? (
             <div className="text-center py-10 text-sm text-muted-foreground">
               Henüz kayıtlı adresiniz yok.
             </div>
@@ -344,9 +388,11 @@ function AddressesTab() {
               {list.map((a) => (
                 <div key={a.id} className="rounded-2xl border border-border bg-background p-4 relative">
                   <button
+                    disabled={saving}
                     onClick={() => handleDelete(a.id)}
                     className="absolute top-3 right-3 p-1.5 rounded-md text-muted-foreground hover:text-rose-600 hover:bg-rose-500/10"
                     title="Sil"
+                    aria-label={`${a.first_name} ${a.last_name} adresini sil`}
                   >
                     <Trash2 className="h-4 w-4" />
                   </button>
@@ -363,6 +409,15 @@ function AddressesTab() {
                     <br/>
                     {(a.country_code || '').toUpperCase()}
                   </div>
+                  <div className="mt-3 flex flex-wrap gap-2 text-xs">
+                    {a.is_default_shipping && <span className="text-emerald-600 font-bold">Varsayılan teslimat</span>}
+                    {a.is_default_billing && <span className="text-emerald-600 font-bold">Varsayılan fatura</span>}
+                  </div>
+                  <div className="flex flex-wrap gap-3 mt-3 text-xs font-bold text-accent">
+                    <button type="button" disabled={saving} onClick={() => edit(a)} className="min-h-9 underline">Düzenle</button>
+                    {!a.is_default_shipping && <button type="button" disabled={saving} onClick={() => void setDefault(a.id, 'shipping')} className="min-h-9 underline">Teslimat için varsayılan yap</button>}
+                    {!a.is_default_billing && <button type="button" disabled={saving} onClick={() => void setDefault(a.id, 'billing')} className="min-h-9 underline">Fatura için varsayılan yap</button>}
+                  </div>
                 </div>
               ))}
             </div>
@@ -378,10 +433,21 @@ function AddressesTab() {
 function OrdersTab() {
   const [orders, setOrders] = useState<HttpTypes.StoreOrder[]>([]);
   const [loading, setLoading] = useState(true);
+  const [count, setCount] = useState(0);
+  const [page, setPage] = useState(1);
+  const [attempt, setAttempt] = useState(0);
+  const [error, setError] = useState(false);
+  const pageSize = 10;
 
   useEffect(() => {
-    listMyOrders().then((o) => { setOrders(o); setLoading(false); });
-  }, []);
+    let cancelled = false;
+    setLoading(true); setError(false);
+    listMyOrders(pageSize, (page - 1) * pageSize)
+      .then(({ orders, count }) => { if (!cancelled) { setOrders(orders); setCount(count); } })
+      .catch(() => { if (!cancelled) setError(true); })
+      .finally(() => { if (!cancelled) setLoading(false); });
+    return () => { cancelled = true; };
+  }, [page, attempt]);
 
   if (loading) {
     return (
@@ -391,7 +457,9 @@ function OrdersTab() {
     );
   }
 
-  if (orders.length === 0) {
+  if (error) return <div role="alert" className="rounded-3xl border border-border bg-metallic-card p-10 text-center space-y-3"><p>Siparişler yüklenemedi.</p><button type="button" onClick={() => setAttempt((n) => n + 1)} className="text-accent font-bold underline">Tekrar dene</button></div>;
+
+  if (orders.length === 0 && page === 1) {
     return (
       <div className="rounded-3xl bg-metallic-card border border-border p-10 text-center space-y-3">
         <Package className="h-10 w-10 mx-auto text-muted-foreground" />
@@ -405,7 +473,7 @@ function OrdersTab() {
 
   return (
     <div className="rounded-3xl bg-metallic-card border border-border p-6 md:p-8">
-      <h2 className="text-lg font-extrabold tracking-tight mb-6">Siparişlerim ({orders.length})</h2>
+      <h2 className="text-lg font-extrabold tracking-tight mb-6">Siparişlerim ({count})</h2>
       <div className="space-y-3">
         {orders.map((o) => (
           <div key={o.id} className="rounded-2xl border border-border bg-background p-4">
@@ -444,6 +512,11 @@ function OrdersTab() {
           </div>
         ))}
       </div>
+      <nav aria-label="Sipariş sayfaları" className="flex justify-center items-center gap-4 mt-6 text-sm">
+        <button type="button" disabled={page <= 1} onClick={() => setPage((p) => p - 1)} className="border border-border rounded-lg px-3 py-2 disabled:opacity-40">Önceki</button>
+        <span>Sayfa {page} / {Math.max(1, Math.ceil(count / pageSize))}</span>
+        <button type="button" disabled={page * pageSize >= count} onClick={() => setPage((p) => p + 1)} className="border border-border rounded-lg px-3 py-2 disabled:opacity-40">Sonraki</button>
+      </nav>
     </div>
   );
 }

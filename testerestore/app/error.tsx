@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
+import * as Sentry from '@sentry/nextjs';
 import Link from 'next/link';
 import { AlertTriangle, RefreshCw, ArrowLeft } from 'lucide-react';
 
@@ -20,6 +21,7 @@ export default function Error({
     // Sunucu hataları instrumentation.onRequestError ile Sentry'e gider;
     // burada client tarafı için konsola düşürüyoruz.
     console.error('[route-error]', error);
+    Sentry.captureException(error);
   }, [error]);
 
   return (

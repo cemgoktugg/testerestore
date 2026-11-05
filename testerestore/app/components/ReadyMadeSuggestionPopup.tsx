@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useId, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { X, Zap, Truck, ArrowRight, Clock } from "lucide-react";
@@ -19,7 +19,7 @@ interface Props {
 
 /**
  * Müşteri uzunluk girdiğinde, eğer hazır stoğumuzda eşleşen ürün varsa
- * açılan modal. Avantaj rozetleri: aynı gün kargo, stoktan, hazır kaynak.
+ * açılan modal. Ürünler için doğrulanmamış teslimat süresi vaat edilmez.
  */
 export default function ReadyMadeSuggestionPopup({
   open,
@@ -28,6 +28,45 @@ export default function ReadyMadeSuggestionPopup({
   onClose,
   onContinueCustom,
 }: Props) {
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const closeRef = useRef(onClose);
+  useEffect(() => { closeRef.current = onClose; }, [onClose]);
+  const titleId = useId();
+  const descriptionId = useId();
+  const visible = open && suggestions.length > 0;
+
+  useEffect(() => {
+    if (!visible) return;
+    const previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const dialog = dialogRef.current;
+    dialog?.querySelector<HTMLElement>('button, a[href]')?.focus();
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        event.stopPropagation();
+        closeRef.current();
+      }
+      if (event.key !== 'Tab' || !dialog) return;
+      const focusable = Array.from(dialog.querySelectorAll<HTMLElement>('button:not([disabled]), a[href], input:not([disabled]), [tabindex="0"]'));
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (!first) { event.preventDefault(); dialog.focus(); return; }
+      if (event.shiftKey && (document.activeElement === first || !dialog.contains(document.activeElement))) {
+        event.preventDefault(); last?.focus();
+      } else if (!event.shiftKey && (document.activeElement === last || !dialog.contains(document.activeElement))) {
+        event.preventDefault(); first.focus();
+      }
+    };
+    document.addEventListener('keydown', onKeyDown, true);
+    return () => {
+      document.removeEventListener('keydown', onKeyDown, true);
+      document.body.style.overflow = previousOverflow;
+      if (previousFocus?.isConnected) previousFocus.focus();
+    };
+  }, [visible]);
+
   if (!open || suggestions.length === 0) return null;
 
   return (
@@ -36,6 +75,12 @@ export default function ReadyMadeSuggestionPopup({
       onClick={onClose}
     >
       <div
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
+        aria-describedby={descriptionId}
+        tabIndex={-1}
         className="relative w-full max-w-3xl bg-background border border-border rounded-t-2xl sm:rounded-2xl shadow-2xl max-h-[90vh] overflow-hidden flex flex-col animate-in slide-in-from-bottom-8 sm:zoom-in-95 duration-300"
         onClick={(e) => e.stopPropagation()}
       >
@@ -57,17 +102,16 @@ export default function ReadyMadeSuggestionPopup({
             <div className="space-y-1">
               <div className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider">
                 <Clock className="h-3 w-3" />
-                Hızlı Teslimat
+                Hazır Boy Seçenekleri
               </div>
-              <h2 className="text-lg sm:text-xl font-extrabold tracking-tight">
-                {requestedLengthMm.toLocaleString("tr-TR")} mm için hazır
-                stoğumuzda <span className="text-orange-grad">{suggestions.length}</span>{" "}
+              <h2 id={titleId} className="text-lg sm:text-xl font-extrabold tracking-tight">
+                {requestedLengthMm.toLocaleString("tr-TR")} mm için hazır boyda
+                <span className="text-orange-grad"> {suggestions.length}</span>{" "}
                 seçenek var!
               </h2>
-              <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
-                Aşağıdaki hazır kaynaklı ürünlerimiz <strong>aynı gün kargoya</strong>{" "}
-                verilir. Özel boy üretim 3-7 iş günü sürerken, hazır stoktan
-                anında gönderilir.
+              <p id={descriptionId} className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+                Aşağıdaki ürünler standart ölçüde hazır kaynaklıdır. Güncel stok bilgisini
+                ürün sayfasından inceleyebilir, teslimat süresi için bizimle iletişime geçebilirsiniz.
               </p>
             </div>
           </div>
@@ -119,7 +163,7 @@ export default function ReadyMadeSuggestionPopup({
                     </span>
                     <span className="inline-flex items-center gap-1 rounded-md bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 px-2 py-0.5 text-[10px] font-bold">
                       <Truck className="h-2.5 w-2.5" />
-                      Aynı gün kargoda
+                      Hazır kaynaklı
                     </span>
                   </div>
 

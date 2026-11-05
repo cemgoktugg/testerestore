@@ -5,6 +5,7 @@ import Footer from '../components/Footer';
 import IletisimForm from './IletisimForm';
 import { MapPin, Phone, Mail, Clock, MessageCircle, ArrowRight } from 'lucide-react';
 import { pageMetadata } from '../../lib/seo';
+import { companyInfo, publicContactPhone } from '../../lib/company-info';
 
 export const metadata: Metadata = pageMetadata({
   title: 'İletişim',
@@ -19,19 +20,19 @@ const CONTACT_ITEMS = [
   {
     icon: MapPin,
     title: 'Atölye Adresi',
-    primary: 'İkitelli OSB, Başakşehir',
-    secondary: 'İstanbul, Türkiye',
+    primary: companyInfo.address,
+    secondary: `${companyInfo.city}, Türkiye`,
   },
   {
     icon: Phone,
     title: 'Telefon',
-    primary: '+90 (212) 000 00 00',
+    primary: publicContactPhone,
     secondary: 'Hafta içi 09:00 – 18:00',
   },
   {
     icon: Mail,
     title: 'E-Posta',
-    primary: 'info@testerestore.com',
+    primary: companyInfo.email,
     secondary: 'Teknik destek ve sipariş',
   },
   {
@@ -71,7 +72,7 @@ export default function IletisimPage() {
             {/* Contact info */}
             <div className="lg:col-span-5 space-y-6">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {CONTACT_ITEMS.map((item) => {
+                {CONTACT_ITEMS.filter((item) => item.primary).map((item) => {
                   const Icon = item.icon;
                   return (
                     <div

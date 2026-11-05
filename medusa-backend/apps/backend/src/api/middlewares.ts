@@ -7,6 +7,7 @@
  */
 import {
   defineMiddlewares,
+  authenticate,
   type MedusaNextFunction,
   type MedusaRequest,
   type MedusaResponse,
@@ -110,6 +111,26 @@ async function guardStandardLineUpdate(
 
 export default defineMiddlewares({
   routes: [
+    {
+      matcher: "/store/cart-recovery",
+      method: ["POST"],
+      middlewares: [authenticate("customer", ["session", "bearer"], { allowUnauthenticated: true })],
+    },
+    {
+      matcher: "/store/orders/:id/requests",
+      method: ["GET", "POST"],
+      middlewares: [authenticate("customer", ["session", "bearer"])],
+    },
+    {
+      matcher: "/store/loyalty/redeem",
+      method: ["POST"],
+      middlewares: [authenticate("customer", ["session", "bearer"])],
+    },
+    {
+      matcher: "/store/products/:id/reviews",
+      method: ["POST"],
+      middlewares: [authenticate("customer", ["session", "bearer"], { allowUnauthenticated: true })],
+    },
     {
       matcher: "/store/payment-collections/:id/payment-sessions",
       method: ["POST"],

@@ -93,6 +93,7 @@ function buildCsp(): string {
 }
 
 const nextConfig: NextConfig = {
+  distDir: process.env.NEXT_DIST_DIR || ".next",
   // Docker/VPS dağıtımı için yalın, kendi kendine yeten çıktı. Sadece
   // `next build` çıktısını etkiler (.next/standalone üretir); `next dev` ve
   // `next start` davranışı değişmez. Vercel'de yok sayılır.

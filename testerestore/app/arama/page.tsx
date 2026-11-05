@@ -10,28 +10,45 @@ import { listProducts } from "../../lib/medusa/services/products";
 import { formatMoney, getProductImage } from "../../lib/medusa/format";
 import type { StoreProduct } from "../../lib/medusa/types";
 import { Loader2, Package, ArrowLeft, Search } from "lucide-react";
+import { trackEvent } from "../components/Analytics";
+import { parsePage } from "../../lib/pagination";
+
+const PAGE_SIZE = 24;
 
 export default function SearchPage() {
   const params = useSearchParams();
   const q = params?.get("q") ?? "";
+  const page = parsePage(params?.get("sayfa"));
   const [results, setResults] = useState<StoreProduct[]>([]);
   const [loading, setLoading] = useState(true);
   const [count, setCount] = useState(0);
+  const [error, setError] = useState(false);
+  const [attempt, setAttempt] = useState(0);
 
   useEffect(() => {
+    let cancelled = false;
+    setError(false);
+    setCount(0);
+    setResults([]);
     if (!q.trim()) {
-      setResults([]);
       setLoading(false);
       return;
     }
     setLoading(true);
-    listProducts({ q, limit: 50 })
+    listProducts({ q: q.trim(), limit: PAGE_SIZE, offset: (page - 1) * PAGE_SIZE })
       .then(({ products, count }) => {
+        if (cancelled) return;
         setResults(products);
         setCount(count);
+        if (page === 1) trackEvent("search", { search_term: q.trim(), results_count: count });
       })
-      .finally(() => setLoading(false));
-  }, [q]);
+      .catch(() => { if (!cancelled) setError(true); })
+      .finally(() => { if (!cancelled) setLoading(false); });
+    return () => { cancelled = true; };
+  }, [q, page, attempt]);
+
+  const pageHref = (value: number) => `/arama?q=${encodeURIComponent(q)}&sayfa=${value}`;
+  const totalPages = Math.max(1, Math.ceil(count / PAGE_SIZE));
 
   return (
     <>
@@ -52,7 +69,7 @@ export default function SearchPage() {
                 Arama Sonuçları
               </h1>
               <p className="text-sm text-muted-foreground mt-0.5">
-                {q ? (
+                {loading ? "Aranıyor..." : error ? "Arama şu an tamamlanamadı" : q ? (
                   <>
                     <span className="font-semibold text-foreground">&quot;{q}&quot;</span>{" "}
                     için <span className="font-bold">{count}</span> ürün bulundu
@@ -68,20 +85,25 @@ export default function SearchPage() {
             <div className="flex items-center justify-center py-20">
               <Loader2 className="h-8 w-8 animate-spin text-accent" />
             </div>
+          ) : error ? (
+            <div role="alert" className="text-center rounded-2xl border border-border py-16 space-y-4">
+              <p>Arama sonuçları yüklenemedi. Lütfen tekrar deneyin.</p>
+              <button type="button" onClick={() => setAttempt((n) => n + 1)} className="rounded-xl bg-molten-grad text-white px-6 py-3 font-bold">Tekrar dene</button>
+            </div>
           ) : results.length === 0 ? (
             <div className="text-center py-20 rounded-2xl border border-dashed border-border bg-metallic-card p-8 space-y-4">
               <Package className="h-12 w-12 mx-auto text-muted-foreground/50" />
               <div>
-                <h2 className="text-xl font-bold">Sonuç bulunamadı</h2>
+                <h2 className="text-xl font-bold">{page > totalPages ? "Bu sayfada ürün bulunamadı" : "Sonuç bulunamadı"}</h2>
                 <p className="text-sm text-muted-foreground mt-1">
                   Farklı bir terimle aramayı deneyin veya kategorilerimize göz atın.
                 </p>
               </div>
               <Link
-                href="/"
+                href={page > 1 ? pageHref(1) : "/"}
                 className="inline-flex h-10 items-center justify-center rounded-xl bg-molten-grad text-white text-sm font-bold px-6 glow-orange"
               >
-                Ürünleri Keşfet
+                {page > 1 ? "İlk sayfaya dön" : "Ürünleri Keşfet"}
               </Link>
             </div>
           ) : (
@@ -126,6 +148,13 @@ export default function SearchPage() {
                 );
               })}
             </div>
+          )}
+          {!loading && !error && totalPages > 1 && (
+            <nav aria-label="Arama sonuçları sayfaları" className="flex items-center justify-center gap-5 mt-8 text-sm">
+              {page > 1 && <Link className="rounded-lg border border-border px-4 py-2" href={pageHref(page - 1)}>Önceki</Link>}
+              <span aria-live="polite">Sayfa {page} / {totalPages}</span>
+              {page < totalPages && <Link className="rounded-lg border border-border px-4 py-2" href={pageHref(page + 1)}>Sonraki</Link>}
+            </nav>
           )}
         </div>
       </main>

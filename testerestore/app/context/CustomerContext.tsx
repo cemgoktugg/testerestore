@@ -5,6 +5,7 @@ import React, {
   useCallback,
   useContext,
   useEffect,
+  useRef,
   useState,
 } from 'react';
 import {
@@ -15,8 +16,10 @@ import {
   type LoginInput,
   type RegisterInput,
   type StoreCustomer,
+  customerWishlistPersistence,
 } from '../../lib/medusa/services/auth';
 import { MEDUSA_READY } from '../../lib/medusa/config';
+import { connectWishlist } from '../../lib/wishlist';
 
 interface CustomerContextType {
   customer: StoreCustomer | null;
@@ -44,15 +47,23 @@ export function CustomerProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [pendingPassword, setPendingPassword] = useState<string | null>(null);
+  const authEpoch = useRef(0);
+
+  useEffect(() => {
+    const id = customer?.id;
+    void connectWishlist(id ?? null, id ? customerWishlistPersistence(id) : undefined);
+    return () => { void connectWishlist(null); };
+  }, [customer?.id]);
 
   const refresh = useCallback(async () => {
+    const current = authEpoch.current;
     if (!MEDUSA_READY) {
       setLoading(false);
       return;
     }
     try {
       const c = await getCurrentCustomer();
-      setCustomer(c);
+      if (current === authEpoch.current) setCustomer(c);
     } finally {
       setLoading(false);
     }
@@ -63,6 +74,7 @@ export function CustomerProvider({ children }: { children: React.ReactNode }) {
   }, [refresh]);
 
   const login = useCallback(async (input: LoginInput) => {
+    ++authEpoch.current;
     setError(null);
     try {
       const c = await svcLogin(input);
@@ -79,6 +91,7 @@ export function CustomerProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const register = useCallback(async (input: RegisterInput) => {
+    ++authEpoch.current;
     setError(null);
     try {
       const c = await svcRegister(input);
@@ -95,9 +108,11 @@ export function CustomerProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const logout = useCallback(async () => {
-    await svcLogout();
+    ++authEpoch.current;
+    void connectWishlist(null);
     setCustomer(null);
     setPendingPassword(null);
+    await svcLogout();
   }, []);
 
   const clearPendingPassword = useCallback(() => setPendingPassword(null), []);

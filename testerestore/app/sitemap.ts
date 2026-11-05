@@ -39,8 +39,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         ...(images.length && { images }),
       };
     });
-  } catch {
-    /* backend'e ulaşılamazsa statik sayfalarla devam */
+  } catch (error) {
+    // A transient API failure is not a smaller catalog. Let crawlers retry
+    // instead of publishing a successful sitemap with all products missing.
+    throw error;
   }
 
   const guidesUpdated = GUIDES.map((g) => new Date(g.dateModified)).sort((a, b) => +b - +a)[0];

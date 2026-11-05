@@ -5,6 +5,7 @@ import HazirUrunlerClient from './HazirUrunlerClient';
 import { listReadyMade } from '../../lib/medusa/services/products';
 import { pageMetadata, canonicalUrl } from '../../lib/seo';
 import { JsonLd } from '../components/StructuredData';
+import { slimProductForCard } from '../../lib/medusa/slim';
 
 // SSR + ISR: hazır boy listesi sunucuda çekilir → ilk HTML dolu, SEO dostu.
 export const revalidate = 300;
@@ -18,7 +19,7 @@ export const metadata: Metadata = pageMetadata({
 });
 
 export default async function HazirUrunlerPage() {
-  const readyMade = await listReadyMade(200);
+  const readyMade = await listReadyMade();
 
   return (
     <>
@@ -43,7 +44,7 @@ export default async function HazirUrunlerPage() {
           </div>
         </section>
 
-        <HazirUrunlerClient initialReadyMade={readyMade} />
+        <HazirUrunlerClient initialReadyMade={readyMade.map(slimProductForCard)} />
       </main>
       <Footer />
       <JsonLd

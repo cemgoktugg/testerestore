@@ -1,0 +1,1314 @@
+{
+ "terms": [
+  {
+   "term_tr": "şerit testere bıçağı",
+   "synonyms_tr": [
+    "şerit testere",
+    "şerit bıçak",
+    "şerit",
+    "testere şeridi",
+    "band testere",
+    "bant testere",
+    "şerit kesme bıçağı"
+   ],
+   "misspellings": [
+    "serit testere bicagi",
+    "şerit testre",
+    "şeritt",
+    "serıt",
+    "şerit tesrere",
+    "seirt"
+   ],
+   "en": [
+    "band saw blade",
+    "bandsaw blade",
+    "band"
+   ],
+   "de": [
+    "Sägeband",
+    "Bandsägeblatt"
+   ]
+  },
+  {
+   "term_tr": "lama (yassı demir)",
+   "synonyms_tr": [
+    "yassı lama",
+    "lama demir",
+    "yassı çubuk"
+   ],
+   "misspellings": [],
+   "en": [
+    "flat bar"
+   ],
+   "de": [
+    "Flachstahl",
+    "Flacheisen"
+   ]
+  },
+  {
+   "term_tr": "bi-metal bıçak",
+   "synonyms_tr": [
+    "bimetal",
+    "bi metal",
+    "bimetalik",
+    "HSS uçlu"
+   ],
+   "misspellings": [
+    "bı metal",
+    "bimetl",
+    "bi-metl",
+    "bimetal̇"
+   ],
+   "en": [
+    "bi-metal",
+    "bimetal band saw blade"
+   ],
+   "de": [
+    "Bimetall-Sägeband"
+   ]
+  },
+  {
+   "term_tr": "M42",
+   "synonyms_tr": [
+    "M-42",
+    "kobaltlı HSS"
+   ],
+   "misspellings": [
+    "m42 premıum",
+    "em kırk iki"
+   ],
+   "en": [
+    "M42 HSS"
+   ],
+   "de": [
+    "M42",
+    "HSS-Co8"
+   ]
+  },
+  {
+   "term_tr": "M51",
+   "synonyms_tr": [
+    "M-51"
+   ],
+   "misspellings": [],
+   "en": [
+    "M51 HSS"
+   ],
+   "de": [
+    "M51"
+   ]
+  },
+  {
+   "term_tr": "HSS (hız çeliği)",
+   "synonyms_tr": [
+    "hız çeliği",
+    "yüksek hız çeliği"
+   ],
+   "misspellings": [],
+   "en": [
+    "high speed steel",
+    "HSS"
+   ],
+   "de": [
+    "Schnellarbeitsstahl"
+   ]
+  },
+  {
+   "term_tr": "karbür uçlu bıçak",
+   "synonyms_tr": [
+    "karbür",
+    "sert metal uçlu",
+    "TCT",
+    "vidia",
+    "widia"
+   ],
+   "misspellings": [
+    "karbur",
+    "karbürlü",
+    "karpit",
+    "karbit"
+   ],
+   "en": [
+    "carbide-tipped band saw blade",
+    "TCT"
+   ],
+   "de": [
+    "Hartmetall-Sägeband",
+    "HM-Sägeband"
+   ]
+  },
+  {
+   "term_tr": "karbon çeliği bıçak (Alman/İsveç çeliği)",
+   "synonyms_tr": [
+    "Alman çeliği",
+    "İsveç çeliği",
+    "karbon çelik şerit"
+   ],
+   "misspellings": [],
+   "en": [
+    "carbon steel band saw blade",
+    "flex back",
+    "hard back"
+   ],
+   "de": [
+    "Werkzeugstahl-Sägeband (WS)"
+   ]
+  },
+  {
+   "term_tr": "et-kemik bıçağı",
+   "synonyms_tr": [
+    "kemik testeresi bıçağı",
+    "kasap bıçağı",
+    "et bıçağı"
+   ],
+   "misspellings": [
+    "et kemık",
+    "etkemik",
+    "kemık"
+   ],
+   "en": [
+    "meat and bone band saw blade"
+   ],
+   "de": [
+    "Fleisch- und Knochensägeband"
+   ]
+  },
+  {
+   "term_tr": "sünger-tekstil bıçağı (düz/dalgalı ağız)",
+   "synonyms_tr": [
+    "sünger bıçağı",
+    "dişsiz bıçak",
+    "düz bıçak",
+    "dalgalı bıçak"
+   ],
+   "misspellings": [
+    "sunger bicagi",
+    "süngher"
+   ],
+   "en": [
+    "bandknife",
+    "foam cutting blade",
+    "wavy edge",
+    "scalloped edge"
+   ],
+   "de": [
+    "Bandmesser",
+    "Wellenschliff"
+   ]
+  },
+  {
+   "term_tr": "ahşap kesim bıçağı",
+   "synonyms_tr": [
+    "ağaç",
+    "kereste",
+    "tomruk",
+    "odun",
+    "MDF",
+    "sunta",
+    "kontrplak"
+   ],
+   "misspellings": [
+    "ahsap",
+    "agac",
+    "kerestee"
+   ],
+   "en": [
+    "wood band saw blade",
+    "resaw blade",
+    "lumber"
+   ],
+   "de": [
+    "Holzbandsägeblatt"
+   ]
+  },
+  {
+   "term_tr": "hazır boy",
+   "synonyms_tr": [
+    "stoktaki ürün",
+    "standart boy",
+    "hazır kaynaklı"
+   ],
+   "misspellings": [],
+   "en": [
+    "ready-made / stock length"
+   ],
+   "de": [
+    "Lagerware"
+   ]
+  },
+  {
+   "term_tr": "özel ölçü / ölçüye göre kaynak",
+   "synonyms_tr": [
+    "siparişe özel",
+    "kaynaklı",
+    "özel boy"
+   ],
+   "misspellings": [],
+   "en": [
+    "custom welded length",
+    "made to measure"
+   ],
+   "de": [
+    "Sonderlänge"
+   ]
+  },
+  {
+   "term_tr": "rulo / metre ile şerit",
+   "synonyms_tr": [
+    "metraj",
+    "rulo şerit"
+   ],
+   "misspellings": [],
+   "en": [
+    "coil",
+    "band stock"
+   ],
+   "de": [
+    "Coil",
+    "Meterware"
+   ]
+  },
+  {
+   "term_tr": "katalog dışı testereler (daire, panter, tilki kuyruğu, spiral)",
+   "synonyms_tr": [
+    "sunta/daire bıçağı",
+    "dekupaj bıçağı"
+   ],
+   "misspellings": [],
+   "en": [
+    "circular saw blade",
+    "jigsaw blade",
+    "hand saw",
+    "angle grinder disc"
+   ],
+   "de": [
+    "Kreissägeblatt",
+    "Stichsägeblatt",
+    "Trennscheibe"
+   ]
+  },
+  {
+   "term_tr": "bıçak boyu (şerit uzunluğu)",
+   "synonyms_tr": [
+    "uzunluk",
+    "şerit uzunluğu",
+    "çevre"
+   ],
+   "misspellings": [
+    "boyu nu",
+    "uzunlugu"
+   ],
+   "en": [
+    "blade length"
+   ],
+   "de": [
+    "Bandlänge"
+   ]
+  },
+  {
+   "term_tr": "genişlik (en)",
+   "synonyms_tr": [
+    "şerit eni",
+    "bıçak eni",
+    "genişlik"
+   ],
+   "misspellings": [
+    "genislik",
+    "genişliği nı"
+   ],
+   "en": [
+    "blade width"
+   ],
+   "de": [
+    "Bandbreite"
+   ]
+  },
+  {
+   "term_tr": "kalınlık",
+   "synonyms_tr": [
+    "bıçak kalınlığı",
+    "gövde kalınlığı"
+   ],
+   "misspellings": [],
+   "en": [
+    "blade thickness",
+    "gauge"
+   ],
+   "de": [
+    "Banddicke"
+   ]
+  },
+  {
+   "term_tr": "ölçü yazımı (boy × genişlik × kalınlık × diş)",
+   "synonyms_tr": [
+    "ebat",
+    "ölçü"
+   ],
+   "misspellings": [],
+   "en": [
+    "length x width x thickness"
+   ],
+   "de": [
+    "Länge x Breite x Dicke"
+   ]
+  },
+  {
+   "term_tr": "birimler (mm, cm, metre, inç, parmak)",
+   "synonyms_tr": [
+    "santim",
+    "milim",
+    "inç"
+   ],
+   "misspellings": [],
+   "en": [
+    "inch",
+    "mm"
+   ],
+   "de": [
+    "Zoll",
+    "Millimeter"
+   ]
+  },
+  {
+   "term_tr": "makine marka/model numarası",
+   "synonyms_tr": [
+    "makine modeli",
+    "tezgah modeli"
+   ],
+   "misspellings": [],
+   "en": [
+    "machine model"
+   ],
+   "de": [
+    "Maschinentyp"
+   ]
+  },
+  {
+   "term_tr": "malzeme kodundaki sayılar (304, 6061, 1.2379)",
+   "synonyms_tr": [
+    "malzeme numarası",
+    "Werkstoff no"
+   ],
+   "misspellings": [],
+   "en": [
+    "material grade"
+   ],
+   "de": [
+    "Werkstoffnummer"
+   ]
+  },
+  {
+   "term_tr": "TPI / diş sayısı",
+   "synonyms_tr": [
+    "diş sayısı",
+    "inç başına diş",
+    "diş adımı"
+   ],
+   "misspellings": [
+    "tpı",
+    "t.p.i",
+    "tpi̇"
+   ],
+   "en": [
+    "TPI",
+    "teeth per inch"
+   ],
+   "de": [
+    "ZpZ",
+    "Zähne pro Zoll"
+   ]
+  },
+  {
+   "term_tr": "diş adımı / hatve (pitch)",
+   "synonyms_tr": [
+    "diş adımı",
+    "diş aralığı"
+   ],
+   "misspellings": [],
+   "en": [
+    "tooth pitch"
+   ],
+   "de": [
+    "Zahnteilung"
+   ]
+  },
+  {
+   "term_tr": "değişken diş (4/6, 10/14)",
+   "synonyms_tr": [
+    "değişken hatve",
+    "kombi diş"
+   ],
+   "misspellings": [],
+   "en": [
+    "variable pitch",
+    "vari-tooth",
+    "combo"
+   ],
+   "de": [
+    "variable Zahnteilung",
+    "Kombizahnung"
+   ]
+  },
+  {
+   "term_tr": "sabit diş",
+   "synonyms_tr": [
+    "eşit diş"
+   ],
+   "misspellings": [],
+   "en": [
+    "constant pitch",
+    "regular pitch"
+   ],
+   "de": [
+    "konstante Zahnteilung"
+   ]
+  },
+  {
+   "term_tr": "diş formu (standart, kanca, atlamalı)",
+   "synonyms_tr": [
+    "diş geometrisi",
+    "diş profili"
+   ],
+   "misspellings": [],
+   "en": [
+    "hook",
+    "regular",
+    "skip",
+    "tooth form"
+   ],
+   "de": [
+    "Hakenzahn",
+    "Normalzahn",
+    "Zahnform"
+   ]
+  },
+  {
+   "term_tr": "çapraz (set)",
+   "synonyms_tr": [
+    "diş çaprazı",
+    "çaprazlama"
+   ],
+   "misspellings": [],
+   "en": [
+    "set",
+    "tooth set",
+    "raker set",
+    "wavy set"
+   ],
+   "de": [
+    "Schränkung"
+   ]
+  },
+  {
+   "term_tr": "kesim aralığı / kesim payı (kerf)",
+   "synonyms_tr": [
+    "kesim payı",
+    "talaş payı"
+   ],
+   "misspellings": [],
+   "en": [
+    "kerf"
+   ],
+   "de": [
+    "Schnittbreite"
+   ]
+  },
+  {
+   "term_tr": "diş boşluğu (gullet)",
+   "synonyms_tr": [
+    "talaş cebi"
+   ],
+   "misspellings": [],
+   "en": [
+    "gullet"
+   ],
+   "de": [
+    "Zahnlücke"
+   ]
+  },
+  {
+   "term_tr": "bıçak sırtı",
+   "synonyms_tr": [
+    "arka kenar"
+   ],
+   "misspellings": [],
+   "en": [
+    "back edge"
+   ],
+   "de": [
+    "Bandrücken"
+   ]
+  },
+  {
+   "term_tr": "kasnak",
+   "synonyms_tr": [
+    "tekerlek",
+    "volan",
+    "makara",
+    "kasnak lastiği"
+   ],
+   "misspellings": [],
+   "en": [
+    "wheel",
+    "pulley"
+   ],
+   "de": [
+    "Bandrolle",
+    "Laufrad"
+   ]
+  },
+  {
+   "term_tr": "kasnak merkezleri arası mesafe",
+   "synonyms_tr": [
+    "aks mesafesi"
+   ],
+   "misspellings": [],
+   "en": [
+    "center distance"
+   ],
+   "de": [
+    "Achsabstand"
+   ]
+  },
+  {
+   "term_tr": "gergi / gerginlik",
+   "synonyms_tr": [
+    "gerdirme",
+    "germe",
+    "tansiyon"
+   ],
+   "misspellings": [],
+   "en": [
+    "band tension"
+   ],
+   "de": [
+    "Bandspannung"
+   ]
+  },
+  {
+   "term_tr": "kılavuz / kılavuz rulmanı / karbür tutucu",
+   "synonyms_tr": [
+    "kılavuz kolu",
+    "kılavuz rulmanı",
+    "karbür tutucu"
+   ],
+   "misspellings": [],
+   "en": [
+    "blade guides",
+    "guide bearings"
+   ],
+   "de": [
+    "Bandführung",
+    "Führungsrollen"
+   ]
+  },
+  {
+   "term_tr": "talaş fırçası",
+   "synonyms_tr": [
+    "fırça"
+   ],
+   "misspellings": [],
+   "en": [
+    "chip brush"
+   ],
+   "de": [
+    "Spänebürste"
+   ]
+  },
+  {
+   "term_tr": "mengene / bağlama",
+   "synonyms_tr": [
+    "çene",
+    "sıkma"
+   ],
+   "misspellings": [],
+   "en": [
+    "vise",
+    "clamp"
+   ],
+   "de": [
+    "Spannstock",
+    "Schraubstock"
+   ]
+  },
+  {
+   "term_tr": "makine tipi (yatay, dikey, açılı, portatif)",
+   "synonyms_tr": [],
+   "misspellings": [],
+   "en": [
+    "horizontal/vertical band saw",
+    "portable band saw"
+   ],
+   "de": [
+    "Horizontal-/Vertikalbandsäge"
+   ]
+  },
+  {
+   "term_tr": "makine etiketi / ölçü tabelası",
+   "synonyms_tr": [
+    "ölçü tabelası",
+    "tip plakası"
+   ],
+   "misspellings": [],
+   "en": [
+    "nameplate",
+    "machine label"
+   ],
+   "de": [
+    "Typenschild"
+   ]
+  },
+  {
+   "term_tr": "profil / kutu profil / boru (içi boş kesit)",
+   "synonyms_tr": [
+    "kutu",
+    "boru",
+    "kare profil",
+    "dikdörtgen profil"
+   ],
+   "misspellings": [],
+   "en": [
+    "tube",
+    "pipe",
+    "hollow section"
+   ],
+   "de": [
+    "Rohr",
+    "Hohlprofil"
+   ]
+  },
+  {
+   "term_tr": "et kalınlığı / cidar",
+   "synonyms_tr": [
+    "cidar",
+    "duvar kalınlığı"
+   ],
+   "misspellings": [
+    "et kalınlıgı",
+    "etkalınlığı"
+   ],
+   "en": [
+    "wall thickness"
+   ],
+   "de": [
+    "Wandstärke"
+   ]
+  },
+  {
+   "term_tr": "dolu malzeme (mil, çubuk, blok, kare)",
+   "synonyms_tr": [
+    "mil",
+    "çubuk",
+    "yuvarlak demir",
+    "blok",
+    "kütük"
+   ],
+   "misspellings": [],
+   "en": [
+    "solid bar",
+    "round bar",
+    "billet"
+   ],
+   "de": [
+    "Vollmaterial",
+    "Rundstahl"
+   ]
+  },
+  {
+   "term_tr": "yapısal profiller (NPU, NPI, HEA, HEB, IPE, köşebent)",
+   "synonyms_tr": [
+    "kiriş",
+    "köşebent",
+    "U demir",
+    "I demir",
+    "putrel"
+   ],
+   "misspellings": [],
+   "en": [
+    "structural steel sections",
+    "I-beam",
+    "H-beam",
+    "channel",
+    "angle"
+   ],
+   "de": [
+    "Formstahl",
+    "Träger",
+    "Winkelstahl"
+   ]
+  },
+  {
+   "term_tr": "sac / levha / plaka",
+   "synonyms_tr": [
+    "levha",
+    "plaka"
+   ],
+   "misspellings": [],
+   "en": [
+    "sheet",
+    "plate"
+   ],
+   "de": [
+    "Blech"
+   ]
+  },
+  {
+   "term_tr": "demet / paket kesim",
+   "synonyms_tr": [
+    "paket kesim",
+    "toplu kesim",
+    "deste kesim"
+   ],
+   "misspellings": [],
+   "en": [
+    "bundle cutting"
+   ],
+   "de": [
+    "Bündelschnitt"
+   ]
+  },
+  {
+   "term_tr": "inşaat demiri (nervürlü)",
+   "synonyms_tr": [
+    "nervürlü demir",
+    "donatı"
+   ],
+   "misspellings": [],
+   "en": [
+    "rebar"
+   ],
+   "de": [
+    "Betonstahl"
+   ]
+  },
+  {
+   "term_tr": "paslanmaz çelik",
+   "synonyms_tr": [
+    "inox",
+    "krom-nikel"
+   ],
+   "misspellings": [
+    "paslanmas",
+    "paslanmz"
+   ],
+   "en": [
+    "stainless steel"
+   ],
+   "de": [
+    "Edelstahl",
+    "VA",
+    "rostfrei"
+   ]
+  },
+  {
+   "term_tr": "alüminyum",
+   "synonyms_tr": [
+    "alu",
+    "alüminyum alaşımı"
+   ],
+   "misspellings": [
+    "alimünyum",
+    "aliminyum",
+    "alüminyüm",
+    "aluminyum"
+   ],
+   "en": [
+    "aluminium",
+    "aluminum"
+   ],
+   "de": [
+    "Aluminium"
+   ]
+  },
+  {
+   "term_tr": "döküm (pik, sfero)",
+   "synonyms_tr": [
+    "dökme demir",
+    "pik"
+   ],
+   "misspellings": [],
+   "en": [
+    "cast iron"
+   ],
+   "de": [
+    "Grauguss",
+    "Sphäroguss"
+   ]
+  },
+  {
+   "term_tr": "karbon çeliği / yapı çeliği / demir",
+   "synonyms_tr": [
+    "demir",
+    "yapı çeliği",
+    "normal çelik"
+   ],
+   "misspellings": [],
+   "en": [
+    "carbon steel",
+    "mild steel",
+    "structural steel"
+   ],
+   "de": [
+    "Baustahl"
+   ]
+  },
+  {
+   "term_tr": "ıslah çeliği",
+   "synonyms_tr": [
+    "ıslah edilmiş çelik"
+   ],
+   "misspellings": [],
+   "en": [
+    "quenched and tempered steel"
+   ],
+   "de": [
+    "Vergütungsstahl"
+   ]
+  },
+  {
+   "term_tr": "sertleştirilmiş / indüksiyonlu / krom kaplı mil",
+   "synonyms_tr": [
+    "sertleştirilmiş çelik",
+    "indüksiyon sertleştirme"
+   ],
+   "misspellings": [],
+   "en": [
+    "hardened steel",
+    "induction hardened",
+    "hard chrome plated bar"
+   ],
+   "de": [
+    "gehärtet",
+    "induktionsgehärtet",
+    "hartverchromt"
+   ]
+  },
+  {
+   "term_tr": "takım çeliği",
+   "synonyms_tr": [
+    "kalıp çeliği"
+   ],
+   "misspellings": [],
+   "en": [
+    "tool steel"
+   ],
+   "de": [
+    "Werkzeugstahl"
+   ]
+  },
+  {
+   "term_tr": "rodaj / alıştırma",
+   "synonyms_tr": [
+    "alıştırma",
+    "ilk kullanım"
+   ],
+   "misspellings": [],
+   "en": [
+    "break-in",
+    "run-in"
+   ],
+   "de": [
+    "Einlaufen"
+   ]
+  },
+  {
+   "term_tr": "bor yağı / soğutma sıvısı",
+   "synonyms_tr": [
+    "soğutma suyu",
+    "emülsiyon",
+    "kesme sıvısı",
+    "beyaz su",
+    "sulu yağ"
+   ],
+   "misspellings": [
+    "bor yagi",
+    "boryağı",
+    "bor yağ"
+   ],
+   "en": [
+    "coolant",
+    "cutting fluid",
+    "soluble oil"
+   ],
+   "de": [
+    "Kühlschmierstoff (KSS)",
+    "Emulsion"
+   ]
+  },
+  {
+   "term_tr": "kuru kesim",
+   "synonyms_tr": [
+    "soğutmasız kesim"
+   ],
+   "misspellings": [],
+   "en": [
+    "dry cutting"
+   ],
+   "de": [
+    "Trockenschnitt"
+   ]
+  },
+  {
+   "term_tr": "bant hızı / devir (kesme hızı)",
+   "synonyms_tr": [
+    "hız",
+    "kesme hızı"
+   ],
+   "misspellings": [],
+   "en": [
+    "band speed",
+    "cutting speed"
+   ],
+   "de": [
+    "Schnittgeschwindigkeit"
+   ]
+  },
+  {
+   "term_tr": "ilerleme / kol iniş hızı (besleme)",
+   "synonyms_tr": [
+    "besleme",
+    "dalma"
+   ],
+   "misspellings": [],
+   "en": [
+    "feed rate",
+    "downfeed"
+   ],
+   "de": [
+    "Vorschub"
+   ]
+  },
+  {
+   "term_tr": "bıçak takma ve diş yönü",
+   "synonyms_tr": [
+    "montaj",
+    "bıçak değişimi"
+   ],
+   "misspellings": [],
+   "en": [
+    "blade installation",
+    "tooth direction"
+   ],
+   "de": [
+    "Bandwechsel",
+    "Schnittrichtung"
+   ]
+  },
+  {
+   "term_tr": "bileme",
+   "synonyms_tr": [
+    "keskinleştirme"
+   ],
+   "misspellings": [],
+   "en": [
+    "sharpening"
+   ],
+   "de": [
+    "Schärfen",
+    "Nachschleifen"
+   ]
+  },
+  {
+   "term_tr": "kaynak / kaynak yeri",
+   "synonyms_tr": [
+    "ek yeri",
+    "birleşim yeri"
+   ],
+   "misspellings": [],
+   "en": [
+    "weld",
+    "weld joint"
+   ],
+   "de": [
+    "Schweißstelle"
+   ]
+  },
+  {
+   "term_tr": "eğri kesim / yana kaçma / sapma",
+   "synonyms_tr": [
+    "sapma",
+    "yana kaçma",
+    "eğri gitme"
+   ],
+   "misspellings": [
+    "egri kesiyo",
+    "eğri kesıyor"
+   ],
+   "en": [
+    "blade drift",
+    "crooked cut",
+    "run-out"
+   ],
+   "de": [
+    "Verlaufen",
+    "schiefer Schnitt"
+   ]
+  },
+  {
+   "term_tr": "diş sıyırma / diş dökülmesi / diş kırılması",
+   "synonyms_tr": [
+    "diş kopması",
+    "diş kaybı"
+   ],
+   "misspellings": [],
+   "en": [
+    "tooth stripping",
+    "tooth breakage"
+   ],
+   "de": [
+    "Zahnausbruch"
+   ]
+  },
+  {
+   "term_tr": "körelme / çabuk aşınma",
+   "synonyms_tr": [
+    "aşınma",
+    "körleşme"
+   ],
+   "misspellings": [
+    "koreliyo",
+    "körelıyor"
+   ],
+   "en": [
+    "dull",
+    "blunt",
+    "premature wear"
+   ],
+   "de": [
+    "stumpf",
+    "Verschleiß"
+   ]
+  },
+  {
+   "term_tr": "kopma / kırılma / çatlama",
+   "synonyms_tr": [
+    "kırılma",
+    "çatlak"
+   ],
+   "misspellings": [],
+   "en": [
+    "blade breakage",
+    "crack"
+   ],
+   "de": [
+    "Bandbruch",
+    "Riss"
+   ]
+  },
+  {
+   "term_tr": "titreşim / ses / gıcırtı",
+   "synonyms_tr": [
+    "vibrasyon",
+    "ses"
+   ],
+   "misspellings": [],
+   "en": [
+    "vibration",
+    "chatter",
+    "noise"
+   ],
+   "de": [
+    "Vibration",
+    "Rattern"
+   ]
+  },
+  {
+   "term_tr": "ısınma / mavi talaş / yanık",
+   "synonyms_tr": [
+    "aşırı ısınma"
+   ],
+   "misspellings": [],
+   "en": [
+    "overheating",
+    "blue chips"
+   ],
+   "de": [
+    "Überhitzung"
+   ]
+  },
+  {
+   "term_tr": "talaş (biçim ve yapışma)",
+   "synonyms_tr": [
+    "kırpıntı"
+   ],
+   "misspellings": [],
+   "en": [
+    "chips",
+    "swarf"
+   ],
+   "de": [
+    "Späne"
+   ]
+  },
+  {
+   "term_tr": "kasnaktan çıkma / atma / kayma",
+   "synonyms_tr": [
+    "bıçak atması"
+   ],
+   "misspellings": [],
+   "en": [
+    "blade coming off the wheel",
+    "slipping"
+   ],
+   "de": [
+    "Band läuft ab"
+   ]
+  },
+  {
+   "term_tr": "kesim yüzeyi: pürüz, tırtık, çapak, basamak",
+   "synonyms_tr": [
+    "pürüz",
+    "çapak"
+   ],
+   "misspellings": [],
+   "en": [
+    "rough finish",
+    "burr"
+   ],
+   "de": [
+    "raue Schnittfläche",
+    "Grat"
+   ]
+  },
+  {
+   "term_tr": "kargo / teslimat / gönderim",
+   "synonyms_tr": [
+    "teslimat",
+    "gönderim",
+    "sevkiyat"
+   ],
+   "misspellings": [
+    "kargoo",
+    "kargu"
+   ],
+   "en": [
+    "shipping",
+    "delivery"
+   ],
+   "de": [
+    "Versand",
+    "Lieferung"
+   ]
+  },
+  {
+   "term_tr": "iade / cayma / değişim",
+   "synonyms_tr": [
+    "iade",
+    "geri gönderme",
+    "değişim"
+   ],
+   "misspellings": [],
+   "en": [
+    "return",
+    "right of withdrawal",
+    "exchange"
+   ],
+   "de": [
+    "Rückgabe",
+    "Widerruf",
+    "Umtausch"
+   ]
+  },
+  {
+   "term_tr": "ödeme / taksit / kapıda ödeme",
+   "synonyms_tr": [
+    "taksit",
+    "kart"
+   ],
+   "misspellings": [],
+   "en": [
+    "payment",
+    "installments",
+    "cash on delivery"
+   ],
+   "de": [
+    "Zahlung",
+    "Ratenzahlung",
+    "Nachnahme"
+   ]
+  },
+  {
+   "term_tr": "fatura / KDV dahil-hariç",
+   "synonyms_tr": [
+    "e-fatura",
+    "e-arşiv"
+   ],
+   "misspellings": [],
+   "en": [
+    "invoice",
+    "VAT included/excluded"
+   ],
+   "de": [
+    "Rechnung",
+    "inkl./zzgl. MwSt."
+   ]
+  },
+  {
+   "term_tr": "toptan / adet indirimi / teklif / bayilik",
+   "synonyms_tr": [
+    "toplu alım",
+    "kurumsal teklif"
+   ],
+   "misspellings": [],
+   "en": [
+    "wholesale",
+    "bulk discount",
+    "quote"
+   ],
+   "de": [
+    "Mengenrabatt",
+    "Angebot",
+    "Großhandel"
+   ]
+  },
+  {
+   "term_tr": "ayıplı ürün / hasarlı gelme / kusur",
+   "synonyms_tr": [
+    "ayıplı mal",
+    "hasar"
+   ],
+   "misspellings": [],
+   "en": [
+    "defect",
+    "warranty claim",
+    "damaged in transit"
+   ],
+   "de": [
+    "Mangel",
+    "Gewährleistung"
+   ]
+  },
+  {
+   "term_tr": "sipariş durumu / iptal / değişiklik",
+   "synonyms_tr": [
+    "sipariş takibi",
+    "iptal"
+   ],
+   "misspellings": [],
+   "en": [
+    "order status",
+    "cancel order"
+   ],
+   "de": [
+    "Bestellstatus",
+    "Stornierung"
+   ]
+  },
+  {
+   "term_tr": "canlı destek / yetkili / temsilci",
+   "synonyms_tr": [
+    "temsilci",
+    "yetkili"
+   ],
+   "misspellings": [],
+   "en": [
+    "live agent",
+    "human handoff"
+   ],
+   "de": [
+    "Kundendienst",
+    "Mitarbeiter"
+   ]
+  }
+ ]
+}
