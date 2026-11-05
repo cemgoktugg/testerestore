@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Send, CheckCircle2, RefreshCw, AlertTriangle } from 'lucide-react';
 import { MEDUSA_BACKEND_URL, MEDUSA_PUBLISHABLE_KEY } from '../../lib/medusa/config';
 
@@ -11,6 +11,8 @@ export default function IletisimForm() {
   const [topic, setTopic] = useState<'quote' | 'support' | 'partnership' | 'other'>('quote');
   const [message, setMessage] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const requestKey = useRef<string | null>(null);
+  const [requestNumber, setRequestNumber] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -19,15 +21,18 @@ export default function IletisimForm() {
     setSubmitting(true);
     setError(null);
     try {
+      requestKey.current ||= crypto.randomUUID();
       const res = await fetch(`${MEDUSA_BACKEND_URL}/store/contact`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'x-publishable-api-key': MEDUSA_PUBLISHABLE_KEY,
         },
-        body: JSON.stringify({ name, email, phone, topic, message }),
+        body: JSON.stringify({ request_key: requestKey.current, name, email, phone, topic, message }),
       });
       if (!res.ok) throw new Error(`(${res.status})`);
+      const data = await res.json() as { request_number: string };
+      setRequestNumber(data.request_number);
       setSubmitted(true);
     } catch (err) {
       setError(
@@ -46,6 +51,7 @@ export default function IletisimForm() {
           <CheckCircle2 className="h-7 w-7" />
         </div>
         <h3 className="text-lg font-bold tracking-tight">Mesajınız alındı!</h3>
+        <p className="text-sm font-semibold" role="status">Talep numaranız: {requestNumber}</p>
         <p className="text-sm text-muted-foreground max-w-md mx-auto">
           En kısa sürede geri dönüş yapacağız. Acil bir konu için doğrudan telefon ile arayabilirsiniz.
         </p>
@@ -53,6 +59,7 @@ export default function IletisimForm() {
           type="button"
           onClick={() => {
             setSubmitted(false);
+            requestKey.current = null;
             setName('');
             setEmail('');
             setPhone('');

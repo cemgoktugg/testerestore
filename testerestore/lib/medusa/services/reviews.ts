@@ -3,6 +3,7 @@ import {
   MEDUSA_PUBLISHABLE_KEY,
   MEDUSA_READY,
 } from "../config";
+import { medusa } from "../client";
 
 export interface ProductReview {
   id: string;
@@ -23,7 +24,7 @@ export interface ReviewStats {
   distribution: Array<{ stars: number; count: number }>;
 }
 
-const HEADERS: HeadersInit = {
+const HEADERS: Record<string, string> = {
   "Content-Type": "application/json",
   "x-publishable-api-key": MEDUSA_PUBLISHABLE_KEY,
 };
@@ -67,25 +68,21 @@ export async function submitProductReview(
 ): Promise<{ ok: boolean; error?: string }> {
   if (!MEDUSA_READY) return { ok: false, error: "Medusa not ready" };
   try {
-    const res = await fetch(
-      `${MEDUSA_BACKEND_URL}/store/products/${encodeURIComponent(
+    await medusa.client.fetch(
+      `/store/products/${encodeURIComponent(
         input.productId
       )}/reviews`,
       {
         method: "POST",
         headers: HEADERS,
-        body: JSON.stringify({
+        body: {
           rating: input.rating,
           title: input.title,
           body: input.body,
           author_name: input.authorName,
-          customer_id: input.customerId ?? null,
-        }),
+        },
       }
     );
-    if (!res.ok) {
-      return { ok: false, error: `${res.status}: ${await res.text()}` };
-    }
     return { ok: true };
   } catch (e) {
     return { ok: false, error: e instanceof Error ? e.message : String(e) };

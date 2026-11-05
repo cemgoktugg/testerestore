@@ -34,3 +34,8 @@ export const companyInfo = {
   iban: "",
   lastUpdated: "2026-06-16",
 };
+
+/** Do not publish the starter's example phone as a real support channel. */
+export const publicContactPhone = ["902125551020", "902120000000"].includes(companyInfo.phone.replace(/\D/g, ""))
+  ? ""
+  : companyInfo.phone;

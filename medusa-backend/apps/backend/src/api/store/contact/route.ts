@@ -1,13 +1,18 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http";
 import { z } from "zod";
 import { Modules, ContainerRegistrationKeys } from "@medusajs/framework/utils";
+import { randomUUID } from "node:crypto";
+import { CUSTOMER_REQUEST_MODULE } from "../../../modules/customer-request";
+import type CustomerRequestService from "../../../modules/customer-request/service";
+import { requestNumber } from "../../../lib/customer-request";
 
 const Schema = z.object({
-  name: z.string().min(2).max(120),
-  email: z.string().email(),
+  request_key: z.string().uuid().optional(),
+  name: z.string().trim().min(2).max(120),
+  email: z.string().trim().email().toLowerCase(),
   phone: z.string().max(40).optional().nullable(),
   topic: z.enum(["quote", "support", "partnership", "other"]).optional(),
-  message: z.string().min(5).max(4000),
+  message: z.string().trim().min(5).max(4000),
 });
 
 const TOPIC_LABEL: Record<string, string> = {
@@ -34,12 +39,27 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
   const logger = req.scope.resolve(ContainerRegistrationKeys.LOGGER);
   const topicLabel = TOPIC_LABEL[topic ?? "other"];
 
-  // 1) Lead'i her durumda kalıcı log'a düş — e-posta sağlayıcısı kapalı olsa bile kaybolmaz.
-  logger.info(
-    `[contact] Yeni mesaj | Konu: ${topicLabel} | Ad: ${name} | E-posta: ${email} | Tel: ${
-      phone || "-"
-    } | Mesaj: ${message.replace(/\s+/g, " ").slice(0, 500)}`
-  );
+  const service = req.scope.resolve<CustomerRequestService>(CUSTOMER_REQUEST_MODULE);
+  const requestKey = parsed.data.request_key || randomUUID();
+  const [existing] = await service.listCustomerRequests({ request_key: requestKey, kind: "contact" });
+  if (existing) {
+    if (existing.email !== email) { res.status(409).json({ message: "Bu talep anahtarı kullanılmış." }); return; }
+    res.json({ ok: true, request_number: existing.request_number });
+    return;
+  }
+  let saved;
+  try {
+    [saved] = await service.createCustomerRequests([{
+      request_key: requestKey, request_number: requestNumber(), kind: "contact",
+      name, email, phone: phone || null, topic: topic || "other", message,
+    }]);
+  } catch (error) {
+    const [retry] = await service.listCustomerRequests({ request_key: requestKey, kind: "contact", email });
+    if (!retry) throw error;
+    res.json({ ok: true, request_number: retry.request_number });
+    return;
+  }
+  logger.info(`[contact] Talep kaydedildi: ${saved.request_number}`);
 
   // 2) Mağaza e-postasına bildirim dene (varsa).
   const to =
@@ -54,7 +74,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
         channel: "email",
         template: "contact.received",
         data: {
-          subject: `Yeni iletişim formu — ${topicLabel} (${name})`,
+          subject: `Yeni talep ${saved.request_number} — ${topicLabel}`,
           body:
             `Konu: ${topicLabel}\n` +
             `Ad Soyad: ${name}\n` +
@@ -77,5 +97,5 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     );
   }
 
-  res.status(201).json({ ok: true });
+  res.status(201).json({ ok: true, request_number: saved.request_number });
 }

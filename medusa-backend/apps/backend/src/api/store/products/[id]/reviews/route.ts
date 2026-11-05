@@ -7,6 +7,7 @@ import { ContainerRegistrationKeys } from "@medusajs/framework/utils";
 import { z } from "zod";
 import type ProductReviewService from "../../../../../modules/product-review/service";
 import { PRODUCT_REVIEW_MODULE } from "../../../../../modules/product-review";
+import { hasVerifiedPurchase } from "../../../../../lib/verified-purchase";
 
 const PostSchema = z.object({
   rating: z.coerce.number().int().min(1).max(5),
@@ -77,6 +78,19 @@ export async function POST(req: AuthenticatedMedusaRequest, res: MedusaResponse)
   }
 
   const svc = req.scope.resolve<ProductReviewService>(PRODUCT_REVIEW_MODULE);
+  const customerId = req.auth_context?.actor_type === "customer" ? req.auth_context.actor_id : null;
+  let verified = false;
+  if (customerId) {
+    for (let skip = 0; ; skip += 100) {
+      const { data: orders } = await query.graph({
+        entity: "order", filters: { customer_id: customerId },
+        fields: ["id", "status", "items.id", "items.product_id", "fulfillments.canceled_at", "fulfillments.shipped_at", "fulfillments.delivered_at", "fulfillments.items.line_item_id"],
+        pagination: { take: 100, skip },
+      });
+      verified = hasVerifiedPurchase(orders as Parameters<typeof hasVerifiedPurchase>[0], productId);
+      if (verified || orders.length < 100) break;
+    }
+  }
   const [created] = await svc.createProductReviews([
     {
       product_id: productId,
@@ -86,8 +100,8 @@ export async function POST(req: AuthenticatedMedusaRequest, res: MedusaResponse)
       body: parsed.data.body.trim(),
       // Yalnızca oturumdan — istemci başka bir müşterinin kimliğini yazamasın.
       customer_id:
-        req.auth_context?.actor_type === "customer" ? req.auth_context.actor_id : null,
-      is_verified_purchase: false,
+        customerId,
+      is_verified_purchase: verified,
       is_approved: false, // admin approve etmeli
     },
   ]);

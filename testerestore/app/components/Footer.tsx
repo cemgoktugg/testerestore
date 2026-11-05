@@ -13,10 +13,11 @@ import type {
 import TrustSignals from './TrustSignals';
 import { LEGAL_LINKS } from '../../lib/legal-links';
 import { resolveLegacyCategoryHref } from '../../lib/category-links';
+import { openCookiePreferences } from '../../lib/cookie-consent';
 
 /** Admin'de href'i boş bırakılmış yasal linki başlığından sayfasına eşler. */
 function legalHrefForLabel(label: string): string | undefined {
-  const norm = (t: string) => t.toLocaleLowerCase('tr').replace(/s+/g, ' ').trim();
+  const norm = (t: string) => t.toLocaleLowerCase('tr').replace(/\s+/g, ' ').trim();
   const page = LEGAL_LINKS.find(
     (p) => norm(p.title) === norm(label) || norm(p.title).startsWith(norm(label))
   );
@@ -178,6 +179,9 @@ export default function Footer() {
           </ul>
           {/* Admin verisinden bağımsız sabit yardım linkleri */}
           <ul className="mt-4 space-y-2 text-xs">
+            <li>
+              <button type="button" onClick={openCookiePreferences} className="min-h-8 font-semibold text-muted-foreground hover:text-primary underline underline-offset-2">Çerez tercihleri</button>
+            </li>
             <li>
               <Link href="/sss" className="font-semibold text-muted-foreground hover:text-primary">
                 Sık Sorulan Sorular

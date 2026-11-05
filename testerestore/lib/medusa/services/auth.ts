@@ -1,6 +1,8 @@
 import { medusa } from "../client";
 import { MEDUSA_READY } from "../config";
 import type { HttpTypes } from "@medusajs/types";
+import { collectAllPages } from "../../pagination";
+import type { WishlistPersistence } from "../../wishlist";
 
 export type StoreCustomer = HttpTypes.StoreCustomer;
 export type StoreCustomerAddress = HttpTypes.StoreCustomerAddress;
@@ -110,8 +112,35 @@ export interface AddressInput {
 
 export async function listAddresses(): Promise<StoreCustomerAddress[]> {
   if (!MEDUSA_READY) return [];
-  const { addresses } = await medusa.store.customer.listAddress();
-  return addresses as StoreCustomerAddress[];
+  return collectAllPages(async (offset, limit) => {
+    const { addresses, count } = await medusa.store.customer.listAddress({ offset, limit });
+    return { items: addresses as StoreCustomerAddress[], count };
+  });
+}
+
+/** Bound to one customer token: delayed writes cannot target a subsequent login. */
+export function customerWishlistPersistence(customerId: string): WishlistPersistence {
+  const token = medusa.client.getToken();
+  const headers = async () => {
+    const value = await token;
+    if (!value) throw new Error("Oturum bulunamadı.");
+    return { Authorization: `Bearer ${value}` };
+  };
+  return {
+    async load() {
+      const { customer } = await medusa.store.customer.retrieve({ fields: "+metadata" }, await headers());
+      if (customer.id !== customerId) throw new Error("Müşteri oturumu değişti.");
+      return customer.metadata?.wishlist;
+    },
+    async save(handles) {
+      const authHeaders = await headers();
+      const { customer } = await medusa.store.customer.retrieve({ fields: "+metadata" }, authHeaders);
+      if (customer.id !== customerId) throw new Error("Müşteri oturumu değişti.");
+      await medusa.store.customer.update({
+        metadata: { ...customer.metadata, wishlist: handles },
+      }, undefined, authHeaders);
+    },
+  };
 }
 
 export async function createAddress(input: AddressInput): Promise<StoreCustomerAddress | null> {
@@ -201,19 +230,15 @@ export function mustChangePassword(
 
 // ---------- Orders ----------
 
-export async function listMyOrders(limit = 20): Promise<HttpTypes.StoreOrder[]> {
-  if (!MEDUSA_READY) return [];
-  try {
+export async function listMyOrders(limit = 20, offset = 0): Promise<{ orders: HttpTypes.StoreOrder[]; count: number }> {
+  if (!MEDUSA_READY) return { orders: [], count: 0 };
     // Türkçe durum etiketi (getOrderStatus) için üç statü alanı da gerekli;
     // list varsayılanlarında yalnızca `status` var, diğerlerini + ile ekle.
-    const { orders } = await medusa.store.order.list({
-      limit,
+    const { orders, count } = await medusa.store.order.list({
+      limit, offset, order: "-created_at",
       fields: "+status,+payment_status,+fulfillment_status",
     });
-    return orders as HttpTypes.StoreOrder[];
-  } catch {
-    return [];
-  }
+    return { orders: orders as HttpTypes.StoreOrder[], count };
 }
 
 // `+` prefix = varsayılan alanlara EK olarak çek (payment_status, items vb.

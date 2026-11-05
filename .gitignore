@@ -21,6 +21,8 @@ advisor/chroma_db/
 
 # ── Build / cache çıktıları ──
 **/.next/
+**/.next-regression/
+**/.next-audit-build/
 **/.medusa/
 **/out/
 **/build/

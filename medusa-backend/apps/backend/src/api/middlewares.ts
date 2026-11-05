@@ -177,6 +177,26 @@ export default defineMiddlewares({
       bodyParser: { sizeLimit: "2mb" },
     },
     {
+      matcher: "/store/cart-recovery",
+      method: ["POST"],
+      middlewares: [optionalCustomer],
+    },
+    {
+      matcher: "/store/orders/:id/requests",
+      method: ["GET", "POST"],
+      middlewares: [authenticate("customer", ["session", "bearer"])],
+    },
+    {
+      matcher: "/store/loyalty/redeem",
+      method: ["POST"],
+      middlewares: [authenticate("customer", ["session", "bearer"])],
+    },
+    {
+      matcher: "/store/products/:id/reviews",
+      method: ["POST"],
+      middlewares: [optionalCustomer],
+    },
+    {
       matcher: "/store/payment-collections/:id/payment-sessions",
       method: ["POST"],
       middlewares: [stripPaymentSessionData],

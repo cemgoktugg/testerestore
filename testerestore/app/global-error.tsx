@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
+import * as Sentry from '@sentry/nextjs';
 
 /**
  * Kök layout'ta (app/layout.tsx) oluşan hataları yakalar. error.tsx bunları
@@ -16,6 +17,7 @@ export default function GlobalError({
 }) {
   useEffect(() => {
     console.error('[global-error]', error);
+    Sentry.captureException(error);
   }, [error]);
 
   return (

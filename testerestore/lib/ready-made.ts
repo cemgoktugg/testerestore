@@ -1,5 +1,6 @@
 import type { StoreProduct } from "./medusa/types";
 import { getProductImage } from "./medusa/format";
+import { getInventory } from "./inventory";
 
 /**
  * Hazır (ready-made) boy ürün yardımcıları.
@@ -27,6 +28,7 @@ export interface ReadyMadeCard {
   image: string;
   /** Gerçek stok adedi (manage_inventory açıksa); bilinmiyorsa null. */
   stock: number | null;
+  stockLabel: string;
   href: string;
 }
 
@@ -78,11 +80,8 @@ export function mapReadyMadeCard(p: StoreProduct): ReadyMadeCard {
   // Stok adedi YALNIZCA Medusa envanter takibi açıksa (manage_inventory) gerçek
   // inventory_quantity'den gösterilir. metadata.inventory_quantity_display elle
   // yazılmış statik bir sayıydı ("10 adet", "Son 8") → sahte aciliyet; artık okunmaz.
-  const v0 = p.variants?.[0] as { manage_inventory?: boolean | null; inventory_quantity?: number | null } | undefined;
-  const stock =
-    v0?.manage_inventory && typeof v0.inventory_quantity === "number"
-      ? Math.max(0, v0.inventory_quantity)
-      : null;
+  const inventory = getInventory(p.variants?.[0]);
+  const stock = inventory.quantity;
 
   const wtt = [fmtDim(width), fmtDim(thickness), tooth].filter(Boolean).join(" × ");
   const sizeLabel = length ? (wtt ? `${wtt} · ${length} mm` : `${length} mm`) : wtt;
@@ -101,6 +100,7 @@ export function mapReadyMadeCard(p: StoreProduct): ReadyMadeCard {
     currency,
     image: getProductImage(p),
     stock,
+    stockLabel: inventory.label,
     href: `/products/${p.handle || p.id}`,
   };
 }

@@ -118,7 +118,7 @@ export default function HazirBoySection({
             <div className="inline-flex items-center gap-2 text-emerald-500">
               <Zap className="h-3.5 w-3.5" />
               <span className="text-[10px] font-medium tracking-[0.32em] uppercase">
-                Stoktan · Aynı Gün Kargo
+                Standart Ölçüler · Hazır Boy
               </span>
             </div>
             <h2 className="text-4xl md:text-[3.25rem] font-semibold tracking-[-0.035em] text-foreground leading-[1.05]">
@@ -126,7 +126,7 @@ export default function HazirBoySection({
             </h2>
             <p className="text-sm md:text-[15px] text-muted-foreground max-w-xl leading-relaxed font-light">
               Önceden kaynaklı, standart ölçülerde, stoğumuzda. Ölçün tutuyorsa
-              yapılandırmadan tek tıkla al — aynı gün kargoda.
+              ölçülerini ve stok durumunu inceleyerek seçin.
             </p>
           </div>
 
@@ -194,7 +194,7 @@ export default function HazirBoySection({
                   {/* Stok rozeti */}
                   <div className="absolute top-3 left-3 z-10 inline-flex items-center gap-1.5 rounded-full bg-emerald-500/90 text-white px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] shadow-lg">
                     <PackageCheck className="h-3 w-3" />
-                    <span>Stokta</span>
+                    <span>{item.stockLabel}</span>
                   </div>
                 </div>
 
@@ -216,7 +216,7 @@ export default function HazirBoySection({
                       {item.stock != null && (
                         <div className="mt-0.5 inline-flex items-center gap-1 text-[10px] text-emerald-400">
                           <Truck className="h-3 w-3" />
-                          {item.stock} adet · aynı gün
+                          {item.stock} adet
                         </div>
                       )}
                     </div>

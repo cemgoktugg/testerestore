@@ -45,6 +45,7 @@ function FilterSelect({
         {label}
       </span>
       <select
+        aria-label={label}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         className={`w-full rounded-lg border bg-background px-3 py-2 text-sm text-foreground cursor-pointer focus:outline-none focus:ring-2 focus:ring-accent/30 ${
@@ -62,7 +63,9 @@ const OPTION_CLASS = 'bg-background text-foreground';
 export default function HazirUrunlerClient({
   initialReadyMade,
 }: { initialReadyMade?: StoreProduct[] } = {}) {
-  const { data: medusaReady } = useReadyMade(200);
+  const { data: medusaReady, loading, error, refetch } = useReadyMade(Number.POSITIVE_INFINITY, {
+    enabled: initialReadyMade === undefined,
+  });
 
   const { applyDealerPrices } = useDealer();
 
@@ -81,6 +84,13 @@ export default function HazirUrunlerClient({
   const [tooth, setTooth] = useState<string>('');
   const [length, setLength] = useState<string>('');
   const [sort, setSort] = useState<SortKey>('length-asc');
+  const [page, setPage] = useState(1);
+  const pageSize = 24;
+  // Filtre/sıralama değişince ilk sayfaya dön.
+  const withReset = <T,>(set: (v: T) => void) => (v: T) => {
+    set(v);
+    setPage(1);
+  };
 
   /** Ürün seçili filtrelere uyuyor mu (`except` alanı yok sayılarak). */
   const matches = (c: ReadyMadeCard, except?: FacetKey) =>
@@ -119,6 +129,7 @@ export default function HazirUrunlerClient({
 
   const hasFilter = family !== 'Tümü' || !!width || !!thickness || !!tooth || !!length;
   const reset = () => {
+    setPage(1);
     setFamily('Tümü');
     setWidth('');
     setThickness('');
@@ -136,7 +147,10 @@ export default function HazirUrunlerClient({
           <button
             key={f}
             type="button"
-            onClick={() => setFamily(f)}
+            onClick={() => {
+              setFamily(f);
+              setPage(1);
+            }}
             aria-pressed={family === f}
             className={`rounded-full px-4 py-2 text-xs font-semibold transition-all cursor-pointer border ${
               family === f
@@ -170,7 +184,7 @@ export default function HazirUrunlerClient({
           </div>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-          <FilterSelect label="Genişlik" value={width} onChange={setWidth}>
+          <FilterSelect label="Genişlik" value={width} onChange={withReset(setWidth)}>
             <option value="" className={OPTION_CLASS}>Tümü</option>
             {widthOpts.map((o) => (
               <option key={o.value} value={o.value} disabled={o.count === 0 && String(o.value) !== width} className={OPTION_CLASS}>
@@ -178,7 +192,7 @@ export default function HazirUrunlerClient({
               </option>
             ))}
           </FilterSelect>
-          <FilterSelect label="Kalınlık" value={thickness} onChange={setThickness}>
+          <FilterSelect label="Kalınlık" value={thickness} onChange={withReset(setThickness)}>
             <option value="" className={OPTION_CLASS}>Tümü</option>
             {thicknessOpts.map((o) => (
               <option key={o.value} value={o.value} disabled={o.count === 0 && String(o.value) !== thickness} className={OPTION_CLASS}>
@@ -186,7 +200,7 @@ export default function HazirUrunlerClient({
               </option>
             ))}
           </FilterSelect>
-          <FilterSelect label="Diş (TPI)" value={tooth} onChange={setTooth}>
+          <FilterSelect label="Diş (TPI)" value={tooth} onChange={withReset(setTooth)}>
             <option value="" className={OPTION_CLASS}>Tümü</option>
             {toothOpts.map((o) => (
               <option key={o.value} value={o.value} disabled={o.count === 0 && o.value !== tooth} className={OPTION_CLASS}>
@@ -194,7 +208,7 @@ export default function HazirUrunlerClient({
               </option>
             ))}
           </FilterSelect>
-          <FilterSelect label="Boy" value={length} onChange={setLength}>
+          <FilterSelect label="Boy" value={length} onChange={withReset(setLength)}>
             <option value="" className={OPTION_CLASS}>Tümü</option>
             {lengthOpts.map((o) => (
               <option key={o.value} value={o.value} disabled={o.count === 0 && String(o.value) !== length} className={OPTION_CLASS}>
@@ -202,7 +216,7 @@ export default function HazirUrunlerClient({
               </option>
             ))}
           </FilterSelect>
-          <FilterSelect label="Sırala" value={sort} onChange={(v) => setSort(v as SortKey)} active={false}>
+          <FilterSelect label="Sırala" value={sort} onChange={withReset((v: string) => setSort(v as SortKey))} active={false}>
             <option value="length-asc" className={OPTION_CLASS}>Boy: kısa → uzun</option>
             <option value="length-desc" className={OPTION_CLASS}>Boy: uzun → kısa</option>
             <option value="price-asc" className={OPTION_CLASS}>Fiyat: artan</option>
@@ -212,7 +226,18 @@ export default function HazirUrunlerClient({
       </div>
 
       {/* Grid */}
-      {filtered.length === 0 ? (
+      {error ? (
+        <div role="alert" className="py-10 text-center text-sm">
+          Ürünler yüklenemedi.{' '}
+          <button type="button" onClick={refetch} className="text-accent font-bold underline">
+            Tekrar dene
+          </button>
+        </div>
+      ) : loading && !initialReadyMade ? (
+        <p role="status" className="py-10 text-center text-sm text-muted-foreground">
+          Ürünler yükleniyor...
+        </p>
+      ) : filtered.length === 0 ? (
         <div className="text-center py-20 text-sm text-muted-foreground">
           {all.length === 0
             ? 'Henüz hazır boy ürün eklenmemiş.'
@@ -220,7 +245,7 @@ export default function HazirUrunlerClient({
         </div>
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-5">
-          {filtered.map((item) => (
+          {filtered.slice((page - 1) * pageSize, page * pageSize).map((item) => (
             <Link
               key={item.id}
               href={item.href}
@@ -237,7 +262,7 @@ export default function HazirUrunlerClient({
                 <div className="absolute inset-0 bg-gradient-to-t from-[#14171c] via-transparent to-transparent pointer-events-none" />
                 <div className="absolute top-3 left-3 z-10 inline-flex items-center gap-1.5 rounded-full bg-emerald-500/90 text-white px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] shadow-lg">
                   <PackageCheck className="h-3 w-3" />
-                  <span>Stokta</span>
+                  <span>{item.stockLabel}</span>
                 </div>
               </div>
 
@@ -259,7 +284,7 @@ export default function HazirUrunlerClient({
                     {item.stock != null && (
                       <div className="mt-0.5 inline-flex items-center gap-1 text-[10px] text-emerald-400">
                         <Truck className="h-3 w-3" />
-                        {item.stock} adet · aynı gün
+                        {item.stock} adet
                       </div>
                     )}
                   </div>
@@ -271,6 +296,19 @@ export default function HazirUrunlerClient({
             </Link>
           ))}
         </div>
+      )}
+      {filtered.length > pageSize && (
+        <nav aria-label="Hazır ürün sayfaları" className="flex items-center justify-center gap-4 mt-8 text-sm">
+          <button type="button" disabled={page <= 1} onClick={() => setPage((p) => p - 1)} className="border border-border rounded-lg px-4 py-2 disabled:opacity-40">
+            Önceki
+          </button>
+          <span>
+            Sayfa {page} / {Math.ceil(filtered.length / pageSize)}
+          </span>
+          <button type="button" disabled={page * pageSize >= filtered.length} onClick={() => setPage((p) => p + 1)} className="border border-border rounded-lg px-4 py-2 disabled:opacity-40">
+            Sonraki
+          </button>
+        </nav>
       )}
     </section>
   );

@@ -2,6 +2,8 @@ import { medusa } from "../client";
 import { MEDUSA_READY } from "../config";
 import type { StoreProduct } from "../types";
 import { getCurrentRegion } from "./region";
+import { collectAllPages } from "../../pagination";
+import { isReadyMade } from "../../ready-made";
 
 const PRODUCT_FIELDS = [
   "id",
@@ -11,6 +13,7 @@ const PRODUCT_FIELDS = [
   "description",
   "thumbnail",
   "metadata",
+  "created_at",
   "weight",
   "*images",
   "*options",
@@ -22,9 +25,17 @@ const PRODUCT_FIELDS = [
   // manage_inventory=false ise "Stokta" gösterilir; takip ediliyorsa gerçek adet.
   "variants.inventory_quantity",
   "variants.manage_inventory",
+  "variants.allow_backorder",
   "*categories",
   "*collection",
   "*tags",
+].join(",");
+
+// Lists do not need every option value or full variant record sent to product detail.
+const CARD_FIELDS = [
+  "id", "title", "handle", "subtitle", "description", "thumbnail", "metadata", "created_at",
+  "*images", "*categories", "variants.id", "variants.sku", "*variants.calculated_price",
+  "variants.inventory_quantity", "variants.manage_inventory", "variants.allow_backorder",
 ].join(",");
 
 interface ListOpts {
@@ -62,17 +73,22 @@ export async function listProducts(
   opts: ListOpts = {}
 ): Promise<{ products: StoreProduct[]; count: number }> {
   if (!MEDUSA_READY) return { products: [], count: 0 };
-  try {
-    const query = await buildQuery(opts);
-    const res = await medusa.store.product.list(query);
-    return {
-      products: res.products as StoreProduct[],
-      count: (res as { count?: number }).count ?? res.products.length,
-    };
-  } catch (e) {
-    console.error("[medusa] listProducts failed", e);
-    return { products: [], count: 0 };
-  }
+  const query = await buildQuery(opts);
+  const res = await medusa.store.product.list({ ...query, fields: CARD_FIELDS });
+  return {
+    products: res.products as StoreProduct[],
+    count: res.count ?? res.products.length,
+  };
+}
+
+/** Complete catalogue for filters that the Store API cannot express (metadata). */
+export async function listAllProducts(opts: Omit<ListOpts, "limit" | "offset"> = {}): Promise<StoreProduct[]> {
+  if (!MEDUSA_READY) return [];
+  const query = await buildQuery(opts);
+  return collectAllPages(async (offset, limit) => {
+    const res = await medusa.store.product.list({ ...query, fields: CARD_FIELDS, order: opts.order || "id", offset, limit });
+    return { items: res.products as StoreProduct[], count: res.count };
+  });
 }
 
 /**
@@ -83,21 +99,23 @@ export async function listProductsForSitemap(): Promise<
   Array<{ handle: string; title: string; updated_at?: string; thumbnail?: string | null; images?: { url: string }[] }>
 > {
   if (!MEDUSA_READY) return [];
-  const res = await medusa.store.product.list({
-    fields: "handle,title,updated_at,thumbnail,*images",
-    limit: 200,
+  return collectAllPages(async (offset, limit) => {
+    const res = await medusa.store.product.list({
+      fields: "id,handle,title,updated_at,thumbnail,*images", order: "id", offset, limit,
+    });
+    return { items: res.products as Array<{ handle: string; title: string; updated_at?: string; thumbnail?: string | null; images?: { url: string }[] }>, count: res.count };
   });
-  return res.products as Array<{ handle: string; title: string; updated_at?: string; thumbnail?: string | null; images?: { url: string }[] }>;
 }
 
 /** llms.txt / llms-full.txt için: fiyatsız, içerik alanları dahil. Hata fırlatır. */
 export async function listProductsForLlms(): Promise<StoreProduct[]> {
   if (!MEDUSA_READY) return [];
-  const res = await medusa.store.product.list({
-    fields: "handle,title,subtitle,description,metadata,*categories",
-    limit: 200,
+  return collectAllPages(async (offset, limit) => {
+    const res = await medusa.store.product.list({
+      fields: "id,handle,title,subtitle,description,metadata,*categories", order: "id", offset, limit,
+    });
+    return { items: res.products as StoreProduct[], count: res.count };
   });
-  return res.products as StoreProduct[];
 }
 
 /** Fetch a single product by handle (preferred for SEO-friendly URLs). */
@@ -161,7 +179,10 @@ export async function listBestSellers(
   limit = 8
 ): Promise<StoreProduct[]> {
   if (!MEDUSA_READY) return [];
-  const { products } = await listProducts({ limit: 40 });
+  return selectBestSellers(await listAllProducts(), limit);
+}
+
+export function selectBestSellers(products: StoreProduct[], limit = 8): StoreProduct[] {
   const flagged = products
     .filter((p) => (p.metadata as Record<string, unknown> | null)?.is_best_seller)
     .sort((a, b) => {
@@ -174,22 +195,20 @@ export async function listBestSellers(
       return ra - rb;
     });
   if (flagged.length) return flagged.slice(0, limit);
-  return products.slice(0, limit);
+  return [...products].sort((a, b) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime()).slice(0, limit);
 }
 
 /**
  * Ready-made (hazır boy) ürünler — metadata.is_ready_made === true olanlar.
  * Ana katalogdan ayrı bölümde/sayfada listelenir. Boy'a göre (kısa→uzun) sıralı.
  */
-export async function listReadyMade(limit = 24): Promise<StoreProduct[]> {
+export async function listReadyMade(limit = Number.POSITIVE_INFINITY): Promise<StoreProduct[]> {
   if (!MEDUSA_READY) return [];
-  // Hazır ürünler çok sayıda olabildiği için geniş çekip filtreliyoruz.
-  const { products } = await listProducts({ limit: 100 });
-  const ready = products.filter(
-    (p) =>
-      (p.metadata as Record<string, unknown> | null)?.is_ready_made === true ||
-      /hazır/i.test(p.title || "")
-  );
+  return selectReadyMade(await listAllProducts(), limit);
+}
+
+export function selectReadyMade(products: StoreProduct[], limit = Number.POSITIVE_INFINITY): StoreProduct[] {
+  const ready = products.filter(isReadyMade);
   ready.sort((a, b) => {
     const la = Number((a.metadata as Record<string, unknown> | null)?.length_mm ?? 0);
     const lb = Number((b.metadata as Record<string, unknown> | null)?.length_mm ?? 0);

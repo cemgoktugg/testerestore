@@ -50,7 +50,9 @@ export default function CrossSell({
       );
       setProducts(filtered.slice(0, limit));
       setLoading(false);
-    })();
+    })().catch(() => {
+      if (!cancelled) { setProducts([]); setLoading(false); }
+    });
     return () => {
       cancelled = true;
     };

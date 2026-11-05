@@ -1,13 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import WishlistButton from "../../components/WishlistButton";
-import { getWishlist } from "../../../lib/wishlist";
-import { getProductByHandle } from "../../../lib/medusa/services/products";
+import { getWishlist, getWishlistSyncState, retryWishlistSync } from "../../../lib/wishlist";
+import { getProductBySlug } from "../../../lib/medusa/services/products";
+import { useCustomer } from "../../context/CustomerContext";
 import { formatMoney, getProductImage } from "../../../lib/medusa/format";
 import type { StoreProduct } from "../../../lib/medusa/types";
 import { Heart, ArrowLeft, Loader2, ShoppingBag } from "lucide-react";
@@ -15,27 +16,39 @@ import { Heart, ArrowLeft, Loader2, ShoppingBag } from "lucide-react";
 export default function WishlistPage() {
   const [items, setItems] = useState<StoreProduct[]>([]);
   const [loading, setLoading] = useState(true);
+  const [failed, setFailed] = useState(false);
+  const [sync, setSync] = useState(getWishlistSyncState);
+  const requestId = useRef(0);
+  const { isAuthenticated, loading: customerLoading } = useCustomer();
 
   async function reload() {
+    const current = ++requestId.current;
     setLoading(true);
+    setFailed(false);
+    setItems([]);
     const handles = getWishlist();
     if (handles.length === 0) {
       setItems([]);
       setLoading(false);
       return;
     }
-    const results = await Promise.all(
-      handles.map((h) => getProductByHandle(h).catch(() => null))
+    const results = await Promise.allSettled(
+      handles.map((h) => getProductBySlug(h))
     );
-    setItems(results.filter((p): p is StoreProduct => !!p));
+    if (current !== requestId.current) return;
+    setFailed(results.some((r) => r.status === "rejected"));
+    setItems(results.flatMap((r) => r.status === "fulfilled" && r.value ? [r.value] : []));
     setLoading(false);
   }
 
   useEffect(() => {
     reload();
     const onChange = () => reload();
+    const onSync = () => setSync(getWishlistSyncState());
     window.addEventListener("wishlist-changed", onChange);
-    return () => window.removeEventListener("wishlist-changed", onChange);
+    window.addEventListener("wishlist-sync", onSync);
+    onSync();
+    return () => { ++requestId.current; window.removeEventListener("wishlist-changed", onChange); window.removeEventListener("wishlist-sync", onSync); };
   }, []);
 
   return (
@@ -57,18 +70,22 @@ export default function WishlistPage() {
                 Favorilerim
               </h1>
               <p className="text-xs text-muted-foreground mt-0.5">
-                {items.length > 0
+                {loading || sync.syncing ? "Favoriler yükleniyor..." : items.length > 0
                   ? `${items.length} ürün`
                   : "Henüz favori eklemediniz"}
               </p>
             </div>
           </div>
 
+          {!customerLoading && !isAuthenticated && <p className="mb-5 text-sm text-muted-foreground">Favorileriniz bu cihazda saklanıyor. <Link href="/giris?next=/hesabim/favoriler" className="text-accent underline">Giriş yaparak hesabınıza kaydedin.</Link></p>}
+          {sync.error && <div role="alert" className="mb-5 rounded-xl border border-amber-500/40 p-4 text-sm">{sync.error} <button type="button" onClick={() => void retryWishlistSync()} className="text-accent underline font-bold">Eşitlemeyi tekrar dene</button></div>}
+          {failed && <div role="alert" className="mb-5 rounded-xl border border-border p-4 text-sm">Bazı favori ürünler yüklenemedi. <button type="button" onClick={() => void reload()} className="text-accent underline font-bold">Tekrar dene</button></div>}
+
           {loading ? (
             <div className="flex justify-center py-20">
               <Loader2 className="h-8 w-8 animate-spin text-accent" />
             </div>
-          ) : items.length === 0 ? (
+          ) : items.length === 0 && !failed ? (
             <div className="text-center py-20 rounded-2xl border border-dashed border-border bg-metallic-card p-8 max-w-md mx-auto space-y-4">
               <Heart className="h-12 w-12 mx-auto text-muted-foreground/40" />
               <div>

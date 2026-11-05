@@ -1,86 +1,58 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http";
+import { randomUUID } from "node:crypto";
 import { z } from "zod";
 import { Modules } from "@medusajs/framework/utils";
 import type NewsletterService from "../../../../modules/newsletter/service";
 import { NEWSLETTER_MODULE } from "../../../../modules/newsletter";
+import { newsletterLink } from "../../../../lib/newsletter-token";
 
 const Schema = z.object({
-  email: z.string().email(),
-  source: z.string().max(50).optional(),
-});
+  email: z.string().trim().email().toLowerCase(),
+  source: z.string().trim().max(50).optional(),
+  consent: z.literal(true),
+}).strict();
+const response = { ok: true, message: "Aboneliğinizi tamamlamak için e-postanızdaki onay bağlantısını kullanın. Aboneliğiniz zaten onaylıysa yeniden işlem gerekmez." };
 
-/**
- * POST /store/newsletter/subscribe
- *
- * Aboneliği oluşturur (zaten varsa re-activate eder) ve welcome e-postası
- * gönderir. İkinci aynı email çağrısı idempotent — duplicate welcome
- * göndermez.
- */
 export async function POST(req: MedusaRequest, res: MedusaResponse) {
   const parsed = Schema.safeParse(req.body);
-  if (!parsed.success) {
-    res.status(400).json({
-      message: "Invalid email",
-      errors: parsed.error.issues,
-    });
+  if (!parsed.success) { res.status(400).json({ message: "Geçerli bir e-posta ve bülten izni gerekli." }); return; }
+  // Validate signing and URL configuration before changing subscription state.
+  try { newsletterLink("confirm", "configuration-check", "configuration-check"); }
+  catch { res.status(503).json({ message: "Bülten kaydı şu anda kullanılamıyor. Lütfen daha sonra deneyin." }); return; }
+  const service = req.scope.resolve<NewsletterService>(NEWSLETTER_MODULE);
+  const subscriptions = await service.listNewsletterSubscriptions({ email: parsed.data.email }, { order: { created_at: "DESC" } });
+  let sub = subscriptions[0];
+  if (sub?.is_active && sub.is_confirmed && sub.confirmed_at) { res.json(response); return; }
+  if (sub?.confirmation_sent_at && !sub.unsubscribed_at && Date.now() - new Date(sub.confirmation_sent_at).getTime() < 60_000) {
+    res.json(response); return;
+  }
+  const nonce = randomUUID();
+  const update = {
+    is_active: false, is_confirmed: false, confirmation_nonce: nonce,
+    source: parsed.data.source || "footer-form", consent_requested_at: new Date(),
+    consent_text_version: "newsletter-2026-10-19", unsubscribed_at: null,
+    confirmed_at: null, welcome_sent_at: null,
+  };
+  try {
+    if (sub) [sub] = await service.updateNewsletterSubscriptions([{ id: sub.id, ...update }]);
+    else [sub] = await service.createNewsletterSubscriptions([{ email: parsed.data.email, ...update }]);
+  } catch (error) {
+    const retries = await service.listNewsletterSubscriptions({ email: parsed.data.email });
+    if (!retries.some((row) => row.confirmation_nonce)) throw error;
+    res.status(202).json(response);
     return;
   }
-  const email = parsed.data.email.toLowerCase().trim();
-  const source = parsed.data.source ?? "footer-form";
-
-  const svc = req.scope.resolve<NewsletterService>(NEWSLETTER_MODULE);
-  const existing = await svc.listNewsletterSubscriptions({ email });
-
-  let sub;
-  let alreadySubscribed = false;
-  if (existing.length > 0) {
-    alreadySubscribed = !!existing[0].welcome_sent_at;
-    [sub] = await svc.updateNewsletterSubscriptions([
-      {
-        id: existing[0].id,
-        is_active: true,
-        source: existing[0].source ?? source,
-      },
-    ]);
-  } else {
-    [sub] = await svc.createNewsletterSubscriptions([
-      { email, source, is_active: true, is_confirmed: true },
-    ]);
+  try {
+    const notifications = req.scope.resolve(Modules.NOTIFICATION);
+    await notifications.createNotifications([{
+      to: sub.email, channel: "email", template: "newsletter.confirm",
+      data: { confirm_url: newsletterLink("confirm", sub.id, nonce), unsubscribe_url: newsletterLink("unsubscribe", sub.id, nonce) },
+    }]);
+    await service.updateNewsletterSubscriptions([{ id: sub.id, confirmation_sent_at: new Date() }]);
+  } catch {
+    req.scope.resolve("logger").warn("[newsletter] Onay bildirimi gönderilemedi; abonelik etkinleştirilmedi.");
+    res.status(503).json({ message: "Onay e-postası şu anda gönderilemedi. Lütfen daha sonra tekrar deneyin." });
+    return;
   }
-
-  // Welcome maili gönder (sadece daha önce gönderilmediyse)
-  if (!alreadySubscribed) {
-    try {
-      const notif = req.scope.resolve(Modules.NOTIFICATION);
-      await notif.createNotifications([
-        {
-          to: email,
-          channel: "email",
-          template: "newsletter.welcome",
-          data: {
-            email,
-            coupon_code: "HOSGELDIN5", // Admin'de bu kodu manuel açmalı
-          },
-        },
-      ]);
-      await svc.updateNewsletterSubscriptions([
-        { id: sub.id, welcome_sent_at: new Date() },
-      ]);
-    } catch (e) {
-      // Welcome mail gönderilemezse abonelik yine de geçerli kabul edilir
-      req.scope
-        .resolve("logger")
-        .warn(
-          `[newsletter] welcome email failed: ${
-            e instanceof Error ? e.message : String(e)
-          }`
-        );
-    }
-  }
-
-  res.status(201).json({
-    ok: true,
-    alreadySubscribed,
-    subscription: { id: sub.id, email: sub.email },
-  });
+  res.status(202).json(response);
 }

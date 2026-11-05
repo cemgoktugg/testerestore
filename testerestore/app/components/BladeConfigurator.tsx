@@ -47,6 +47,7 @@ import {
 } from '../../lib/medusa/services/blade-price';
 import { useDealer } from '../context/DealerContext';
 import StockIndicator from './StockIndicator';
+import { bladeQuoteMatches } from '../../lib/commerce-state';
 import ReadyMadeSuggestionPopup from './ReadyMadeSuggestionPopup';
 import {
   getReadyMadeSuggestions,
@@ -276,6 +277,8 @@ export default function BladeConfigurator({
   const [length, setLength] = useState<number>(defaultLength);
   const [quantity, setQuantity] = useState<number>(1);
   const [addedMessage, setAddedMessage] = useState(false);
+  const [adding, setAdding] = useState(false);
+  const addingRef = useRef(false);
   const [addError, setAddError] = useState<string | null>(null);
 
   // ---- Hazır ürün önerisi (popup) ----
@@ -356,8 +359,20 @@ export default function BladeConfigurator({
   const [calcLoading, setCalcLoading] = useState(false);
   const [calcMissing, setCalcMissing] = useState(false);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const currentQuote = bladeQuoteMatches(matrixCalc, {
+    blade_type: bladeTypeSlug,
+    width_mm: Number(widthKey),
+    thickness_mm: Number(thicknessKey),
+    tooth_pitch: matrixToothPitchesHasNull ? null : toothPitch || null,
+    length_mm: length,
+    quantity,
+  });
 
   useEffect(() => {
+    let active = true;
+    setMatrixCalc(null);
+    setCalcMissing(false);
+    setCalcLoading(false);
     if (!matrixHasData) {
       setMatrixCalc(null);
       setCalcMissing(false);
@@ -382,6 +397,7 @@ export default function BladeConfigurator({
         length_mm: length,
         quantity,
       });
+      if (!active) return;
       setCalcLoading(false);
       if (!res) {
         setMatrixCalc(null);
@@ -392,6 +408,7 @@ export default function BladeConfigurator({
       }
     }, 250);
     return () => {
+      active = false;
       if (debounceRef.current) clearTimeout(debounceRef.current);
     };
   }, [
@@ -524,16 +541,22 @@ export default function BladeConfigurator({
 
   // ---- Add to cart ----
   const handleAddToCart = async () => {
+    if (addingRef.current || (matrixHasData && (calcLoading || !currentQuote))) return;
+    addingRef.current = true;
+    setAdding(true);
     setAddError(null);
     try {
       await addToCartInner();
     } catch {
       setAddError('Ürün sepete eklenemedi. Lütfen tekrar deneyin; sorun sürerse bizimle iletişime geçin.');
+    } finally {
+      addingRef.current = false;
+      setAdding(false);
     }
   };
 
   const addToCartInner = async () => {
-    if (validation) return;
+    if (validation || (matrixHasData && (calcLoading || !currentQuote))) return;
 
     const productSlug = product?.handle || productId || 'bimetal-premium';
     const legacyImage = product
@@ -781,11 +804,12 @@ export default function BladeConfigurator({
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 ((legacyVariant || product?.variants?.[0]) as any)?.manage_inventory ?? true
               }
+              allowBackorder={(legacyVariant || product?.variants?.[0])?.allow_backorder ?? false}
             />
             {/* Hızlı kargo rozeti — aciliyet */}
             <span className="text-[10px] font-bold text-emerald-600 inline-flex items-center gap-1">
               <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              Aynı gün kargoda
+              Teslimat bilgisi için bizimle iletişime geçin
             </span>
           </div>
         </div>
@@ -1077,7 +1101,7 @@ export default function BladeConfigurator({
           )}
           <button
             onClick={handleAddToCart}
-            disabled={!!validation || (matrixHasData && !matrixCalc)}
+            disabled={adding || !!validation || (matrixHasData && (calcLoading || !currentQuote))}
             className={`col-span-4 flex h-11 items-center justify-center gap-2 rounded-xl text-sm font-bold text-white transition-all duration-300 shadow-md ${
               validation || (matrixHasData && !matrixCalc)
                 ? 'bg-muted text-muted-foreground cursor-not-allowed'
@@ -1086,7 +1110,7 @@ export default function BladeConfigurator({
                 : 'bg-molten-grad glow-orange hover:shadow-lg cursor-pointer'
             }`}
           >
-            {addedMessage ? (
+            {adding ? 'Sepete ekleniyor…' : addedMessage ? (
               <><Sparkles className="h-4 w-4" /> Sepete Eklendi!</>
             ) : (
               <><ShoppingCart className="h-4 w-4" /> Sepete Ekle</>

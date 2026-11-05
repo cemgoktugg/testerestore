@@ -1,52 +1,33 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http";
-import { Modules } from "@medusajs/framework/utils";
+import { ContainerRegistrationKeys, Modules } from "@medusajs/framework/utils";
 
-/**
- * POST /admin/orders/:id/notify-shipped
- * Body: { carrier_name, tracking_number, tracking_url }
- *
- * Manuel olarak müşteriye "siparişiniz kargoya verildi" e-postası gönderir.
- * Admin widget'tan "kargo bilgisini kaydet + e-posta gönder" akışı için.
- */
+/** Resend shipment information using only the order's persisted shipment data. */
 export async function POST(req: MedusaRequest, res: MedusaResponse) {
-  const id = req.params.id as string;
-  const body = (req.body || {}) as {
-    carrier_name?: string;
-    tracking_number?: string;
-    tracking_url?: string;
-  };
-
-  const orderModule = req.scope.resolve(Modules.ORDER);
-  const notificationModule = req.scope.resolve(Modules.NOTIFICATION);
-
-  try {
-    const order = await orderModule.retrieveOrder(id);
-    if (!order.email) {
-      res.status(400).json({ message: "Order has no email" });
-      return;
-    }
-
-    await notificationModule.createNotifications([
-      {
-        to: order.email,
-        channel: "email",
-        template: "order.shipped",
-        data: {
-          order_no: order.display_id
-            ? `#${order.display_id}`
-            : id.slice(-8).toUpperCase(),
-          carrier: body.carrier_name || "Kargo",
-          tracking_number: body.tracking_number || "",
-          tracking_url: body.tracking_url || "",
-        },
-      },
-    ]);
-
-    res.json({ ok: true });
-  } catch (e) {
-    res.status(500).json({
-      message: "notify failed",
-      error: e instanceof Error ? e.message : String(e),
-    });
+  const query = req.scope.resolve(ContainerRegistrationKeys.QUERY);
+  const { data } = await query.graph({
+    entity: "order", filters: { id: req.params.id },
+    fields: ["id", "email", "display_id", "status", "fulfillments.id", "fulfillments.metadata", "fulfillments.shipped_at", "fulfillments.canceled_at", "fulfillments.labels.tracking_number", "fulfillments.labels.tracking_url"],
+  });
+  const order = data[0];
+  if (!order) { res.status(404).json({ message: "Sipariş bulunamadı." }); return; }
+  if (!order.email) { res.status(409).json({ message: "Siparişte e-posta adresi yok." }); return; }
+  const shipments = (order.fulfillments || []).filter((row) => row && row.shipped_at && !row.canceled_at);
+  if (order.status === "canceled" || !shipments.length) {
+    res.status(409).json({ message: "Siparişin kargoya verilmiş gönderisi yok." }); return;
   }
+  const notifications = req.scope.resolve(Modules.NOTIFICATION);
+  for (const shipment of shipments) {
+    if (!shipment) continue;
+    const labels = shipment.labels || [];
+    await notifications.createNotifications([{
+      to: order.email, channel: "email", template: "order.shipped",
+      data: {
+        order_no: order.display_id ? "#" + order.display_id : order.id.slice(-8).toUpperCase(),
+        carrier: shipment.metadata?.carrier_name || "Kargo",
+        tracking_number: labels.map((label) => label?.tracking_number).filter(Boolean).join(", "),
+        tracking_url: labels.find((label) => label?.tracking_url)?.tracking_url || "",
+      },
+    }]);
+  }
+  res.json({ ok: true });
 }

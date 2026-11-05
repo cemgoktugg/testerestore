@@ -7,6 +7,7 @@
 
 import type { StoreProduct, StoreProductVariant } from "./types";
 import { OPTION_WIDTH, OPTION_THICKNESS, OPTION_TPI } from "./types";
+import { getInventory } from "../inventory";
 
 export interface BladeOptionSet {
   /** Sorted, unique values across all variants. */
@@ -134,14 +135,5 @@ export function readOption(
 
 /** True when the variant has stock (or stock is not tracked). */
 export function isVariantInStock(variant: StoreProductVariant | null): boolean {
-  if (!variant) return false;
-  const v = variant as StoreProductVariant & {
-    manage_inventory?: boolean;
-    allow_backorder?: boolean;
-    inventory_quantity?: number;
-  };
-  if (v.manage_inventory === false) return true;
-  if (v.allow_backorder) return true;
-  if (typeof v.inventory_quantity === "number") return v.inventory_quantity > 0;
-  return true;
+  return getInventory(variant).canPurchase;
 }

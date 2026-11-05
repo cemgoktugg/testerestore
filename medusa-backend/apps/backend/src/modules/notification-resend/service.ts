@@ -76,10 +76,12 @@ class ResendNotificationProviderService extends AbstractNotificationProviderServ
     const from = `${this.fromName_} <${this.fromEmail_}>`;
 
     if (!this.client_) {
+      if (process.env.NODE_ENV === "production") {
+        throw new Error("E-posta sağlayıcısı yapılandırılmamış; bildirim gönderilmedi.");
+      }
       this.logger_.info(
         `[notification-resend] (DRY RUN) → ${notification.to} | ${subject}`
       );
-      this.logger_.debug(`[notification-resend] html:\n${html}`);
       return { id: "dry-run" };
     }
 
@@ -119,8 +121,10 @@ function renderTemplate(tpl: string, data: Record<string, unknown>): Rendered {
       return orderShippedTemplate(data);
     case "cart.abandoned":
       return cartAbandonedTemplate(data);
+    case "newsletter.confirm":
+      return newsletterConsentTemplate(data, false);
     case "newsletter.welcome":
-      return newsletterWelcomeTemplate(data);
+      return newsletterConsentTemplate(data, true);
     case "customer.welcome_chat":
       return welcomeChatTemplate(data);
     case "auth.password_reset":
@@ -141,6 +145,20 @@ function escapeHtml(s: string): string {
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#39;");
+}
+
+function newsletterConsentTemplate(data: Record<string, unknown>, confirmed: boolean): Rendered {
+  const subject = confirmed ? "Bülten aboneliğiniz onaylandı | Testere Store" : "Bülten aboneliğinizi onaylayın | Testere Store";
+  const confirmUrl = String(data.confirm_url || "");
+  const unsubscribeUrl = String(data.unsubscribe_url || "");
+  const intro = confirmed ? "Bültenimize hoş geldiniz. Yeni ürünler, teknik rehberler ve kampanyalar hakkında sizi bilgilendireceğiz." : "Bülten e-postaları almak için aşağıdaki bağlantıyla aboneliğinizi onaylayın. Bağlantı 48 saat geçerlidir. Bu isteği siz yapmadıysanız e-postayı yok sayabilirsiniz.";
+  return {
+    subject,
+    html: '<div style="font-family:sans-serif;max-width:560px;margin:auto;padding:24px"><h1>' + escapeHtml(subject) + '</h1><p>' + intro + '</p>' +
+      (!confirmed ? '<p><a href="' + escapeHtml(confirmUrl) + '">Aboneliğimi onayla</a></p>' : '') +
+      '<p><a href="' + escapeHtml(unsubscribeUrl) + '">Abonelikten ayrıl</a></p></div>',
+    text: intro + (!confirmed ? "\nOnay: " + confirmUrl : "") + "\nAbonelikten ayrıl: " + unsubscribeUrl,
+  };
 }
 
 function fmtMoneyMinor(amount: number, currency: string): string {
@@ -323,6 +341,14 @@ function cartAbandonedTemplate(data: Record<string, unknown>): Rendered {
   const total = Number(data.total ?? 0);
   const currency = String(data.currency_code ?? "try");
   const storefront = process.env.STOREFRONT_URL || "http://localhost:3001";
+  if (!data.recovery_url || !data.unsubscribe_url) throw new Error("Sepet kurtarma ve abonelikten ayrılma bağlantıları gerekli.");
+  const recovery = new URL(String(data.recovery_url), storefront);
+  const unsubscribe = new URL(String(data.unsubscribe_url), storefront);
+  const storefrontOrigin = new URL(storefront).origin;
+  if (recovery.origin !== storefrontOrigin || unsubscribe.origin !== storefrontOrigin || !["https:", "http:"].includes(recovery.protocol) || !["https:", "http:"].includes(unsubscribe.protocol)) {
+    throw new Error("Geçersiz sepet kurtarma bağlantısı.");
+  }
+  const recoveryUrl = recovery.toString();
 
   const itemList = items
     .map(
@@ -349,12 +375,13 @@ function cartAbandonedTemplate(data: Record<string, unknown>): Rendered {
               <strong>Toplam:</strong> ${fmtMoneyMinor(total, currency)}
             </div>
             <div style="margin-top:24px;text-align:center;">
-              <a href="${storefront}/cart" style="display:inline-block;background:linear-gradient(135deg,#ff6a00,#ee0979);color:#fff;text-decoration:none;font-size:14px;font-weight:700;padding:14px 32px;border-radius:10px;">
+              <a href="${escapeHtml(recoveryUrl)}" style="display:inline-block;background:linear-gradient(135deg,#ff6a00,#ee0979);color:#fff;text-decoration:none;font-size:14px;font-weight:700;padding:14px 32px;border-radius:10px;">
                 Sepete Geri Dön
               </a>
             </div>
             <p style="margin-top:24px;font-size:11px;color:#999;text-align:center;">
               Bu e-postayı, ${storefront} sitesindeki sepetiniz tamamlanmadığı için aldınız.
+              <br/><a href="${escapeHtml(unsubscribe.toString())}">Abonelikten ayrıl</a>
             </p>
           </td></tr>
         </table>
@@ -365,60 +392,8 @@ function cartAbandonedTemplate(data: Record<string, unknown>): Rendered {
   const text = `Sepetinizde ${items.length} ürün bekliyor.
 Toplam: ${fmtMoneyMinor(total, currency)}
 
-Sepetinize dönmek için: ${storefront}/cart`;
-
-  return { subject, html, text };
-}
-
-function newsletterWelcomeTemplate(data: Record<string, unknown>): Rendered {
-  const coupon = String(data.coupon_code || "HOSGELDIN5");
-  const storefront = process.env.STOREFRONT_URL || "http://localhost:3001";
-  const subject = "Hoş geldiniz! İlk siparişinize özel %5 indirim 🎁";
-
-  const html = `<!DOCTYPE html><html lang="tr"><body style="margin:0;background:#f5f6f8;font-family:-apple-system,Segoe UI,Roboto,sans-serif;color:#222;">
-    <table width="100%" cellspacing="0" cellpadding="0" style="background:#f5f6f8;padding:32px 12px;">
-      <tr><td align="center">
-        <table width="100%" style="max-width:520px;background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 6px 20px rgba(0,0,0,.06);">
-          <tr><td style="padding:32px;background:linear-gradient(135deg,#ff6a00,#ee0979);color:#fff;text-align:center;">
-            <div style="font-size:24px;font-weight:700;">Hoş geldiniz! 🎁</div>
-            <div style="font-size:13px;opacity:.95;margin-top:6px;">Testere Store ailesine katıldınız</div>
-          </td></tr>
-          <tr><td style="padding:28px 32px;text-align:center;">
-            <p style="margin:0 0 18px 0;font-size:14px;line-height:1.6;color:#444;">
-              Aboneliğiniz başarıyla oluşturuldu. Hoş geldin hediyesi olarak ilk
-              siparişinizde geçerli <strong>%5 indirim kupon kodunuzu</strong>
-              hemen kullanabilirsiniz:
-            </p>
-
-            <div style="display:inline-block;border:2px dashed #ee0979;background:#fff5fa;border-radius:10px;padding:14px 28px;margin:6px 0 18px 0;">
-              <div style="font-size:11px;color:#888;text-transform:uppercase;letter-spacing:2px;margin-bottom:4px;">Kupon Kodu</div>
-              <div style="font-size:24px;font-weight:800;color:#ee0979;letter-spacing:3px;font-family:monospace;">${escapeHtml(coupon)}</div>
-            </div>
-
-            <p style="margin:0 0 24px 0;font-size:12px;color:#888;line-height:1.6;">
-              Kupon ödeme adımında sepetinizde uygulanabilir. Yeniliklerimizi,
-              kampanyalarımızı ve şerit testere ipuçlarımızı bültenlerimizde
-              size ileteceğiz.
-            </p>
-
-            <a href="${storefront}" style="display:inline-block;background:linear-gradient(135deg,#ff6a00,#ee0979);color:#fff;text-decoration:none;font-size:14px;font-weight:700;padding:14px 32px;border-radius:10px;">
-              Alışverişe Başla
-            </a>
-          </td></tr>
-          <tr><td style="padding:14px 32px;background:#fafbfc;border-top:1px solid #eee;text-align:center;font-size:11px;color:#888;">
-            Bültenden çıkmak için bize yanıt yazabilirsiniz.<br/>
-            © Testere Store
-          </td></tr>
-        </table>
-      </td></tr>
-    </table>
-  </body></html>`;
-
-  const text = `Hoş geldiniz!
-
-İlk siparişinize özel %5 indirim kupon kodunuz: ${coupon}
-
-${storefront}`;
+Sepetinize dönmek için: ${recoveryUrl}
+Abonelikten ayrıl: ${unsubscribe.toString()}`;
 
   return { subject, html, text };
 }

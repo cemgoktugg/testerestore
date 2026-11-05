@@ -65,6 +65,7 @@ export function slimProductForCard(p: StoreProduct): StoreProduct {
             id: v.id,
             sku: v.sku,
             manage_inventory: v.manage_inventory,
+            allow_backorder: v.allow_backorder,
             inventory_quantity: v.inventory_quantity,
             calculated_price: v.calculated_price
               ? {

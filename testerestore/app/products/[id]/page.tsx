@@ -4,6 +4,7 @@ import { getProductBySlugCached } from '../../../lib/medusa/server/product-cache
 import ProductDetailClient from './ProductDetailClient';
 import { categoryPageForHandles, categoryHref } from '../../../lib/category-pages';
 import { isReadyMade } from '../../../lib/ready-made';
+import ProductViewAnalytics from '../../components/ProductViewAnalytics';
 
 /**
  * Product detail — Server Component.
@@ -55,11 +56,14 @@ export default async function ProductPage({
     ? { name: catPage.name, href: categoryHref(catPage) }
     : undefined;
   return (
+    <>
+    <ProductViewAnalytics id={product.id} name={product.title} />
     <ProductDetailClient
       initialProduct={product}
       initialRelated={related}
       categoryLink={categoryLink}
       slug={id}
     />
+    </>
   );
 }

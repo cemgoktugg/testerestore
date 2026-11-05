@@ -1,5 +1,5 @@
 import React from "react";
-import { companyInfo } from "../../lib/company-info";
+import { companyInfo, publicContactPhone } from "../../lib/company-info";
 import { siteContent } from "../../lib/content-config";
 import { CATEGORY_NAV } from "../../lib/category-links";
 
@@ -14,7 +14,7 @@ const COMPANY = {
   url: SITE_URL,
   logo: `${SITE_URL}/images/logo.png`,
   email: companyInfo.email,
-  phone: companyInfo.phone,
+  phone: publicContactPhone || undefined,
   street: companyInfo.streetAddress,
   district: companyInfo.district,
   city: companyInfo.city,

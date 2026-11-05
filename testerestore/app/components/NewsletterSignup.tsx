@@ -15,13 +15,14 @@ interface Props {
 
 /**
  * Newsletter abone formu. Footer'da compact varyant, blog/içerik sayfalarında
- * dolu varyant. Welcome maili otomatik gönderir.
+ * dolu varyant. Abonelik, e-postadaki bağlantı onaylandıktan sonra etkinleşir.
  */
 export default function NewsletterSignup({
   source = "footer-form",
   compact = false,
 }: Props) {
   const [email, setEmail] = useState("");
+  const [consent, setConsent] = useState(false);
   const [state, setState] = useState<"idle" | "loading" | "success" | "error">(
     "idle"
   );
@@ -29,6 +30,7 @@ export default function NewsletterSignup({
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
+    if (!consent) { setState("error"); setMessage("Bülten e-postası almak için izninizi işaretleyin."); return; }
     if (!email || !/^\S+@\S+\.\S+$/.test(email)) {
       setState("error");
       setMessage("Geçerli bir e-posta girin");
@@ -49,16 +51,14 @@ export default function NewsletterSignup({
             "Content-Type": "application/json",
             "x-publishable-api-key": MEDUSA_PUBLISHABLE_KEY,
           },
-          body: JSON.stringify({ email, source }),
+          body: JSON.stringify({ email, source, consent }),
         }
       );
       if (!res.ok) throw new Error(`${res.status}`);
-      const data = (await res.json()) as { alreadySubscribed: boolean };
+      const data = (await res.json()) as { message: string };
       setState("success");
       setMessage(
-        data.alreadySubscribed
-          ? "Zaten abonesiniz, teşekkürler!"
-          : "Teşekkürler! Bültenimize kaydoldunuz."
+        data.message || "Lütfen e-postanızdaki bağlantıyla aboneliğinizi onaylayın."
       );
       setEmail("");
     } catch {
@@ -80,6 +80,7 @@ export default function NewsletterSignup({
           Yeni ürünler, teknik rehberler ve kampanyalardan ilk siz haberdar olun.
         </p>
         <form onSubmit={submit} className="flex flex-col gap-2">
+          <label className="flex items-start gap-2 text-[11px] text-muted-foreground"><input type="checkbox" required checked={consent} onChange={(event) => setConsent(event.target.checked)} className="mt-0.5" />Yeni ürün, rehber ve kampanya e-postaları almak istiyorum. Dilediğim zaman abonelikten ayrılabilirim.</label>
           <div className="flex gap-2">
             <input
               type="email"
@@ -138,7 +139,8 @@ export default function NewsletterSignup({
       <p className="text-sm text-muted-foreground mb-5">
         Yeni ürünler, teknik rehberler ve kampanyalardan ilk siz haberdar olun.
       </p>
-      <form onSubmit={submit} className="flex flex-col sm:flex-row gap-2 max-w-md mx-auto">
+      <form onSubmit={submit} className="flex flex-col gap-3 max-w-md mx-auto">
+        <label className="flex items-start gap-2 text-left text-xs text-muted-foreground"><input type="checkbox" required checked={consent} onChange={(event) => setConsent(event.target.checked)} className="mt-0.5" />Yeni ürün, rehber ve kampanya e-postaları almak istiyorum. Dilediğim zaman abonelikten ayrılabilirim.</label>
         <input
           type="email"
           value={email}
@@ -160,8 +162,8 @@ export default function NewsletterSignup({
           {state === "loading"
             ? "Gönderiliyor..."
             : state === "success"
-            ? "✓ Abone olundu"
-            : "Kuponumu Al"}
+            ? "✓ Onay e-postası istendi"
+            : "Abone Ol"}
         </button>
       </form>
       {message && (

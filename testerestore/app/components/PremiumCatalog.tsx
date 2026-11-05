@@ -5,7 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { ArrowRight, ChevronDown, X as XIcon } from 'lucide-react';
-import { useProducts } from '../../lib/medusa/hooks/useProducts';
+import { useAllProducts } from '../../lib/medusa/hooks/useProducts';
 import { useCategories } from '../../lib/medusa/hooks/useCategories';
 import { useDealer } from '../context/DealerContext';
 import { getProductImage } from '../../lib/medusa/format';
@@ -13,6 +13,7 @@ import type { StoreProduct, StoreProductCategory } from '../../lib/medusa/types'
 import { siteContent } from '../../lib/content-config';
 import { isReadyMade } from '../../lib/ready-made';
 import { CatalogGridSkeleton } from './skeletons/CatalogSkeleton';
+import { productCategoryHandles } from '../../lib/catalog-category';
 
 /** Site genelinde kullanılan turuncu accent — `--accent` Tailwind değişkeniyle uyumlu. */
 const ACCENT = '#f97316';      // orange-500 (light mode brand accent)
@@ -25,6 +26,7 @@ interface CatalogCardData {
   description: string;
   image: string;
   category: string;
+  categoryLabels: string[];
   href: string;
   /** Sıralama/filtreleme için minimum varyant fiyatı (0 → bilinmiyor). */
   price: number;
@@ -51,23 +53,15 @@ const CATEGORY_PILLS: ReadonlyArray<{
 
 const PILL_LABELS = ['Tümü', ...CATEGORY_PILLS.map((p) => p.label)];
 
-function pillLabelForMedusa(p: StoreProduct): string {
-  const productHandles = (p.categories ?? [])
-    .map((c) => c.handle)
-    .filter(Boolean) as string[];
-  for (const pill of CATEGORY_PILLS) {
-    if (productHandles.some((h) => pill.handles.includes(h))) {
-      return pill.label;
-    }
-  }
-  return p.categories?.[0]?.name ?? 'Şerit Testere';
+function pillLabelsForMedusa(p: StoreProduct, categories: StoreProductCategory[]): string[] {
+  const productHandles = productCategoryHandles(categories, p.categories ?? []);
+  return CATEGORY_PILLS.filter((pill) => productHandles.some((h) => pill.handles.includes(h))).map((pill) => pill.label);
 }
 
 function mapMedusaToCard(
   products: StoreProduct[],
-  _categories: StoreProductCategory[]
+  categories: StoreProductCategory[]
 ): CatalogCardData[] {
-  void _categories;
   return products.map((p) => {
     // Minimum variant price (excluding 0/null)
     const prices =
@@ -78,13 +72,15 @@ function mapMedusaToCard(
     const currency =
       p.variants?.[0]?.calculated_price?.currency_code || 'try';
     const createdAt = p.created_at ? new Date(p.created_at).getTime() : 0;
+    const categoryLabels = pillLabelsForMedusa(p, categories);
     return {
       id: p.id,
       handle: p.handle || p.id,
       name: p.title,
       description: p.subtitle || p.description || '',
       image: getProductImage(p),
-      category: pillLabelForMedusa(p),
+      category: categoryLabels[0] ?? p.categories?.[0]?.name ?? 'Şerit Testere',
+      categoryLabels,
       href: `/products/${p.handle || p.id}`,
       price: minPrice,
       currency,
@@ -127,21 +123,18 @@ function PremiumCatalogView({
   searchParams,
 }: PremiumCatalogProps & { searchParams: URLSearchParams | null }) {
   // SSR'dan veri geldiyse tarayıcıda tekrar çekilmez (ISR 5 dk'da bir tazeler).
-  const { data: productsResp, loading: productsLoading } = useProducts(
-    { limit: 24 },
-    { enabled: !initialProducts?.length }
+  const { data: productsResp, loading: productsLoading, error: productsError, refetch } = useAllProducts(
+    { enabled: initialProducts === undefined }
   );
   const { data: categoryList, loading: categoriesLoading } = useCategories({
-    enabled: !initialCategories?.length,
+    enabled: initialCategories === undefined,
   });
 
   const { applyDealerPrices } = useDealer();
 
   const items = useMemo<CatalogCardData[]>(() => {
     // SSR prop'ları (initialProducts/Categories) ilk render'ı doldurur; client tazeler.
-    const products = productsResp?.products?.length
-      ? productsResp.products
-      : initialProducts;
+    const products = productsResp ?? initialProducts;
     const cats = categoryList ?? initialCategories ?? [];
     if (products?.length) {
       // Hazır (ready-made) ürünler ana kataloga GİRMEZ — kendi "Hazır Boy"
@@ -165,6 +158,8 @@ function PremiumCatalogView({
 
   const [active, setActive] = useState<string>(initialActive);
   const [showAll, setShowAll] = useState(false);
+  const [page, setPage] = useState(1);
+  const pageSize = 24;
   const [priceMin, setPriceMin] = useState<string>(
     searchParams?.get('minPrice') || ''
   );
@@ -175,8 +170,9 @@ function PremiumCatalogView({
   // When the URL param changes (clicking another Header link without full
   // navigation), sync the active pill.
   useEffect(() => {
-    if (urlCategory && PILL_LABELS.includes(urlCategory) && urlCategory !== active) {
-      setActive(urlCategory);
+    const nextCategory = urlCategory && PILL_LABELS.includes(urlCategory) ? urlCategory : 'Tümü';
+    if (nextCategory !== active) {
+      setActive(nextCategory);
       setShowAll(false);
     }
     // Only react to url changes, not user clicks on pills
@@ -185,7 +181,7 @@ function PremiumCatalogView({
 
   const filtered = useMemo(() => {
     let out =
-      active === 'Tümü' ? items : items.filter((i) => i.category === active);
+      active === 'Tümü' ? items : items.filter((i) => i.categoryLabels.includes(active));
     const min = priceMin.trim() === '' ? null : Number(priceMin);
     const max = priceMax.trim() === '' ? null : Number(priceMax);
     if (min !== null && !isNaN(min)) {
@@ -197,7 +193,8 @@ function PremiumCatalogView({
     return out;
   }, [items, active, priceMin, priceMax]);
 
-  const visible = showAll ? filtered : filtered.slice(0, COLLAPSED_COUNT);
+  const currentPage = Math.min(page, Math.max(1, Math.ceil(filtered.length / pageSize)));
+  const visible = showAll ? filtered.slice((currentPage - 1) * pageSize, currentPage * pageSize) : filtered.slice(0, COLLAPSED_COUNT);
   const hasMore = filtered.length > COLLAPSED_COUNT;
   const hasActiveFilter =
     priceMin.trim() !== '' || priceMax.trim() !== '';
@@ -333,9 +330,8 @@ function PremiumCatalogView({
             key={active}
             className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 md:gap-6"
           >
-            {/* Daraltılmış kartlar DOM'dan çıkarılmaz, CSS ile gizlenir — böylece
-                tüm ürün linkleri SSR HTML'inde kalır (iç linkleme / tarama). */}
-            {filtered.map((item, idx) => (
+            {/* Keep the mounted card count bounded; category pages and sitemap expose the catalogue. */}
+            {visible.map((item, idx) => (
               <article
                 key={item.id}
                 className={`catalog-card group relative flex flex-col overflow-hidden rounded-2xl border border-white/[0.08] shadow-[0_8px_30px_rgba(0,0,0,0.35)] transition-all duration-500 hover:-translate-y-2 ${
@@ -418,7 +414,18 @@ function PremiumCatalogView({
           </div>
         ) : null}
 
-        {!isLoading && filtered.length === 0 && (
+        {showAll && filtered.length > pageSize && <nav aria-label="Katalog sayfaları" className="flex items-center justify-center gap-4 mt-8 text-sm">
+          <button type="button" disabled={currentPage <= 1} onClick={() => setPage(currentPage - 1)} className="border border-border rounded-lg px-4 py-2 disabled:opacity-40">Önceki</button>
+          <span>Sayfa {currentPage} / {Math.ceil(filtered.length / pageSize)}</span>
+          <button type="button" disabled={currentPage * pageSize >= filtered.length} onClick={() => setPage(currentPage + 1)} className="border border-border rounded-lg px-4 py-2 disabled:opacity-40">Sonraki</button>
+        </nav>}
+
+        {productsError && (
+          <div role="alert" className="text-center py-10 text-sm">
+            Ürünler yüklenemedi. <button type="button" onClick={refetch} className="text-accent font-bold underline">Tekrar dene</button>
+          </div>
+        )}
+        {!isLoading && !productsError && filtered.length === 0 && (
           <div className="text-center py-20 text-sm text-muted-foreground">
             Bu kategoride henüz ürün bulunmamaktadır.
           </div>
@@ -429,7 +436,7 @@ function PremiumCatalogView({
           <div className="mt-10 flex flex-col items-center gap-3">
             <button
               type="button"
-              onClick={() => setShowAll((s) => !s)}
+              onClick={() => { setShowAll((s) => !s); setPage(1); }}
               aria-expanded={showAll}
               className="catalog-more-btn group/more inline-flex items-center gap-2 rounded-full border border-white/10 px-7 py-3 text-xs font-bold tracking-wide uppercase text-[#dadcdf] hover:text-white transition-all duration-300 cursor-pointer"
             >
@@ -446,7 +453,7 @@ function PremiumCatalogView({
             </button>
             <span className="text-[11px] text-muted-foreground">
               {showAll
-                ? `Tüm ${filtered.length} ürün gösteriliyor`
+                ? `${visible.length} / ${filtered.length} ürün gösteriliyor`
                 : `${visible.length} / ${filtered.length} ürün gösteriliyor`}
             </span>
           </div>

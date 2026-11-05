@@ -87,9 +87,12 @@ export async function retrieveCart(): Promise<StoreCart | null> {
     }
     return cart as StoreCart;
   } catch (e) {
-    console.warn("[medusa] retrieveCart failed — clearing cart id", e);
-    writeCartId(null);
-    return null;
+    if ((e as { status?: number })?.status === 404) {
+      writeCartId(null);
+      return null;
+    }
+    // A temporary outage does not invalidate the customer's existing cart.
+    throw e;
   }
 }
 
@@ -129,7 +132,7 @@ export interface AddLineInput {
 export async function addLineItem(input: AddLineInput): Promise<StoreCart | null> {
   if (!MEDUSA_READY) return null;
   const cart = await getOrCreateCart();
-  if (!cart) return null;
+  if (!cart) throw new Error("Sepet oluşturulamadı. Lütfen tekrar deneyin.");
   try {
     const { cart: updated } = await medusa.store.cart.createLineItem(cart.id, {
       variant_id: input.variantId,
@@ -139,7 +142,7 @@ export async function addLineItem(input: AddLineInput): Promise<StoreCart | null
     return updated as StoreCart;
   } catch (e) {
     console.error("[medusa] addLineItem failed", e);
-    return null;
+    throw new Error("Ürün sepete eklenemedi. Stok durumunu kontrol edip tekrar deneyin.", { cause: e });
   }
 }
 
@@ -165,7 +168,7 @@ export async function addBladeMatrixLine(
 ): Promise<StoreCart | null> {
   if (!MEDUSA_READY) return null;
   const cart = await getOrCreateCart();
-  if (!cart) return null;
+  if (!cart) throw new Error("Sepet oluşturulamadı. Lütfen tekrar deneyin.");
   try {
     const { MEDUSA_BACKEND_URL, MEDUSA_PUBLISHABLE_KEY } = await import(
       "../config"
@@ -191,12 +194,12 @@ export async function addBladeMatrixLine(
     if (!res.ok) {
       const text = await res.text();
       console.error("[medusa] addBladeMatrixLine failed", res.status, text);
-      return null;
+      throw new Error("Ürün sepete eklenemedi. Ölçü ve stok durumunu kontrol edin.");
     }
     return await retrieveCart();
   } catch (e) {
     console.error("[medusa] addBladeMatrixLine failed", e);
-    return null;
+    throw new Error("Ürün sepete eklenemedi. Lütfen tekrar deneyin.", { cause: e });
   }
 }
 
@@ -206,7 +209,7 @@ export async function updateLineItem(
 ): Promise<StoreCart | null> {
   if (!MEDUSA_READY) return null;
   const cart = await retrieveCart();
-  if (!cart) return null;
+  if (!cart) throw new Error("Sepet bulunamadı. Sayfayı yenileyip tekrar deneyin.");
   if (quantity <= 0) return removeLineItem(lineItemId);
   try {
     const { cart: updated } = await medusa.store.cart.updateLineItem(
@@ -217,7 +220,7 @@ export async function updateLineItem(
     return updated as StoreCart;
   } catch (e) {
     console.error("[medusa] updateLineItem failed", e);
-    return null;
+    throw new Error("Adet güncellenemedi. Stok durumunu kontrol edip tekrar deneyin.", { cause: e });
   }
 }
 
@@ -231,7 +234,7 @@ export async function updateBladeMatrixLine(
 ): Promise<StoreCart | null> {
   if (!MEDUSA_READY) return null;
   const cart = await retrieveCart();
-  if (!cart) return null;
+  if (!cart) throw new Error("Sepet bulunamadı. Sayfayı yenileyip tekrar deneyin.");
   if (quantity <= 0) return removeLineItem(lineId);
   try {
     const { MEDUSA_BACKEND_URL, MEDUSA_PUBLISHABLE_KEY } = await import(
@@ -252,12 +255,12 @@ export async function updateBladeMatrixLine(
     if (!res.ok) {
       const text = await res.text();
       console.error("[medusa] updateBladeMatrixLine failed", res.status, text);
-      return null;
+      throw new Error("Adet güncellenemedi. Lütfen tekrar deneyin.");
     }
     return await retrieveCart();
   } catch (e) {
     console.error("[medusa] updateBladeMatrixLine failed", e);
-    return null;
+    throw new Error("Adet güncellenemedi. Lütfen tekrar deneyin.", { cause: e });
   }
 }
 
@@ -266,7 +269,7 @@ export async function removeLineItem(
 ): Promise<StoreCart | null> {
   if (!MEDUSA_READY) return null;
   const cart = await retrieveCart();
-  if (!cart) return null;
+  if (!cart) throw new Error("Sepet bulunamadı. Sayfayı yenileyip tekrar deneyin.");
   try {
     const { parent } = (await medusa.store.cart.deleteLineItem(
       cart.id,
@@ -275,7 +278,7 @@ export async function removeLineItem(
     return parent;
   } catch (e) {
     console.error("[medusa] removeLineItem failed", e);
-    return null;
+    throw new Error("Ürün sepetten çıkarılamadı. Lütfen tekrar deneyin.", { cause: e });
   }
 }
 

@@ -40,6 +40,7 @@ export default async function orderPlacedHandler({
         to,
         channel: "email",
         template: "order.placed",
+        idempotency_key: "order-placed:" + data.id,
         data: { order },
       },
     ]);
@@ -49,6 +50,7 @@ export default async function orderPlacedHandler({
     logger.error(
       `[order-placed] failed: ${e instanceof Error ? e.message : String(e)}`
     );
+    throw e;
   }
 }
 
