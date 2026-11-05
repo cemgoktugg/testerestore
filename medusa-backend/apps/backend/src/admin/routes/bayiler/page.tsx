@@ -191,6 +191,10 @@ export default function DealersPage() {
   const [company, setCompany] = useState("");
   const [note, setNote] = useState("");
   const [issued, setIssued] = useState<{ email: string; password: string } | null>(null);
+  // Bayi eklendi ama müşterinin giriş hesabı zaten vardı (şifre üretilmedi):
+  // pencere açık kalır, istenirse oradan geçici şifre oluşturulur.
+  const [existing, setExisting] = useState<{ dealerId: string; email: string } | null>(null);
+  const [issuing, setIssuing] = useState(false);
 
   const dealer = dealers.find((d) => d.id === dealerId) ?? null;
 
@@ -422,10 +426,9 @@ export default function DealersPage() {
       if (temp_password) {
         setIssued({ email: picked.email, password: temp_password });
       } else {
-        toast.info("Bu müşterinin hesabı zaten var", {
-          description: "Kendi şifresiyle giriş yapabilir. Gerekirse “Yeni şifre oluştur”u kullanın.",
-        });
-        setNewOpen(false);
+        // Eskiden burada kısa bir bildirim çıkıp pencere kapanıyordu; gözden
+        // kaçıyor, "geçici şifre çıkmadı" sanılıyordu.
+        setExisting({ dealerId: created.id, email: picked.email });
       }
       setPicked(null);
       setCompany("");
@@ -485,15 +488,23 @@ export default function DealersPage() {
       cancelText: "Vazgeç",
     });
     if (!ok) return;
+    await requestTempPassword(dealer.id);
+  }
+
+  async function requestTempPassword(id: string) {
+    setIssuing(true);
     try {
       const { email, temp_password } = await api<{ email: string; temp_password: string }>(
-        `/admin/dealers/${dealer.id}/password`,
+        `/admin/dealers/${id}/password`,
         { method: "POST" }
       );
+      setExisting(null);
       setIssued({ email, password: temp_password });
       setNewOpen(true);
     } catch (e) {
       toast.error("Şifre oluşturulamadı", { description: String(e) });
+    } finally {
+      setIssuing(false);
     }
   }
 
@@ -536,6 +547,7 @@ export default function DealersPage() {
             setPicked(null);
             setQuery("");
             setIssued(null);
+            setExisting(null);
             setNewOpen(true);
           }}
         >
@@ -783,7 +795,9 @@ export default function DealersPage() {
       <Drawer open={newOpen} onOpenChange={setNewOpen}>
         <Drawer.Content>
           <Drawer.Header>
-            <Drawer.Title>{issued ? "Giriş Bilgileri" : "Yeni Bayi"}</Drawer.Title>
+            <Drawer.Title>
+              {issued ? "Giriş Bilgileri" : existing ? "Bayi Eklendi" : "Yeni Bayi"}
+            </Drawer.Title>
           </Drawer.Header>
           <Drawer.Body className="flex flex-col gap-4 p-4">
             {issued ? (
@@ -811,6 +825,18 @@ export default function DealersPage() {
                     Bilgileri kopyala
                   </Button>
                 </div>
+              </div>
+            ) : existing ? (
+              <div className="flex flex-col gap-3">
+                <Text weight="plus">Bu müşterinin giriş hesabı zaten var</Text>
+                <Text size="small" className="text-ui-fg-subtle">
+                  {existing.email} bayi olarak eklendi. Hesap daha önce açıldığı için geçici şifre
+                  otomatik üretilmedi; müşteri kendi şifresiyle giriş yapabilir.
+                </Text>
+                <Text size="small" className="text-ui-fg-subtle">
+                  Müşteri şifresini bilmiyorsa geçici şifre oluşturun. Mevcut şifresi çalışmaz olur,
+                  ilk girişte kendi şifresini belirler.
+                </Text>
               </div>
             ) : (
             <>
@@ -851,7 +877,7 @@ export default function DealersPage() {
                 <Text size="xsmall" className="mt-2 text-ui-fg-subtle">
                   Seçildi: {picked.email}
                   {picked.has_account
-                    ? ""
+                    ? ". Giriş hesabı zaten var; eklendikten sonra isterseniz geçici şifre oluşturabilirsiniz."
                     : ". Giriş hesabı açılacak, geçici şifre size gösterilecek."}
                 </Text>
               )}
@@ -869,9 +895,19 @@ export default function DealersPage() {
           </Drawer.Body>
           <Drawer.Footer>
             <Button size="small" variant="secondary" onClick={() => setNewOpen(false)}>
-              {issued ? "Kapat" : "Vazgeç"}
+              {issued || existing ? "Kapat" : "Vazgeç"}
             </Button>
-            {!issued && (
+            {!issued && existing && (
+              <Button
+                size="small"
+                onClick={() => requestTempPassword(existing.dealerId)}
+                disabled={issuing}
+                isLoading={issuing}
+              >
+                Geçici şifre oluştur
+              </Button>
+            )}
+            {!issued && !existing && (
               <Button size="small" onClick={createDealer} disabled={saving} isLoading={saving}>
                 Bayi Ekle
               </Button>
