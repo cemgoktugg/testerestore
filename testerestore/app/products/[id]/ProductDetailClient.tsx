@@ -197,6 +197,14 @@ export default function ProductDetailClient({
   // --- UI state hooks (always called — never inside conditionals)
   const [activeTab, setActiveTab] = useState<'image' | '3d'>('image');
   const [imageIdx, setImageIdx] = useState(0);
+  // Galeride bugüne kadar açılmış resimler. Yalnız bunlar DOM'a konur: eskiden
+  // 7 resmin hepsi üst üste (opaklık 0) duruyordu, tarayıcı hepsini ekranda
+  // sayıp açılışta birden indiriyordu → ana resim 13 istekle yarışıyordu.
+  const [seenImages, setSeenImages] = useState<number[]>([0]);
+  const showImage = (i: number) => {
+    setImageIdx(i);
+    setSeenImages((prev) => (prev.includes(i) ? prev : [...prev, i]));
+  };
   const [bladeConfig, setBladeConfig] = useState({
     width: '27mm', tpi: '4/6 TPI', material: product?.name ?? '',
   });
@@ -216,6 +224,8 @@ export default function ProductDetailClient({
     // existing layout so a controlled reset is the pragmatic option here.
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setImageIdx(0);
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setSeenImages([0]);
     // Son görüntülenenler listesine ekle
     if (product?.handle) recordRecentlyViewed(product.handle);
   }, [product?.id, product?.handle]);
@@ -285,9 +295,8 @@ export default function ProductDetailClient({
     product.images.length > 0 ? product.images : [product.image];
 
   const goPrevImage = () =>
-    setImageIdx((i) => (i - 1 + galleryImages.length) % galleryImages.length);
-  const goNextImage = () =>
-    setImageIdx((i) => (i + 1) % galleryImages.length);
+    showImage((imageIdx - 1 + galleryImages.length) % galleryImages.length);
+  const goNextImage = () => showImage((imageIdx + 1) % galleryImages.length);
 
   // ---------- Machine handling (legacy + Medusa) ----------
   const getMachinePrice = () => {
@@ -415,7 +424,7 @@ export default function ProductDetailClient({
               }`}>
                 {activeTab === 'image' ? (
                   <div className="relative w-full h-full">
-                    {galleryImages.map((img, i) => (
+                    {galleryImages.map((img, i) => seenImages.includes(i) && (
                       <Image
                         key={img + i}
                         src={img}
@@ -457,7 +466,7 @@ export default function ProductDetailClient({
                             <button
                               key={img + i}
                               type="button"
-                              onClick={() => setImageIdx(i)}
+                              onClick={() => showImage(i)}
                               aria-label={`${i + 1}. görsele git`}
                               aria-current={i === imageIdx}
                               className={`relative shrink-0 h-12 w-12 rounded-lg overflow-hidden border transition-all duration-300 cursor-pointer ${

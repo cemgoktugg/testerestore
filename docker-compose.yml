@@ -145,6 +145,11 @@ services:
     restart: unless-stopped
     depends_on:
       - backend
+    volumes:
+      # next/image'in dönüştürdüğü resimler. Volume'süzken her deploy'da
+      # siliniyordu; ilk ziyaretçiler bütün resimleri yeniden bekliyordu.
+      # Yalnız images alt klasörü: sayfa/veri önbelleği build'e bağlı kalsın.
+      - storefront_image_cache:/app/.next/cache/images
     environment:
       NODE_ENV: production
       PORT: "3000"
@@ -285,6 +290,7 @@ volumes:
   advisor_chroma:
   advisor_data:
   db_backups:
+  storefront_image_cache:
 
 networks:
   internal:

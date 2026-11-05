@@ -4,9 +4,10 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Sparkles, ArrowRight } from "lucide-react";
-import { listProducts } from "../../lib/medusa/services/products";
+import { listProductsLite } from "../../lib/medusa/services/products";
 import { formatMoney, getProductImage } from "../../lib/medusa/format";
 import type { StoreProduct } from "../../lib/medusa/types";
+import { useDealer } from "../context/DealerContext";
 
 interface Props {
   /** Listeden çıkarılacak ürün handle/id'leri (örn. zaten sepette olanlar). */
@@ -35,14 +36,17 @@ export default function CrossSell({
   title = "Diğer Ürünlerimiz",
   variant = "grid",
 }: Props) {
-  const [products, setProducts] = useState<StoreProduct[]>([]);
+  const [fetched, setProducts] = useState<StoreProduct[]>([]);
   const [loading, setLoading] = useState(true);
+  // Bayi girişliyse kartlarda da bayi fiyatı görünsün (diğer listelerle aynı).
+  const { applyDealerPrices } = useDealer();
+  const products = fetched.map(applyDealerPrices);
 
   useEffect(() => {
     let cancelled = false;
     void categoryHint; // kategori filtresi v2'de
     (async () => {
-      const { products } = await listProducts({ limit: limit + 6 });
+      const products = await listProductsLite(limit + 6);
       if (cancelled) return;
       const excludeSet = new Set(exclude);
       const filtered = products.filter(

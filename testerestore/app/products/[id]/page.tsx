@@ -5,6 +5,7 @@ import ProductDetailClient from './ProductDetailClient';
 import { categoryPageForHandles, categoryHref } from '../../../lib/category-pages';
 import { isReadyMade } from '../../../lib/ready-made';
 import ProductViewAnalytics from '../../components/ProductViewAnalytics';
+import { slimProductForCard } from '../../../lib/medusa/slim';
 
 /**
  * Product detail — Server Component.
@@ -60,7 +61,9 @@ export default async function ProductPage({
     <ProductViewAnalytics id={product.id} name={product.title} />
     <ProductDetailClient
       initialProduct={product}
-      initialRelated={related}
+      // Kart yalnız başlık/görsel/kategori okur; tam ürün (yüzlerce varyant
+      // fiyatı) sayfanın RSC verisini gereksiz büyütüyordu.
+      initialRelated={related.map(slimProductForCard)}
       categoryLink={categoryLink}
       slug={id}
     />

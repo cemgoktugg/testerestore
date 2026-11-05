@@ -68,6 +68,25 @@ async function buildQuery(opts: ListOpts = {}) {
   return query;
 }
 
+/**
+ * Öneri şeritleri (CrossSell) için en hafif liste: başlık, görsel ve her
+ * varyantın yalnız fiyat tutarı. `*variants.calculated_price` tam fiyat
+ * nesnesini döndürüyordu; 112 varyantlı bıçaklarla 10 ürün ~1,2 MB ediyor,
+ * mobilde ürün resimleriyle bant genişliği için yarışıyordu (~57 KB'a iner).
+ */
+const LITE_FIELDS = [
+  "id", "title", "handle", "thumbnail", "images.url",
+  "variants.id", "variants.calculated_price.calculated_amount",
+  "variants.calculated_price.currency_code",
+].join(",");
+
+export async function listProductsLite(limit = 10): Promise<StoreProduct[]> {
+  if (!MEDUSA_READY) return [];
+  const query = await buildQuery({ limit });
+  const res = await medusa.store.product.list({ ...query, fields: LITE_FIELDS });
+  return res.products as StoreProduct[];
+}
+
 /** List products, scoped to the current region for pricing. */
 export async function listProducts(
   opts: ListOpts = {}

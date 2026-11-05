@@ -126,8 +126,10 @@ const nextConfig: NextConfig = {
     ];
   },
   images: {
-    // AVIF (WebP'den ~%20-30 daha küçük) + WebP fallback. LCP/bandwidth kazancı.
-    formats: ["image/avif", "image/webp"],
+    // Yalnız WebP. AVIF ~%30-40 daha küçük ama VPS'te ilk dönüştürme resim
+    // başına 1-2,4 sn sürüyordu (WebP 0,3 sn); her cihaz genişliği ayrı
+    // dönüştürüldüğü için yeni bir telefonda ürün resimleri 7-10 sn geliyordu.
+    formats: ["image/webp"],
     // Optimize edilmiş resimleri 30 gün cache'le (default 60sn → sık sık soğuk
     // yeniden optimize ediyordu). İlk optimize sonrası tekrar hızlı.
     minimumCacheTTL: 2592000,

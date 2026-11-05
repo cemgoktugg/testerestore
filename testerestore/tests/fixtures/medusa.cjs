@@ -5,7 +5,7 @@ const makeProduct = (i) => ({
   id: 'prod_fixture_' + i, handle: i === 0 ? 'bimetal-premium' : i === 1 ? 'hazir-tukendi' : i === 2 ? 'hazir-stok' : 'hazir-' + i,
   title: i === 0 ? 'Bi-Metal M42 Şerit Testere' : 'Bi-Metal M42 Hazır ' + (3000 + i) + ' mm',
   subtitle: 'Regresyon test ürünü', description: 'Teknik ürün açıklaması', status: 'published',
-  thumbnail: '/images/bimetal_blade.png', images: [], options: [], collection: null, tags: [], categories: [category],
+  thumbnail: '/images/bimetal_blade.png', images: i === 0 ? ['bimetal_blade', 'carbide_blade', 'woodworking_blade'].map((n, k) => ({ id: 'img_' + k, url: '/images/' + n + '.png' })) : [], options: [], collection: null, tags: [], categories: [category],
   created_at: '2026-10-19T00:00:00.000Z', updated_at: '2026-10-19T00:00:00.000Z',
   metadata: i === 0 ? { blade_type: 'bi-metal', custom_length_enabled: true, min_length_mm: 1000, max_length_mm: 15000, product_type: 'blade' } :
     { is_ready_made: true, blade_type: 'bi-metal', width_mm: 27, thickness_mm: 0.9, length_mm: 3000 + i, tooth_pitch: '4/6', product_type: 'blade' },
